@@ -1,0 +1,66 @@
+baseURL = "https://deepsleep.fun/"
+languageCode = "zh-CN"
+title = "DeepSleep Blog"
+theme = ["PaperMod"]
+
+[params]
+  [params.homeInfoParams]
+    Title = "🌙 DeepSleep Blog"
+    Content = """
+      👋 欢迎来到我的个人博客！
+
+      这里记录技术探索、生活感悟和创意项目。
+    """
+
+  [[params.socialIcons]]
+    name = "github"
+    url = "https://github.com/106-official"
+
+  [[params.socialIcons]]
+    name = "email"
+    url = "mailto:your@email.com"
+
+  ShowReadingTime = true
+  ShowShareButtons = true
+  ShowPostNavLinks = true
+
+  comments = false
+
+  # Google Analytics（可选）
+  # analytics:
+  #   google = "G-XXXXXXXXXX"
+
+[outputs]
+  home = ["HTML", "RSS", "JSON"]
+
+[[menu.main]]
+  identifier = "posts"
+  name = "文章"
+  url = "/posts/"
+  weight = 10
+
+[[menu.main]]
+  identifier = "archives"
+  name = "归档"
+  url = "/archives/"
+  weight = 20
+
+[[menu.main]]
+  identifier = "search"
+  name = "搜索"
+  url = "/search/"
+  weight = 30
+
+[[menu.main]]
+  identifier = "about"
+  name = "关于"
+  url = "/about/"
+  weight = 40
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+
+  [markup.highlight]
+    noClasses = false

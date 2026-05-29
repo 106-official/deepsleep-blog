@@ -4,14 +4,24 @@ title = "DeepSleep Blog"
 theme = ["PaperMod"]
 
 [params]
+  # 主题配置
+  defaultTheme = "auto"
+  themeColor = "#D4AF37"
+  
+  # 首页信息
   [params.homeInfoParams]
     Title = "🌙 DeepSleep Blog"
     Content = """
-      👋 欢迎来到我的个人博客！
-
-      这里记录技术探索、生活感悟和创意项目。
+      <p style='font-size: 1.1em; line-height: 1.8;'>
+      👋 欢迎来到我的个人博客空间<br><br>
+      
+      这里记录<span style='color: #D4AF37; font-weight: bold;'>技术探索</span>与<span style='color: #888; font-weight: bold;'>生活感悟</span><br><br>
+      
+      <em>用文字留住时光，用代码构建未来</em>
+      </p>
     """
 
+  # 社交链接
   [[params.socialIcons]]
     name = "github"
     url = "https://github.com/106-official"
@@ -20,43 +30,86 @@ theme = ["PaperMod"]
     name = "email"
     url = "mailto:your@email.com"
 
+  # 功能开关
   ShowReadingTime = true
   ShowShareButtons = true
   ShowPostNavLinks = true
-
+  ShowBreadCrumbs = true
+  ShowCodeCopyButtons = true
+  
+  # 评论系统（可选）
   comments = false
 
-  # Google Analytics（可选）
-  # analytics:
-  #   google = "G-XXXXXXXXXX"
+  # 主页布局
+  [params.profileMode]
+    enabled = true
+    title = "DeepSleep Blog"
+    subtitle = "✨ 技术 · 生活 · 思考"
+    imageUrl = ""
+    imageTitle = "DeepSleep"
+    imageWidth = 150
+    imageHeight = 150
+    
+    [[params.profileMode.buttons]]
+      name = "📝 文章"
+      url = "/posts"
+    
+    [[params.profileMode.buttons]]
+      name = "🏷️ 标签"
+      url = "/tags"
 
+  # 文章列表样式
+  [params.cover]
+    hidden = true
+    hiddenInList = true
+    hiddenInSingle = true
+
+  # 编辑器信息
+  [params.editPost]
+    URL = "https://github.com/106-official/deepsleep-blog/tree/main/content/posts"
+    Text = "在 GitHub 上编辑此文章 ✏️"
+    addPlainText = true
+
+  # 搜索功能
+  [params.fuseOpts]
+    isCaseSensitive = false
+    shouldSort = true
+    location = 0
+    distance = 1000
+    threshold = 0.4
+    minMatchCharLength = 0
+    keys = ["title", "permalink", "summary", "content"]
+
+# 输出格式
 [outputs]
   home = ["HTML", "RSS", "JSON"]
 
+# 导航菜单
 [[menu.main]]
   identifier = "posts"
-  name = "文章"
+  name = "📝 文章"
   url = "/posts/"
   weight = 10
 
 [[menu.main]]
   identifier = "archives"
-  name = "归档"
+  name = "📚 归档"
   url = "/archives/"
   weight = 20
 
 [[menu.main]]
   identifier = "search"
-  name = "搜索"
+  name = "🔍 搜索"
   url = "/search/"
   weight = 30
 
 [[menu.main]]
   identifier = "about"
-  name = "关于"
+  name = "👤 关于"
   url = "/about/"
   weight = 40
 
+# Markdown 渲染
 [markup]
   [markup.goldmark]
     [markup.goldmark.renderer]
@@ -64,3 +117,35 @@ theme = ["PaperMod"]
 
   [markup.highlight]
     noClasses = false
+    anchorLineNos = true
+    codeFences = true
+    guessSyntax = true
+    lineNos = true
+    style = "monokai"
+
+# 相关内容
+[related]
+  includeNewer = true
+  threshold = 80
+  toLower = true
+  
+  [[related.indices]]
+    name = "keywords"
+    weight = 100
+  
+  [[related.indices]]
+    name = "tags"
+    weight = 80
+  
+  [[related.indices]]
+    name = "date"
+    weight = 10
+
+# 社交媒体分享
+[[params.socialIcons]]
+  name = "twitter"
+  url = "#"
+
+# 分析工具（可选）
+# [params.analytics]
+#   google = "G-XXXXXXXXXX"

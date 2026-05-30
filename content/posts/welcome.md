@@ -1,12 +1,11 @@
-***
-
+---
 title: "欢迎来到 DeepSleep Blog 🌙"
 date: 2026-05-29T00:00:00+08:00
 draft: false
 summary: "^-^"
-tags: \["hello", "first-post"]
-categories: \["公告"]
--------------------
+tags: ["hello", "first-post"]
+categories: ["公告"]
+---
 
 ## ✨ 欢迎欢迎！
 

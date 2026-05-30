@@ -1,13 +1,12 @@
-***
-
+---
 title: "🌙 DeepSleep Blog 正式启航！"
 date: 2026-05-29T20:00:00+08:00
 draft: false
 summary: "欢迎来到 DeepSleep Blog！"
-tags: \["博客"]
-categories: \["^-^"]
+tags: ["博客"]
+categories: ["^-^"]
 author: "DeepSleep"
--------------------
+---
 
 # 🎉 DeepSleep Blog 正式上线！
 

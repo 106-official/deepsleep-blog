@@ -1,6 +1,4 @@
-{{- /* Override PaperMod's default post layout to include Twikoo comments */ -}}
-
-{{- define "comments" -}}
+{{- /* Twikoo Comment System for PaperMod */ -}}
 {{- if .Site.Params.comments | default false -}}
   {{- if .IsPage -}}
     <div class="post-footer-comments">
@@ -113,5 +111,4 @@
       </style>
     </div>
   {{- end -}}
-{{- end -}}
 {{- end -}}

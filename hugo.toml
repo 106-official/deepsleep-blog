@@ -41,7 +41,7 @@ theme = ["PaperMod"]
   comments = true
 
   [params.twikoo]
-    envId = "https://your-twikoo.vercel.app"
+    envId = "https://teikoo-deepsleep.vercel.app"
     lang = "zh-CN"
     requiredMeta = ["nick", "email"]
     wordLimit = [0, 500]

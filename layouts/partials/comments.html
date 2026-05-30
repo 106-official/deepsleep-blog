@@ -1,5 +1,5 @@
 {{- /* Twikoo Comment System for PaperMod */ -}}
-{{- if .Site.Params.comments | default false -}}
+{{- if or (.Param "comments") (.Site.Params.comments) | default false -}}
   {{- if .IsPage -}}
     <div class="post-footer-comments">
       <h2 id="comments" style="
@@ -17,28 +17,54 @@
         欢迎对这篇文章发表你的看法和见解 ✨
       </p>
 
-      <div id="tcomment"></div>
+      <div id="tcomment">
+        <div style="text-align: center; padding: 2rem; color: #999;">
+          <p>⏳ 评论加载中...</p>
+        </div>
+      </div>
 
       <script src="https://cdn.jsdelivr.net/npm/twikoo@1.6.39/dist/twikoo.all.min.js"></script>
       <script>
-        twikoo.init({
-          envId: '{{ .Site.Params.twikoo.envId }}',
-          el: '#tcomment',
-          path: '{{ .RelPermalink }}',
-          lang: '{{ .Site.Params.twikoo.lang | default "zh-CN" }}',
-          requiredMeta: {{ .Site.Params.twikoo.requiredMeta | default `["nick", "email"]` }},
-          wordLimit: {{ .Site.Params.twikoo.wordLimit | default `[0, 500]` }},
-          pageSize: {{ .Site.Params.twikoo.pageSize | default `10` }},
-          reaction: {{ .Site.Params.twikoo.reaction | default `["👍", "🎉", "😄", "❤️", "🚀"]` }},
-          placeholder: '欢迎发表你的看法~ 支持Markdown语法 ✨',
-          imageUploader: false,
-          highlight: {
-            theme: 'monokai',
-            lang: ['html', 'css', 'javascript', 'python', 'markdown'],
-          },
-          commentSorting: 'latest',
-          dark: 'html[data-theme="dark"]',
-        });
+        (function() {
+          var envId = '{{ .Site.Params.twikoo.envId }}';
+          var el = document.getElementById('tcomment');
+          
+          if (!envId || envId === '') {
+            console.error('[Twikoo] 错误: envId 未配置');
+            if (el) {
+              el.innerHTML = '<div style="text-align: center; padding: 2rem; color: #e74c3c;"><p>❌ 评论系统未正确配置</p><p style="font-size: 0.9rem; margin-top: 0.5rem;">请联系网站管理员</p></div>';
+            }
+            return;
+          }
+
+          try {
+            twikoo.init({
+              envId: envId,
+              el: '#tcomment',
+              path: '{{ .RelPermalink }}',
+              lang: '{{ .Site.Params.twikoo.lang | default "zh-CN" }}',
+              requiredMeta: {{ .Site.Params.twikoo.requiredMeta | default `["nick", "email"]` }},
+              wordLimit: {{ .Site.Params.twikoo.wordLimit | default `[0, 500]` }},
+              pageSize: {{ .Site.Params.twikoo.pageSize | default `10` }},
+              reaction: {{ .Site.Params.twikoo.reaction | default `["👍", "🎉", "😄", "❤️", "🚀"]` }},
+              placeholder: '欢迎发表你的看法~ 支持Markdown语法 ✨',
+              imageUploader: false,
+              highlight: {
+                theme: 'monokai',
+                lang: ['html', 'css', 'javascript', 'python', 'markdown'],
+              },
+              commentSorting: 'latest',
+              dark: 'html[data-theme="dark"]',
+            });
+            
+            console.log('[Twikoo] 初始化成功, envId:', envId);
+          } catch (error) {
+            console.error('[Twikoo] 初始化失败:', error);
+            if (el) {
+              el.innerHTML = '<div style="text-align: center; padding: 2rem; color: #e74c3c;"><p>❌ 评论系统加载失败</p><p style="font-size: 0.85rem; margin-top: 0.5rem; color: #666;">请稍后重试或联系管理员</p></div>';
+            }
+          }
+        })();
       </script>
 
       <style>

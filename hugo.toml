@@ -36,9 +36,18 @@ theme = ["PaperMod"]
   ShowPostNavLinks = true
   ShowBreadCrumbs = true
   ShowCodeCopyButtons = true
+
+  # 评论系统 - Waline
+  comments = true
   
-  # 评论系统（可选）
-  comments = false
+  [params.waline]
+    serverURL = "https://your-waline.vercel.app"
+    lang = "zh-CN"
+    emoji = ["https://cdn.jsdelivr.net/npm/@waline/emojis@1.1.0/bilibili"]
+    requiredMeta = ["nick", "email"]
+    wordLimit = [0, 500]
+    pageSize = 10
+    avatarCDN = "https://seccdn.libravatar.cn/avatar/"
 
   # 主页布局
   [params.profileMode]
@@ -108,6 +117,12 @@ theme = ["PaperMod"]
   name = "👤 关于"
   url = "/about/"
   weight = 40
+
+[[menu.main]]
+  identifier = "forum"
+  name = "💬 论坛"
+  url = "/forum/"
+  weight = 50
 
 # Markdown 渲染
 [markup]

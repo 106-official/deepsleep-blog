@@ -1,0 +1,170 @@
+{{- /* Waline Comment System Integration */ -}}
+{{- if .Site.Params.comments | default false -}}
+
+<div id="waline-comments"></div>
+
+<link href="https://unpkg.com/@waline/client@v3/dist/waline.css" rel="stylesheet" />
+<script type="module">
+  import { init } from 'https://unpkg.com/@waline/client@v3/dist/waline.js';
+  
+  init({
+    el: '#waline-comments',
+    serverURL: '{{ .Site.Params.waline.serverURL }}',
+    path: '{{ .RelPermalink }}',
+    lang: '{{ .Site.Params.waline.lang | default "zh-CN" }}',
+    emoji: [
+      'https://cdn.jsdelivr.net/npm/@waline/emojis@1.1.0/bilibili',
+      'https://cdn.jsdelivr.net/npm/@waline/emojis@1.1.0/qq',
+      'https://cdn.jsdelivr.net/npm/@waline/emojis@1.1.0/tieba',
+    ],
+    requiredMeta: {{ .Site.Params.waline.requiredMeta | default `["nick", "email"]` }},
+    wordLimit: {{ .Site.Params.waline.wordLimit | default `[0, 500]` }},
+    pageSize: {{ .Site.Params.waline.pageSize | default `10` }},
+    avatarCDN: '{{ .Site.Params.waline.avatarCDN }}',
+    
+    // 自定义占位文本
+    placeholder: '欢迎发表你的看法~ 支持Markdown语法 ✨',
+    
+    // 图片上传配置
+    imageUploader: false,
+    
+    // 搜索功能
+    search: true,
+    
+    // 反应表情
+    reaction: ['👍', '🎉', '😄', '❤️', '🚀', '👀'],
+    
+    // 评论排序
+    commentSorting: 'latest',
+    
+    // 自定义样式
+    dark: 'html[data-theme="dark"]',
+  });
+</script>
+
+<style>
+  /* Waline 评论区域美化 */
+  #waline-comments {
+    margin-top: 3rem;
+    padding: 2rem;
+    background: var(--color-bg-secondary, #ffffff);
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border-left: 4px solid #D4AF37;
+  }
+
+  /* 标题样式 */
+  #waline-comments .wl-header {
+    border-bottom: 2px solid #D4AF37;
+    margin-bottom: 1.5rem !important;
+  }
+
+  #waline-comments .wl-header-label {
+    font-size: 1.5rem !important;
+    font-weight: 600 !important;
+    color: #2d2d2d !important;
+  }
+
+  /* 输入框样式 */
+  #waline-comments .wl-editor {
+    min-height: 150px !important;
+    border-radius: 12px !important;
+    border: 2px solid #e0e0e0 !important;
+    transition: all 0.3s ease !important;
+  }
+
+  #waline-comments .wl-editor:focus {
+    border-color: #D4AF37 !important;
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1) !important;
+  }
+
+  /* 按钮样式 */
+  #waline-comments .wl-btn {
+    background: linear-gradient(135deg, #D4AF37, #B8960C) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 25px !important;
+    padding: 10px 30px !important;
+    font-weight: 600 !important;
+    transition: all 0.3s ease !important;
+  }
+
+  #waline-comments .wl-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+  }
+
+  /* 评论卡片样式 */
+  #waline-comments .wl-item {
+    border-radius: 12px !important;
+    padding: 1.5rem !important;
+    margin-bottom: 1rem !important;
+    background: #fafafa !important;
+    transition: all 0.3s ease !important;
+  }
+
+  #waline-comments .wl-item:hover {
+    transform: translateX(5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  }
+
+  /* 用户头像 */
+  #waline-comments .wl-user {
+    font-weight: 600 !important;
+    color: #D4AF37 !important;
+  }
+
+  #waline-comments .wl-avatar {
+    border-radius: 50% !important;
+    border: 3px solid #D4AF37 !important;
+  }
+
+  /* 时间戳 */
+  #waline-comments .wl-time {
+    color: #999 !important;
+    font-size: 0.9rem !important;
+  }
+
+  /* 表情选择器 */
+  #waline-comments .wl-emoji-popup {
+    border-radius: 16px !important;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15) !important;
+  }
+
+  /* 登录/注册按钮 */
+  #waline-comments .wl-login-info a {
+    color: #D4AF37 !important;
+    font-weight: 600 !important;
+    text-decoration: underline !important;
+  }
+
+  /* 加载动画 */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  #waline-comments {
+    animation: fadeInUp 0.6s ease-out;
+  }
+
+  /* 响应式调整 */
+  @media (max-width: 768px) {
+    #waline-comments {
+      padding: 1rem;
+      margin-top: 2rem;
+    }
+
+    #waline-comments .wl-header-label {
+      font-size: 1.2rem !important;
+    }
+  }
+</style>
+
+{{- end -}}

@@ -37,17 +37,16 @@ theme = ["PaperMod"]
   ShowBreadCrumbs = true
   ShowCodeCopyButtons = true
 
-  # 评论系统 - Waline
+  # 评论系统 - Twikoo
   comments = true
-  
-  [params.waline]
-    serverURL = "https://your-waline.vercel.app"
+
+  [params.twikoo]
+    envId = "https://your-twikoo.vercel.app"
     lang = "zh-CN"
-    emoji = ["https://cdn.jsdelivr.net/npm/@waline/emojis@1.1.0/bilibili"]
     requiredMeta = ["nick", "email"]
     wordLimit = [0, 500]
     pageSize = 10
-    avatarCDN = "https://seccdn.libravatar.cn/avatar/"
+    reaction = ["👍", "🎉", "😄", "❤️", "🚀", "👀"]
 
   # 主页布局
   [params.profileMode]

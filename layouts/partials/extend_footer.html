@@ -1,4 +1,4 @@
-{{- /* Waline Comment System - Load on posts and forum pages */ -}}
+{{- /* Twikoo Comment System - Load on posts and forum pages */ -}}
 {{- if .Site.Params.comments | default false -}}
   {{- $isPost := eq .Kind "page" -}}
   {{- $isForum := or (eq .Type "forum") (eq .RelPermalink "/forum/") -}}
@@ -16,7 +16,7 @@
         ">
           💬 {{- if $isForum -}}参与讨论{{- else -}}发表评论{{- end -}}
         </h2>
-        
+
         <p style="
           color: #666;
           margin-bottom: 2rem;
@@ -29,7 +29,7 @@
           {{- end -}}
         </p>
       </div>
-      
+
       {{ partial "comments.html" . }}
     </div>
 

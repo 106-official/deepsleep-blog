@@ -1,50 +1,43 @@
-{{- /* Waline Comment System Integration */ -}}
+{{- /* Twikoo Comment System Integration */ -}}
 {{- if .Site.Params.comments | default false -}}
 
-<div id="waline-comments"></div>
+<div id="tcomment"></div>
 
-<link href="https://unpkg.com/@waline/client@v3/dist/waline.css" rel="stylesheet" />
-<script type="module">
-  import { init } from 'https://unpkg.com/@waline/client@v3/dist/waline.js';
-  
-  init({
-    el: '#waline-comments',
-    serverURL: '{{ .Site.Params.waline.serverURL }}',
+<script src="https://cdn.jsdelivr.net/npm/twikoo@1.6.39/dist/twikoo.all.min.js"></script>
+<script>
+  twikoo.init({
+    envId: '{{ .Site.Params.twikoo.envId }}',
+    el: '#tcomment',
     path: '{{ .RelPermalink }}',
-    lang: '{{ .Site.Params.waline.lang | default "zh-CN" }}',
-    emoji: [
-      'https://cdn.jsdelivr.net/npm/@waline/emojis@1.1.0/bilibili',
-      'https://cdn.jsdelivr.net/npm/@waline/emojis@1.1.0/qq',
-      'https://cdn.jsdelivr.net/npm/@waline/emojis@1.1.0/tieba',
-    ],
-    requiredMeta: {{ .Site.Params.waline.requiredMeta | default `["nick", "email"]` }},
-    wordLimit: {{ .Site.Params.waline.wordLimit | default `[0, 500]` }},
-    pageSize: {{ .Site.Params.waline.pageSize | default `10` }},
-    avatarCDN: '{{ .Site.Params.waline.avatarCDN }}',
-    
+    lang: '{{ .Site.Params.twikoo.lang | default "zh-CN" }}',
+    requiredMeta: {{ .Site.Params.twikoo.requiredMeta | default `["nick", "email"]` }},
+    wordLimit: {{ .Site.Params.twikoo.wordLimit | default `[0, 500]` }},
+    pageSize: {{ .Site.Params.twikoo.pageSize | default `10` }},
+    reaction: {{ .Site.Params.twikoo.reaction | default `["👍", "🎉", "😄", "❤️", "🚀"]` }},
+
     // 自定义占位文本
     placeholder: '欢迎发表你的看法~ 支持Markdown语法 ✨',
-    
-    // 图片上传配置
+
+    // 图片上传
     imageUploader: false,
-    
-    // 搜索功能
-    search: true,
-    
-    // 反应表情
-    reaction: ['👍', '🎉', '😄', '❤️', '🚀', '👀'],
-    
+
+    // 高亮代码
+    highlight: {
+      theme: 'monokai',
+      lang: ['html', 'css', 'javascript', 'python', 'markdown'],
+    },
+
     // 评论排序
     commentSorting: 'latest',
-    
-    // 自定义样式
+
+    // 暗色模式
     dark: 'html[data-theme="dark"]',
   });
 </script>
 
 <style>
-  /* Waline 评论区域美化 */
-  #waline-comments {
+  /* Twikoo 评论区域美化 */
+  #tcomment {
     margin-top: 3rem;
     padding: 2rem;
     background: var(--color-bg-secondary, #ffffff);
@@ -54,32 +47,37 @@
   }
 
   /* 标题样式 */
-  #waline-comments .wl-header {
+  #tcomment .twikoo-header {
     border-bottom: 2px solid #D4AF37;
     margin-bottom: 1.5rem !important;
+    padding-bottom: 0.8rem !important;
   }
 
-  #waline-comments .wl-header-label {
+  #tcomment .twikoo-header-title {
     font-size: 1.5rem !important;
     font-weight: 600 !important;
     color: #2d2d2d !important;
   }
 
   /* 输入框样式 */
-  #waline-comments .wl-editor {
+  #tcomment .el-textarea__inner,
+  #tcomment textarea {
     min-height: 150px !important;
     border-radius: 12px !important;
     border: 2px solid #e0e0e0 !important;
     transition: all 0.3s ease !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+    line-height: 1.6 !important;
   }
 
-  #waline-comments .wl-editor:focus {
+  #tcomment .el-textarea__inner:focus,
+  #tcomment textarea:focus {
     border-color: #D4AF37 !important;
     box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1) !important;
   }
 
   /* 按钮样式 */
-  #waline-comments .wl-btn {
+  #tcomment .el-button--primary {
     background: linear-gradient(135deg, #D4AF37, #B8960C) !important;
     color: white !important;
     border: none !important;
@@ -89,13 +87,13 @@
     transition: all 0.3s ease !important;
   }
 
-  #waline-comments .wl-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+  #tcomment .el-button--primary:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4) !important;
   }
 
   /* 评论卡片样式 */
-  #waline-comments .wl-item {
+  #tcomment .twikoo-item {
     border-radius: 12px !important;
     padding: 1.5rem !important;
     margin-bottom: 1rem !important;
@@ -103,43 +101,59 @@
     transition: all 0.3s ease !important;
   }
 
-  #waline-comments .wl-item:hover {
+  #tcomment .twikoo-item:hover {
     transform: translateX(5px);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
   }
 
   /* 用户头像 */
-  #waline-comments .wl-user {
-    font-weight: 600 !important;
-    color: #D4AF37 !important;
-  }
-
-  #waline-comments .wl-avatar {
+  #tcomment .tk-avatar {
     border-radius: 50% !important;
     border: 3px solid #D4AF37 !important;
+    width: 48px !important;
+    height: 48px !important;
+  }
+
+  /* 用户名 */
+  #tcomment .tk-nick {
+    font-weight: 600 !important;
+    color: #D4AF37 !important;
+    text-decoration: none !important;
+  }
+
+  #tcomment .tk-nick:hover {
+    color: #B8960C !important;
   }
 
   /* 时间戳 */
-  #waline-comments .wl-time {
+  #tcomment .tk-time {
     color: #999 !important;
     font-size: 0.9rem !important;
   }
 
   /* 表情选择器 */
-  #waline-comments .wl-emoji-popup {
+  #tcomment .OwO-body {
     border-radius: 16px !important;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15) !important;
   }
 
   /* 登录/注册按钮 */
-  #waline-comments .wl-login-info a {
+  #tcomment .tk-action-icon {
     color: #D4AF37 !important;
     font-weight: 600 !important;
-    text-decoration: underline !important;
+  }
+
+  /* 反应表情 */
+  #tcomment .tk-reactions .tk-reaction-item {
+    transition: all 0.2s ease !important;
+  }
+
+  #tcomment .tk-reactions .tk-reaction-item:hover {
+    transform: scale(1.2) !important;
   }
 
   /* 加载动画 */
-  @keyframes fadeInUp {
+  @keyframes twikooFadeInUp {
     from {
       opacity: 0;
       transform: translateY(20px);
@@ -150,20 +164,41 @@
     }
   }
 
-  #waline-comments {
-    animation: fadeInUp 0.6s ease-out;
+  #tcomment {
+    animation: twikooFadeInUp 0.6s ease-out;
   }
 
   /* 响应式调整 */
   @media (max-width: 768px) {
-    #waline-comments {
+    #tcomment {
       padding: 1rem;
       margin-top: 2rem;
     }
 
-    #waline-comments .wl-header-label {
+    #tcomment .twikoo-header-title {
       font-size: 1.2rem !important;
     }
+
+    #tcomment .tk-avatar {
+      width: 36px !important;
+      height: 36px !important;
+    }
+  }
+
+  /* 暗色模式适配 */
+  html[data-theme="dark"] #tcomment {
+    background: var(--color-bg-secondary, #1a1a1a) !important;
+  }
+
+  html[data-theme="dark"] #tcomment .twikoo-item {
+    background: #252525 !important;
+  }
+
+  html[data-theme="dark"] #tcomment .el-textarea__inner,
+  html[data-theme="dark"] #tcomment textarea {
+    background: #2d2d2d !important;
+    color: #e0e0e0 !important;
+    border-color: #444 !important;
   }
 </style>
 

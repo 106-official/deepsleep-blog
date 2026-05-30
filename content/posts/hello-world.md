@@ -6,6 +6,7 @@ summary: "欢迎来到 DeepSleep Blog！"
 tags: ["博客"]
 categories: ["^-^"]
 author: "DeepSleep"
+comments: true
 ---
 
 # 🎉 DeepSleep Blog 正式上线！

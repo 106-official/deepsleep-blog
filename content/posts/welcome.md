@@ -5,6 +5,7 @@ draft: false
 summary: "^-^"
 tags: ["hello", "first-post"]
 categories: ["公告"]
+comments: true
 ---
 
 ## ✨ 欢迎欢迎！

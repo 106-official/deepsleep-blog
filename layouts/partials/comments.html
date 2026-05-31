@@ -24,46 +24,67 @@
       </div>
 
       <link href="https://cdn.jsdelivr.net/npm/@waline/client@v3/dist/waline.css" rel="stylesheet" />
-      <script src="https://cdn.jsdelivr.net/npm/@waline/client@v3/dist/waline.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/@waline/client@v3/dist/waline.js" defer></script>
       <script>
         document.addEventListener('DOMContentLoaded', function() {
-          var serverURL = '{{ .Site.Params.waline.serverURL }}';
-          var el = document.getElementById('waline');
+          var maxRetries = 20;
+          var retryCount = 0;
 
-          if (!serverURL || serverURL === '') {
-            console.error('[Waline] 错误: serverURL 未配置');
-            if (el) {
-              el.innerHTML = '<div style="text-align: center; padding: 2rem; color: #e74c3c;"><p>❌ 评论系统未正确配置</p><p style="font-size: 0.9rem; margin-top: 0.5rem;">请联系网站管理员</p></div>';
+          function tryInitWaline() {
+            if (typeof Waline === 'undefined') {
+              retryCount++;
+              if (retryCount <= maxRetries) {
+                setTimeout(tryInitWaline, 100);
+                return;
+              }
+              console.error('[Waline] 错误: 重试' + maxRetries + '次后Waline仍未加载');
+              var el = document.getElementById('waline');
+              if (el) {
+                el.innerHTML = '<div style="text-align: center; padding: 2rem; color: #e74c3c;"><p>❌ 评论系统加载超时</p><p style="font-size: 0.85rem; margin-top: 0.5rem; color: #666;">请刷新页面重试</p></div>';
+              }
+              return;
             }
-            return;
+
+            var serverURL = '{{ .Site.Params.waline.serverURL }}';
+            var el = document.getElementById('waline');
+
+            if (!serverURL || serverURL === '') {
+              console.error('[Waline] 错误: serverURL 未配置');
+              if (el) {
+                el.innerHTML = '<div style="text-align: center; padding: 2rem; color: #e74c3c;"><p>❌ 评论系统未正确配置</p><p style="font-size: 0.9rem; margin-top: 0.5rem;">请联系网站管理员</p></div>';
+              }
+              return;
+            }
+
+            try {
+              Waline({
+                el: '#waline',
+                serverURL: serverURL,
+                path: '{{ .RelPermalink }}',
+                lang: '{{ .Site.Params.waline.lang | default "zh-CN" }}',
+                emoji: {{ .Site.Params.waline.emoji | default `["https://cdn.jsdelivr.net/npm/@waline/emojis@1.1.0/bilibili"]` | jsonify }},
+                requiredMeta: {{ .Site.Params.waline.requiredMeta | default `["nick", "email"]` | jsonify }},
+                wordLimit: {{ .Site.Params.waline.wordLimit | default `[0, 500]` | jsonify }},
+                pageSize: {{ .Site.Params.waline.pageSize | default `10` }},
+                placeholder: '{{ .Site.Params.waline.placeholder | default "欢迎发表你的看法~" }}',
+                imageUploader: false,
+                highlighter: false,
+                commentSorting: 'latest',
+                dark: 'html[data-theme="dark"]',
+                login: 'enable',
+                footer: '<a href="https://waline.js.org" target="_blank" rel="noopener noreferrer">Waline</a> powered',
+              });
+
+              console.log('[Waline] 初始化成功, serverURL:', serverURL, '(重试次数:', retryCount + ')');
+            } catch (error) {
+              console.error('[Waline] 初始化失败:', error);
+              if (el) {
+                el.innerHTML = '<div style="text-align: center; padding: 2rem; color: #e74c3c;"><p>❌ 评论系统加载失败</p><p style="font-size: 0.85rem; margin-top: 0.5rem; color: #666;">请稍后重试或联系管理员</p></div>';
+              }
+            }
           }
 
-          try {
-            Waline({
-              el: '#waline',
-              serverURL: serverURL,
-              path: '{{ .RelPermalink }}',
-              lang: '{{ .Site.Params.waline.lang | default "zh-CN" }}',
-              emoji: {{ .Site.Params.waline.emoji | default `["https://cdn.jsdelivr.net/npm/@waline/emojis@1.1.0/bilibili"]` | jsonify }},
-              requiredMeta: {{ .Site.Params.waline.requiredMeta | default `["nick", "email"]` | jsonify }},
-              wordLimit: {{ .Site.Params.waline.wordLimit | default `[0, 500]` | jsonify }},
-              pageSize: {{ .Site.Params.waline.pageSize | default `10` }},
-              placeholder: '{{ .Site.Params.waline.placeholder | default "欢迎发表你的看法~" }}',
-              imageUploader: false,
-              highlighter: false,
-              commentSorting: 'latest',
-              dark: 'html[data-theme="dark"]',
-              login: 'enable',
-              footer: '<a href="https://waline.js.org" target="_blank" rel="noopener noreferrer">Waline</a> powered',
-            });
-
-            console.log('[Waline] 初始化成功, serverURL:', serverURL);
-          } catch (error) {
-            console.error('[Waline] 初始化失败:', error);
-            if (el) {
-              el.innerHTML = '<div style="text-align: center; padding: 2rem; color: #e74c3c;"><p>❌ 评论系统加载失败</p><p style="font-size: 0.85rem; margin-top: 0.5rem; color: #666;">请稍后重试或联系管理员</p></div>';
-            }
-          }
+          tryInitWaline();
         });
       </script>
 

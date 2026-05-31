@@ -24,14 +24,9 @@
       </div>
 
       <link href="https://cdn.jsdelivr.net/npm/@waline/client@v3/dist/waline.css" rel="stylesheet" />
-      <script src="https://cdn.jsdelivr.net/npm/@waline/client@v3/dist/waline.js" defer></script>
+      <script src="https://cdn.jsdelivr.net/npm/@waline/client@v3/dist/waline.js"></script>
       <script>
-        function initWaline() {
-          if (typeof Waline === 'undefined') {
-            setTimeout(initWaline, 100);
-            return;
-          }
-
+        document.addEventListener('DOMContentLoaded', function() {
           var serverURL = '{{ .Site.Params.waline.serverURL }}';
           var el = document.getElementById('waline');
 
@@ -69,9 +64,7 @@
               el.innerHTML = '<div style="text-align: center; padding: 2rem; color: #e74c3c;"><p>❌ 评论系统加载失败</p><p style="font-size: 0.85rem; margin-top: 0.5rem; color: #666;">请稍后重试或联系管理员</p></div>';
             }
           }
-        }
-
-        document.addEventListener('DOMContentLoaded', initWaline);
+        });
       </script>
 
       <style>

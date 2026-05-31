@@ -57,7 +57,13 @@
             }
 
             try {
-              Waline({
+              var WalineInit = Waline.init || Waline.default || Waline;
+
+              if (typeof WalineInit !== 'function') {
+                throw new Error('Waline初始化函数不存在, typeof Waline: ' + typeof Waline);
+              }
+
+              WalineInit({
                 el: '#waline',
                 serverURL: serverURL,
                 path: '{{ .RelPermalink }}',

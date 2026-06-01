@@ -24,12 +24,15 @@
       </div>
 
       <link href="/css/waline.css" rel="stylesheet" />
-      <script src="/js/waline.umd.min.js"></script>
+      <script src="/js/waline.umd.min.js" onload="console.log('[Waline Script] ✅ JS文件onload事件触发')" onerror="console.error('[Waline Script] ❌ JS文件加载错误')"></script>
       <script>
+        console.log('[Waline Init] 脚本开始执行, 当前Waline状态:', typeof Waline);
+
         document.addEventListener('DOMContentLoaded', function() {
           console.log('[Waline Debug] DOMContentLoaded triggered');
           console.log('[Waline Debug] typeof Waline:', typeof Waline);
           console.log('[Waline Debug] window.Waline exists:', 'Waline' in window);
+          console.log('[Waline Debug] window.Waline值:', window.Waline);
 
           var maxRetries = 50;
           var retryCount = 0;

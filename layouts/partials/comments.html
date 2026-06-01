@@ -24,20 +24,29 @@
       </div>
 
       <link href="/css/waline.css" rel="stylesheet" />
-      <script src="/js/waline.umd.min.js?v=3.15.0-local" defer></script>
-      <script defer>
+      <script src="/js/waline.umd.min.js?v=3.15.0-local"></script>
+      <script>
         document.addEventListener('DOMContentLoaded', function() {
-          var maxRetries = 20;
+          console.log('[Waline Debug] DOMContentLoaded triggered');
+          console.log('[Waline Debug] typeof Waline:', typeof Waline);
+          console.log('[Waline Debug] window.Waline exists:', 'Waline' in window);
+
+          var maxRetries = 50;
           var retryCount = 0;
+          var retryInterval = 200;
 
           function tryInitWaline() {
-            if (typeof Waline === 'undefined') {
+            var WalineObj = window.Waline || Waline;
+
+            if (typeof WalineObj === 'undefined') {
               retryCount++;
               if (retryCount <= maxRetries) {
-                setTimeout(tryInitWaline, 100);
+                console.log('[Waline Debug] 重试 #' + retryCount + '/' + maxRetries);
+                setTimeout(tryInitWaline, retryInterval);
                 return;
               }
               console.error('[Waline] 错误: 重试' + maxRetries + '次后Waline仍未加载');
+              console.error('[Waline Debug] 最终状态 - typeof Waline:', typeof Waline, ', window.Waline:', window.Waline);
               var el = document.getElementById('waline');
               if (el) {
                 el.innerHTML = '<div style="text-align: center; padding: 2rem; color: #e74c3c;"><p>❌ 评论系统加载超时</p><p style="font-size: 0.85rem; margin-top: 0.5rem; color: #666;">请刷新页面重试</p></div>';
@@ -57,10 +66,13 @@
             }
 
             try {
-              var WalineInit = Waline.init || Waline.default || Waline;
+              var WalineInit = WalineObj.init || WalineObj.default || WalineObj;
+
+              console.log('[Waline Debug] WalineInit type:', typeof WalineInit);
+              console.log('[Waline Debug] WalineInit keys:', Object.keys(WalineObj));
 
               if (typeof WalineInit !== 'function') {
-                throw new Error('Waline初始化函数不存在, typeof Waline: ' + typeof Waline);
+                throw new Error('Waline初始化函数不存在, typeof WalineInit: ' + typeof WalineInit);
               }
 
               WalineInit({
@@ -81,9 +93,10 @@
                 footer: '<a href="https://waline.js.org" target="_blank" rel="noopener noreferrer">Waline</a> powered',
               });
 
-              console.log('[Waline] 初始化成功, serverURL:', serverURL, '(重试次数:', retryCount + ')');
+              console.log('[Waline] ✅ 初始化成功, serverURL:', serverURL, '(重试次数:', retryCount + ')');
             } catch (error) {
               console.error('[Waline] 初始化失败:', error);
+              console.error('[Waline Debug] 错误堆栈:', error.stack);
               if (el) {
                 el.innerHTML = '<div style="text-align: center; padding: 2rem; color: #e74c3c;"><p>❌ 评论系统加载失败</p><p style="font-size: 0.85rem; margin-top: 0.5rem; color: #666;">请稍后重试或联系管理员</p></div>';
               }

@@ -26,88 +26,166 @@
       <link href="/css/waline.css" rel="stylesheet" />
       <script src="/js/waline.umd.min.js" onload="console.log('[Waline Script] ✅ JS文件onload事件触发')" onerror="console.error('[Waline Script] ❌ JS文件加载错误')"></script>
       <script>
-        console.log('[Waline Init] 脚本开始执行, 当前Waline状态:', typeof Waline);
-
-        document.addEventListener('DOMContentLoaded', function() {
-          console.log('[Waline Debug] DOMContentLoaded triggered');
-          console.log('[Waline Debug] typeof Waline:', typeof Waline);
-          console.log('[Waline Debug] window.Waline exists:', 'Waline' in window);
-          console.log('[Waline Debug] window.Waline值:', window.Waline);
-
-          var maxRetries = 50;
-          var retryCount = 0;
-          var retryInterval = 200;
-
-          function tryInitWaline() {
-            var WalineObj = window.Waline || Waline;
-
-            if (typeof WalineObj === 'undefined') {
-              retryCount++;
-              if (retryCount <= maxRetries) {
-                console.log('[Waline Debug] 重试 #' + retryCount + '/' + maxRetries);
-                setTimeout(tryInitWaline, retryInterval);
-                return;
-              }
-              console.error('[Waline] 错误: 重试' + maxRetries + '次后Waline仍未加载');
-              console.error('[Waline Debug] 最终状态 - typeof Waline:', typeof Waline, ', window.Waline:', window.Waline);
-              var el = document.getElementById('waline');
-              if (el) {
-                el.innerHTML = '<div style="text-align: center; padding: 2rem; color: #e74c3c;"><p>❌ 评论系统加载超时</p><p style="font-size: 0.85rem; margin-top: 0.5rem; color: #666;">请刷新页面重试</p></div>';
-              }
-              return;
-            }
-
-            var serverURL = '{{ .Site.Params.waline.serverURL }}';
-            var el = document.getElementById('waline');
-
-            if (!serverURL || serverURL === '') {
-              console.error('[Waline] 错误: serverURL 未配置');
-              if (el) {
-                el.innerHTML = '<div style="text-align: center; padding: 2rem; color: #e74c3c;"><p>❌ 评论系统未正确配置</p><p style="font-size: 0.9rem; margin-top: 0.5rem;">请联系网站管理员</p></div>';
-              }
-              return;
-            }
-
+        (function() {
+          'use strict';
+          
+          // 安全日志函数 - 避免打印复杂对象
+          function safeLog(msg, value) {
             try {
-              var WalineInit = WalineObj.init || WalineObj.default || WalineObj;
-
-              console.log('[Waline Debug] WalineInit type:', typeof WalineInit);
-              console.log('[Waline Debug] WalineInit keys:', Object.keys(WalineObj));
-
-              if (typeof WalineInit !== 'function') {
-                throw new Error('Waline初始化函数不存在, typeof WalineInit: ' + typeof WalineInit);
+              if (value === undefined) {
+                console.log(msg, 'undefined');
+              } else if (value === null) {
+                console.log(msg, 'null');
+              } else if (typeof value === 'object') {
+                // 只打印类型和基本属性，避免循环引用
+                var typeStr = value.constructor ? value.constructor.name : 'Object';
+                console.log(msg, typeStr);
+              } else {
+                console.log(msg, value);
               }
-
-              WalineInit({
-                el: '#waline',
-                serverURL: serverURL,
-                path: '{{ .RelPermalink }}',
-                lang: 'zh-CN',
-                emoji: ['https://cdn.jsdelivr.net/npm/@waline/emojis@1.1.0/bilibili'],
-                requiredMeta: ['nick', 'email'],
-                wordLimit: [0, 500],
-                pageSize: 10,
-                placeholder: '欢迎发表你的看法~ 支持Markdown语法 ✨',
-                imageUploader: false,
-                highlighter: false,
-                commentSorting: 'latest',
-                dark: 'html[data-theme="dark"]',
-                login: 'enable',
-                footer: '<a href="https://waline.js.org" target="_blank" rel="noopener noreferrer">Waline</a> powered',
-              });
-
-              console.log('[Waline] ✅ 初始化成功, serverURL:', serverURL, '(重试次数:', retryCount + ')');
-            } catch (error) {
-              console.error('[Waline] 初始化失败:', error);
-              console.error('[Waline Debug] 错误堆栈:', error.stack);
-              if (el) {
-                el.innerHTML = '<div style="text-align: center; padding: 2rem; color: #e74c3c;"><p>❌ 评论系统加载失败</p><p style="font-size: 0.85rem; margin-top: 0.5rem; color: #666;">请稍后重试或联系管理员</p></div>';
-              }
+            } catch (e) {
+              console.log(msg, '[无法序列化]');
             }
           }
 
-          tryInitWaline();
-        });
+          console.log('[Waline Init] 脚本开始执行');
+
+          document.addEventListener('DOMContentLoaded', function() {
+            console.log('[Waline Debug] DOMContentLoaded triggered');
+            
+            var WalineObj = null;
+            try {
+              WalineObj = window.Waline || (typeof Waline !== 'undefined' ? Waline : undefined);
+            } catch (e) {
+              console.error('[Waline] 访问 Waline 对象时出错:', e.message);
+            }
+            
+            safeLog('[Waline Debug] typeof Waline:', typeof WalineObj);
+            safeLog('[Waline Debug] Waline 对象类型:', WalineObj);
+
+            var maxRetries = 30;  // 减少重试次数，避免长时间阻塞
+            var retryCount = 0;
+            var retryInterval = 300;
+            var initTimer = null;
+
+            function tryInitWaline() {
+              try {
+                // 重新获取 Waline 对象
+                try {
+                  WalineObj = window.Waline || (typeof Waline !== 'undefined' ? Waline : undefined);
+                } catch (e) {
+                  // 忽略访问错误
+                }
+
+                if (typeof WalineObj === 'undefined' || WalineObj === null) {
+                  retryCount++;
+                  if (retryCount <= maxRetries) {
+                    console.log('[Waline Debug] 重试 #' + retryCount + '/' + maxRetries);
+                    initTimer = setTimeout(tryInitWaline, retryInterval);
+                    return;
+                  }
+                  console.error('[Waline] 错误: 重试' + maxRetries + '次后Waline仍未加载');
+                  var el = document.getElementById('waline');
+                  if (el) {
+                    el.innerHTML = '<div style="text-align: center; padding: 2rem; color: #e74c3c;"><p>❌ 评论系统加载超时</p><p style="font-size: 0.85rem; margin-top: 0.5rem; color: #666;">请刷新页面重试</p></div>';
+                  }
+                  return;
+                }
+
+                // 清除定时器
+                if (initTimer) {
+                  clearTimeout(initTimer);
+                  initTimer = null;
+                }
+
+                var serverURL = '{{ .Site.Params.waline.serverURL }}';
+                var el = document.getElementById('waline');
+
+                if (!serverURL || serverURL === '') {
+                  console.error('[Waline] 错误: serverURL 未配置');
+                  if (el) {
+                    el.innerHTML = '<div style="text-align: center; padding: 2rem; color: #e74c3c;"><p>❌ 评论系统未正确配置</p><p style="font-size: 0.9rem; margin-top: 0.5rem;">请联系网站管理员</p></div>';
+                  }
+                  return;
+                }
+
+                // 获取初始化函数
+                var WalineInit = null;
+                try {
+                  if (typeof WalineObj.init === 'function') {
+                    WalineInit = WalineObj.init;
+                  } else if (WalineObj.default && typeof WalineObj.default === 'function') {
+                    WalineInit = WalineObj.default;
+                  } else if (typeof WalineObj === 'function') {
+                    WalineInit = WalineObj;
+                  }
+                } catch (e) {
+                  console.error('[Waline] 获取初始化函数失败:', e.message);
+                }
+
+                safeLog('[Waline Debug] WalineInit 类型:', WalineInit);
+
+                if (typeof WalineInit !== 'function') {
+                  throw new Error('Waline初始化函数不存在, 类型: ' + typeof WalineInit);
+                }
+
+                // Waline 配置
+                var walineConfig = {
+                  el: '#waline',
+                  serverURL: serverURL,
+                  path: '{{ .RelPermalink }}',
+                  lang: 'zh-CN',
+                  emoji: ['https://cdn.jsdelivr.net/npm/@waline/emojis@1.1.0/bilibili'],
+                  requiredMeta: ['nick', 'email'],
+                  wordLimit: [0, 500],
+                  pageSize: 10,
+                  placeholder: '欢迎发表你的看法~ 支持Markdown语法 ✨',
+                  imageUploader: false,
+                  highlighter: false,
+                  commentSorting: 'latest',
+                  dark: 'html[data-theme="dark"]',
+                  login: 'enable',
+                  footer: '<a href="https://waline.js.org" target="_blank" rel="noopener noreferrer">Waline</a> powered',
+                  
+                  // 添加错误处理回调
+                  onError: function(error) {
+                    console.error('[Waline] 运行时错误:', error);
+                    // 显示用户友好的错误信息
+                    var errorEl = document.querySelector('#waline .wl-meta');
+                    if (errorEl) {
+                      errorEl.innerHTML = '<span style="color: #e74c3c;">评论加载失败，请稍后重试</span>';
+                    }
+                  }
+                };
+
+                // 执行初始化
+                WalineInit(walineConfig);
+
+                console.log('[Waline] ✅ 初始化成功, serverURL:', serverURL, '(重试次数:', retryCount + ')');
+                
+                // 添加全局错误处理
+                window.addEventListener('error', function(e) {
+                  if (e.message && e.message.includes('Waline')) {
+                    console.error('[Waline] 捕获到全局错误:', e.message);
+                  }
+                });
+
+              } catch (error) {
+                console.error('[Waline] 初始化失败:', error.message || error);
+                if (error.stack) {
+                  console.error('[Waline] 错误堆栈:', error.stack.split('\n')[0]);
+                }
+                var el = document.getElementById('waline');
+                if (el) {
+                  el.innerHTML = '<div style="text-align: center; padding: 2rem; color: #e74c3c;"><p>❌ 评论系统加载失败</p><p style="font-size: 0.85rem; margin-top: 0.5rem; color: #666;">请稍后重试或联系管理员</p></div>';
+                }
+              }
+            }
+
+            // 延迟启动初始化，确保 DOM 完全就绪
+            setTimeout(tryInitWaline, 100);
+          });
+        })();
       </script>
 
       <style>
@@ -142,6 +220,19 @@
           border-radius: 25px !important;
           padding: 10px 30px !important;
           font-weight: 600 !important;
+          cursor: pointer !important;
+          transition: all 0.3s ease !important;
+        }
+
+        #waline .wl-btn-primary:hover {
+          transform: translateY(-2px) !important;
+          box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3) !important;
+        }
+
+        #waline .wl-btn-primary:disabled {
+          opacity: 0.6 !important;
+          cursor: not-allowed !important;
+          transform: none !important;
         }
 
         #waline .wl-item {
@@ -169,6 +260,15 @@
         #waline .wl-nick {
           font-weight: 600 !important;
           color: #D4AF37 !important;
+        }
+
+        /* 添加错误状态样式 */
+        #waline .wl-error {
+          color: #e74c3c !important;
+          padding: 1rem !important;
+          background: #fdf2f2 !important;
+          border-radius: 8px !important;
+          margin: 1rem 0 !important;
         }
 
         @media (max-width: 768px) {

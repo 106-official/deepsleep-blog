@@ -66,6 +66,10 @@ theme = ["PaperMod"]
     [[params.profileMode.buttons]]
       name = "🏷️ 标签"
       url = "/tags"
+    
+    [[params.profileMode.buttons]]
+      name = "📦 资源"
+      url = "/resources"
 
   # 文章列表样式
   [params.cover]
@@ -105,6 +109,12 @@ theme = ["PaperMod"]
   name = "📚 归档"
   url = "/archives/"
   weight = 20
+
+[[menu.main]]
+  identifier = "resources"
+  name = "📦 资源"
+  url = "/resources/"
+  weight = 25
 
 [[menu.main]]
   identifier = "search"

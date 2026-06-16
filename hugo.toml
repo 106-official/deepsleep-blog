@@ -129,6 +129,12 @@ theme = ["PaperMod"]
   weight = 40
 
 [[menu.main]]
+  identifier = "me"
+  name = "🧑‍💻 我"
+  url = "/me/"
+  weight = 45
+
+[[menu.main]]
   identifier = "forum"
   name = "💬 论坛"
   url = "/forum/"

@@ -1,8 +1,8 @@
 # DeepSleep Blog - 项目技术文档
 
-> **最后更新**: 2026-06-12
-> **版本**: v5.0
-> **状态**: ✅ 生产就绪 | 🎉 评论系统正常运行 (Neon PostgreSQL)
+> **最后更新**: 2026-06-17
+> **版本**: v5.1
+> **状态**: ✅ 生产就绪 | 🎉 评论系统正常运行 (Neon PostgreSQL) | 💬 社区系统已上线
 
 ---
 
@@ -36,9 +36,13 @@
 
 - 📝 文章发布与管理（Markdown 格式）
 - 💬 Waline 评论系统（Neon PostgreSQL + Vercel Serverless）✅
+- 💬 **社区论坛系统**（用户注册/登录 + 发帖）✅ v5.1 新增
 - 🔍 全文搜索（Fuse.js）
-- 📱 响应式设计 + 暗色/亮色主题切换
 - 🏷️ 标签与分类系统
+- 📦 资源分享板块（独立分区）
+- 👤 个人技能展示页
+- 📚 归档与搜索页面
+- 📱 响应式设计 + 暗色/亮色主题切换
 - ⚡ 零 CDN 依赖（Waline 前端资源完全本地化）
 
 ---
@@ -58,24 +62,32 @@
 │         https://deepsleep.fun                        │
 │    • Hugo 生成的静态 HTML/CSS/JS                    │
 │    • 本地化 Waline 资源 (零 CDN 依赖)              │
-└──────────────────┬──────────────────────────────────┘
-                   │ API 调用
-                   ▼
-┌─────────────────────────────────────────────────────┐
-│   Waline Backend (Vercel Serverless)                │
-│      https://waline-deepsleep.vercel.app            │
-│    • 评论 CRUD / 用户认证 / 管理后台 (/ui)         │
-│    • @waline/vercel 框架                            │
-└──────────────────┬──────────────────────────────────┘
-                   │ PostgreSQL (SSL)
-                   ▼
+│    • 社区前端 (community.css + community.js)        │
+└──────┬──────────────────┬─────────────────────────┘
+       │ API 调用           │ API 调用
+       ▼                   ▼
+┌──────────────────┐ ┌──────────────────────────────────┐
+│  Waline Backend   │ │   Community Backend (Vercel)      │
+│  (Vercel)         │ │   https://community-deepsleep     │
+│                  │ │   .vercel.app                     │
+│ • 评论 CRUD       │ │ • /api/register 用户注册          │
+│ • 用户认证        │ │ • /api/login 登录                │
+│ • 管理后台 (/ui)  │ │ • /api/me 个人资料              │
+│                  │ │ • /api/posts 帖子 CRUD            │
+└────────┬─────────┘ └──────────────┬─────────────────┘
+         │                            │
+         └────────────┬───────────────┘
+                      │ PostgreSQL (SSL)
+                      ▼
 ┌─────────────────────────────────────────────────────┐
 │        Neon PostgreSQL (Serverless)                 │
 │     Project: wild-sky-70139158                      │
 │     Region: US East (aws-us-east-1)                 │
-│    • wl_comment (评论)                              │
-│    • wl_counter (计数)                              │
-│    • wl_users (用户)                                │
+│                                                      │
+│  Waline 表:          Community 表:                   │
+│  • wl_comment (评论)  • community_users (社区用户)    │
+│  • wl_counter (计数)  • community_posts (帖子)        │
+│  • wl_users (用户)                                    │
 └─────────────────────────────────────────────────────┘
 ```
 
@@ -85,8 +97,12 @@
 |------|------|------|------|
 | **前端** | Hugo Extended + PaperMod | 静态站点生成 | 免费 |
 | **前端** | Waline Client v3.15.0 (UMD 本地化) | 评论 UI | 免费 |
+| **前端** | 原生 JS (community.js) | 社区交互逻辑 | 免费 |
 | **后端** | Vercel Serverless (Hobby) | Waline 评论后端 | 免费 |
-| **数据库** | Neon PostgreSQL (Free) | 评论数据存储 | 免费 |
+| **后端** | Vercel Serverless + Node.js (Express) | 社区系统 API | 免费 |
+| **数据库** | Neon PostgreSQL (Free) | 评论 + 社区数据存储 | 免费 |
+| **认证** | JWT (jsonwebtoken) | 社区用户认证 | 免费 |
+| **加密** | bcryptjs | 密码哈希 | 免费 |
 | **托管** | GitHub Pages | 静态站点 CDN | 免费 |
 | **CI/CD** | GitHub Actions | 自动部署 | 免费 |
 
@@ -98,6 +114,10 @@
 | 数据库 | Neon PostgreSQL | Supabase Supavisor 兼容性问题，Neon 通过 Vercel 集成更稳定 |
 | 连接方式 | Pooled Connection | Serverless 环境必须使用连接池 |
 | SSL | sslmode=require | Neon 强制要求 SSL 连接 |
+| 社区认证方式 | JWT Token (7天有效期) | 无状态，适合 Serverless，无需 Session 存储 |
+| 社区注册方式 | 邮箱+密码（非手机号） | 无需短信服务，降低成本和复杂度 |
+| 社区页面渲染 | Hugo 布局模板（非 Markdown 内嵌 HTML） | 避免 Goldmark 转义 HTML 标签为代码块 |
+| CSS 优先级策略 | `!important` + 内联 `style.display` | 解决 PaperMod 全局样式覆盖社区组件的问题 |
 
 ---
 
@@ -112,27 +132,50 @@ blog-static/
 │   │   ├── hello-world.md
 │   │   └── welcome.md
 │   ├── about.md                     # 关于页面
-│   └── forum.md                     # 论坛页面
-├── layouts/partials/
-│   ├── comments.html                # ⭐ Waline 评论组件
-│   ├── extend_footer.html           # 自定义页脚
-│   └── extended_head.html           # 自定义头部 (字体/CSS)
+│   ├── me.md                        # 个人技能展示页
+│   ├── community.md                 # ⭐ 社区论坛页 (layout: community)
+│   ├── archives.md                  # 归档页面 (layout: archives)
+│   ├── search.md                    # 搜索页面 (layout: search)
+│   ├── forum.md                     # 论坛页面
+│   └── resources/                   # 资源分享板块
+│       └── _index.md                # 板块首页
+├── layouts/
+│   ├── partials/
+│   │   ├── comments.html            # Waline 评论组件
+│   │   ├── extend_footer.html       # 自定义页脚
+│   │   └── extended_head.html       # 自定义头部 (字体/CSS)
+│   └── _default/
+│       └── community.html           # ⭐ 社区布局模板 (Hugo 原生 HTML)
 ├── static/
 │   ├── css/
 │   │   ├── custom.css               # 自定义样式
-│   │   └── waline.css               # Waline 样式 (22KB)
+│   │   ├── waline.css               # Waline 样式 (22KB)
+│   │   └── community.css            # ⭐ 社区样式 (含夜间模式)
 │   ├── js/
-│   │   └── waline.umd.min.js        # Waline JS (256KB, 必须完整)
+│   │   ├── waline.umd.min.js        # Waline JS (256KB, 必须完整)
+│   │   └── community.js             # ⭐ 社区交互逻辑 (认证/发帖/列表)
 │   └── CNAME                        # 自定义域名
 ├── themes/PaperMod/                 # 主题 (Git 子模块)
-├── hugo.toml                        # ⭐ Hugo 主配置
+├── hugo.toml                        # Hugo 主配置
 └── PROJECT_DOCUMENTATION.md         # 本文档
 
-waline-deepsleep/                    # Waline 后端 (独立项目)
+waline-deepsleep/                    # Waline 后端 (独立项目，Vercel 部署)
 ├── index.cjs                        # Vercel 入口
 ├── package/                         # Waline 源码
 ├── vercel.json                      # Vercel 配置
 └── waline.pgsql                     # PostgreSQL 表结构初始化脚本
+
+community-deepsleep/                 # ⭐ 社区后端 (独立项目，Vercel 部署) v5.1 新增
+├── api/
+│   ├── db.js                        # 数据库连接与初始化
+│   ├── auth.js                      # JWT 认证中间件
+│   ├── register.js                  # 用户注册 API
+│   ├── login.js                     # 用户登录 API
+│   ├── me.js                        # 个人资料 API (GET/PUT)
+│   ├── posts.js                     # 帖子 CRUD API (GET/POST)
+│   └── init.js                      # 数据库表初始化 API
+├── package.json                     # 依赖配置 (pg, bcryptjs, jsonwebtoken)
+└── vercel.json                      # Vercel Serverless 配置
 ```
 
 ---
@@ -208,13 +251,38 @@ Neon 集成自动配置的变量（Production/Preview/Development）：
 
 ### 数据库表结构
 
-由 `waline.pgsql` 初始化，三张表：
+**Waline 表**（由 `waline.pgsql` 初始化）：
 
 | 表名 | 用途 | 关键字段 |
 |------|------|----------|
 | `wl_comment` | 评论数据 | id, user_id, comment, nick, mail, url, pid, rid, status, like, ua, ip |
 | `wl_counter` | 页面计数 | id, url, time, reaction0-8 |
 | `wl_users` | 用户信息 | id, display_name, email, password, type, avatar, github, qq 等 |
+
+**Community 表**（v5.1 新增，由社区后端自动初始化）：
+
+| 表名 | 用途 | 关键字段 |
+|------|------|----------|
+| `community_users` | 社区用户 | id, email, password_hash, display_name, avatar_url, bio, role |
+| `community_posts` | 社区帖子 | id, user_id, title, content, category, status, view_count, like_count |
+
+### Vercel 环境变量 (community-deepsleep 项目) v5.1 新增
+
+| 变量名 | 值 | 说明 |
+|--------|-----|------|
+| `DATABASE_URL` | Neon PostgreSQL 连接串 (同 Waline 项目) | 共享同一数据库实例 |
+| `JWT_SECRET` | JWT 签名密钥 | 用于生成/验证用户 Token |
+
+### Community API 接口
+
+| 方法 | 路径 | 功能 | 认证 |
+|------|------|------|------|
+| POST | `/api/register` | 用户注册（邮箱+密码+昵称） | 否 |
+| POST | `/api/login` | 用户登录（返回 JWT） | 否 |
+| GET | `/api/me` | 获取当前用户信息 | ✅ Bearer Token |
+| PUT | `/api/me` | 更新个人资料（昵称/头像/简介） | ✅ Bearer Token |
+| GET | `/api/posts` | 获取帖子列表（分页+分类筛选） | 否 |
+| POST | `/api/posts` | 发布新帖子 | ✅ Bearer Token |
 
 ---
 
@@ -417,6 +485,8 @@ pg_dump "postgresql://neondb_owner:PASSWORD@ep-xxx.c-9.us-east-1.aws.neon.tech/n
 | 博客 | https://deepsleep.fun |
 | Waline 后端 | https://waline-deepsleep.vercel.app |
 | Waline 管理 | https://waline-deepsleep.vercel.app/ui |
+| **社区后端** | **https://community-deepsleep.vercel.app** |
+| **社区页面** | **https://deepsleep.fun/community/** |
 | Neon Dashboard | https://console.neon.tech/ |
 | Vercel Dashboard | https://vercel.com/dashboard |
 | GitHub 仓库 | https://github.com/106-official/deepsleep-blog |
@@ -432,6 +502,11 @@ pg_dump "postgresql://neondb_owner:PASSWORD@ep-xxx.c-9.us-east-1.aws.neon.tech/n
 | Waline 入口 | `waline-deepsleep/index.cjs` | 后端入口 |
 | 表结构 | `waline-deepsleep/waline.pgsql` | 数据库初始化 |
 | 适配器配置 | `waline-deepsleep/package/src/config/adapter.js` | 数据库连接逻辑 |
+| ⭐ 社区布局模板 | `blog-static/layouts/_default/community.html` | 社区页面 HTML |
+| ⭐ 社区样式 | `blog-static/static/css/community.css` | 社区 UI + 夜间模式 |
+| ⭐ 社区交互逻辑 | `blog-static/static/js/community.js` | 认证/发帖/列表 |
+| ⭐ 社区内容页 | `blog-static/content/community.md` | 声明 layout: community |
+| ⭐ 社区后端 API | `community-deepsleep/api/` | 全部 API 端点 |
 
 ---
 
@@ -616,7 +691,103 @@ git config --global https.proxy http://127.0.0.1:65532
 
 ---
 
+### Bug Fix 5: 社区页面 HTML 被当作代码显示 (2026-06-17)
+
+**❓ Problem**: 社区页面 (`/community/`) 的注册/登录表单 HTML 标签被当作纯文本显示
+
+**Symptoms**:
+- 页面显示原始 HTML 代码：`<div id="login-error" class="c-error"></div>`
+- 注册/登录表单无法渲染，只看到标签文本
+
+---
+
+### 🔍 Root Cause Analysis
+
+**Technical Root Cause**:
+Hugo 的 Goldmark Markdown 渲染器将 `.md` 文件中的原始 HTML 标签包裹在 `<pre><code>` 中并转义 `<>` 为 `&lt;&gt;`。即使配置了 `unsafe = true`，某些复杂 HTML 结构仍会被错误处理。
+
+**Discovery Method**:
+- 用户截图反馈页面显示原始 HTML 代码
+- 本地构建输出确认存在 `<pre><code>` 包裹
+
+---
+
+### ✅ Solution
+
+将所有 HTML 从 `.md` 文件移至 **Hugo 布局模板**：
+
+1. **简化 content 文件**: [`content/community.md`](content/community.md) 只保留 Front Matter + `layout: community`
+2. **创建布局模板**: [`layouts/_default/community.html`](layouts/_default/community.html) — 所有 HTML 放在 `{{ define "main" }}` 块中
+3. 模板中的 HTML 被 Hugo **原样输出**，不会被转义或包裹在代码块中
+
+**💡 Prevention**: 当 Hugo 页面需要大量自定义 HTML 时（如表单、交互组件），应使用布局模板而非 Markdown 内嵌 HTML。
+
+---
+
+### Bug Fix 6: 社区登录/注册表单不显示 (2026-06-17)
+
+**❓ Problem**: 社区页面的「登录」和「注册」Tab 切换后，表单输入框消失不可见
+
+**Symptoms**:
+- Tab 切换正常（高亮变化），但下方表单区域空白
+- 登录表单默认也不显示
+
+---
+
+### 🔍 Root Cause Analysis
+
+**Technical Root Cause**:
+PaperMod 主题的全局 CSS 样式优先级高于社区组件的 `.auth-form { display: none }` / `.auth-form.active { display: block }`，导致 `display` 属性被覆盖，表单始终隐藏。
+
+---
+
+### ✅ Solution
+
+三重保障策略：
+
+1. **CSS `!important`**: [community.css](static/css/community.css) 中添加 `!important`
+   ```css
+   .auth-form { display: none !important; }
+   .auth-form.active { display: block !important; }
+   ```
+
+2. **内联初始样式**: 登录表单添加 `style="display:block"` 确保默认可见
+
+3. **JS 双重切换**: [community.js](static/js/community.js) 的 `switchTab()` 同时操作 `classList` 和内联 `style.display`
+   ```javascript
+   f.style.display = 'none';          // 隐藏所有
+   targetForm.style.display = 'block'; // 显示目标
+   ```
+
+同时修复了注册表单的重复 `id` 属性（`id="reg-form"` 和 `id="register"` 冲突）。
+
+**💡 Prevention**: 在 PaperMod 等主题中嵌入自定义组件时，CSS 需使用 `!important` 或更高优先级选择器来覆盖主题全局样式。
+
+---
+
 ## 📝 更新日志
+
+### v5.1 (2026-06-17) - 社区论坛系统上线
+
+**新增功能**:
+- ✅ **社区论坛系统** — 用户注册/登录 + 发帖 + 帖子列表
+- ✅ **社区后端** (community-deepsleep) — Express + Neon PostgreSQL，部署在 Vercel
+- ✅ **用户认证** — 邮箱+密码注册，JWT Token 认证（7天有效期）
+- ✅ **个人资料** — 头像、昵称、简介编辑
+- ✅ **帖子系统** — 发布/列表/分页/分类筛选（日常交流/技术分享/资源分享/问题求助）
+- ✅ **夜间模式** — 社区组件完整适配暗色主题
+- ✅ **资源板块** — 4 篇资源帖（Adobe 全家桶、Stata19 MP、Amos 29、Stata OLS 遍历）
+- ✅ **个人技能页** (`/me/`) — Stata/SPSS/Amos 等技能展示
+- ✅ **归档/搜索页面** — 修复为空问题
+
+**Bug 修复**:
+- ✅ 修复社区页面 HTML 被当作代码显示（改用 Hugo 布局模板）
+- ✅ 修复社区登录/注册表单不显示（CSS `!important` + 内联样式双重保障）
+
+**技术决策记录**:
+- 选择邮箱注册而非手机号（无需短信服务）
+- 使用布局模板而非 Markdown 内嵌 HTML（避免 Goldmark 转义）
+- CSS `!important` 策略对抗 PaperMod 全局样式覆盖
 
 ### v5.0 (2026-06-12) - 功能扩展与问题修复
 
@@ -661,4 +832,4 @@ git config --global https.proxy http://127.0.0.1:65532
 
 ---
 
-*文档结束 | 最后更新: 2026-06-12 | 版本: v5.0 | 状态: ✅ 生产就绪*
+*文档结束 | 最后更新: 2026-06-17 | 版本: v5.1 | 状态: ✅ 生产就绪*

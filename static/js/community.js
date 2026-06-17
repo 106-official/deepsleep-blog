@@ -249,6 +249,40 @@ function switchTab(tabName) {
   if (targetForm) { targetForm.classList.add('active'); targetForm.style.display = 'block'; }
 }
 
+// Profile section toggle
+function toggleProfileSection() {
+  const user = getUser();
+  const profileSection = document.getElementById('profile-section');
+  
+  if (!user) {
+    // 未登录：滚动到注册界面并切换到注册Tab
+    profileSection.style.display = 'none';
+    switchTab('register');
+    document.getElementById('auth-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    showError(document.getElementById('reg-error'), '请先注册或登录后再查看个人资料');
+    return;
+  }
+  
+  // 已登录：切换个人资料显示/隐藏
+  if (profileSection.style.display === 'none' || profileSection.style.display === '') {
+    profileSection.style.display = 'block';
+    profileSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    
+    // 填充当前用户数据
+    document.getElementById('profile-name').value = user.displayName || '';
+    document.getElementById('profile-avatar').value = user.avatarUrl || '';
+    document.getElementById('profile-bio').value = user.bio || '';
+    var preview = document.getElementById('avatar-preview');
+    preview.src = user.avatarUrl || getDefaultAvatar(user.displayName);
+  } else {
+    profileSection.style.display = 'none';
+  }
+}
+
+function closeProfileSection() {
+  document.getElementById('profile-section').style.display = 'none';
+}
+
 // Init
 document.addEventListener('DOMContentLoaded', () => {
   updateHeaderUI();
@@ -276,4 +310,18 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.auth-tab').forEach(tab => {
     tab.addEventListener('click', () => switchTab(tab.dataset.tab));
   });
+  
+  // Avatar preview on input
+  const avatarInput = document.getElementById('profile-avatar');
+  if (avatarInput) {
+    avatarInput.addEventListener('input', (e) => {
+      const preview = document.getElementById('avatar-preview');
+      if (e.target.value && e.target.value.match(/^https?:\/\/.+/)) {
+        preview.src = e.target.value;
+        preview.onerror = () => { preview.src = getDefaultAvatar(''); };
+      } else {
+        preview.src = getDefaultAvatar('');
+      }
+    });
+  }
 });

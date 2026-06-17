@@ -5,11 +5,44 @@
 <div class="community-container">
   <div class="community-header">
     <h1>💬 DeepSleep 社区</h1>
-    <div id="header-user"></div>
+    <button class="c-btn c-btn-secondary profile-btn" onclick="toggleProfileSection()">👤 个人</button>
   </div>
 
   <div id="community-app">
 
+    <!-- 个人资料区（默认隐藏） -->
+    <div id="profile-section" style="display:none">
+      <div class="profile-edit-box">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem">
+          <h2>👤 个人资料</h2>
+          <button class="c-btn c-btn-secondary" style="padding:6px 12px;font-size:0.85rem" onclick="closeProfileSection()">✕ 关闭</button>
+        </div>
+        <div id="profile-error" class="c-error"></div>
+        <div id="profile-success" class="c-success"></div>
+        <form id="profile-form">
+          <div class="avatar-upload">
+            <img id="avatar-preview" class="avatar-preview" src="" alt="">
+            <div>
+              <div class="c-form-group" style="margin-bottom:0">
+                <label for="profile-avatar">头像链接</label>
+                <input type="url" id="profile-avatar" class="c-form-input" placeholder="https://... 头像图片URL" style="width:300px">
+              </div>
+            </div>
+          </div>
+          <div class="c-form-group">
+            <label for="profile-name">昵称</label>
+            <input type="text" id="profile-name" class="c-form-input" placeholder="你的昵称" maxlength="50">
+          </div>
+          <div class="c-form-group">
+            <label for="profile-bio">个人简介</label>
+            <textarea id="profile-bio" class="c-form-input" placeholder="介绍一下自己..." rows="3" maxlength="200"></textarea>
+          </div>
+          <button type="submit" class="c-btn c-btn-primary">保存修改</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- 未登录时显示的认证区 -->
     <div id="auth-section">
       <div class="auth-box">
         <h2>加入社区</h2>
@@ -52,6 +85,7 @@
       </div>
     </div>
 
+    <!-- 登录后显示的主内容区 -->
     <div id="logged-in-section" style="display:none">
 
       <div class="write-post-box" id="write-box">
@@ -94,34 +128,6 @@
       <div id="pagination" class="pagination"></div>
     </div>
 
-    <div id="profile-section" style="display:none">
-      <div class="profile-edit-box">
-        <h2>👤 个人资料</h2>
-        <div id="profile-error" class="c-error"></div>
-        <div id="profile-success" class="c-success"></div>
-        <form id="profile-form">
-          <div class="avatar-upload">
-            <img id="avatar-preview" class="avatar-preview" src="" alt="">
-            <div>
-              <div class="c-form-group" style="margin-bottom:0">
-                <label for="profile-avatar">头像链接</label>
-                <input type="url" id="profile-avatar" class="c-form-input" placeholder="https://... 头像图片URL" style="width:300px">
-              </div>
-            </div>
-          </div>
-          <div class="c-form-group">
-            <label for="profile-name">昵称</label>
-            <input type="text" id="profile-name" class="c-form-input" placeholder="你的昵称" maxlength="50">
-          </div>
-          <div class="c-form-group">
-            <label for="profile-bio">个人简介</label>
-            <textarea id="profile-bio" class="c-form-input" placeholder="介绍一下自己..." rows="3" maxlength="200"></textarea>
-          </div>
-          <button type="submit" class="c-btn c-btn-primary">保存修改</button>
-        </form>
-      </div>
-    </div>
-
   </div>
 </div>
 
@@ -132,7 +138,6 @@
     if (user) {
       document.getElementById('auth-section').style.display = 'none';
       document.getElementById('logged-in-section').style.display = 'block';
-      updateHeaderUI();
       document.getElementById('profile-name').value = user.displayName || '';
       document.getElementById('profile-avatar').value = user.avatarUrl || '';
       document.getElementById('profile-bio').value = user.bio || '';

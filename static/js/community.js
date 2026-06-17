@@ -256,10 +256,10 @@ document.addEventListener('DOMContentLoaded', () => {
   if (postsList) loadPosts(1);
 
   // Bind forms
-  const regForm = document.getElementById('reg-form');
+  const regForm = document.getElementById('register');
   if (regForm) regForm.addEventListener('submit', handleRegister);
 
-  const loginForm = document.getElementById('login-form');
+  const loginForm = document.getElementById('login');
   if (loginForm) loginForm.addEventListener('submit', handleLogin);
 
   const postForm = document.getElementById('post-form');

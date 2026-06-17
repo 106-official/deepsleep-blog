@@ -36,39 +36,99 @@
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(212,175,55,0.3);
   }
-  
-  /* 个人资料弹窗 */
-  .profile-modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
+
+  /* 个人资料页面通用表单样式 */
+  .c-form-input {
     width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.5);
-    z-index: 9999;
-    justify-content: center;
-    align-items: flex-start;
-    padding-top: 80px;
+    padding: 10px 14px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.2s;
+    background: #fff;
+    color: #333;
   }
-  
-  .profile-modal.active {
-    display: flex;
+
+  .c-form-input:focus {
+    outline: none;
+    border-color: var(--color-primary, #D4AF37);
+    box-shadow: 0 0 0 3px rgba(212,175,55,0.1);
   }
-  
-  .profile-modal-content {
-    background: var(--color-bg, #fff);
-    border-radius: 16px;
-    padding: 2rem;
-    width: 90%;
-    max-width: 500px;
-    max-height: 80vh;
-    overflow-y: auto;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-    position: relative;
+
+  [data-theme="dark"] .c-form-input {
+    background: #2a2a2a;
+    border-color: #444;
+    color: #e0e0e0;
   }
-  
-  [data-theme="dark"] .profile-modal-content {
-    background: #1e1e1e;
+
+  [data-theme="dark"] .c-form-input:focus {
+    border-color: var(--color-primary, #D4AF37);
+  }
+
+  .c-btn {
+    display: inline-block;
+    padding: 10px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+  }
+
+  .c-btn-primary {
+    background: var(--color-primary, #D4AF37);
+    color: #000;
+  }
+
+  .c-btn-primary:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(212,175,55,0.3);
+  }
+
+  .c-btn-secondary {
+    background: #f0f0f0;
+    color: #333;
+  }
+
+  .c-btn-secondary:hover {
+    background: #e0e0e0;
+  }
+
+  [data-theme="dark"] .c-btn-secondary {
+    background: #3a3a3a;
+    color: #e0e0e0;
+  }
+
+  .c-error {
+    padding: 12px 16px;
+    background: #fee;
+    color: #c33;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    border-left: 4px solid #c33;
+    font-size: 0.9rem;
+  }
+
+  .c-success {
+    padding: 12px 16px;
+    background: #efe;
+    color: #363;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    border-left: 4px solid #363;
+    font-size: 0.9rem;
+  }
+
+  [data-theme="dark"] .c-error {
+    background: #4a2020;
+    color: #ff6666;
+  }
+
+  [data-theme="dark"] .c-success {
+    background: #203a20;
+    color: #66ff66;
   }
 </style>

@@ -1,0 +1,441 @@
+{{ define "main" }}
+<div class="profile-page">
+  <div id="profile-loading" class="loading-state" style="display:none;text-align:center;padding:3rem">
+    <div class="loading-spinner"></div>
+    <p style="margin-top:1rem;color:#666">加载中...</p>
+  </div>
+
+  <div id="profile-not-login" class="not-login-state" style="display:none;text-align:center;padding:4rem 2rem">
+    <div class="not-login-icon">🔒</div>
+    <h2 style="margin:1rem 0;font-size:1.6rem;color:var(--color-text,#333)">请先登录</h2>
+    <p style="color:#666;margin-bottom:2rem">登录后即可查看和编辑个人资料</p>
+    <a href="/community/#login" class="c-btn c-btn-primary" style="display:inline-block;padding:12px 32px;font-size:1rem">去登录</a>
+  </div>
+
+  <div id="profile-content" class="profile-content" style="display:none">
+    <!-- 用户信息展示区 -->
+    <div class="profile-header">
+      <div class="profile-avatar-wrapper">
+        <img id="profile-display-avatar" class="profile-avatar" src="" alt="用户头像">
+        <label for="avatar-upload-input" class="avatar-upload-overlay" title="点击更换头像">
+          <span>📷</span>
+        </label>
+        <input type="file" id="avatar-upload-input" accept="image/jpeg,image/png,image/gif,image/webp" style="display:none">
+      </div>
+      <div class="profile-info">
+        <h1 id="profile-display-name" class="profile-name"></h1>
+        <p id="profile-display-email" class="profile-email"></p>
+        <p id="profile-display-bio" class="profile-bio-text"></p>
+      </div>
+    </div>
+
+    <!-- 编辑表单 -->
+    <div class="profile-edit-section">
+      <h3 class="section-title">✏️ 编辑资料</h3>
+      
+      <div id="profile-error" class="c-error" style="display:none"></div>
+      <div id="profile-success" class="c-success" style="display:none"></div>
+
+      <form id="profile-edit-form">
+        <div class="form-group">
+          <label for="edit-name">昵称</label>
+          <input type="text" id="edit-name" class="c-form-input" placeholder="你的昵称" maxlength="50">
+        </div>
+
+        <div class="form-group">
+          <label>头像</label>
+          <div class="avatar-upload-area">
+            <div class="current-avatar-preview">
+              <img id="edit-avatar-preview" src="" alt="" style="width:100px;height:100px;border-radius:50%;object-fit:cover;border:3px solid var(--color-primary,#D4AF37);background:#f0f0f0">
+            </div>
+            <div class="upload-controls">
+              <button type="button" id="choose-avatar-btn" class="c-btn c-btn-secondary" onclick="document.getElementById('avatar-file-input').click()">
+                📁 选择图片
+              </button>
+              <input type="file" id="avatar-file-input" accept="image/jpeg,image/png,image/gif,image/webp" style="display:none">
+              <small style="display:block;margin-top:4px;color:#888">支持 JPG、PNG、GIF、WebP，建议尺寸 200x200</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="edit-email-display">邮箱（只读）</label>
+          <input type="text" id="edit-email-display" class="c-form-input" readonly style="background:#f5f5f5;cursor:not-allowed;opacity:0.8">
+        </div>
+
+        <div class="form-group">
+          <label for="edit-bio">个人简介</label>
+          <textarea id="edit-bio" class="c-form-input" placeholder="介绍一下自己..." rows="4" maxlength="200"></textarea>
+        </div>
+
+        <button type="submit" class="c-btn c-btn-primary btn-save" style="width:100%;padding:14px;font-size:1.05rem">
+          💾 保存修改
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  async function initProfilePage() {
+    const loadingEl = document.getElementById('profile-loading');
+    const notLoginEl = document.getElementById('profile-not-login');
+    const contentEl = document.getElementById('profile-content');
+
+    loadingEl.style.display = 'block';
+    notLoginEl.style.display = 'none';
+    contentEl.style.display = 'none';
+
+    try {
+      const user = getUser();
+      if (!user) {
+        loadingEl.style.display = 'none';
+        notLoginEl.style.display = 'block';
+        return;
+      }
+
+      const data = await api('/me', { method: 'GET' });
+      if (data.success && data.user) {
+        displayUserInfo(data.user);
+        fillEditForm(data.user);
+        
+        loadingEl.style.display = 'none';
+        contentEl.style.display = 'block';
+
+        bindEvents();
+      }
+    } catch (e) {
+      console.error('Load profile error:', e);
+      loadingEl.style.display = 'none';
+      
+      if (e.message.includes('未登录') || e.message.includes('过期')) {
+        notLoginEl.style.display = 'block';
+      } else {
+        showError(document.getElementById('profile-error'), '加载失败: ' + e.message);
+        contentEl.style.display = 'block';
+      }
+    }
+  }
+
+  function displayUserInfo(user) {
+    document.getElementById('profile-display-avatar').src = user.avatarUrl || getDefaultAvatar(user.displayName);
+    document.getElementById('profile-display-name').textContent = user.displayName || '未设置昵称';
+    document.getElementById('profile-display-email').textContent = user.email || '';
+    document.getElementById('profile-display-bio').textContent = user.bio || '这个人很懒，什么都没写~';
+  }
+
+  function fillEditForm(user) {
+    document.getElementById('edit-name').value = user.displayName || '';
+    document.getElementById('edit-avatar-preview').src = user.avatarUrl || getDefaultAvatar(user.displayName);
+    document.getElementById('edit-email-display').value = user.email || '';
+    document.getElementById('edit-bio').value = user.bio || '';
+  }
+
+  let avatarBase64 = null;
+
+  function bindEvents() {
+    // 表单提交
+    const form = document.getElementById('profile-edit-form');
+    form.addEventListener('submit', handleProfileSubmit);
+
+    // 头像文件选择（编辑区域）
+    const fileInput = document.getElementById('avatar-file-input');
+    fileInput.addEventListener('change', handleAvatarSelect);
+
+    // 头像上传（展示区域）
+    const headerFileInput = document.getElementById('avatar-upload-input');
+    headerFileInput.addEventListener('change', handleHeaderAvatarSelect);
+  }
+
+  function handleAvatarSelect(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (!file.type.match(/^image\/(jpeg|png|gif|webp)$/)) {
+      showError(document.getElementById('profile-error'), '请选择 JPG、PNG、GIF 或 WebP 格式的图片');
+      return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+      showError(document.getElementById('profile-error'), '图片大小不能超过 2MB');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(event) {
+      const base64 = event.target.result;
+      avatarBase64 = base64;
+      
+      // 更新预览
+      document.getElementById('edit-avatar-preview').src = base64;
+      document.getElementById('profile-display-avatar').src = base64;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function handleHeaderAvatarSelect(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (!file.type.match(/^image\/(jpeg|png|gif|webp)$/)) {
+      showError(document.getElementById('profile-error'), '请选择 JPG、PNG、GIF 或 WebP 格式的图片');
+      return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+      showError(document.getElementById('profile-error'), '图片大小不能超过 2MB');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(event) {
+      avatarBase64 = event.target.result;
+      document.getElementById('edit-avatar-preview').src = avatarBase64;
+      document.getElementById('profile-display-avatar').src = avatarBase64;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  async function handleProfileSubmit(e) {
+    e.preventDefault();
+
+    const errEl = document.getElementById('profile-error');
+    const succEl = document.getElementById('profile-success');
+    errEl.style.display = 'none';
+    succEl.style.display = 'none';
+
+    const displayName = document.getElementById('edit-name').value.trim();
+    const bio = document.getElementById('edit-bio').value.trim();
+    
+    const updateData = { displayName, bio };
+    if (avatarBase64) {
+      updateData.avatarUrl = avatarBase64;
+    }
+
+    try {
+      await api('/me', {
+        method: 'PUT',
+        body: JSON.stringify(updateData)
+      });
+
+      const user = getUser();
+      user.displayName = displayName || user.displayName;
+      if (avatarBase64) {
+        user.avatarUrl = avatarBase64;
+      }
+      user.bio = bio !== undefined ? bio : user.bio;
+      setUser(user);
+
+      displayUserInfo(user);
+      showSuccess(succEl, '✅ 资料更新成功！');
+      
+      avatarBase64 = null;
+
+      setTimeout(() => {
+        succEl.style.display = 'none';
+      }, 3000);
+    } catch (err) {
+      showError(errEl, err.message);
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initProfilePage);
+  } else {
+    initProfilePage();
+  }
+})();
+</script>
+
+<style>
+.profile-page {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 0 1.5rem;
+}
+
+.profile-header {
+  background: var(--color-bg, #fff);
+  border-radius: 16px;
+  padding: 3rem 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  display: flex;
+  align-items: center;
+  gap: 2.5rem;
+}
+
+[data-theme="dark"] .profile-header {
+  background: #1e1e1e;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+}
+
+.profile-avatar-wrapper {
+  position:relative;
+  flex-shrink:0;
+}
+
+.profile-avatar {
+  width:150px;
+  height:150px;
+  border-radius:50%;
+  object-fit:cover;
+  border:4px solid var(--color-primary,#D4AF37);
+  box-shadow:0 4px 16px rgba(0,0,0,0.15);
+  background:#f0f0f0;
+}
+
+.avatar-upload-overlay {
+  position:absolute;
+  bottom:8px;
+  right:8px;
+  width:40px;
+  height:40px;
+  background:var(--color-primary,#D4AF37);
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  font-size:1.2rem;
+  transition:transform 0.2s;
+  border:3px solid #fff;
+}
+
+.avatar-upload-overlay:hover {
+  transform:scale(1.1);
+}
+
+.profile-info {
+  flex:1;
+}
+
+.profile-name {
+  font-size:2rem;
+  margin:0 0 0.5rem 0;
+  color:var(--color-text,#333);
+  font-weight:700;
+}
+
+[data-theme="dark"] .profile-name {
+  color:#fff;
+}
+
+.profile-email {
+  color:#666;
+  margin:0.3rem 0;
+  font-size:1rem;
+}
+
+.profile-bio-text {
+  color:#888;
+  margin:0.8rem 0 0 0;
+  line-height:1.6;
+  font-style:italic;
+}
+
+.profile-edit-section {
+  background:var(--color-bg,#fff);
+  border-radius:16px;
+  padding:2.5rem;
+  box-shadow:0 2px 12px rgba(0,0,0,0.08);
+}
+
+[data-theme="dark"] .profile-edit-section {
+  background:#1e1e1e;
+  box-shadow:0 2px 12px rgba(0,0,0,0.3);
+}
+
+.section-title {
+  font-size:1.4rem;
+  margin:0 0 2rem 0;
+  color:var(--color-text,#333);
+  padding-bottom:1rem;
+  border-bottom:2px solid var(--color-primary,#D4AF37);
+}
+
+.form-group {
+  margin-bottom:1.5rem;
+}
+
+.form-group label {
+  display:block;
+  font-size:0.95rem;
+  font-weight:600;
+  margin-bottom:0.6rem;
+  color:var(--color-text,#333);
+}
+
+.avatar-upload-area {
+  display:flex;
+  align-items:center;
+  gap:2rem;
+  padding:1rem;
+  background:#fafafa;
+  border-radius:12px;
+  border:2px dashed #ddd;
+}
+
+[data-theme="dark"] .avatar-upload-area {
+  background:#2a2a2a;
+  border-color:#444;
+}
+
+.upload-controls {
+  flex:1;
+}
+
+.not-login-icon {
+  font-size:4rem;
+  margin-bottom:1rem;
+}
+
+.loading-spinner {
+  width:40px;
+  height:40px;
+  border:4px solid #f3f3f3;
+  border-top:4px solid var(--color-primary,#D4AF37);
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+  margin:0 auto;
+}
+
+@keyframes spin {
+  0%{ transform:rotate(0deg); }
+  100%{ transform:rotate(360deg); }
+}
+
+.btn-save {
+  margin-top:1rem;
+  transition:all 0.2s;
+}
+
+.btn-save:hover {
+  transform:translateY(-2px);
+  box-shadow:0 6px 20px rgba(212,175,55,0.4);
+}
+
+@media(max-width:768px){
+  .profile-header{
+    flex-direction:column;
+    text-align:center;
+    padding:2rem 1.5rem;
+  }
+  
+  .profile-avatar{
+    width:120px;
+    height:120px;
+  }
+  
+  .avatar-upload-area{
+    flex-direction:column;
+    text-align:center;
+  }
+  
+  .profile-edit-section{
+    padding:1.5rem;
+  }
+}
+</style>
+{{ end }}

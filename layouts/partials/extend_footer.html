@@ -1,45 +1,9 @@
 {{- /* Custom footer additions - 全局功能 */ -}}
 
-<!-- 个人资料弹窗 -->
-<div id="global-profile-modal" class="profile-modal">
-  <div class="profile-modal-content">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem">
-      <h2 style="margin:0;font-size:1.4rem;color:var(--color-text,#2d2d2d)">👤 个人资料</h2>
-      <button onclick="closeGlobalProfile()" style="background:none;border:none;font-size:1.5rem;cursor:pointer;color:#666;padding:4px 8px">✕</button>
-    </div>
-    
-    <div id="global-profile-error" class="c-error"></div>
-    <div id="global-profile-success" class="c-success"></div>
-    
-    <form id="global-profile-form">
-      <div class="avatar-upload" style="margin-bottom:1.2rem">
-        <img id="global-avatar-preview" class="avatar-preview" src="" alt="" style="width:80px;height:80px;border-radius:50%;object-fit:cover;background:#e0e0e0;border:3px solid var(--color-primary,#D4AF37)">
-        <div style="flex:1;margin-left:16px">
-          <label for="global-profile-avatar" style="display:block;font-size:0.9rem;font-weight:500;margin-bottom:6px;color:var(--color-text,#333)">头像链接</label>
-          <input type="url" id="global-profile-avatar" class="c-form-input" placeholder="https://... 头像图片URL" style="width:100%">
-        </div>
-      </div>
-      
-      <div class="c-form-group" style="margin-bottom:1rem">
-        <label for="global-profile-name" style="display:block;font-size:0.9rem;font-weight:500;margin-bottom:6px;color:var(--color-text,#333)">昵称</label>
-        <input type="text" id="global-profile-name" class="c-form-input" placeholder="你的昵称" maxlength="50">
-      </div>
-      
-      <div class="c-form-group" style="margin-bottom:1.2rem">
-        <label for="global-profile-bio" style="display:block;font-size:0.9rem;font-weight:500;margin-bottom:6px;color:var(--color-text,#333)">个人简介</label>
-        <textarea id="global-profile-bio" class="c-form-input" placeholder="介绍一下自己..." rows="3" maxlength="200"></textarea>
-      </div>
-      
-      <button type="submit" class="c-btn c-btn-primary" style="width:100%">保存修改</button>
-    </form>
-  </div>
-</div>
-
 <script src="{{ "js/community.js" | relURL }}"></script>
 
 <script>
 (function() {
-  // 等待 DOM 和 community.js 加载完成
   function initGlobalProfile() {
     const menu = document.getElementById('menu');
     if (!menu) return;
@@ -48,107 +12,15 @@
     const profileBtn = document.createElement('button');
     profileBtn.className = 'global-profile-btn';
     profileBtn.innerHTML = '👤 个人';
-    profileBtn.onclick = toggleGlobalProfile;
+    
+    // 点击跳转到个人资料页面（而非弹出Modal）
+    profileBtn.onclick = function() {
+      window.location.href = '/profile/';
+    };
     
     // 添加到菜单后面
     menu.parentNode.insertBefore(profileBtn, menu.nextSibling);
-    
-    // 绑定表单事件
-    const form = document.getElementById('global-profile-form');
-    if (form) {
-      form.addEventListener('submit', handleGlobalProfileUpdate);
-    }
-    
-    // 头像预览
-    const avatarInput = document.getElementById('global-profile-avatar');
-    if (avatarInput) {
-      avatarInput.addEventListener('input', (e) => {
-        const preview = document.getElementById('global-avatar-preview');
-        if (e.target.value && e.target.value.match(/^https?:\/\/.+/)) {
-          preview.src = e.target.value;
-          preview.onerror = () => { preview.src = getDefaultAvatar(''); };
-        } else {
-          preview.src = getDefaultAvatar('');
-        }
-      });
-    }
   }
-  
-  // 切换个人资料弹窗
-  window.toggleGlobalProfile = function() {
-    const user = getUser();
-    const modal = document.getElementById('global-profile-modal');
-    
-    if (!user) {
-      // 未登录：跳转到社区注册页面
-      window.location.href = '/community/#register';
-      return;
-    }
-    
-    // 已登录：切换弹窗显示
-    if (modal.classList.contains('active')) {
-      modal.classList.remove('active');
-    } else {
-      // 填充用户数据
-      document.getElementById('global-profile-name').value = user.displayName || '';
-      document.getElementById('global-profile-avatar').value = user.avatarUrl || '';
-      document.getElementById('global-profile-bio').value = user.bio || '';
-      
-      const preview = document.getElementById('global-avatar-preview');
-      preview.src = user.avatarUrl || getDefaultAvatar(user.displayName);
-      
-      modal.classList.add('active');
-    }
-  };
-  
-  // 关闭弹窗
-  window.closeGlobalProfile = function() {
-    document.getElementById('global-profile-modal').classList.remove('active');
-  };
-  
-  // 处理表单提交
-  async function handleGlobalProfileUpdate(e) {
-    e.preventDefault();
-    
-    const errEl = document.getElementById('global-profile-error');
-    const succEl = document.getElementById('global-profile-success');
-    errEl.style.display = 'none';
-    succEl.style.display = 'none';
-    
-    try {
-      await api('/me', {
-        method: 'PUT',
-        body: JSON.stringify({
-          displayName: document.getElementById('global-profile-name').value.trim(),
-          avatarUrl: document.getElementById('global-profile-avatar').value.trim(),
-          bio: document.getElementById('global-profile-bio').value.trim()
-        })
-      });
-      
-      // 更新本地存储
-      const user = getUser();
-      user.displayName = document.getElementById('global-profile-name').value.trim() || user.displayName;
-      user.avatarUrl = document.getElementById('global-profile-avatar').value.trim() || user.avatarUrl;
-      user.bio = document.getElementById('global-profile-bio').value.trim() || user.bio;
-      setUser(user);
-      
-      showSuccess(succEl, '资料更新成功！');
-      
-      // 更新按钮文字（如果需要）
-      setTimeout(() => closeGlobalProfile(), 1500);
-      
-    } catch (e) {
-      showError(errEl, e.message);
-    }
-  }
-  
-  // 点击遮罩关闭
-  document.addEventListener('click', (e) => {
-    const modal = document.getElementById('global-profile-modal');
-    if (e.target === modal) {
-      closeGlobalProfile();
-    }
-  });
   
   // 页面加载完成后初始化
   if (document.readyState === 'loading') {

@@ -1,0 +1,384 @@
+{{ define "main" }}
+<div class="posts-container">
+  <header class="page-header">
+    <h1 class="page-title">📝 文章与动态</h1>
+    <p class="page-description">博客文章 · 社区讨论 · 技术分享</p>
+  </header>
+
+  <!-- 社区帖子区域 -->
+  <section class="community-posts-section">
+    <div class="section-header">
+      <h2>💬 社区最新动态</h2>
+      <a href="/community/" class="view-all-link">查看全部 →</a>
+    </div>
+    <div id="community-posts-list" class="posts-grid">
+      <div class="loading">加载社区帖子中...</div>
+    </div>
+  </section>
+
+  <!-- 博客文章区域 -->
+  <section class="blog-posts-section">
+    <div class="section-header">
+      <h2>📚 博客文章</h2>
+    </div>
+    <div class="posts-grid">
+      {{- $pages := where .Site.RegularPages "Section" "posts" -}}
+      {{- range $pages -}}
+      <article class="post-card {{ if .Params.featured }}featured{{ end }}">
+        <a href="{{ .Permalink }}" class="post-card-link">
+          {{- if .Params.cover -}}
+          <div class="post-cover" style="background-image: url('{{ .Params.cover | absURL }}')"></div>
+          {{- end -}}
+          
+          <div class="post-content-wrapper">
+            <div class="post-meta-top">
+              <img class="author-avatar-small" 
+                   src="{{ .Params.authorAvatar | default "/images/default-avatar.png" | absURL }}" 
+                   alt=""
+                   onerror="this.src='data:image/svg+xml,{{ `<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 80 80%22><circle cx=%2240%22 cy=%2240%22 r=%2240%22 fill=%22%23ddd%22/><text x=%2240%22 y=%2252%22 text-anchor=%22middle%22 fill=%22%23999%22 font-size=%2230%22>${substr .Site.Title 0 1}</text></svg>` }}'">
+              <span class="author-name-small">{{ .Params.author | default .Site.Title }}</span>
+              <span class="post-date">{{ .Date.Format "2006-01-02" }}</span>
+            </div>
+            
+            <h3 class="post-title">{{ .Title }}</h3>
+            <p class="post-excerpt">{{ .Summary | truncate 120 }}</p>
+            
+            <div class="post-footer">
+              <span class="read-more">阅读全文 →</span>
+            </div>
+          </div>
+        </a>
+      </article>
+      {{- end -}}
+    </div>
+  </section>
+</div>
+
+<style>
+  .posts-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+  }
+  
+  .page-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid var(--color-primary, #D4AF37);
+  }
+  
+  .page-title {
+    font-size: 2.5rem;
+    color: var(--color-text, #2d2d2d);
+    margin-bottom: 0.5rem;
+  }
+  
+  .page-description {
+    font-size: 1.1rem;
+    color: #666;
+  }
+  
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .section-header h2 {
+    font-size: 1.5rem;
+    color: var(--color-text, #2d2d2d);
+    margin: 0;
+  }
+  
+  .view-all-link {
+    font-size: 0.9rem;
+    color: var(--color-primary, #D4AF37);
+    text-decoration: none;
+    font-weight: 500;
+  }
+  
+  .view-all-link:hover {
+    text-decoration: underline;
+  }
+  
+  .posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+  
+  .post-card {
+    background: var(--color-bg, #fff);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+    border-left: 3px solid transparent;
+  }
+  
+  .post-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    border-left-color: var(--color-primary, #D4AF37);
+  }
+  
+  .post-card.featured {
+    grid-column: span 2;
+  }
+  
+  .post-card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+  
+  .post-cover {
+    width: 100%;
+    height: 200px;
+    background-size: cover;
+    background-position: center;
+    background-color: #f0f0f0;
+  }
+  
+  .post-content-wrapper {
+    padding: 1.25rem;
+  }
+  
+  /* 作者信息样式 */
+  .post-meta-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 0.75rem;
+    font-size: 0.85rem;
+  }
+  
+  .author-avatar-small {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #e0e0e0;
+    flex-shrink: 0;
+  }
+  
+  .author-name-small {
+    font-weight: 600;
+    color: var(--color-text, #2d2d2d);
+    flex: 1;
+  }
+  
+  .post-date {
+    color: #999;
+    font-size: 0.8rem;
+  }
+  
+  .post-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-text, #1a1a1a);
+    margin: 0 0 0.6rem 0;
+    line-height: 1.4;
+  }
+  
+  .post-excerpt {
+    color: #555;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
+  
+  .post-footer {
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  .read-more {
+    color: var(--color-primary, #D4AF37);
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+  
+  /* 社区帖子特殊样式 */
+  .community-post-card {
+    background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%);
+    border-left-color: #D4AF37;
+  }
+  
+  .community-post-badge {
+    display: inline-block;
+    background: rgba(212,175,55,0.15);
+    color: #b8941f;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+  
+  .community-post-stats {
+    display: flex;
+    gap: 12px;
+    margin-top: 0.75rem;
+    font-size: 0.8rem;
+    color: #999;
+  }
+  
+  .community-post-stats span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  
+  /* 加载状态 */
+  .loading {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 3rem;
+    color: #999;
+    font-size: 1rem;
+  }
+  
+  /* 暗色模式适配 */
+  [data-theme="dark"] .post-card {
+    background: #1e1e1e;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+  }
+  
+  [data-theme="dark"] .community-post-card {
+    background: linear-gradient(135deg, #252525 0%, #1e1e1e 100%);
+  }
+  
+  [data-theme="dark"] .section-header {
+    border-bottom-color: #333;
+  }
+  
+  [data-theme="dark"] .post-title,
+  [data-theme="dark"] .section-header h2 {
+    color: #e0e0e0;
+  }
+  
+  [data-theme="dark"] .post-excerpt {
+    color: #bbb;
+  }
+  
+  [data-theme="dark"] .author-name-small {
+    color: #e0e0e0;
+  }
+  
+  @media (max-width: 768px) {
+    .posts-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .post-card.featured {
+      grid-column: span 1;
+    }
+    
+    .section-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+  }
+</style>
+
+<script>
+(function() {
+  const API_BASE = 'https://community-deepsleep.vercel.app/api';
+  
+  async function loadCommunityPosts() {
+    const container = document.getElementById('community-posts-list');
+    if (!container) return;
+    
+    try {
+      const response = await fetch(`${API_BASE}/posts?limit=6`);
+      const data = await response.json();
+      
+      if (!data.posts || data.posts.length === 0) {
+        container.innerHTML = `
+          <div style="grid-column:1/-1;text-align:center;padding:2rem;color:#999">
+            <p>暂无社区帖子，来发布第一篇吧！</p>
+            <a href="/community/" style="color:#D4AF37;margin-top:0.5rem;display:inline-block">前往社区 →</a>
+          </div>`;
+        return;
+      }
+      
+      container.innerHTML = data.posts.map(post => createPostCard(post)).join('');
+      
+    } catch (error) {
+      console.error('加载社区帖子失败:', error);
+      container.innerHTML = `
+        <div style="grid-column:1/-1;text-align:center;padding:2rem;color:#999">
+          <p>社区帖子加载失败</p>
+        </div>`;
+    }
+  }
+  
+  function createPostCard(post) {
+    const avatar = post.authorAvatar || getDefaultAvatar(post.authorName);
+    const timeAgo = formatTimeAgo(post.createdAt);
+    
+    return `
+      <article class="post-card community-post-card">
+        <a href="/community/" class="post-card-link">
+          <div class="post-content-wrapper">
+            <span class="community-post-badge">💬 社区动态</span>
+            
+            <div class="post-meta-top">
+              <img class="author-avatar-small" src="${escapeHtml(avatar)}" alt="" onerror="this.src='${getDefaultAvatar('')}'">
+              <span class="author-name-small">${escapeHtml(post.authorName)}</span>
+              <span class="post-date">${timeAgo}</span>
+            </div>
+            
+            <h3 class="post-title">${escapeHtml(post.title)}</h3>
+            <p class="post-excerpt">${escapeHtml(post.contentFull.substring(0, 150))}${post.contentFull.length > 150 ? '...' : ''}</p>
+            
+            <div class="community-post-stats">
+              <span>👁 ${post.viewCount || 0}</span>
+              <span>❤️ ${post.likeCount || 0}</span>
+              <span>💬 ${post.commentCount || 0}</span>
+            </div>
+          </div>
+        </a>
+      </article>`;
+  }
+  
+  function getDefaultAvatar(name) {
+    const initial = (name || '?').charAt(0).toUpperCase();
+    return `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80"><circle cx="40" cy="40" r="40" fill="#ddd"/><text x="40" y="52" text-anchor="middle" fill="#999" font-size="30" font-family="sans-serif">${initial}</text></svg>`)}`;
+  }
+  
+  function escapeHtml(str) {
+    if (!str) return '';
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML.replace(/\n/g, '<br>');
+  }
+  
+  function formatTimeAgo(iso) {
+    if (!iso) return '';
+    const d = new Date(iso);
+    const now = new Date();
+    const diff = now - d;
+    if (diff < 60000) return '刚刚';
+    if (diff < 3600000) return `${Math.floor(diff / 60000)}分钟前`;
+    if (diff < 86400000) return `${Math.floor(diff / 3600000)}小时前`;
+    if (diff < 604800000) return `${Math.floor(diff / 86400000)}天前`;
+    return d.toLocaleDateString('zh-CN');
+  }
+  
+  // 页面加载后获取帖子
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', loadCommunityPosts);
+  } else {
+    loadCommunityPosts();
+  }
+})();
+</script>
+{{ end }}

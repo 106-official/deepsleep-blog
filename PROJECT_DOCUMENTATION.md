@@ -1,8 +1,8 @@
 # DeepSleep Blog - 项目技术文档
 
 > **最后更新**: 2026-06-17
-> **版本**: v5.1
-> **状态**: ✅ 生产就绪 | 🎉 评论系统正常运行 (Neon PostgreSQL) | 💬 社区系统已上线
+> **版本**: v5.2
+> **状态**: ✅ 生产就绪 | 🎉 评论系统正常运行 (Neon PostgreSQL) | 💬 社区系统已上线 | 👤 全局个人中心 | 📝 文章板块整合
 
 ---
 
@@ -37,6 +37,9 @@
 - 📝 文章发布与管理（Markdown 格式）
 - 💬 Waline 评论系统（Neon PostgreSQL + Vercel Serverless）✅
 - 💬 **社区论坛系统**（用户注册/登录 + 发帖）✅ v5.1 新增
+- 👤 **全局个人中心**（导航栏个人按钮 + Modal 弹窗）✅ v5.2 新增
+- 📝 **文章板块整合**（社区帖子与博客文章混合展示）✅ v5.2 新增
+- 🖼️ **作者信息显示**（帖子/文章卡片显示头像+名称）✅ v5.2 新增
 - 🔍 全文搜索（Fuse.js）
 - 🏷️ 标签与分类系统
 - 📦 资源分享板块（独立分区）
@@ -54,6 +57,9 @@
 ```
 ┌─────────────────────────────────────────────────────┐
 │                    用户浏览器                         │
+│  ┌─────────────────────────────────────────────┐   │
+│  │ 导航栏: [菜单项...] [👤 个人按钮] (全局)     │   │
+│  └─────────────────────────────────────────────┘   │
 └──────────────────┬──────────────────────────────────┘
                    │ HTTPS
                    ▼
@@ -63,6 +69,8 @@
 │    • Hugo 生成的静态 HTML/CSS/JS                    │
 │    • 本地化 Waline 资源 (零 CDN 依赖)              │
 │    • 社区前端 (community.css + community.js)        │
+│    • 全局个人中心弹窗 (extend_footer.html)          │
+│    • 文章列表页 (/posts/) 整合社区帖子             │
 └──────┬──────────────────┬─────────────────────────┘
        │ API 调用           │ API 调用
        ▼                   ▼
@@ -74,6 +82,7 @@
 │ • 用户认证        │ │ • /api/login 登录                │
 │ • 管理后台 (/ui)  │ │ • /api/me 个人资料              │
 │                  │ │ • /api/posts 帖子 CRUD            │
+│                  │ │ ✅ CORS: 代码级跨域配置            │
 └────────┬─────────┘ └──────────────┬─────────────────┘
          │                            │
          └────────────┬───────────────┘
@@ -89,6 +98,11 @@
 │  • wl_counter (计数)  • community_posts (帖子)        │
 │  • wl_users (用户)                                    │
 └─────────────────────────────────────────────────────┘
+
+📝 文章板块数据流:
+/posts/ 页面 → 加载社区帖子 (API) + 博客文章 (Hugo)
+         → 混合展示在统一网格布局中
+         → 每个卡片显示作者头像+名称
 ```
 
 ### 技术栈
@@ -118,6 +132,9 @@
 | 社区注册方式 | 邮箱+密码（非手机号） | 无需短信服务，降低成本和复杂度 |
 | 社区页面渲染 | Hugo 布局模板（非 Markdown 内嵌 HTML） | 避免 Goldmark 转义 HTML 标签为代码块 |
 | CSS 优先级策略 | `!important` + 内联 `style.display` | 解决 PaperMod 全局样式覆盖社区组件的问题 |
+| **CORS 配置** | **代码级响应头** (v5.2) | **vercel.json Headers 对 Serverless Functions 不生效** |
+| **全局个人中心** | **Modal 弹窗 + 全局注入** (v5.2) | **所有页面可访问，无需重复实现** |
+| **文章板块整合** | **API 动态加载 + Hugo 静态混合** (v5.2) | **社区帖子与博客文章统一展示，提升用户体验** |
 
 ---
 
@@ -128,35 +145,36 @@ blog-static/
 ├── .github/workflows/deploy.yml     # GitHub Actions 自动部署
 ├── content/
 │   ├── posts/                       # 博客文章
+│   │   ├── _index.md               # ⭐ 文章列表页 (layout: posts) v5.2 新增
 │   │   ├── 1.md                     # 竞赛一览
 │   │   ├── hello-world.md
 │   │   └── welcome.md
 │   ├── about.md                     # 关于页面
 │   ├── me.md                        # 个人技能展示页
-│   ├── community.md                 # ⭐ 社区论坛页 (layout: community)
+│   ├── community.md                 # 社区论坛页 (layout: community)
 │   ├── archives.md                  # 归档页面 (layout: archives)
 │   ├── search.md                    # 搜索页面 (layout: search)
-│   ├── forum.md                     # 论坛页面
 │   └── resources/                   # 资源分享板块
 │       └── _index.md                # 板块首页
 ├── layouts/
 │   ├── partials/
 │   │   ├── comments.html            # Waline 评论组件
-│   │   ├── extend_footer.html       # 自定义页脚
-│   │   └── extended_head.html       # 自定义头部 (字体/CSS)
+│   │   ├── extend_footer.html       # ⭐ 全局功能（个人弹窗 + JS）v5.2 更新
+│   │   └── extended_head.html       # ⭐ 全局样式（个人按钮 + 弹窗样式）v5.2 更新
 │   └── _default/
-│       └── community.html           # ⭐ 社区布局模板 (Hugo 原生 HTML)
+│       ├── community.html           # 社区布局模板
+│       └── posts.html              # ⭐ 文章列表布局模板 v5.2 新增
 ├── static/
 │   ├── css/
 │   │   ├── custom.css               # 自定义样式
 │   │   ├── waline.css               # Waline 样式 (22KB)
-│   │   └── community.css            # ⭐ 社区样式 (含夜间模式)
+│   │   └── community.css            # 社区样式 (含夜间模式 + 个人按钮)
 │   ├── js/
 │   │   ├── waline.umd.min.js        # Waline JS (256KB, 必须完整)
-│   │   └── community.js             # ⭐ 社区交互逻辑 (认证/发帖/列表)
+│   │   └── community.js             # ⭐ 社区交互逻辑 + 全局个人中心函数 v5.2 更新
 │   └── CNAME                        # 自定义域名
 ├── themes/PaperMod/                 # 主题 (Git 子模块)
-├── hugo.toml                        # Hugo 主配置
+├── hugo.toml                        # Hugo 主配置 (已移除论坛菜单)
 └── PROJECT_DOCUMENTATION.md         # 本文档
 
 waline-deepsleep/                    # Waline 后端 (独立项目，Vercel 部署)
@@ -165,14 +183,14 @@ waline-deepsleep/                    # Waline 后端 (独立项目，Vercel 部�
 ├── vercel.json                      # Vercel 配置
 └── waline.pgsql                     # PostgreSQL 表结构初始化脚本
 
-community-deepsleep/                 # ⭐ 社区后端 (独立项目，Vercel 部署) v5.1 新增
+community-deepsleep/                 # 社区后端 (独立项目，Vercel 部署) v5.1 新增
 ├── api/
 │   ├── db.js                        # 数据库连接与初始化
 │   ├── auth.js                      # JWT 认证中间件
-│   ├── register.js                  # 用户注册 API
-│   ├── login.js                     # 用户登录 API
-│   ├── me.js                        # 个人资料 API (GET/PUT)
-│   ├── posts.js                     # 帖子 CRUD API (GET/POST)
+│   ├── register.js                  # 用户注册 API ✅ CORS 已添加
+│   ├── login.js                     # 用户登录 API ✅ CORS 已添加
+│   ├── me.js                        # 个人资料 API (GET/PUT) ✅ CORS 已添加
+│   ├── posts.js                     # 帖子 CRUD API (GET/POST) ✅ CORS 已添加
 │   └── init.js                      # 数据库表初始化 API
 ├── package.json                     # 依赖配置 (pg, bcryptjs, jsonwebtoken)
 └── vercel.json                      # Vercel Serverless 配置
@@ -376,6 +394,47 @@ Neon 集成配置的 `POSTGRES_URL` 包含 `sslmode=require`，SSL 自动启用�
     - 所有 Supabase 相关环境变量 (`SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`) 可安全删除
     - 旧连接格式 (`aws-0-ap-southeast-1.pooler.supabase.com`) 已不再使用
 
+### CORS 跨域相关 (v5.2 重要)
+
+11. **CORS 配置必须使用代码级响应头**:
+    - ❌ `vercel.json` 中的 Headers 配置对 Serverless Functions **不生效**
+    - ✅ 必须在每个 API 路由文件中手动设置 CORS 头：
+      ```javascript
+      function setCorsHeaders(req, res) {
+        res.setHeader('Access-Control-Allow-Origin', 'https://deepsleep.fun');
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+        res.setHeader('Access-Control-Allow-Credentials', 'true');
+        res.setHeader('Access-Control-Max-Age', '86400');
+      }
+      
+      module.exports = async (req, res) => {
+        setCorsHeaders(req, res);
+        
+        if (req.method === 'OPTIONS') {
+          return res.status(200).end();  // 处理预检请求
+        }
+        
+        // ... 正常业务逻辑
+      };
+      ```
+
+12. **浏览器 "Failed to fetch" 错误排查**:
+    - 检查 1: 确认 API 路由已添加 CORS 头（见第11条）
+    - 检查 2: 使用浏览器 DevTools → Network 标签查看 OPTIONS/POST 请求状态
+    - 检查 3: 确认响应头包含 `Access-Control-Allow-Origin: https://deepsleep.fun`
+    - 检查 4: 如果仍失败，检查 Vercel 函数是否正确部署（`vercel --prod`）
+
+13. **全局组件注入注意事项** (v5.2):
+    - `extend_footer.html` 中通过 JS 动态创建 DOM 元素时，必须等待 DOMContentLoaded 事件
+    - 全局函数（如 `toggleGlobalProfile`）必须挂载到 `window` 对象才能在 HTML onclick 中调用
+    - 社区 JS (`community.js`) 必须在全局脚本之前加载（因为依赖 `getUser()`、`api()` 等函数）
+
+14. **论坛版块已移除** (v5.2):
+    - `content/forum.md` 文件已删除
+    - `hugo.toml` 中论坛菜单配置已移除
+    - 如需恢复，需重新创建文件并添加菜单项
+
 ---
 
 ## 🚀 快速开始
@@ -483,6 +542,7 @@ pg_dump "postgresql://neondb_owner:PASSWORD@ep-xxx.c-9.us-east-1.aws.neon.tech/n
 | 服务 | URL |
 |------|-----|
 | 博客 | https://deepsleep.fun |
+| **文章板块** (v5.2) | **https://deepsleep.fun/posts/** |
 | Waline 后端 | https://waline-deepsleep.vercel.app |
 | Waline 管理 | https://waline-deepsleep.vercel.app/ui |
 | **社区后端** | **https://community-deepsleep.vercel.app** |
@@ -502,11 +562,14 @@ pg_dump "postgresql://neondb_owner:PASSWORD@ep-xxx.c-9.us-east-1.aws.neon.tech/n
 | Waline 入口 | `waline-deepsleep/index.cjs` | 后端入口 |
 | 表结构 | `waline-deepsleep/waline.pgsql` | 数据库初始化 |
 | 适配器配置 | `waline-deepsleep/package/src/config/adapter.js` | 数据库连接逻辑 |
-| ⭐ 社区布局模板 | `blog-static/layouts/_default/community.html` | 社区页面 HTML |
-| ⭐ 社区样式 | `blog-static/static/css/community.css` | 社区 UI + 夜间模式 |
-| ⭐ 社区交互逻辑 | `blog-static/static/js/community.js` | 认证/发帖/列表 |
-| ⭐ 社区内容页 | `blog-static/content/community.md` | 声明 layout: community |
-| ⭐ 社区后端 API | `community-deepsleep/api/` | 全部 API 端点 |
+| 社区布局模板 | `blog-static/layouts/_default/community.html` | 社区页面 HTML |
+| **文章列表模板** (v5.2) | **`blog-static/layouts/_default/posts.html`** | **文章+帖子混合展示** |
+| 社区样式 | `blog-static/static/css/community.css` | 社区 UI + 夜间模式 + 个人按钮 |
+| 社区交互逻辑 | `blog-static/static/js/community.js` | 认证/发帖/列表 + 全局个人中心 |
+| 社区内容页 | `blog-static/content/community.md` | 声明 layout: community |
+| **全局头部** (v5.2) | **`blog-static/layouts/partials/extended_head.html`** | **全局样式 + 个人弹窗样式** |
+| **全局页脚** (v5.2) | **`blog-static/layouts/partials/extend_footer.html`** | **个人弹窗 HTML + 全局JS** |
+| 社区后端 API | `community-deepsleep/api/` | 全部 API 端点（含 CORS） |
 
 ---
 
@@ -762,6 +825,185 @@ PaperMod 主题的全局 CSS 样式优先级高于社区组件的 `.auth-form { 
 同时修复了注册表单的重复 `id` 属性（`id="reg-form"` 和 `id="register"` 冲突）。
 
 **💡 Prevention**: 在 PaperMod 等主题中嵌入自定义组件时，CSS 需使用 `!important` 或更高优先级选择器来覆盖主题全局样式。
+
+---
+
+### Bug Fix 7: 社区注册 API "Failed to fetch" CORS 错误 (2026-06-17)
+
+**❓ Problem**: 社区页面注册/登录功能报错 "Failed to fetch"
+
+**Symptoms**:
+- 浏览器控制台显示: `net::ERR_FAILED https://community-deepsleep.vercel.app/api/register`
+- Network 标签显示 OPTIONS 预检请求失败
+- 命令行 curl 测试 API 正常返回数据
+
+**Environment Context**:
+- Date: 2026-06-17
+- Affected Component: Community Backend (Vercel Serverless Functions)
+- Error Log: `CORS policy blocked: No 'Access-Control-Allow-Origin' header`
+
+---
+
+### 🔍 Root Cause Analysis
+
+**Technical Root Cause**:
+1. **vercel.json Headers 配置对 Serverless Functions 不生效**: Vercel 的 `headers` 配置仅适用于静态资源和边缘函数，不适用于 Serverless Functions (API Routes)
+2. **缺少代码级 CORS 头**: 所有 API 路由文件 (`register.js`, `login.js`, `posts.js`, `me.js`) 未手动设置 CORS 响应头
+3. **浏览器同源策略阻止**: 前端 (`deepsleep.fun`) 与后端 (`community-deepsleep.vercel.app`) 跨域请求被浏览器拦截
+
+**Discovery Method**:
+- 使用 Browser Agent 进行实际浏览器测试
+- DevTools Network 标签确认 OPTIONS 请求无 CORS 头
+- 对比命令行测试（成功）与浏览器请求（失败）的差异
+
+**Why It Failed**:
+```
+Browser → OPTIONS /api/register → Vercel Function
+         ↓
+Response 缺少 Access-Control-Allow-Origin 头
+         ↓
+浏览器拦截请求 → "Failed to fetch"
+```
+
+---
+
+### ✅ Solution: 代码级 CORS 实现
+
+**Fix Applied**: 在所有 4 个 API 路由文件中添加 CORS 中间件
+
+1. **创建通用 CORS 函数**:
+   ```javascript
+   function setCorsHeaders(req, res) {
+     res.setHeader('Access-Control-Allow-Origin', 'https://deepsleep.fun');
+     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+     res.setHeader('Access-Control-Allow-Credentials', 'true');
+     res.setHeader('Access-Control-Max-Age', '86400');
+   }
+   ```
+
+2. **在每个路由文件开头调用**:
+   ```javascript
+   module.exports = async (req, res) => {
+     setCorsHeaders(req, res);
+     
+     if (req.method === 'OPTIONS') {
+       return res.status(200).end();  // 处理预检请求
+     }
+     
+     // ... 正常业务逻辑
+   };
+   ```
+
+3. **修改的文件**:
+   - [`api/register.js`](../community-deepsleep/api/register.js): 用户注册 API
+   - [`api/login.js`](../community-deepsleep/api/login.js): 用户登录 API
+   - [`api/posts.js`](../community-deepsleep/api/posts.js): 帖子 CRUD API
+   - [`api/me.js`](../community-deepsleep/api/me.js): 个人资料 API
+
+4. **保留 vercel.json 配置作为备份**（虽不生效但无害）
+
+**Files Modified**:
+| 文件 | 变更 |
+|------|------|
+| `community-deepsleep/api/register.js` | 添加 setCorsHeaders() + OPTIONS 处理 |
+| `community-deepsleep/api/login.js` | 添加 setCorsHeaders() + OPTIONS 处理 |
+| `community-deepsleep/api/posts.js` | 添加 setCorsHeaders() + OPTIONS 处理 |
+| `community-deepsleep/api/me.js` | 添加 setCorsHeaders() + OPTIONS 处理 |
+
+---
+
+### 🧪 Verification
+
+**Test Results**:
+- ✅ Browser DevTools Network: OPTIONS 返回 200，包含完整 CORS 头
+- ✅ POST /api/register 成功返回用户数据和 JWT Token
+- ✅ 注册功能在浏览器中正常工作
+- ✅ 登录、发帖、个人资料功能均正常
+
+**Evidence**:
+```bash
+# CORS 头验证通过
+Access-Control-Allow-Origin: https://deepsleep.fun ✅
+Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS ✅
+Access-Control-Allow-Credentials: true ✅
+
+# API 功能验证
+Status: 200 OK
+Response: {"success":true,"user":{...},"token":"eyJ..."} ✅
+```
+
+**💡 Prevention**: 
+- Vercel Serverless Functions 必须使用代码级 CORS 配置，不要依赖 vercel.json Headers
+- 新增 API 路由时必须立即添加 CORS 支持
+- 使用浏览器 DevTools 验证跨域配置，不要仅依赖命令行测试
+
+---
+
+### Bug Fix 8: 社区表单 ID 与 data-tab 不匹配导致切换失败 (2026-06-17)
+
+**❓ Problem**: 社区页面点击"注册"Tab 后表单消失
+
+**Symptoms**:
+- Tab 切换高亮正常变化
+- 但下方表单区域空白（注册表单不显示）
+- 登录表单因内联样式 `display:block` 兜底可显示
+
+**Environment Context**:
+- Date: 2026-06-17
+- Affected Component: community.html + community.js
+
+---
+
+### 🔍 Root Cause Analysis
+
+**Technical Root Cause**:
+HTML 表单 ID 与 JavaScript 选择器使用的值不一致：
+
+| 元素 | HTML ID | JS 查找值 | 结果 |
+|------|---------|-----------|------|
+| 登录表单 | `login-form` | `login` | ⚠️ 靠内联样式兜底 |
+| 注册表单 | `reg-form` | `register` | ❌ 完全不匹配 |
+
+```javascript
+// community.js 第248行
+const targetForm = document.querySelector(`.auth-form#${tabName}`);
+// 点击"注册"时 tabName = "register"
+// 实际查找 .auth-form#register → 找不到（真实ID是 reg-form）
+```
+
+---
+
+### ✅ Solution: 统一命名规范
+
+**Fix Applied**:
+
+1. **修改 HTML 表单 ID** ([`layouts/_default/community.html`](layouts/_default/community.html)):
+   ```html
+   <!-- 旧 -->
+   <form id="login-form" ...>
+   <form id="reg-form" ...>
+   
+   <!-- 新 -->
+   <form id="login" ...>
+   <form id="register" ...>
+   ```
+
+2. **更新 JS 绑定** ([`static/js/community.js`](static/js/community.js)):
+   ```javascript
+   // 旧
+   const regForm = document.getElementById('reg-form');
+   const loginForm = document.getElementById('login-form');
+   
+   // 新
+   const regForm = document.getElementById('register');
+   const loginForm = document.getElementById('login');
+   ```
+
+**💡 Prevention**: 
+当使用 `data-tab` 属性驱动 UI 切换时，确保：
+- Tab 的 `data-tab` 值 = 目标元素的 `id`
+- 命名风格保持一致（避免缩写如 `reg` vs `register`）
 
 ---
 

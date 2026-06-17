@@ -135,10 +135,16 @@ theme = ["PaperMod"]
   weight = 45
 
 [[menu.main]]
-  identifier = "forum"
-  name = "💬 论坛"
-  url = "/forum/"
+  identifier = "community"
+  name = "💬 社区"
+  url = "/community/"
   weight = 50
+
+[[menu.main]]
+  identifier = "forum"
+  name = "📋 论坛"
+  url = "/forum/"
+  weight = 55
 
 # Markdown 渲染
 [markup]

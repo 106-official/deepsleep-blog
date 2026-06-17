@@ -1,7 +1,7 @@
 # DeepSleep Blog - 项目技术文档
 
 > **最后更新**: 2026-06-12
-> **版本**: v4.0
+> **版本**: v5.0
 > **状态**: ✅ 生产就绪 | 🎉 评论系统正常运行 (Neon PostgreSQL)
 
 ---
@@ -435,7 +435,207 @@ pg_dump "postgresql://neondb_owner:PASSWORD@ep-xxx.c-9.us-east-1.aws.neon.tech/n
 
 ---
 
+## 📚 Bug Fix Q&A
+
+### Bug Fix 1: 归档/搜索页面为空 (2026-06-12)
+
+**❓ Problem**: 导航菜单中的「归档」和「搜索」页面打开后内容为空
+
+**Symptoms**:
+- 访问 `/archives/` 和 `/search/` 页面无任何文章列表或搜索框
+- 页面只显示空白，没有报错
+
+---
+
+### 🔍 Root Cause Analysis
+
+**Technical Root Cause**:
+PaperMod 主题需要对应的内容文件（`.md`）来触发布局模板渲染。虽然 `hugo.toml` 中配置了导航菜单链接到 `/archives/` 和 `/search/`，但 `content/` 目录下缺少对应的文件：
+- 缺少 `content/archives.md`（声明 `layout: archives`）
+- 缺少 `content/search.md`（声明 `layout: search`）
+
+没有这些文件，Hugo 不知道使用哪个模板，导致输出空页面。
+
+---
+
+### ✅ Solution
+
+1. **创建归档页面**: [`content/archives.md`](content/archives.md)
+   ```yaml
+   ---
+   title: "归档"
+   layout: "archives"
+   summary: "archives"
+   ---
+   ```
+
+2. **创建搜索页面**: [`content/search.md`](content/search.md)
+   ```yaml
+   ---
+   title: "搜索"
+   layout: "search"
+   placeholder: "输入关键词搜索..."
+   ---
+   ```
+
+3. **修复 .gitignore**: 将 `resources/` 改为 `/resources/`，避免误忽略 `content/resources/` 目录
+
+**Files Modified**:
+| 文件 | 变更 |
+|------|------|
+| `content/archives.md` | 新建 |
+| `content/search.md` | 新建 |
+| `.gitignore` | `resources/` → `/resources/` |
+
+---
+
+### 🧪 Verification
+
+- ✅ 本地构建生成 36 个页面（+2）
+- ✅ `public/archives/index.html` 包含 `archive-year-header` 和 3 篇文章
+- ✅ `public/search/index.html` 包含 `searchInput`
+- ✅ `public/index.json` 搜索索引包含所有文章
+- ✅ 线上验证返回 200 且内容正确
+
+**💡 Prevention**: PaperMod 特殊页面（archives/search）必须手动创建 content 文件，仅靠菜单配置不够。
+
+---
+
+### Bug Fix 2: 关于/我页面显示原始 Front Matter 代码 (2026-06-12)
+
+**❓ Problem**: 「关于」和「我」页面的标题区域显示原始 YAML 代码
+
+**Symptoms**:
+- 标题显示为 `title: "关于我" date: 2026-06-12 layout: single`
+- 而非正常的页面标题
+
+---
+
+### 🔍 Root Cause Analysis
+
+**Technical Root Cause**:
+Hugo 的 Front Matter 必须用三个短横线 `---` 作为分隔符。两个文件的分隔符写错了：
+
+| 位置 | 错误写法 | 正确写法 |
+|------|---------|---------|
+| 开头 | `***` | `---` |
+| 结尾 | `--------------` | `---` |
+
+Hugo 无法识别错误的分隔符，将整个 YAML 头部当作正文内容原样输出。
+
+---
+
+### ✅ Solution
+
+修正 [`content/about.md`](content/about.md) 和 [`content/me.md`](content/me.md) 的 Front Matter 分隔符为标准格式 `---`。
+
+**💡 Prevention**: Hugo Front Matter 格式严格固定——必须是且只能是三个短横线 `---`，前后各一行。
+
+---
+
+### Bug Fix 3: Waline 评论系统夜间模式不生效 (2026-06-12)
+
+**❓ Problem**: 博客切换夜间模式后，评论组件仍显示白色背景
+
+**Symptoms**:
+- 评论输入框、评论卡片在夜间模式下保持白底黑字
+- 与博客整体暗色风格不协调
+
+---
+
+### 🔍 Root Cause Analysis
+
+**Technical Root Cause**:
+虽然 Waline 配置中已有 `dark: 'html[data-theme="dark"]'`，但缺少两处关键样式：
+
+1. **自定义样式缺失**: [`comments.html`](layouts/partials/comments.html) 中没有 `[data-theme="dark"]` 选择器的样式覆盖
+2. **Waline CSS 变量缺失**: [`waline.css`](static/css/waline.css) 中没有定义夜间模式的 CSS 变量
+
+PaperMod 切换夜间模式时会在 `<html>` 添加 `data-theme="dark"` 属性，但 Waline 组件的背景、边框、文字颜色没有被覆盖。
+
+---
+
+### ✅ Solution
+
+1. **comments.html 新增夜间模式样式覆盖**:
+   - 评论容器背景: `#ffffff` → `#181818`
+   - 输入框背景/文字: 白色 → `#222` / `#e0e0e0`
+   - 评论卡片背景: `#fafafa` → `#222`
+   - 标题/提示文字: 深色 → 浅灰
+
+2. **waline.css 新增夜间模式变量**:
+   ```css
+   [data-theme="dark"]{
+     --waline-color:#ccc;--waline-bg-color:#1e1e1e;
+     --waline-bg-color-light:#2a2a2a;--waline-border-color:#444;
+     ...
+   }
+   ```
+
+**💡 Prevention**: 添加自定义组件时需同时考虑日间/夜间两种主题的样式适配。
+
+---
+
+### Bug Fix 4: Git 推送 GitHub 持续失败 (2026-06-12)
+
+**❓ Problem**: `git push origin main` 反复超时或连接重置
+
+**Error Messages**:
+```
+fatal: unable to access 'https://github.com/...': Failed to connect to github.com port 443 after 21074 ms
+fatal: unable to access 'https://github.com/...': Recv failure: Connection was reset
+```
+
+---
+
+### 🔍 Root Cause Analysis
+
+**Technical Root Cause**:
+1. 用户网络环境需要代理才能访问 GitHub 443 端口
+2. Git 未配置代理设置，直连 GitHub 超时
+3. 系统代理端口为 `127.0.0.1:65532`（通过注册表确认），但 git 未使用
+
+**Discovery Method**:
+```powershell
+Get-ItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings"
+# ProxyEnable: 1, ProxyServer: http://127.0.0.1:65532
+```
+
+---
+
+### ✅ Solution
+
+配置 Git 全局代理指向系统代理端口：
+
+```bash
+git config --global http.proxy http://127.0.0.1:65532
+git config --global https.proxy http://127.0.0.1:65532
+```
+
+**💡 Prevention**: 在需要代理的网络环境下，首次使用 Git 前应检查并配置代理。可通过 `git config --global --list | grep proxy` 验证当前配置。
+
+---
+
 ## 📝 更新日志
+
+### v5.0 (2026-06-12) - 功能扩展与问题修复
+
+**新增功能**:
+- ✅ 归档页面 (`/archives/`) — 按年份/月份分组展示文章
+- ✅ 搜索页面 (`/search/`) — Fuse.js 全文模糊搜索
+- ✅ 资源板块 (`/resources/`) — 资源分享分区，含 4 篇资源帖
+- ✅ 个人技能页 (`/me/`) — Stata/SPSS/Amos 等技能展示
+- ✅ Waline 评论系统夜间模式适配
+
+**Bug 修复**:
+- ✅ 修复归档/搜索页面为空（缺少 content 文件）
+- ✅ 修复关于/我页面显示原始 Front Matter（分隔符错误）
+- ✅ 修复 .gitignore 误忽略 `content/resources/` 目录
+- ✅ 配置 Git 代理解决 GitHub 推送超时
+
+**文档更新**:
+- ✅ 新增 Bug Fix Q&A 章节（4 条记录）
+- ✅ 更新目录结构、注意事项
 
 ### v4.0 (2026-06-12) - 数据库迁移至 Neon
 
@@ -461,4 +661,4 @@ pg_dump "postgresql://neondb_owner:PASSWORD@ep-xxx.c-9.us-east-1.aws.neon.tech/n
 
 ---
 
-*文档结束 | 最后更新: 2026-06-12 | 版本: v4.0 | 状态: ✅ 生产就绪*
+*文档结束 | 最后更新: 2026-06-12 | 版本: v5.0 | 状态: ✅ 生产就绪*

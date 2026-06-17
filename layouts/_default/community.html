@@ -1,0 +1,146 @@
+{{ define "main" }}
+<link rel="stylesheet" href="/css/community.css">
+<script src="/js/community.js"></script>
+
+<div class="community-container">
+  <div class="community-header">
+    <h1>💬 DeepSleep 社区</h1>
+    <div id="header-user"></div>
+  </div>
+
+  <div id="community-app">
+
+    <div id="auth-section">
+      <div class="auth-box">
+        <h2>加入社区</h2>
+        <div class="auth-tabs">
+          <div class="auth-tab active" data-tab="login">登录</div>
+          <div class="auth-tab" data-tab="register">注册</div>
+        </div>
+
+        <div id="login-error" class="c-error"></div>
+        <div id="login-success" class="c-success"></div>
+        <form id="login-form" class="auth-form active">
+          <div class="c-form-group">
+            <label for="login-email">邮箱</label>
+            <input type="email" id="login-email" class="c-form-input" placeholder="your@email.com" required>
+          </div>
+          <div class="c-form-group">
+            <label for="login-password">密码</label>
+            <input type="password" id="login-password" class="c-form-input" placeholder="至少6位密码" required minlength="6">
+          </div>
+          <button type="submit" class="c-btn c-btn-primary">登 录</button>
+        </form>
+
+        <div id="reg-error" class="c-error"></div>
+        <div id="reg-success" class="c-success"></div>
+        <form id="reg-form" class="auth-form" id="register">
+          <div class="c-form-group">
+            <label for="reg-name">昵称</label>
+            <input type="text" id="reg-name" class="c-form-input" placeholder="你的昵称" required maxlength="50">
+          </div>
+          <div class="c-form-group">
+            <label for="reg-email">邮箱</label>
+            <input type="email" id="reg-email" class="c-form-input" placeholder="your@email.com" required>
+          </div>
+          <div class="c-form-group">
+            <label for="reg-password">密码</label>
+            <input type="password" id="reg-password" class="c-form-input" placeholder="至少6位密码" required minlength="6">
+          </div>
+          <button type="submit" class="c-btn c-btn-primary">注 册</button>
+        </form>
+      </div>
+    </div>
+
+    <div id="logged-in-section" style="display:none">
+
+      <div class="write-post-box" id="write-box">
+        <h3>✏️ 发布新帖子</h3>
+        <div id="post-error" class="c-error"></div>
+        <div id="post-success" class="c-success"></div>
+        <form id="post-form">
+          <div class="c-form-group">
+            <label for="post-title">标题</label>
+            <input type="text" id="post-title" class="c-form-input" placeholder="输入帖子标题..." required maxlength="255">
+          </div>
+          <div class="c-form-group">
+            <label for="post-category">分类</label>
+            <select id="post-category" class="c-form-input">
+              <option value="general">💬 日常交流</option>
+              <option value="tech">💻 技术分享</option>
+              <option value="resource">📦 资源分享</option>
+              <option value="question">❓ 问题求助</option>
+            </select>
+          </div>
+          <div class="c-form-group">
+            <label for="post-content">内容</label>
+            <textarea id="post-content" class="c-form-input" placeholder="写下你想分享的内容..." required></textarea>
+          </div>
+          <button type="submit" class="c-btn c-btn-primary">发布帖子</button>
+        </form>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+        <select id="category-filter" class="c-form-input" style="width:auto;padding:8px 16px;font-size:0.88rem">
+          <option value="">全部分类</option>
+          <option value="general">💬 日常交流</option>
+          <option value="tech">💻 技术分享</option>
+          <option value="resource">📦 资源分享</option>
+          <option value="question">❓ 问题求助</option>
+        </select>
+      </div>
+
+      <div id="posts-list"><div class="loading">加载中</div></div>
+      <div id="pagination" class="pagination"></div>
+    </div>
+
+    <div id="profile-section" style="display:none">
+      <div class="profile-edit-box">
+        <h2>👤 个人资料</h2>
+        <div id="profile-error" class="c-error"></div>
+        <div id="profile-success" class="c-success"></div>
+        <form id="profile-form">
+          <div class="avatar-upload">
+            <img id="avatar-preview" class="avatar-preview" src="" alt="">
+            <div>
+              <div class="c-form-group" style="margin-bottom:0">
+                <label for="profile-avatar">头像链接</label>
+                <input type="url" id="profile-avatar" class="c-form-input" placeholder="https://... 头像图片URL" style="width:300px">
+              </div>
+            </div>
+          </div>
+          <div class="c-form-group">
+            <label for="profile-name">昵称</label>
+            <input type="text" id="profile-name" class="c-form-input" placeholder="你的昵称" maxlength="50">
+          </div>
+          <div class="c-form-group">
+            <label for="profile-bio">个人简介</label>
+            <textarea id="profile-bio" class="c-form-input" placeholder="介绍一下自己..." rows="3" maxlength="200"></textarea>
+          </div>
+          <button type="submit" class="c-btn c-btn-primary">保存修改</button>
+        </form>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+(function() {
+  function checkAuth() {
+    const user = getUser();
+    if (user) {
+      document.getElementById('auth-section').style.display = 'none';
+      document.getElementById('logged-in-section').style.display = 'block';
+      updateHeaderUI();
+      document.getElementById('profile-name').value = user.displayName || '';
+      document.getElementById('profile-avatar').value = user.avatarUrl || '';
+      document.getElementById('profile-bio').value = user.bio || '';
+      var preview = document.getElementById('avatar-preview');
+      preview.src = user.avatarUrl || getDefaultAvatar(user.displayName);
+    }
+  }
+  checkAuth();
+})();
+</script>
+{{ end }}

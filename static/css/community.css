@@ -69,8 +69,8 @@
   color: var(--color-primary, #D4AF37);
   border-bottom-color: var(--color-primary, #D4AF37);
 }
-.auth-form { display: none; }
-.auth-form.active { display: block; }
+.auth-form { display: none !important; }
+.auth-form.active { display: block !important; }
 
 /* Form Elements */
 .c-form-group {

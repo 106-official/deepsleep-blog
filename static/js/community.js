@@ -243,9 +243,10 @@ function formatTime(iso) {
 // Tab switching
 function switchTab(tabName) {
   document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+  document.querySelectorAll('.auth-form').forEach(f => { f.classList.remove('active'); f.style.display = 'none'; });
   document.querySelector(`.auth-tab[data-tab="${tabName}"]`)?.classList.add('active');
-  document.querySelector(`.auth-form#${tabName}`)?.classList.add('active');
+  const targetForm = document.querySelector(`.auth-form#${tabName}`);
+  if (targetForm) { targetForm.classList.add('active'); targetForm.style.display = 'block'; }
 }
 
 // Init

@@ -28,8 +28,9 @@ async function api(path, options = {}) {
     if (!res.ok && data.error) throw new Error(data.error);
     return data;
   } catch (e) {
-    if (e.message.includes('未登录') || e.message.includes('过期')) {
-      clearToken(); clearUser(); location.reload();
+    if (e.message.includes('未登录') || e.message.includes('过期') || 
+        e.message.includes('用户不存在') || e.message.includes('不存在')) {
+      clearToken(); clearUser();
     }
     throw e;
   }

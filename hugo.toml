@@ -105,46 +105,28 @@ theme = ["PaperMod"]
   weight = 10
 
 [[menu.main]]
-  identifier = "archives"
-  name = "📚 归档"
-  url = "/archives/"
-  weight = 20
-
-[[menu.main]]
   identifier = "resources"
   name = "📦 资源"
   url = "/resources/"
-  weight = 25
-
-[[menu.main]]
-  identifier = "search"
-  name = "🔍 搜索"
-  url = "/search/"
-  weight = 30
-
-[[menu.main]]
-  identifier = "about"
-  name = "👤 关于"
-  url = "/about/"
-  weight = 40
+  weight = 20
 
 [[menu.main]]
   identifier = "me"
   name = "🧑‍💻 我"
   url = "/me/"
-  weight = 45
+  weight = 30
 
 [[menu.main]]
   identifier = "community"
   name = "💬 社区"
   url = "/community/"
-  weight = 50
+  weight = 40
 
 [[menu.main]]
   identifier = "play"
   name = "🎮 娱乐"
   url = "/play/"
-  weight = 55
+  weight = 50
 
 # Markdown 渲染
 [markup]

@@ -1,84 +1,268 @@
 {{ define "main" }}
-<div class="posts-container">
-  <header class="page-header">
-    <h1 class="page-title">📝 文章与动态</h1>
-    <p class="page-description">博客文章 · 社区讨论 · 技术分享</p>
-  </header>
+<div class="posts-page-layout">
+  <!-- 左侧主内容区 -->
+  <main class="posts-main-content">
+    <header class="page-header">
+      <h1 class="page-title">📝 文章与动态</h1>
+      <p class="page-description">博客文章 · 社区讨论 · 技术分享</p>
+    </header>
 
-  <!-- 社区帖子区域 -->
-  <section class="community-posts-section">
-    <div class="section-header">
-      <h2>💬 社区最新动态</h2>
-      <a href="/community/" class="view-all-link">查看全部 →</a>
-    </div>
-    <div id="community-posts-list" class="posts-grid">
-      <div class="loading">加载社区帖子中...</div>
-    </div>
-  </section>
+    <!-- 搜索栏 - 位于顶部 -->
+    <section class="search-section">
+      <form action="/search/" method="get" class="search-form-inline">
+        <div class="search-input-wrapper">
+          <span class="search-icon">🔍</span>
+          <input 
+            type="text" 
+            name="q" 
+            placeholder="搜索文章标题、标签、内容..." 
+            class="search-input"
+            autocomplete="off"
+            id="posts-search"
+          >
+        </div>
+        <button type="submit" class="search-submit-btn">搜索</button>
+      </form>
+    </section>
 
-  <!-- 博客文章区域 -->
-  <section class="blog-posts-section">
-    <div class="section-header">
-      <h2>📚 博客文章</h2>
-    </div>
-    <div class="posts-grid">
-      {{- $pages := where .Site.RegularPages "Section" "posts" -}}
-      {{- range $pages -}}
-      <article class="post-card {{ if .Params.featured }}featured{{ end }}">
-        <a href="{{ .Permalink }}" class="post-card-link">
-          {{- if .Params.cover -}}
-          <div class="post-cover" style="background-image: url('{{ .Params.cover | absURL }}')"></div>
-          {{- end -}}
-          
-          <div class="post-content-wrapper">
-            <div class="post-meta-top">
-              <img class="author-avatar-small" 
-                   src="{{ .Params.authorAvatar | default "/images/default-avatar.png" | absURL }}" 
-                   alt=""
-                   onerror="this.src='data:image/svg+xml,{{ `<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 80 80%22><circle cx=%2240%22 cy=%2240%22 r=%2240%22 fill=%22%23ddd%22/><text x=%2240%22 y=%2252%22 text-anchor=%22middle%22 fill=%22%23999%22 font-size=%2230%22>${substr .Site.Title 0 1}</text></svg>` }}'">
-              <span class="author-name-small">{{ .Params.author | default .Site.Title }}</span>
-              <span class="post-date">{{ .Date.Format "2006-01-02" }}</span>
-            </div>
+    <!-- 社区帖子区域 -->
+    <section class="community-posts-section">
+      <div class="section-header">
+        <h2>💬 社区最新动态</h2>
+        <a href="/community/" class="view-all-link">查看全部 →</a>
+      </div>
+      <div id="community-posts-list" class="posts-grid">
+        <div class="loading">加载社区帖子中...</div>
+      </div>
+    </section>
+
+    <!-- 博客文章区域 -->
+    <section class="blog-posts-section">
+      <div class="section-header">
+        <h2>📚 博客文章</h2>
+      </div>
+      <div class="posts-grid">
+        {{- $pages := where .Site.RegularPages "Section" "posts" -}}
+        {{- range $pages -}}
+        <article class="post-card {{ if .Params.featured }}featured{{ end }}">
+          <a href="{{ .Permalink }}" class="post-card-link">
+            {{- if .Params.cover -}}
+            <div class="post-cover" style="background-image: url('{{ .Params.cover | absURL }}')"></div>
+            {{- end -}}
             
-            <h3 class="post-title">{{ .Title }}</h3>
-            <p class="post-excerpt">{{ .Summary | truncate 120 }}</p>
-            
-            <div class="post-footer">
-              <span class="read-more">阅读全文 →</span>
+            <div class="post-content-wrapper">
+              <div class="post-meta-top">
+                <img class="author-avatar-small" 
+                     src="{{ .Params.authorAvatar | default "/images/default-avatar.png" | absURL }}" 
+                     alt=""
+                     onerror="this.src='data:image/svg+xml,{{ `<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 80 80%22><circle cx=%2240%22 cy=%2240%22 r=%2240%22 fill=%22%23ddd%22/><text x=%2240%22 y=%2252%22 text-anchor=%22middle%22 fill=%22%23999%22 font-size=%2230%22>${substr .Site.Title 0 1}</text></svg>` }}'">
+                <span class="author-name-small">{{ .Params.author | default .Site.Title }}</span>
+                <span class="post-date">{{ .Date.Format "2006-01-02" }}</span>
+              </div>
+              
+              <h3 class="post-title">{{ .Title }}</h3>
+              <p class="post-excerpt">{{ .Summary | truncate 120 }}</p>
+              
+              <div class="post-footer">
+                <span class="read-more">阅读全文 →</span>
+              </div>
             </div>
-          </div>
+          </a>
+        </article>
+        {{- end -}}
+      </div>
+    </section>
+  </main>
+
+  <!-- 右侧边栏：归档 + 标签 + 快速链接 -->
+  <aside class="posts-sidebar">
+    <!-- 归档模块 -->
+    <div class="sidebar-widget archive-widget">
+      <h3 class="widget-title">
+        <span class="widget-icon">📅</span>
+        文章归档
+      </h3>
+      
+      <div class="archive-list">
+        {{- $posts := where site.RegularPages "Section" "posts" -}}
+        {{- range $posts.GroupByDate "2006" "January" | first 12 -}}
+        {{- $dateStr := .Key -}}
+        {{- $year := substr 0 4 $dateStr -}}
+        {{- $month := substr 5 2 $dateStr -}}
+        {{- $monthNames := slice "" "01月" "02月" "03月" "04月" "05月" "06月" "07月" "08月" "09月" "10月" "11月" "12月" -}}
+        {{- $monthNum := int $month -}}
+        {{- if and (ge $monthNum 1) (le $monthNum 12) -}}
+        {{- $displayName := printf "%s年%s" $year (index $monthNames $monthNum) -}}
+        <a href="/archives/{{ $dateStr }}/" class="archive-item">
+          <span class="archive-date">{{ $displayName }}</span>
+          <span class="archive-count">{{ len .Pages }}篇</span>
         </a>
-      </article>
-      {{- end -}}
+        {{- end -}}
+        {{- end -}}
+        
+        <a href="/archives/" class="archive-more-link">
+          查看完整归档 →
+        </a>
+      </div>
     </div>
-  </section>
+
+    <!-- 热门标签 -->
+    <div class="sidebar-widget tags-widget">
+      <h3 class="widget-title">
+        <span class="widget-icon">🏷️</span>
+        热门标签
+      </h3>
+      
+      <div class="tags-cloud">
+        {{- $counter := 0 -}}
+        {{- range $name, $taxonomy := site.Taxonomies.tags -}}
+        {{- if lt $counter 15 -}}
+        <a href="{{ $taxonomy.Page.Permalink }}" class="tag-item" style="font-size: {{ add 0.85 (mul (len $taxonomy.Pages) 0.1) }}rem">
+          #{{ $name }}
+        </a>
+        {{- end -}}
+        {{- $counter = add $counter 1 -}}
+        {{- end -}}
+        <a href="/tags/" class="tag-more">更多...</a>
+      </div>
+    </div>
+
+    <!-- 快速链接 -->
+    <div class="sidebar-widget links-widget">
+      <h3 class="widget-title">
+        <span class="widget-icon">⚡</span>
+        快速导航
+      </h3>
+      
+      <nav class="quick-links">
+        <a href="/play/sleeptown/" class="quick-link featured">
+          🎮 SleepTown 游戏
+        </a>
+        <a href="/resources/" class="quick-link">
+          📦 资源分享
+        </a>
+        <a href="/community/" class="quick-link">
+          💬 社区讨论
+        </a>
+        <a href="/profile/" class="quick-link">
+          👤 个人中心
+        </a>
+      </nav>
+    </div>
+  </aside>
 </div>
 
 <style>
-  .posts-container {
-    max-width: 1200px;
+  /* 页面整体布局 */
+  .posts-page-layout {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 2rem;
+    max-width: 1300px;
     margin: 0 auto;
     padding: 2rem 1.5rem;
+    min-height: calc(100vh - 200px);
   }
-  
+
+  /* 主内容区 */
+  .posts-main-content {
+    min-width: 0; /* 防止grid溢出 */
+  }
+
+  /* 页面标题 */
   .page-header {
     text-align: center;
-    margin-bottom: 3rem;
+    margin-bottom: 2rem;
     padding-bottom: 1.5rem;
     border-bottom: 2px solid var(--color-primary, #D4AF37);
   }
-  
+
   .page-title {
     font-size: 2.5rem;
     color: var(--color-text, #2d2d2d);
     margin-bottom: 0.5rem;
   }
-  
+
   .page-description {
     font-size: 1.1rem;
     color: #666;
+    margin: 0;
   }
-  
+
+  /* ========== 搜索栏样式 ========== */
+  .search-section {
+    background: linear-gradient(135deg, rgba(212,175,55,0.08) 0%, rgba(212,175,55,0.02) 100%);
+    border-radius: 16px;
+    padding: 1.8rem;
+    margin-bottom: 2.5rem;
+    border: 2px solid rgba(212,175,55,0.15);
+    box-shadow: 0 4px 20px rgba(212,175,55,0.08);
+  }
+
+  .search-form-inline {
+    display: flex;
+    gap: 0.8rem;
+    align-items: center;
+  }
+
+  .search-input-wrapper {
+    flex: 1;
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 1.2rem;
+    font-size: 1.2rem;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .search-input {
+    width: 100%;
+    padding: 1rem 1.2rem 1rem 3rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    font-size: 1rem;
+    background: #fff;
+    color: #333;
+    transition: all 0.3s ease;
+  }
+
+  [data-theme="dark"] .search-input {
+    background: #2a2a2a;
+    border-color: #444;
+    color: #fff;
+  }
+
+  .search-input:focus {
+    outline: none;
+    border-color: var(--color-primary, #D4AF37);
+    box-shadow: 0 0 0 4px rgba(212,175,55,0.1), 0 6px 24px rgba(212,175,55,0.15);
+    transform: translateY(-1px);
+  }
+
+  .search-submit-btn {
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, var(--color-primary, #D4AF37) 0%, #B8941F 100%);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+  }
+
+  .search-submit-btn:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 6px 18px rgba(212,175,55,0.35);
+  }
+
+  /* ========== 区域头部样式 ========== */
   .section-header {
     display: flex;
     justify-content: space-between;
@@ -87,31 +271,35 @@
     padding-bottom: 0.75rem;
     border-bottom: 1px solid #eee;
   }
-  
+
   .section-header h2 {
     font-size: 1.5rem;
     color: var(--color-text, #2d2d2d);
     margin: 0;
   }
-  
+
   .view-all-link {
     font-size: 0.9rem;
     color: var(--color-primary, #D4AF37);
     text-decoration: none;
     font-weight: 500;
+    transition: all 0.3s;
   }
-  
+
   .view-all-link:hover {
     text-decoration: underline;
+    transform: translateX(3px);
+    display: inline-block;
   }
-  
+
+  /* ========== 文章网格 ========== */
   .posts-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 1.5rem;
     margin-bottom: 3rem;
   }
-  
+
   .post-card {
     background: var(--color-bg, #fff);
     border-radius: 12px;
@@ -120,23 +308,23 @@
     transition: all 0.3s ease;
     border-left: 3px solid transparent;
   }
-  
+
   .post-card:hover {
     transform: translateY(-4px);
     box-shadow: 0 8px 24px rgba(0,0,0,0.12);
     border-left-color: var(--color-primary, #D4AF37);
   }
-  
+
   .post-card.featured {
     grid-column: span 2;
   }
-  
+
   .post-card-link {
     text-decoration: none;
     color: inherit;
     display: block;
   }
-  
+
   .post-cover {
     width: 100%;
     height: 200px;
@@ -144,12 +332,12 @@
     background-position: center;
     background-color: #f0f0f0;
   }
-  
+
   .post-content-wrapper {
     padding: 1.25rem;
   }
-  
-  /* 作者信息样式 */
+
+  /* 作者信息 */
   .post-meta-top {
     display: flex;
     align-items: center;
@@ -157,7 +345,7 @@
     margin-bottom: 0.75rem;
     font-size: 0.85rem;
   }
-  
+
   .author-avatar-small {
     width: 28px;
     height: 28px;
@@ -166,18 +354,18 @@
     background: #e0e0e0;
     flex-shrink: 0;
   }
-  
+
   .author-name-small {
     font-weight: 600;
     color: var(--color-text, #2d2d2d);
     flex: 1;
   }
-  
+
   .post-date {
     color: #999;
     font-size: 0.8rem;
   }
-  
+
   .post-title {
     font-size: 1.25rem;
     font-weight: 700;
@@ -185,31 +373,208 @@
     margin: 0 0 0.6rem 0;
     line-height: 1.4;
   }
-  
+
   .post-excerpt {
     color: #555;
     font-size: 0.95rem;
     line-height: 1.6;
     margin-bottom: 1rem;
   }
-  
+
   .post-footer {
     display: flex;
     justify-content: flex-end;
   }
-  
+
   .read-more {
     color: var(--color-primary, #D4AF37);
     font-size: 0.9rem;
     font-weight: 500;
   }
-  
+
+  /* ========== 右侧边栏样式 ========== */
+  .posts-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .sidebar-widget {
+    background: var(--color-bg, #fff);
+    border-radius: 14px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    border: 1px solid #f0f0f0;
+    transition: all 0.3s;
+  }
+
+  [data-theme="dark"] .sidebar-widget {
+    background: #1e1e1e;
+    border-color: #333;
+  }
+
+  .widget-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0 0 1rem 0;
+    color: var(--color-text, #333);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding-bottom: 0.7rem;
+    border-bottom: 2px solid var(--color-primary, #D4AF37);
+  }
+
+  [data-theme="dark"] .widget-title {
+    color: #fff;
+  }
+
+  .widget-icon {
+    font-size: 1.3rem;
+  }
+
+  /* 归档列表 */
+  .archive-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.65rem 0.9rem;
+    background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%);
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--color-text, #333);
+    font-size: 0.88rem;
+    transition: all 0.3s;
+    border-left: 3px solid transparent;
+  }
+
+  [data-theme="dark"] .archive-item {
+    background: linear-gradient(135deg, #2a2a2a 0%, #1e1e1e 100%);
+    color: #ccc;
+  }
+
+  .archive-item:hover {
+    background: linear-gradient(135deg, rgba(212,175,55,0.12) 0%, rgba(212,175,55,0.04) 100%);
+    border-left-color: var(--color-primary, #D4AF37);
+    transform: translateX(5px);
+  }
+
+  .archive-date {
+    font-weight: 500;
+  }
+
+  .archive-count {
+    font-size: 0.82rem;
+    color: #888;
+    background: rgba(212,175,55,0.12);
+    padding: 0.15rem 0.55rem;
+    border-radius: 10px;
+    font-weight: 600;
+  }
+
+  .archive-more-link {
+    display: block;
+    text-align: center;
+    padding: 0.7rem;
+    margin-top: 0.5rem;
+    color: var(--color-primary, #D4AF37);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: all 0.3s;
+  }
+
+  .archive-more-link:hover {
+    background: rgba(212,175,55,0.08);
+  }
+
+  /* 标签云 */
+  .tags-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    line-height: 1.8;
+  }
+
+  .tag-item {
+    color: var(--color-text, #666);
+    text-decoration: none;
+    transition: all 0.3s;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+  }
+
+  [data-theme="dark"] .tag-item {
+    color: #aaa;
+  }
+
+  .tag-item:hover {
+    color: var(--color-primary, #D4AF37);
+    background: rgba(212,175,55,0.1);
+    transform: scale(1.08);
+  }
+
+  .tag-more {
+    color: #888;
+    font-size: 0.85rem;
+    text-decoration: none;
+    padding: 0.25rem 0.5rem;
+  }
+
+  .tag-more:hover {
+    color: var(--color-primary, #D4AF37);
+  }
+
+  /* 快速链接 */
+  .quick-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .quick-link {
+    display: block;
+    padding: 0.75rem 1rem;
+    background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%);
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--color-text, #333);
+    font-weight: 500;
+    font-size: 0.92rem;
+    transition: all 0.3s;
+    border-left: 3px solid transparent;
+  }
+
+  [data-theme="dark"] .quick-link {
+    background: linear-gradient(135deg, #2a2a2a 0%, #1e1e1e 100%);
+    color: #ccc;
+  }
+
+  .quick-link:hover {
+    border-left-color: var(--color-primary, #D4AF37);
+    background: linear-gradient(135deg, rgba(212,175,55,0.08) 0%, rgba(212,175,55,0.02) 100%);
+    transform: translateX(3px);
+  }
+
+  .quick-link.featured {
+    background: linear-gradient(135deg, rgba(212,175,55,0.12) 0%, rgba(212,175,55,0.04) 100%);
+    border-left-color: var(--color-primary, #D4AF37);
+    font-weight: 600;
+  }
+
   /* 社区帖子特殊样式 */
   .community-post-card {
     background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%);
     border-left-color: #D4AF37;
   }
-  
+
   .community-post-badge {
     display: inline-block;
     background: rgba(212,175,55,0.15);
@@ -220,7 +585,7 @@
     font-weight: 600;
     margin-bottom: 0.5rem;
   }
-  
+
   .community-post-stats {
     display: flex;
     gap: 12px;
@@ -228,13 +593,13 @@
     font-size: 0.8rem;
     color: #999;
   }
-  
+
   .community-post-stats span {
     display: flex;
     align-items: center;
     gap: 4px;
   }
-  
+
   /* 加载状态 */
   .loading {
     grid-column: 1 / -1;
@@ -243,35 +608,63 @@
     color: #999;
     font-size: 1rem;
   }
-  
-  /* 暗色模式适配 */
+
+  /* ========== 暗色模式适配 ========== */
   [data-theme="dark"] .post-card {
     background: #1e1e1e;
     box-shadow: 0 2px 12px rgba(0,0,0,0.3);
   }
-  
+
   [data-theme="dark"] .community-post-card {
     background: linear-gradient(135deg, #252525 0%, #1e1e1e 100%);
   }
-  
+
   [data-theme="dark"] .section-header {
     border-bottom-color: #333;
   }
-  
+
   [data-theme="dark"] .post-title,
   [data-theme="dark"] .section-header h2 {
     color: #e0e0e0;
   }
-  
+
   [data-theme="dark"] .post-excerpt {
     color: #bbb;
   }
-  
+
   [data-theme="dark"] .author-name-small {
     color: #e0e0e0;
   }
-  
+
+  [data-theme="dark"] .search-section {
+    background: linear-gradient(135deg, rgba(212,175,55,0.04) 0%, rgba(212,175,55,0.01) 100%);
+    border-color: rgba(212,175,55,0.1);
+  }
+
+  /* ========== 响应式设计 ========== */
+  @media (max-width: 1024px) {
+    .posts-page-layout {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+    
+    .posts-sidebar {
+      order: -1; /* 移到上方 */
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+    }
+    
+    .search-section {
+      grid-column: 1 / -1;
+    }
+  }
+
   @media (max-width: 768px) {
+    .posts-page-layout {
+      padding: 1.5rem 1rem;
+    }
+    
     .posts-grid {
       grid-template-columns: 1fr;
     }
@@ -280,10 +673,23 @@
       grid-column: span 1;
     }
     
+    .search-form-inline {
+      flex-direction: column;
+    }
+    
+    .search-submit-btn {
+      width: 100%;
+    }
+    
     .section-header {
       flex-direction: column;
       align-items: flex-start;
       gap: 0.5rem;
+    }
+    
+    .posts-sidebar {
+      display: flex;
+      flex-direction: column;
     }
   }
 </style>
@@ -291,6 +697,17 @@
 <script>
 (function() {
   const API_BASE = 'https://community-deepsleep.vercel.app/api';
+  
+  // 搜索功能增强
+  const searchInput = document.getElementById('posts-search');
+  if (searchInput) {
+    searchInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        this.form.submit();
+      }
+    });
+  }
   
   async function loadCommunityPosts() {
     const container = document.getElementById('community-posts-list');

@@ -1,0 +1,359 @@
+{{ define "main" }}
+<div class="sleeptown-game stagemode-coming-soon">
+  <div class="coming-soon-container">
+    <div class="lock-icon">🔒</div>
+    <h1>关卡模式</h1>
+    <h2>即将开放</h2>
+    
+    <p class="coming-soon-desc">
+      关卡模式正在精心开发中，将带来全新的游戏体验！
+    </p>
+
+    <div class="features-preview">
+      <h3>🎯 即将推出的功能</h3>
+      
+      <div class="feature-item">
+        <span class="feature-icon">📚</span>
+        <div class="feature-content">
+          <strong>多关卡挑战</strong>
+          <p>从简单到困难，逐步提升你的推理能力</p>
+        </div>
+      </div>
+
+      <div class="feature-item">
+        <span class="feature-icon">🎲</span>
+        <div class="feature-content">
+          <strong>特殊规则</strong>
+          <p>每个关卡都有独特的规则和限制条件</p>
+        </div>
+      </div>
+
+      <div class="feature-item">
+        <span class="feature-icon">⭐</span>
+        <div class="feature-content">
+          <strong>成就系统</strong>
+          <p>完成挑战解锁成就和特殊奖励</p>
+        </div>
+      </div>
+
+      <div class="feature-item">
+        <span class="feature-icon">🏆</span>
+        <div class="feature-content">
+          <strong>排行榜</strong>
+          <p>与其他玩家比拼通关速度和策略</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="progress-section">
+      <h4>📊 开发进度</h4>
+      <div class="progress-bar">
+        <div class="progress-fill" style="width: 15%"></div>
+      </div>
+      <p class="progress-text">基础架构搭建中... (15%)</p>
+    </div>
+
+    <div class="action-buttons">
+      <button onclick="goBack()" class="back-btn-primary">← 返回模式选择</button>
+      <button onclick="tryFreeMode()" class="try-freemode-btn">先试试自由模式 🎮</button>
+    </div>
+
+    <div class="notify-section">
+      <h4>🔔 想要第一时间知道关卡模式开放？</h4>
+      <p>关注我们的更新，或尝试自由模式熟悉游戏规则！</p>
+    </div>
+  </div>
+</div>
+
+<script>
+function goBack() {
+  window.location.href = '/play/sleeptown/';
+}
+
+function tryFreeMode() {
+  window.location.href = '/play/sleeptown/freemode/';
+}
+</script>
+
+<style>
+.sleeptown-game.stagemode-coming-soon {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  min-height: calc(100vh - 200px);
+}
+
+.coming-soon-container {
+  background: var(--color-bg, #fff);
+  border-radius: 24px;
+  padding: 3rem;
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+}
+
+[data-theme="dark"] .coming-soon-container { 
+  background: #1e1e1e; 
+}
+
+.lock-icon {
+  font-size: 5rem;
+  margin-bottom: 1rem;
+  animation: pulse-lock 2s infinite;
+}
+
+@keyframes pulse-lock {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.1); opacity: 0.8; }
+}
+
+.coming-soon-container h1 {
+  font-size: 2.5rem;
+  margin: 0 0 0.5rem 0;
+  background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.coming-soon-container h2 {
+  font-size: 1.8rem;
+  color: #95a5a6;
+  margin: 0 0 1.5rem 0;
+  font-weight: 400;
+}
+
+.coming-soon-desc {
+  font-size: 1.1rem;
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 2.5rem;
+}
+
+[data-theme="dark"] .coming-soon-desc { color: #ccc; }
+
+/* 功能预览 */
+.features-preview {
+  text-align: left;
+  margin: 2.5rem 0;
+  padding: 2rem;
+  background: linear-gradient(135deg, #f39c1211 0%, #e67e2211 100%);
+  border-radius: 16px;
+  border: 2px dashed #f39c1233;
+}
+
+.features-preview h3 {
+  text-align: center;
+  margin: 0 0 1.5rem 0;
+  color: var(--color-text, #333);
+  font-size: 1.3rem;
+}
+
+[data-theme="dark"] .features-preview h3 { color: #fff; }
+
+.feature-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  margin: 1.2rem 0;
+  padding: 1rem;
+  background: var(--color-bg, #fff);
+  border-radius: 12px;
+  transition: all 0.3s;
+}
+
+[data-theme="dark"] .feature-item { background: #2a2a2a; }
+
+.feature-item:hover {
+  transform: translateX(8px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.feature-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+.feature-content strong {
+  display: block;
+  font-size: 1.05rem;
+  color: var(--color-text, #333);
+  margin-bottom: 0.3rem;
+}
+
+[data-theme="dark"] .feature-content strong { color: #fff; }
+
+.feature-content p {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 0;
+  line-height: 1.5;
+}
+
+[data-theme="dark"] .feature-content p { color: #aaa; }
+
+/* 进度条 */
+.progress-section {
+  margin: 2.5rem 0;
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 12px;
+}
+
+[data-theme="dark"] .progress-section { background: #2a2a2a; }
+
+.progress-section h4 {
+  margin: 0 0 1rem 0;
+  color: var(--color-text, #333);
+  font-size: 1.1rem;
+}
+
+[data-theme="dark"] .progress-section h4 { color: #fff; }
+
+.progress-bar {
+  width: 100%;
+  height: 20px;
+  background: #e0e0e0;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 0.8rem;
+}
+
+[data-theme="dark"] .progress-bar { background: #444; }
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #f39c12 0%, #e67e22 100%);
+  border-radius: 10px;
+  transition: width 0.3s ease;
+  position: relative;
+}
+
+.progress-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255,255,255,0.3) 50%,
+    transparent 100%
+  );
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.progress-text {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 0;
+  text-align: center;
+}
+
+[data-theme="dark"] .progress-text { color: #ccc; }
+
+/* 操作按钮 */
+.action-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin: 2rem 0;
+  flex-wrap: wrap;
+}
+
+.back-btn-primary {
+  padding: 14px 28px;
+  font-size: 1rem;
+  font-weight: 600;
+  background: #f0f0f0;
+  color: #333;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.back-btn-primary:hover {
+  background: #e0e0e0;
+  transform: translateY(-2px);
+}
+
+.try-freemode-btn {
+  padding: 14px 28px;
+  font-size: 1rem;
+  font-weight: 600;
+  background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.try-freemode-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(39,174,96,0.4);
+}
+
+/* 通知区域 */
+.notify-section {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #667eea11 0%, #764ba211 100%);
+  border-radius: 12px;
+  border-left: 4px solid #667eea;
+}
+
+.notify-section h4 {
+  margin: 0 0 0.5rem 0;
+  color: var(--color-text, #333);
+  font-size: 1rem;
+}
+
+[data-theme="dark"] .notify-section h4 { color: #fff; }
+
+.notify-section p {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 0;
+  line-height: 1.5;
+}
+
+[data-theme="dark"] .notify-section p { color: #ccc; }
+
+@media (max-width: 768px) {
+  .coming-soon-container {
+    padding: 2rem 1.5rem;
+    margin: 1rem;
+  }
+  
+  .coming-soon-container h1 {
+    font-size: 2rem;
+  }
+  
+  .coming-soon-container h2 {
+    font-size: 1.5rem;
+  }
+  
+  .feature-item {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+  }
+  
+  .back-btn-primary,
+  .try-freemode-btn {
+    width: 100%;
+  }
+}
+</style>
+{{ end }}

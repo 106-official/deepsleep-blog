@@ -1,14 +1,14 @@
 {{ define "main" }}
 <div class="sleeptown-game">
-  <!-- 游戏模式选择 -->
-  <div class="mode-selection">
+  <!-- 模式选择界面 -->
+  <div id="mode-selection" class="mode-selection">
     <div class="selection-container">
       <h1>🐟 SleepTown 鱼塘推理 v2.1.1.0</h1>
       <p class="game-intro">欢迎来到 SleepTown v2.1.1.0！全新多模式系统，更多玩法，更多策略！</p>
       
       <div class="mode-cards">
         <!-- 自由模式卡片 -->
-        <div class="mode-card freemode-card" onclick="window.location.href='/play/sleeptown/freemode/'">
+        <div class="mode-card freemode-card" onclick="showFreeModeSetup()">
           <div class="mode-icon">🎮</div>
           <h2>自由模式</h2>
           <p class="mode-description">
@@ -24,7 +24,7 @@
         </div>
 
         <!-- 关卡模式卡片 -->
-        <div class="mode-card stagemode-card" onclick="window.location.href='/play/sleeptown/stagemode/'">
+        <div class="mode-card stagemode-card">
           <div class="mode-icon">🏆</div>
           <h2>关卡模式</h2>
           <p class="mode-description">
@@ -149,9 +149,286 @@
       </div>
     </div>
   </div>
+
+  <!-- 自由模式配置界面 -->
+  <div id="freemode-setup" class="game-setup" style="display:none">
+    <div class="setup-container">
+      <h1>🎮 SleepTown 自由模式</h1>
+      <p class="game-intro">自定义游戏配置，完全掌控游戏参数！</p>
+
+      <!-- 返回按钮 -->
+      <button onclick="backToModeSelection()" class="back-to-selection-btn">← 返回模式选择</button>
+
+      <!-- 鱼数量配置 -->
+      <div class="config-section">
+        <h3>🐟 鱼的数量</h3>
+        <div class="fish-count-config">
+          <label for="fish-count">选择参与游戏的鱼数量：</label>
+          <div class="count-selector">
+            <button onclick="adjustCount(-1)" class="count-btn minus-btn">−</button>
+            <input type="number" id="fish-count" min="6" max="20" value="10" class="fish-count-input" onchange="validateCount()">
+            <button onclick="adjustCount(1)" class="count-btn plus-btn">+</button>
+          </div>
+          <p class="hint">💡 范围：6-20只鱼，推荐10-15只</p>
+        </div>
+      </div>
+
+      <!-- 角色阵营配置 -->
+      <div class="config-section">
+        <h3>🎭 角色阵营选择</h3>
+        <p class="section-desc">至少选择一种阵营参与游戏</p>
+
+        <div class="faction-checkboxes">
+          <!-- 豪鱼阵营 -->
+          <div class="faction-group good-faction">
+            <label class="faction-label">
+              <input type="checkbox" id="faction-good" checked onchange="updateFactionSelection()">
+              <span class="faction-icon">🌊</span>
+              <span class="faction-name">豪鱼阵营</span>
+              <span class="faction-desc">摆烂D、侦探D、法官D、八卦鱼</span>
+            </label>
+          </div>
+
+          <!-- 坏鱼阵营 -->
+          <div class="faction-group evil-faction">
+            <label class="faction-label">
+              <input type="checkbox" id="faction-evil" checked onchange="updateFactionSelection()">
+              <span class="faction-icon">😈</span>
+              <span class="faction-name">坏鱼阵营</span>
+              <span class="faction-desc">邪恶D（会伪装）</span>
+            </label>
+          </div>
+
+          <!-- 中立阵营 -->
+          <div class="faction-group neutral-faction">
+            <label class="faction-label">
+              <input type="checkbox" id="faction-neutral" checked onchange="updateFactionSelection()">
+              <span class="faction-icon">⚖️</span>
+              <span class="faction-name">中立阵营</span>
+              <span class="faction-desc">恶作剧D、虎鲸</span>
+            </label>
+          </div>
+        </div>
+
+        <div id="faction-warning" class="warning-message" style="display:none">
+          ⚠️ 请至少选择一个阵营！
+        </div>
+      </div>
+
+      <!-- 高级选项（可选） -->
+      <div class="config-section advanced-options">
+        <h3 onclick="toggleAdvanced()" class="advanced-header">
+          ⚙️ 高级选项 <span id="advanced-toggle">展开 ▼</span>
+        </h3>
+
+        <div id="advanced-content" style="display:none">
+          <div class="option-row">
+            <label for="inquiry-count">每轮问询次数：</label>
+            <select id="inquiry-count" class="option-select">
+              <option value="2">2 次（困难）</option>
+              <option value="3" selected>3 次（标准）</option>
+              <option value="4">4 次（简单）</option>
+              <option value="5">5 次（新手）</option>
+            </select>
+          </div>
+
+          <div class="option-row">
+            <label for="difficulty">难度调整：</label>
+            <select id="difficulty" class="option-select">
+              <option value="easy">简单（豪鱼优势）</option>
+              <option value="normal" selected>标准（平衡）</option>
+              <option value="hard">困难（坏鱼优势）</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- 配置预览 -->
+      <div class="config-preview">
+        <h4>📋 当前配置预览</h4>
+        <div id="config-summary" class="summary-content">
+          <p><strong>鱼数量：</strong> <span id="preview-count">10</span> 只</p>
+          <p><strong>参与阵营：</strong> <span id="preview-factions">豪鱼 + 坏鱼 + 中立</span></p>
+          <p><strong>问询次数：</strong> <span id="preview-inquiries">3</span> 次/轮</p>
+          <p><strong>预计难度：</strong> <span id="preview-difficulty">标准</span></p>
+        </div>
+      </div>
+
+      <!-- 开始按钮 -->
+      <button onclick="startFreeModeGame()" class="start-btn" id="start-game-btn">
+        🎮 开始自由模式游戏
+      </button>
+    </div>
+  </div>
+
+  <!-- 游戏主界面 -->
+  <div id="game-main" class="game-main" style="display:none">
+    <!-- 状态栏 -->
+    <div class="status-bar">
+      <div class="status-item">
+        <span class="status-label">当前阶段</span>
+        <span id="phase-display" class="status-value">白天 第 1 轮</span>
+      </div>
+      <div class="status-item">
+        <span class="status-label">剩余问询</span>
+        <span id="inquiries-left" class="status-value">3 次</span>
+      </div>
+      <div class="status-item">
+        <span class="status-label">存活豪鱼</span>
+        <span id="good-fish-alive" class="status-value">-</span>
+      </div>
+      <div class="status-item">
+        <span class="status-label">存活非豪鱼</span>
+        <span id="bad-fish-alive" class="status-value">?</span>
+      </div>
+    </div>
+
+    <!-- 日志 -->
+    <div id="game-log" class="game-log"></div>
+
+    <!-- 鱼塘 -->
+    <div id="fish-pond" class="fish-pond"></div>
+
+    <!-- 操作按钮 -->
+    <div class="action-bar">
+      <button id="btn-skip-inquiry" onclick="skipInquiry()" class="action-btn skip-btn" style="display:none">
+        ⏭️ 结束问询
+      </button>
+      <button id="btn-exile" onclick="enterExileMode()" class="action-btn exile-btn" disabled>
+        ⚖️ 流放模式
+      </button>
+      <button id="btn-skip-exile" onclick="skipExile()" class="action-btn skip-exile-btn" style="display:none">
+        🚫 跳过流放
+      </button>
+      <button onclick="showRulesModal()" class="action-btn info-btn">
+        📖 完整规则
+      </button>
+      <button onclick="resetGame()" class="action-btn reset-btn">
+        🔄 重新开始
+      </button>
+      <button onclick="goBackToSetup()" class="action-btn back-btn">
+        ← 修改配置
+      </button>
+    </div>
+  </div>
+
+  <!-- 游戏结束弹窗 -->
+  <div id="game-over-modal" class="modal-overlay" style="display:none">
+    <div class="modal-content game-over-content">
+      <div id="result-icon" class="result-icon"></div>
+      <h2 id="result-title" class="result-title"></h2>
+      <p id="result-message" class="result-message"></p>
+
+      <div id="reveal-info" class="reveal-info"></div>
+
+      <div class="result-actions">
+        <button onclick="resetGame()" class="play-again-btn">🔄 再来一局</button>
+        <button onclick="goBackToSetup()" class="back-btn">修改配置</button>
+        <button onclick="backToModeSelection()" class="back-btn">返回模式选择</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 规则弹窗 -->
+  <div id="rules-modal" class="modal-overlay" style="display:none">
+    <div class="modal-content rules-content">
+      <h2>📜 SleepTown 完整规则 v2.1.1.0</h2>
+
+      <div class="rules-section">
+        <h3>🎭 角色介绍（7种角色）</h3>
+
+        <div class="role-card good-role">
+          <h4>🐟 摆烂D（豪鱼阵营）</h4>
+          <p>普通的好鱼，翻开后无事发生。</p>
+        </div>
+
+        <div class="role-card detective-role">
+          <h4>🔍 侦探D（豪鱼阵营）</h4>
+          <p>告诉你一条<strong>真实坏鱼</strong>的编号。</p>
+        </div>
+
+        <div class="role-card judge-role">
+          <h4>⚖️ 法官D（豪鱼阵营）</h4>
+          <p>宣判一只<strong>非豪鱼</strong>的编号。</p>
+        </div>
+
+        <div class="role-card gossip-role">
+          <h4>📰 八卦鱼（豪鱼阵营）</h4>
+          <p>检查相邻号码，有非好鱼回复<strong>"有瓜吃！"</strong>，没有则<strong>"并没有瓜..."</strong></p>
+        </div>
+
+        <div class="role-card evil-role">
+          <h4>😈 邪恶D（坏鱼阵营）</h4>
+          <p>每晚会杀死一只豪鱼。被翻开时会<strong>完美伪装</strong>成其他角色。</p>
+        </div>
+
+        <div class="role-card neutral-role">
+          <h4>🎭 恶作剧D（中立阵营）</h4>
+          <p>翻开后会<strong>立即清空</strong>当天剩余问询机会！</p>
+        </div>
+
+        <div class="role-card orca-role">
+          <h4>🐋 虎鲸（中立阵营）</h4>
+          <p><strong>每夜晚</strong>都会随机杀死一条其他的鱼（不分阵营）！</p>
+        </div>
+      </div>
+
+      <div class="rules-section">
+        <h3>🏆 胜利条件</h3>
+        <div class="win-condition">
+          <strong>✅ 豪鱼胜利</strong>: 所有坏鱼都被淘汰<br>
+        </div>
+        <div class="lose-condition">
+          <strong>❌ 失败条件</strong>:<br>
+          • 所有豪鱼都被淘汰（死亡/流放）<br>
+          • 或：豪鱼 + 中立阵营 ≤ 坏鱼阵营数量<br>
+        </div>
+      </div>
+
+      <button onclick="closeModal('rules-modal')" class="close-rules-btn">了解了！</button>
+    </div>
+  </div>
 </div>
 
 <script>
+// ==================== 全局变量 ====================
+let gameState = {
+  phase: 'setup',
+  day: 1,
+  inquiriesLeft: 3,
+  maxInquiriesPerDay: 3,
+  fishes: [],
+  totalFish: 10,
+  mode: 'freemode',
+  config: {
+    fishCount: 10,
+    factions: ['good', 'evil', 'neutral'],
+    inquiriesPerDay: 3,
+    difficulty: 'normal'
+  },
+  logs: []
+};
+
+// ==================== 页面导航函数 ====================
+function showFreeModeSetup() {
+  document.getElementById('mode-selection').style.display = 'none';
+  document.getElementById('freemode-setup').style.display = 'flex';
+}
+
+function backToModeSelection() {
+  closeModal('game-over-modal');
+  document.getElementById('freemode-setup').style.display = 'none';
+  document.getElementById('game-main').style.display = 'none';
+  document.getElementById('mode-selection').style.display = 'flex';
+}
+
+function goBackToSetup() {
+  closeModal('game-over-modal');
+  document.getElementById('game-main').style.display = 'none';
+  document.getElementById('freemode-setup').style.display = 'flex';
+}
+
+// ==================== 模式选择界面函数 ====================
 function toggleRules() {
   const rulesContent = document.getElementById('rules-content-setup');
   const toggleBtn = document.getElementById('toggle-rules-btn');
@@ -166,12 +443,710 @@ function toggleRules() {
 }
 
 function quickStart() {
-  // 使用默认配置跳转到自由模式
-  window.location.href = '/play/sleeptown/freemode/?mode=quick&count=10';
+  // 使用默认配置直接开始游戏
+  const defaultConfig = {
+    fishCount: 10,
+    factions: ['good', 'evil', 'neutral'],
+    inquiriesPerDay: 3,
+    difficulty: 'normal'
+  };
+  
+  gameState.config = defaultConfig;
+  
+  document.getElementById('mode-selection').style.display = 'none';
+  document.getElementById('game-main').style.display = 'block';
+  
+  initializeGame(defaultConfig);
+}
+
+// ==================== 配置界面函数 ====================
+function adjustCount(delta) {
+  const input = document.getElementById('fish-count');
+  let value = parseInt(input.value) + delta;
+  value = Math.max(6, Math.min(20, value));
+  input.value = value;
+  validateCount();
+  updateConfigPreview();
+}
+
+function validateCount() {
+  const input = document.getElementById('fish-count');
+  let value = parseInt(input.value);
+  value = Math.max(6, Math.min(20, value));
+  input.value = value;
+  updateConfigPreview();
+}
+
+function updateFactionSelection() {
+  const good = document.getElementById('faction-good').checked;
+  const evil = document.getElementById('faction-evil').checked;
+  const neutral = document.getElementById('faction-neutral').checked;
+
+  const warning = document.getElementById('faction-warning');
+
+  if (!good && !evil && !neutral) {
+    warning.style.display = 'block';
+    document.getElementById('start-game-btn').disabled = true;
+  } else {
+    warning.style.display = 'none';
+    document.getElementById('start-game-btn').disabled = false;
+  }
+
+  updateConfigPreview();
+}
+
+function toggleAdvanced() {
+  const content = document.getElementById('advanced-content');
+  const toggle = document.getElementById('advanced-toggle');
+
+  if (content.style.display === 'none') {
+    content.style.display = 'block';
+    toggle.textContent = '收起 ▲';
+  } else {
+    content.style.display = 'none';
+    toggle.textContent = '展开 ▼';
+  }
+}
+
+function updateConfigPreview() {
+  const count = document.getElementById('fish-count').value;
+  const good = document.getElementById('faction-good').checked;
+  const evil = document.getElementById('faction-evil').checked;
+  const neutral = document.getElementById('faction-neutral').checked;
+  const inquiries = document.getElementById('inquiry-count').value;
+  const difficulty = document.getElementById('difficulty').value;
+
+  document.getElementById('preview-count').textContent = count;
+
+  let factions = [];
+  if (good) factions.push('豪鱼');
+  if (evil) factions.push('坏鱼');
+  if (neutral) factions.push('中立');
+  document.getElementById('preview-factions').textContent = factions.join(' + ');
+
+  document.getElementById('preview-inquiries').textContent = inquiries;
+
+  const difficultyText = {
+    'easy': '简单',
+    'normal': '标准',
+    'hard': '困难'
+  };
+  document.getElementById('preview-difficulty').textContent = difficultyText[difficulty];
+}
+
+// ==================== 游戏启动函数 ====================
+function startFreeModeGame() {
+  const config = {
+    fishCount: parseInt(document.getElementById('fish-count').value),
+    factions: [],
+    inquiriesPerDay: parseInt(document.getElementById('inquiry-count').value),
+    difficulty: document.getElementById('difficulty').value
+  };
+
+  if (document.getElementById('faction-good').checked) config.factions.push('good');
+  if (document.getElementById('faction-evil').checked) config.factions.push('evil');
+  if (document.getElementById('faction-neutral').checked) config.factions.push('neutral');
+
+  gameState.config = config;
+
+  document.getElementById('freemode-setup').style.display = 'none';
+  document.getElementById('game-main').style.display = 'block';
+
+  initializeGame(config);
+}
+
+function initializeGame(config) {
+  const totalCount = config.fishCount;
+  const factions = config.factions;
+
+  const roles = generateRoles(totalCount, factions, config.difficulty);
+
+  const shuffledRoles = shuffleArray(roles);
+
+  gameState = {
+    phase: 'day',
+    day: 1,
+    inquiriesLeft: config.inquiriesPerDay,
+    maxInquiriesPerDay: config.inquiriesPerDay,
+    fishes: shuffledRoles.map((role, idx) => ({
+      id: idx,
+      role: role,
+      revealed: false,
+      alive: true,
+      disguisedAs: null
+    })),
+    totalFish: totalCount,
+    mode: 'freemode',
+    config: config,
+    gameMode: 'inquiry',
+    logs: []
+  };
+
+  document.getElementById('game-log').innerHTML = '';
+
+  const evilCount = shuffledRoles.filter(r => r === 'evil').length;
+  const tricksterCount = shuffledRoles.filter(r => r === 'trickster').length;
+  const orcaCount = shuffledRoles.filter(r => r === 'orca').length;
+  const goodActual = totalCount - evilCount - tricksterCount - orcaCount;
+
+  addLog(`🎮 自由模式开始！共 ${totalCount} 条鱼 (${goodActual} 豪鱼 vs ${tricksterCount + orcaCount} 中立 vs ${evilCount} 坏鱼)`, 'system');
+  addLog(`☀️ 白天第 1 轮 - 你有 ${config.inquiriesPerDay} 次问询机会`, 'day');
+
+  updateStatusBar();
+  renderFishes();
+
+  document.getElementById('btn-exile').disabled = true;
+  document.getElementById('btn-skip-inquiry').style.display = 'none';
+  document.getElementById('btn-skip-exile').style.display = 'none';
+}
+
+function generateRoles(count, factions, difficulty) {
+  const roles = [];
+
+  let badCount = 0;
+  let tricksterCount = 0;
+  let orcaCount = 0;
+  let goodCount = 0;
+
+  if (factions.includes('evil')) {
+    switch(difficulty) {
+      case 'easy':
+        badCount = Math.max(1, Math.floor(count * 0.15));
+        break;
+      case 'normal':
+        badCount = Math.max(1, Math.floor(count * 0.25));
+        break;
+      case 'hard':
+        badCount = Math.max(1, Math.floor(count * 0.35));
+        break;
+    }
+  }
+
+  if (factions.includes('neutral')) {
+    tricksterCount = Math.max(0, Math.floor(count * 0.08));
+    orcaCount = Math.max(0, Math.floor(count * 0.06));
+  }
+
+  if (factions.includes('good')) {
+    goodCount = count - badCount - tricksterCount - orcaCount;
+
+    const detectiveCount = Math.max(0, Math.floor(goodCount * 0.22));
+    const judgeCount = Math.max(0, Math.floor(goodCount * 0.20));
+    const gossipCount = Math.max(0, Math.floor(goodCount * 0.25));
+    const slackerCount = goodCount - detectiveCount - judgeCount - gossipCount;
+
+    for (let i = 0; i < slackerCount; i++) roles.push('slacker');
+    for (let i = 0; i < detectiveCount; i++) roles.push('detective');
+    for (let i = 0; i < judgeCount; i++) roles.push('judge');
+    for (let i = 0; i < gossipCount; i++) roles.push('gossip');
+  }
+
+  for (let i = 0; i < badCount; i++) roles.push('evil');
+
+  for (let i = 0; i < tricksterCount; i++) roles.push('trickster');
+  for (let i = 0; i < orcaCount; i++) roles.push('orca');
+
+  while (roles.length < count) roles.push('slacker');
+  while (roles.length > count) roles.pop();
+
+  return roles;
+}
+
+// ==================== 公共游戏逻辑函数 ====================
+function shuffleArray(array) {
+  const newArray = [...array];
+  for (let i = newArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+  }
+  return newArray;
+}
+
+function addLog(message, type = 'info') {
+  const logDiv = document.getElementById('game-log');
+  const logEntry = document.createElement('div');
+  logEntry.className = `log-entry log-${type}`;
+  logEntry.innerHTML = message;
+  logDiv.insertBefore(logEntry, logDiv.firstChild);
+  gameState.logs.push({ message, type, time: new Date() });
+}
+
+function updateStatusBar() {
+  document.getElementById('phase-display').textContent =
+    gameState.phase === 'day' ? `白天第 ${gameState.day} 轮` :
+    gameState.phase === 'night' ? `夜晚第 ${gameState.day} 轮` :
+    gameState.phase === 'exile' ? `流放模式` : gameState.phase;
+
+  document.getElementById('inquiries-left').textContent = `${gameState.inquiriesLeft} 次`;
+
+  const aliveGood = gameState.fishes.filter(f => f.alive && ['slacker', 'detective', 'judge', 'gossip'].includes(f.role)).length;
+  const aliveBadOrNeutral = gameState.fishes.filter(f => f.alive && ['evil', 'trickster', 'orca'].includes(f.role)).length;
+
+  document.getElementById('good-fish-alive').textContent = aliveGood;
+  document.getElementById('bad-fish-alive').textContent = gameState.phase === 'gameOver' ||
+    gameState.fishes.some(f => f.revealed && f.role === 'evil') ? aliveBadOrNeutral : '?';
+
+  if (gameState.phase === 'day' && gameState.gameMode === 'inquiry') {
+    const skipInquiryBtn = document.getElementById('btn-skip-inquiry');
+    if (gameState.inquiriesLeft > 0 && gameState.inquiriesLeft < gameState.maxInquiriesPerDay) {
+      skipInquiryBtn.style.display = 'inline-block';
+    } else {
+      skipInquiryBtn.style.display = 'none';
+    }
+    document.getElementById('btn-skip-exile').style.display = 'none';
+  }
+}
+
+function renderFishes() {
+  const pond = document.getElementById('fish-pond');
+  pond.innerHTML = '';
+
+  gameState.fishes.forEach((fish, index) => {
+    const fishCard = document.createElement('div');
+
+    if (!fish.alive) {
+      fishCard.className = `fish-card dead`;
+      fishCard.innerHTML = `
+        <div class="fish-avatar dead-avatar">💀</div>
+        <div class="fish-number">#${index + 1}</div>
+        <div class="fish-status">已死亡</div>
+        <div class="fish-real-role">${getRoleEmoji(fish.role)} ${getRoleName(fish.role)}</div>
+      `;
+    } else if (fish.revealed) {
+      const displayRole = fish.disguisedAs || fish.role;
+      fishCard.className = `fish-card revealed`;
+
+      let badgeHTML = '';
+      if (!fish.disguisedAs && gameState.phase === 'gameOver') {
+        if (['detective', 'judge', 'gossip'].includes(fish.role)) {
+          badgeHTML = `<div class="special-badge ${fish.role}-badge">${getRoleEmoji(fish.role)}${getRoleName(fish.role)}</div>`;
+        } else if (fish.role === 'trickster') {
+          badgeHTML = '<div class="trickster-badge">恶作剧</div>';
+        } else if (fish.role === 'orca') {
+          badgeHTML = '<div class="orca-badge">虎鲸</div>';
+        }
+      }
+
+      fishCard.innerHTML = `
+        <div class="fish-avatar revealed-avatar">${getRoleAvatar(displayRole)}</div>
+        <div class="fish-number">#${index + 1}</div>
+        <div class="fish-role-name">${getRoleName(displayRole)}</div>
+        ${badgeHTML}
+      `;
+
+      if (gameState.gameMode === 'exile') {
+        fishCard.onclick = () => exileFish(index);
+        fishCard.className += ' exile-mode';
+      }
+    } else {
+      fishCard.className = `fish-card`;
+      fishCard.innerHTML = `
+        <div class="fish-avatar hidden-avatar">❓</div>
+        <div class="fish-number">#${index + 1}</div>
+        <div class="fish-hint">${gameState.gameMode === 'inquiry' ? '点击问询' : '点击流放'}</div>
+      `;
+
+      if (gameState.gameMode === 'inquiry' && gameState.inquiriesLeft > 0) {
+        fishCard.onclick = () => inquireFish(index);
+      } else if (gameState.gameMode === 'exile') {
+        fishCard.onclick = () => exileFish(index);
+        fishCard.className += ' exile-mode';
+      }
+    }
+
+    pond.appendChild(fishCard);
+  });
+}
+
+function getRoleEmoji(role) {
+  switch(role) {
+    case 'slacker': return '🐟';
+    case 'detective': return '🔍';
+    case 'judge': return '⚖️';
+    case 'gossip': return '📰';
+    case 'evil': return '😈';
+    case 'trickster': return '🎭';
+    case 'orca': return '🐋';
+    default: return '❓';
+  }
+}
+
+function getRoleAvatar(role) {
+  return getRoleEmoji(role);
+}
+
+function getRoleName(role) {
+  switch(role) {
+    case 'slacker': return '摆烂D';
+    case 'detective': return '侦探D';
+    case 'judge': return '法官D';
+    case 'gossip': return '八卦鱼';
+    case 'evil': return '邪恶D';
+    case 'trickster': return '恶作剧D';
+    case 'orca': return '虎鲸';
+    default: return '未知';
+  }
+}
+
+function getAdjacentFish(index) {
+  const total = gameState.fishes.length;
+  const leftIndex = (index - 1 + total) % total;
+  const rightIndex = (index + 1) % total;
+  return [leftIndex, rightIndex];
+}
+
+function inquireFish(index) {
+  if (gameState.inquiriesLeft <= 0) return;
+  if (!gameState.fishes[index].alive || gameState.fishes[index].revealed) return;
+
+  const fish = gameState.fishes[index];
+  fish.revealed = true;
+  gameState.inquiriesLeft--;
+
+  addLog(`🔍 问询 #${index + 1} 号鱼...`, 'action');
+
+  setTimeout(() => {
+    handleInquireResult(fish, index);
+
+    updateStatusBar();
+    renderFishes();
+
+    if (gameState.inquiriesLeft === 0) {
+      document.getElementById('btn-exile').disabled = false;
+      document.getElementById('btn-skip-inquiry').style.display = 'none';
+      addLog(`⚠️ 问询次数已用完！现在可以选择流放一只可疑的鱼，或跳过流放`, 'warning');
+    } else if (gameState.inquiriesLeft < gameState.maxInquiriesPerDay) {
+      document.getElementById('btn-skip-inquiry').style.display = 'inline-block';
+    }
+
+    checkGameEnd();
+  }, 600);
+}
+
+function handleInquireResult(fish, index) {
+  if (fish.role === 'evil') {
+    const disguiseOptions = ['slacker', 'detective', 'judge', 'gossip', 'trickster'];
+    fish.disguisedAs = disguiseOptions[Math.floor(Math.random() * disguiseOptions.length)];
+
+    addLog(`⚠️ #${index + 1} 号鱼是 **${getRoleEmoji(fish.disguisedAs)}${getRoleName(fish.disguisedAs)}**`, 'warning');
+
+    triggerRoleEffect(fish.disguisedAs, index, true);
+
+  } else {
+    addLog(`✨ #${index + 1} 号是 **${getRoleEmoji(fish.role)}${getRoleName(fish.role)}**`,
+           ['slacker'].includes(fish.role) ? 'neutral' : 'success');
+
+    triggerRoleEffect(fish.role, index, false);
+  }
+}
+
+function triggerRoleEffect(role, index, isDisguised) {
+  switch(role) {
+    case 'trickster':
+      const lostInquiries = gameState.inquiriesLeft;
+      gameState.inquiriesLeft = 0;
+      addLog(`🎭 触发恶作剧效果！**你的问询机会被全部清空了！** (损失 ${lostInquiries} 次机会)`, 'trickster');
+      document.getElementById('btn-exile').disabled = false;
+      addLog(`⚠️ 问询次数已用完！现在可以选择流放一只可疑的鱼，或跳过流放`, 'warning');
+      break;
+
+    case 'detective':
+      let targetPool;
+      if (isDisguised) {
+        targetPool = gameState.fishes.filter(f => f.alive && !['evil', 'trickster', 'orca'].includes(f.role) && f.id !== index);
+      } else {
+        targetPool = gameState.fishes.filter(f => f.alive && f.role === 'evil');
+      }
+
+      if (targetPool.length > 0) {
+        const target = targetPool[Math.floor(Math.random() * targetPool.length)];
+        addLog(`🗣️ #${index + 1} 号说：**#${target.id + 1} 号是坏鱼！**`, 'clue');
+      } else {
+        addLog(`🗣️ #${index + 1} 号说：暂时没有发现...`, 'neutral');
+      }
+      break;
+
+    case 'judge':
+      let judgeTargetPool;
+      if (isDisguised) {
+        judgeTargetPool = gameState.fishes.filter(f => f.alive && !['evil', 'trickster', 'orca'].includes(f.role) && f.id !== index);
+      } else {
+        judgeTargetPool = gameState.fishes.filter(f => f.alive && ['evil', 'trickster', 'orca'].includes(f.role) && f.id !== index);
+      }
+
+      if (judgeTargetPool.length > 0) {
+        const judgeTarget = judgeTargetPool[Math.floor(Math.random() * judgeTargetPool.length)];
+        addLog(`⚖️ #${index + 1} 号宣判：**#${judgeTarget.id + 1} 号不是豪鱼！**`, 'clue');
+      } else {
+        addLog(`⚖️ #${index + 1} 号宣判：暂时没有发现...`, 'neutral');
+      }
+      break;
+
+    case 'gossip':
+      const adjacentIndices = getAdjacentFish(index);
+      const adjacentFish = adjacentIndices.map(i => gameState.fishes[i]).filter(f => f.alive);
+
+      let hasNonGood = adjacentFish.some(f => ['evil', 'trickster', 'orca'].includes(f.role));
+
+      if (isDisguised) {
+        hasNonGood = !hasNonGood;
+      }
+
+      if (hasNonGood) {
+        addLog(`📰 #${index + 1} 号悄悄说：**"有瓜吃！** 🍉（相邻有情况）`, 'clue');
+      } else {
+        addLog(`📰 #${index + 1} 号失望地说：**"并没有瓜..."** 😔`, 'neutral');
+      }
+      break;
+
+    case 'orca':
+      addLog(`🐋 #${index + 1} 号发出低沉的鸣叫...今晚要小心了！`, 'warning');
+      break;
+
+    case 'slacker':
+    default:
+      addLog(`😴 #${index + 1} 号是一条普通的摆烂D，什么也没发生`, 'neutral');
+      break;
+  }
+}
+
+function enterExileMode() {
+  if (gameState.inquiriesLeft > 0) {
+    alert('还有问询机会未使用，是否确定要进入流放模式？\n\n提示：建议先用完所有问询机会获取更多信息！');
+    return;
+  }
+
+  gameState.gameMode = 'exile';
+  addLog(`⚖️ 进入流放模式 - 选择一只鱼进行流放`, 'system');
+  updateStatusBar();
+  renderFishes();
+
+  document.getElementById('btn-exile').disabled = true;
+  document.getElementById('btn-skip-inquiry').style.display = 'none';
+  document.getElementById('btn-skip-exile').style.display = 'inline-block';
+}
+
+function skipInquiry() {
+  if (gameState.inquiriesLeft <= 0) return;
+
+  const remaining = gameState.inquiriesLeft;
+  gameState.inquiriesLeft = 0;
+
+  addLog(`⏭️ 你选择提前结束问询（剩余 ${remaining} 次机会未使用）`, 'warning');
+  document.getElementById('btn-skip-inquiry').style.display = 'none';
+  document.getElementById('btn-exile').disabled = false;
+  addLog(`⚠️ 现在可以选择流放一只可疑的鱼，或跳过流放`, 'warning');
+
+  updateStatusBar();
+}
+
+function skipExile() {
+  addLog(`🚫 你选择本轮不流放任何鱼`, 'neutral');
+  document.getElementById('btn-skip-exile').style.display = 'none';
+
+  if (!checkGameEnd()) {
+    startNightPhase();
+  }
+}
+
+function exileFish(index) {
+  if (!gameState.fishes[index].alive) return;
+
+  const fish = gameState.fishes[index];
+  fish.alive = false;
+  fish.revealed = true;
+
+  addLog(`⚖️ 流放 #${index + 1} 号鱼...`, 'action');
+
+  setTimeout(() => {
+    const realRole = fish.role;
+    const wasDisguised = !!fish.disguisedAs;
+
+    if (realRole === 'evil') {
+      addLog(`🎉 太棒了！#${index + 1} 号确实是 **😈邪恶D（坏鱼）**！${wasDisguised ? ' 它伪装成了其他角色！' : ''}`, 'success');
+    } else if (realRole === 'trickster') {
+      addLog(`😐 #${index + 1} 号是 **🎭恶作剧D（中立）**${wasDisguised ? '（伪装的）' : ''}`, 'neutral');
+    } else if (realRole === 'orca') {
+      addLog(`😤 #${index + 1} 号是 **🐋虎鲸（中立）**${wasDisguised ? '（伪装的）' : ''}，至少它不会再杀人了`, 'neutral');
+    } else if (['slacker', 'detective', 'judge', 'gossip'].includes(realRole)) {
+      addLog(`😢 遗憾...#${index + 1} 号是 **${getRoleEmoji(realRole)}${getRoleName(realRole)}（豪鱼）**${wasDisguised ? '（它是伪装的！）' : ''}，被误杀了`, 'error');
+    }
+
+    if (!checkGameEnd()) {
+      startNightPhase();
+    }
+  }, 800);
+}
+
+function startNightPhase() {
+  gameState.phase = 'night';
+  gameState.gameMode = 'inquiry';
+  gameState.inquiriesLeft = gameState.config.inquiriesPerDay;
+
+  addLog(`🌙 夜晚降临...`, 'night');
+  updateStatusBar();
+  renderFishes();
+
+  setTimeout(() => {
+    const victims = [];
+
+    const aliveEvilFish = gameState.fishes.filter(f => f.alive && f.role === 'evil');
+    const aliveGoodFish = gameState.fishes.filter(f => f.alive && ['slacker', 'detective', 'judge', 'gossip'].includes(f.role));
+
+    if (aliveEvilFish.length > 0 && aliveGoodFish.length > 0) {
+      const victim = aliveGoodFish[Math.floor(Math.random() * aliveGoodFish.length)];
+      victims.push({ fish: victim, killer: '坏鱼' });
+    }
+
+    const aliveOrca = gameState.fishes.filter(f => f.alive && f.role === 'orca');
+    const aliveOthers = gameState.fishes.filter(f => f.alive && f.role !== 'orca');
+
+    if (aliveOrca.length > 0 && aliveOthers.length > 0) {
+      const orcaVictim = aliveOthers[Math.floor(Math.random() * aliveOthers.length)];
+      if (!victims.some(v => v.fish.id === orcaVictim.id)) {
+        victims.push({ fish: orcaVictim, killer: '虎鲸' });
+      }
+    }
+
+    if (victims.length > 0) {
+      setTimeout(() => {
+        victims.forEach(victim => {
+          victim.fish.alive = false;
+          addLog(`💀 夜深了...#${victim.fish.id + 1} 号鱼被 **${victim.killer}** 杀害了！它是 **${getRoleEmoji(victim.fish.role)}${getRoleName(victim.fish.role)}**`, 'death');
+        });
+
+        gameState.day++;
+        gameState.phase = 'day';
+
+        addLog(`☀️ 白天第 ${gameState.day} 轮 - 你有 ${gameState.config.inquiriesPerDay} 次新的问询机会`, 'day');
+
+        updateStatusBar();
+        renderFishes();
+        checkGameEnd();
+      }, 1000);
+    } else {
+      gameState.day++;
+      gameState.phase = 'day';
+
+      addLog(`☀️ 白天第 ${gameState.day} 轮 - 今夜平安无事`, 'day');
+
+      updateStatusBar();
+      renderFishes();
+      checkGameEnd();
+    }
+  }, 1000);
+}
+
+function checkGameEnd() {
+  const aliveGood = gameState.fishes.filter(f => f.alive && ['slacker', 'detective', 'judge', 'gossip'].includes(f.role)).length;
+  const aliveEvil = gameState.fishes.filter(f => f.alive && f.role === 'evil').length;
+  const aliveNeutral = gameState.fishes.filter(f => f.alive && ['trickster', 'orca'].includes(f.role)).length;
+
+  if (aliveEvil === 0) {
+    endGame(true);
+    return true;
+  }
+
+  if (aliveGood === 0) {
+    endGame(false);
+    return true;
+  }
+
+  if (aliveGood + aliveNeutral <= aliveEvil) {
+    endGame(false);
+    return true;
+  }
+
+  return false;
+}
+
+function endGame(playerWins) {
+  gameState.phase = 'gameOver';
+
+  gameState.fishes.forEach(f => {
+    if (f.alive && !f.revealed) {
+      f.revealed = true;
+    }
+  });
+
+  const modal = document.getElementById('game-over-modal');
+  const icon = document.getElementById('result-icon');
+  const title = document.getElementById('result-title');
+  const message = document.getElementById('result-message');
+  const revealInfo = document.getElementById('reveal-info');
+
+  if (playerWins) {
+    icon.textContent = '🎉';
+    title.textContent = '豪鱼胜利！';
+    message.textContent = '你是豪人！成功找出了所有威胁，SleepTown 再次恢复了宁静！';
+    modal.className = 'modal-overlay win-modal';
+  } else {
+    icon.textContent = '💀';
+    title.textContent = '失败！';
+    message.textContent = '混乱占据了上风，SleepTown 陷入了黑暗...';
+    modal.className = 'modal-overlay lose-modal';
+  }
+
+  let revealHTML = '<h3>📋 所有鱼的真相</h3><div class="truth-grid">';
+  gameState.fishes.forEach((fish, index) => {
+    let bgColor = 'good-truth';
+    if (fish.role === 'evil') bgColor = 'evil-truth';
+    else if (['trickster', 'orca'].includes(fish.role)) bgColor = 'neutral-truth';
+
+    const disguiseInfo = fish.disguisedAs ? ` (伪装成${getRoleName(fish.disguisedAs)})` : '';
+
+    revealHTML += `
+      <div class="truth-item ${bgColor}">
+        <span>#${index + 1}</span>
+        <span>${getRoleEmoji(fish.role)} ${getRoleName(fish.role)}${disguiseInfo}</span>
+        <span>${fish.alive ? '✅ 存活' : '💀 死亡'}</span>
+      </div>
+    `;
+  });
+  revealHTML += '</div>';
+  revealInfo.innerHTML = revealHTML;
+
+  modal.style.display = 'flex';
+  updateStatusBar();
+  renderFishes();
+}
+
+function showRulesModal() {
+  document.getElementById('rules-modal').style.display = 'flex';
+}
+
+function closeModal(modalId) {
+  document.getElementById(modalId).style.display = 'none';
+}
+
+function resetGame() {
+  closeModal('game-over-modal');
+  closeModal('rules-modal');
+
+  gameState = {
+    phase: 'setup',
+    day: 1,
+    inquiriesLeft: 3,
+    maxInquiriesPerDay: 3,
+    fishes: [],
+    totalFish: 10,
+    mode: 'freemode',
+    config: {},
+    gameMode: 'inquiry',
+    logs: []
+  };
+
+  document.getElementById('freemode-setup').style.display = 'block';
+  document.getElementById('game-main').style.display = 'none';
+  document.getElementById('btn-exile').disabled = true;
+  document.getElementById('btn-skip-inquiry').style.display = 'none';
+  document.getElementById('btn-skip-exile').style.display = 'none';
+  document.getElementById('game-log').innerHTML = '';
 }
 </script>
 
 <style>
+/* ==================== 基础布局样式 ==================== */
 .sleeptown-game {
   max-width: 1200px;
   margin: 1rem auto;
@@ -179,6 +1154,7 @@ function quickStart() {
   min-height: calc(100vh - 200px);
 }
 
+/* ==================== 模式选择界面样式 ==================== */
 .mode-selection {
   display: flex;
   justify-content: center;
@@ -214,7 +1190,6 @@ function quickStart() {
   margin-bottom: 2.5rem; 
 }
 
-/* 模式卡片 */
 .mode-cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
@@ -327,7 +1302,6 @@ function quickStart() {
   cursor: not-allowed;
 }
 
-/* 快速开始区域 */
 .quick-start-section {
   margin: 2.5rem 0;
   padding: 1.5rem;
@@ -369,7 +1343,6 @@ function quickStart() {
   box-shadow: 0 8px 24px rgba(102,126,234,0.4);
 }
 
-/* 规则预览 */
 .rules-preview { 
   margin-top: 2rem; 
   padding: 1.5rem; 
@@ -482,6 +1455,682 @@ function quickStart() {
   transform: translateY(-1px); 
 }
 
+/* ==================== 自由模式配置界面样式 ==================== */
+.game-setup {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 200px);
+}
+
+.setup-container {
+  background: var(--color-bg, #fff);
+  border-radius: 24px;
+  padding: 3rem;
+  max-width: 700px;
+  width: 100%;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+  text-align: center;
+  position: relative;
+}
+
+[data-theme="dark"] .setup-container { background: #1e1e1e; }
+
+.setup-container h1 {
+  font-size: 2.5rem;
+  margin: 0 0 1rem 0;
+  background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.back-to-selection-btn {
+  position: absolute;
+  top: 1.5rem;
+  left: 1.5rem;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  background: #f0f0f0;
+  color: #333;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.back-to-selection-btn:hover {
+  background: #e0e0e0;
+  transform: translateX(-3px);
+}
+
+.config-section {
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 12px;
+  text-align: left;
+}
+
+[data-theme="dark"] .config-section { background: #2a2a2a; }
+
+.config-section h3 {
+  margin: 0 0 1rem 0;
+  color: var(--color-text, #333);
+  font-size: 1.2rem;
+}
+
+[data-theme="dark"] .config-section h3 { color: #fff; }
+
+.section-desc {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 1rem;
+}
+
+.fish-count-config label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.8rem;
+  color: var(--color-text, #333);
+}
+
+[data-theme="dark"] .fish-count-config label { color: #fff; }
+
+.count-selector {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.count-btn {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  border: 2px solid #667eea;
+  background: #fff;
+  color: #667eea;
+  font-size: 1.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.count-btn:hover {
+  background: #667eea;
+  color: #fff;
+  transform: scale(1.1);
+}
+
+.minus-btn:hover { background: #e74c3c; border-color: #e74c3c; color: #fff; }
+.plus-btn:hover { background: #27ae60; border-color: #27ae60; color: #fff; }
+
+.fish-count-input {
+  width: 80px;
+  height: 45px;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  border: 2px solid #ddd;
+  border-radius: 12px;
+  color: var(--color-text, #333);
+}
+
+[data-theme="dark"] .fish-count-input {
+  background: #1e1e1e;
+  border-color: #444;
+  color: #fff;
+}
+
+.hint {
+  font-size: 0.85rem;
+  color: #888;
+  margin-top: 0.5rem;
+  text-align: center;
+}
+
+.faction-checkboxes {
+  display: grid;
+  gap: 1rem;
+}
+
+.faction-group {
+  padding: 1rem;
+  border-radius: 12px;
+  border: 2px solid #e0e0e0;
+  transition: all 0.3s;
+}
+
+[data-theme="dark"] .faction-group {
+  border-color: #444;
+  background: #1a1a1a;
+}
+
+.faction-group:hover {
+  border-color: #667eea;
+  transform: translateX(5px);
+}
+
+.good-faction:hover { border-color: #27ae60; }
+.evil-faction:hover { border-color: #e74c3c; }
+.neutral-faction:hover { border-color: #f39c12; }
+
+.faction-label {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+.faction-label input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.faction-icon {
+  font-size: 1.8rem;
+}
+
+.faction-name {
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: var(--color-text, #333);
+  flex: 1;
+}
+
+[data-theme="dark"] .faction-name { color: #fff; }
+
+.faction-desc {
+  font-size: 0.85rem;
+  color: #888;
+  display: block;
+  margin-top: 0.2rem;
+  margin-left: 2.8rem;
+}
+
+.warning-message {
+  background: #fadbd8;
+  color: #e74c3c;
+  padding: 0.8rem;
+  border-radius: 8px;
+  margin-top: 1rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.advanced-options {
+  border: 2px dashed #ddd;
+  background: transparent;
+}
+
+.advanced-header {
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.advanced-header:hover {
+  color: #667eea;
+}
+
+#advanced-toggle {
+  font-size: 0.9rem;
+  font-weight: normal;
+}
+
+.option-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 1rem 0;
+  padding: 0.8rem;
+  background: #fff;
+  border-radius: 8px;
+}
+
+[data-theme="dark"] .option-row { background: #1e1e1e; }
+
+.option-row label {
+  font-weight: 600;
+  color: var(--color-text, #333);
+}
+
+[data-theme="dark"] .option-row label { color: #fff; }
+
+.option-select {
+  padding: 8px 12px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  background: #fff;
+  color: #333;
+  cursor: pointer;
+}
+
+[data-theme="dark"] .option-select {
+  background: #2a2a2a;
+  border-color: #444;
+  color: #fff;
+}
+
+.config-preview {
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #667eea11 0%, #764ba211 100%);
+  border-radius: 12px;
+  border: 2px solid #667eea33;
+  text-align: left;
+}
+
+.config-preview h4 {
+  margin: 0 0 1rem 0;
+  color: var(--color-text, #333);
+}
+
+[data-theme="dark"] .config-preview h4 { color: #fff; }
+
+.summary-content p {
+  margin: 0.5rem 0;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+[data-theme="dark"] .summary-content p { color: #ccc; }
+
+.summary-content strong {
+  color: #667eea;
+}
+
+.start-btn {
+  width: 100%;
+  padding: 16px 32px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-top: 1.5rem;
+}
+
+.start-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(39,174,96,0.4);
+}
+
+.start-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ==================== 游戏主界面样式 ==================== */
+.game-main {
+  display: block;
+  background: var(--color-bg, #fff);
+  border-radius: 16px;
+  padding: 2rem;
+  margin-top: 2rem;
+}
+
+[data-theme="dark"] .game-main {
+  background: #1e1e1e;
+}
+
+.status-bar {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background: linear-gradient(135deg, rgba(102,126,234,0.1) 0%, rgba(118,75,162,0.1) 100%);
+  padding: 1.2rem;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.status-item {
+  text-align: center;
+}
+
+.status-label {
+  display: block;
+  font-size: 0.85rem;
+  color: #888;
+  margin-bottom: 0.3rem;
+}
+
+.status-value {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--color-text, #333);
+}
+
+.game-log {
+  max-height: 300px;
+  overflow-y: auto;
+  background: var(--color-bg, #f8f9fa);
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  border-left: 4px solid var(--color-primary, #D4AF37);
+}
+
+[data-theme="dark"] .game-log {
+  background: #252525;
+}
+
+.fish-pond {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 1rem;
+  min-height: 200px;
+  margin-bottom: 1.5rem;
+}
+
+.action-bar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 2px solid #f0f0f0;
+}
+
+.action-btn {
+  padding: 12px 28px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.fish-card {
+  background: var(--color-bg, #fff);
+  border-radius: 12px;
+  padding: 1.5rem 1rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+[data-theme="dark"] .fish-card {
+  background: #2a2a2a;
+}
+
+.fish-card:hover:not(.dead) {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+  border-color: var(--color-primary, #D4AF37);
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.modal-content {
+  background: var(--color-bg, #fff);
+  border-radius: 20px;
+  padding: 2.5rem;
+  max-width: 600px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-50px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.log-entry {
+  padding: 0.5rem;
+  margin: 0.3rem 0;
+  border-radius: 6px;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.log-system { background: #e3f2fd; color: #1976d2; }
+.log-day { background: #fff3e0; color: #f57c00; }
+.log-night { background: #311b92; color: #b39ddb; }
+.log-action { background: #f3e5f5; color: #7b1fa2; }
+.log-success { background: #e8f5e9; color: #388e3c; }
+.log-warning { background: #fff8e1; color: #f9a825; }
+.log-error { background: #ffebee; color: #d32f2f; }
+.log-clue { background: #fce4ec; color: #c2185b; }
+.log-neutral { background: #fafafa; color: #757575; }
+.log-death { background: #212121; color: #ff5252; }
+.log-trickster { background: #e1f5fe; color: #0288d1; }
+
+.fish-avatar {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+}
+
+.fish-number {
+  font-weight: bold;
+  color: var(--color-text, #333);
+  margin-bottom: 0.3rem;
+}
+
+.fish-hint {
+  font-size: 0.85rem;
+  color: #888;
+}
+
+.fish-role-name {
+  font-weight: 600;
+  color: var(--color-text, #333);
+  margin-top: 0.3rem;
+}
+
+.fish-card.dead {
+  opacity: 0.5;
+  filter: grayscale(1);
+}
+
+.fish-card.revealed {
+  border-color: var(--color-primary, #D4AF37);
+}
+
+.fish-card.exile-mode:hover {
+  border-color: #e74c3c;
+  box-shadow: 0 6px 20px rgba(231,76,60,0.3);
+}
+
+.special-badge {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  margin-top: 0.5rem;
+  font-weight: 600;
+}
+
+.detective-badge { background: #e3f2fd; color: #1976d2; }
+.judge-badge { background: #f3e5f5; color: #7b1fa2; }
+.gossip-badge { background: #fce4ec; color: #c2185b; }
+.trickster-badge { background: #e1f5fe; color: #0288d1; }
+.orca-badge { background: #efebe9; color: #5d4037; }
+
+.role-card {
+  padding: 1rem;
+  margin: 0.5rem 0;
+  border-radius: 8px;
+  border-left: 4px solid;
+}
+
+.good-role { background: #e8f5e9; border-color: #4caf50; }
+.detective-role { background: #e3f2fd; border-color: #2196f3; }
+.judge-role { background: #f3e5f5; border-color: #9c27b0; }
+.gossip-role { background: #fce4ec; border-color: #e91e63; }
+.evil-role { background: #ffebee; border-color: #f44336; }
+.neutral-role { background: #fff8e1; border-color: #ffc107; }
+.orca-role { background: #efebe9; border-color: #795548; }
+
+.win-modal .modal-content {
+  border: 3px solid #4caf50;
+}
+
+.lose-modal .modal-content {
+  border: 3px solid #f44336;
+}
+
+.result-icon {
+  font-size: 4rem;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.result-title {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.result-message {
+  text-align: center;
+  color: #666;
+  margin-bottom: 2rem;
+}
+
+.truth-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.truth-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.good-truth { background: #e8f5e9; color: #2e7d32; }
+.evil-truth { background: #ffebee; color: #c62828; }
+.neutral-truth { background: #fff8e1; color: #f57f17; }
+
+.result-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+}
+
+.result-actions button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.play-again-btn {
+  background: #4caf50;
+  color: white;
+}
+
+.play-again-btn:hover {
+  background: #45a049;
+  transform: translateY(-2px);
+}
+
+.result-actions .back-btn {
+  background: #f0f0f0;
+  color: #333;
+}
+
+.result-actions .back-btn:hover {
+  background: #e0e0e0;
+}
+
+.close-rules-btn {
+  width: 100%;
+  padding: 12px;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  margin-top: 1rem;
+}
+
+.close-rules-btn:hover {
+  background: #5568d3;
+}
+
+.rules-content h2 {
+  color: var(--color-text, #333);
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.rules-section {
+  margin: 1.5rem 0;
+}
+
+.rules-section h3 {
+  color: var(--color-text, #333);
+  margin-bottom: 1rem;
+}
+
+.win-condition {
+  background: #e8f5e9;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.lose-condition {
+  background: #ffebee;
+  padding: 1rem;
+  border-radius: 8px;
+}
+
 @media (max-width: 768px) {
   .selection-container { 
     padding: 2rem 1.5rem; 
@@ -507,6 +2156,28 @@ function quickStart() {
   
   .mode-card h2 { 
     font-size: 1.5rem; 
+  }
+  
+  .setup-container {
+    padding: 2rem 1.5rem;
+  }
+  
+  .setup-container h1 {
+    font-size: 2rem;
+  }
+  
+  .status-bar {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .action-bar {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+  
+  .fish-pond {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   }
 }
 </style>

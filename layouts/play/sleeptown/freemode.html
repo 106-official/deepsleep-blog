@@ -1,8 +1,4 @@
----
-title: "SleepTown 自由模式"
-date: 2024-01-01
----
-
+{{ define "main" }}
 <div class="sleeptown-game">
   <!-- 自由模式配置界面 -->
   <div id="freemode-setup" class="game-setup">
@@ -425,12 +421,14 @@ function initializeGame(config) {
 function generateRoles(count, factions, difficulty) {
   const roles = [];
 
+  // 根据选择的阵营和难度计算各角色数量
   let badCount = 0;
   let tricksterCount = 0;
   let orcaCount = 0;
   let goodCount = 0;
 
   if (factions.includes('evil')) {
+    // 根据难度调整坏鱼比例
     switch(difficulty) {
       case 'easy':
         badCount = Math.max(1, Math.floor(count * 0.15));
@@ -452,28 +450,34 @@ function generateRoles(count, factions, difficulty) {
   if (factions.includes('good')) {
     goodCount = count - badCount - tricksterCount - orcaCount;
 
+    // 在好鱼中分配不同角色
     const detectiveCount = Math.max(0, Math.floor(goodCount * 0.22));
     const judgeCount = Math.max(0, Math.floor(goodCount * 0.20));
     const gossipCount = Math.max(0, Math.floor(goodCount * 0.25));
     const slackerCount = goodCount - detectiveCount - judgeCount - gossipCount;
 
+    // 添加好鱼角色
     for (let i = 0; i < slackerCount; i++) roles.push('slacker');
     for (let i = 0; i < detectiveCount; i++) roles.push('detective');
     for (let i = 0; i < judgeCount; i++) roles.push('judge');
     for (let i = 0; i < gossipCount; i++) roles.push('gossip');
   }
 
+  // 添加坏鱼角色
   for (let i = 0; i < badCount; i++) roles.push('evil');
 
+  // 添加中立角色
   for (let i = 0; i < tricksterCount; i++) roles.push('trickster');
   for (let i = 0; i < orcaCount; i++) roles.push('orca');
 
+  // 如果总数不够或超出，用摆烂鱼填充或移除
   while (roles.length < count) roles.push('slacker');
   while (roles.length > count) roles.pop();
 
   return roles;
 }
 
+// 检查URL参数（快速开始模式）
 function checkQuickStartMode() {
   const urlParams = new URLSearchParams(window.location.search);
   if (urlParams.get('mode') === 'quick') {
@@ -481,17 +485,20 @@ function checkQuickStartMode() {
     document.getElementById('fish-count').value = count;
     document.getElementById('quick-mode-notice').style.display = 'block';
 
+    // 自动开始游戏
     setTimeout(() => {
       startFreeModeGame();
     }, 500);
   }
 }
 
+// 页面加载时检查快速开始模式
 window.addEventListener('load', () => {
   checkQuickStartMode();
   updateConfigPreview();
 });
 
+// ==================== 公共游戏逻辑函数 ====================
 function shuffleArray(array) {
   const newArray = [...array];
   for (let i = newArray.length - 1; i > 0; i--) {
@@ -525,6 +532,7 @@ function updateStatusBar() {
   document.getElementById('bad-fish-alive').textContent = gameState.phase === 'gameOver' ||
     gameState.fishes.some(f => f.revealed && f.role === 'evil') ? aliveBadOrNeutral : '?';
 
+  // 控制按钮显示
   if (gameState.phase === 'day' && gameState.gameMode === 'inquiry') {
     const skipInquiryBtn = document.getElementById('btn-skip-inquiry');
     if (gameState.inquiriesLeft > 0 && gameState.inquiriesLeft < gameState.maxInquiriesPerDay) {
@@ -829,6 +837,7 @@ function startNightPhase() {
   setTimeout(() => {
     const victims = [];
 
+    // 坏鱼杀人
     const aliveEvilFish = gameState.fishes.filter(f => f.alive && f.role === 'evil');
     const aliveGoodFish = gameState.fishes.filter(f => f.alive && ['slacker', 'detective', 'judge', 'gossip'].includes(f.role));
 
@@ -837,6 +846,7 @@ function startNightPhase() {
       victims.push({ fish: victim, killer: '坏鱼' });
     }
 
+    // 虎鲸杀人
     const aliveOrca = gameState.fishes.filter(f => f.alive && f.role === 'orca');
     const aliveOthers = gameState.fishes.filter(f => f.alive && f.role !== 'orca');
 
@@ -847,6 +857,7 @@ function startNightPhase() {
       }
     }
 
+    // 处理受害者
     if (victims.length > 0) {
       setTimeout(() => {
         victims.forEach(victim => {
@@ -991,6 +1002,7 @@ function goBackToSetup() {
 </script>
 
 <style>
+/* 自由模式游戏样式 */
 .sleeptown-game {
   max-width: 1200px;
   margin: 1rem auto;
@@ -1070,6 +1082,7 @@ function goBackToSetup() {
   margin-bottom: 1rem;
 }
 
+/* 数量选择器 */
 .fish-count-config label {
   display: block;
   font-weight: 600;
@@ -1132,6 +1145,7 @@ function goBackToSetup() {
   text-align: center;
 }
 
+/* 阵营复选框 */
 .faction-checkboxes {
   display: grid;
   gap: 1rem;
@@ -1203,6 +1217,7 @@ function goBackToSetup() {
   text-align: center;
 }
 
+/* 高级选项 */
 .advanced-options {
   border: 2px dashed #ddd;
   background: transparent;
@@ -1259,6 +1274,7 @@ function goBackToSetup() {
   color: #fff;
 }
 
+/* 配置预览 */
 .config-preview {
   margin: 2rem 0;
   padding: 1.5rem;
@@ -1287,6 +1303,7 @@ function goBackToSetup() {
   color: #667eea;
 }
 
+/* 开始按钮 */
 .start-btn {
   width: 100%;
   padding: 16px 32px;
@@ -1320,6 +1337,7 @@ function goBackToSetup() {
   font-size: 0.9rem;
 }
 
+/* 游戏主界面样式 */
 .game-main {
   display: block;
   background: var(--color-bg, #fff);
@@ -1449,3 +1467,4 @@ function goBackToSetup() {
   animation: modalSlideIn 0.3s ease-out;
 }
 </style>
+{{ end }}

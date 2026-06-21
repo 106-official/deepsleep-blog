@@ -1,0 +1,145 @@
+{{ define "main" }}
+<div class="play-page">
+  <div class="play-header">
+    <h1>🎮 娱乐中心</h1>
+    <p class="subtitle">欢迎来到 DeepSleep 娱乐世界，放松心情，享受游戏时光！</p>
+  </div>
+
+  <div class="games-grid">
+    <a href="/play/SleepTown/" class="game-card">
+      <div class="game-icon">🐟</div>
+      <h2>SleepTown</h2>
+      <p>鱼塘推理游戏</p>
+      <span class="game-tag">推理</span>
+    </a>
+
+    <div class="game-card disabled">
+      <div class="game-icon">🎲</div>
+      <h2>更多游戏</h2>
+      <p>敬请期待...</p>
+      <span class="game-tag coming-soon">即将上线</span>
+    </div>
+  </div>
+</div>
+
+<style>
+.play-page {
+  max-width: 1000px;
+  margin: 2rem auto;
+  padding: 0 1.5rem;
+}
+
+.play-header {
+  text-align: center;
+  margin-bottom: 3rem;
+  padding: 2rem;
+  background: var(--color-bg, #fff);
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+
+[data-theme="dark"] .play-header {
+  background: #1e1e1e;
+}
+
+.play-header h1 {
+  font-size: 2.5rem;
+  margin: 0 0 1rem 0;
+  color: var(--color-text, #333);
+}
+
+[data-theme="dark"] .play-header h1 {
+  color: #fff;
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  color: #666;
+  margin: 0;
+}
+
+.games-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.game-card {
+  background: var(--color-bg, #fff);
+  border-radius: 16px;
+  padding: 2.5rem 2rem;
+  text-align: center;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  border: 2px solid transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+[data-theme="dark"] .game-card {
+  background: #1e1e1e;
+}
+
+.game-card:hover:not(.disabled) {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 24px rgba(212,175,55,0.3);
+  border-color: var(--color-primary, #D4AF37);
+}
+
+.game-card.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.game-icon {
+  font-size: 4rem;
+  margin-bottom: 0.5rem;
+}
+
+.game-card h2 {
+  font-size: 1.6rem;
+  margin: 0;
+  color: var(--color-text, #333);
+}
+
+[data-theme="dark"] .game-card h2 {
+  color: #fff;
+}
+
+.game-card p {
+  font-size: 1rem;
+  color: #888;
+  margin: 0;
+}
+
+.game-tag {
+  display: inline-block;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: linear-gradient(135deg, #D4AF37, #F4D03F);
+  color: #000;
+}
+
+.coming-soon {
+  background: #ccc;
+  color: #666;
+}
+
+@media (max-width: 768px) {
+  .games-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .play-header h1 {
+    font-size: 2rem;
+  }
+}
+</style>
+{{ end }}

@@ -140,6 +140,12 @@ theme = ["PaperMod"]
   url = "/community/"
   weight = 50
 
+[[menu.main]]
+  identifier = "play"
+  name = "🎮 娱乐"
+  url = "/play/"
+  weight = 55
+
 # Markdown 渲染
 [markup]
   [markup.goldmark]

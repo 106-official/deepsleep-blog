@@ -9,12 +9,11 @@
       <div class="setup-section">
         <label for="fish-count">选择参与游戏的鱼数量：</label>
         <select id="fish-count" class="fish-select">
-          <option value="6">6 只鱼 (2 坏鱼)</option>
-          <option value="8">8 只鱼 (2-3 坏鱼)</option>
-          <option value="10" selected>10 只鱼 (3 坏鱼)</option>
-          <option value="12">12 只鱼 (3-4 坏鱼)</option>
-          <option value="15">15 只鱼 (5 坏鱼)</option>
-          <option value="20">20 只鱼 (6-7 坏鱼)</option>
+          <option value="8">8 只鱼 (入门)</option>
+          <option value="10" selected>10 只鱼 (推荐)</option>
+          <option value="12">12 只鱼 (进阶)</option>
+          <option value="15">15 只鱼 (困难)</option>
+          <option value="20">20 只鱼 (专家)</option>
         </select>
         <p class="hint">💡 豪鱼阵营数量至少是坏鱼阵营的 2 倍</p>
       </div>
@@ -22,11 +21,13 @@
       <button onclick="startGame()" class="start-btn">🎮 开始游戏</button>
 
       <div class="rules-preview">
-        <h3>📜 游戏规则速览</h3>
+        <h3>📜 角色介绍</h3>
         <ul>
-          <li><strong>摆烂D</strong>（豪鱼）：翻开后无事发生</li>
-          <li><strong>侦探D</strong>（豪鱼）：翻开后告知一条坏鱼身份</li>
-          <li><strong>邪恶D</strong>（坏鱼）：每晚会杀死一只豪鱼，会伪装成其他角色</li>
+          <li><strong>🐟 摆烂D</strong>（豪鱼）：翻开后无事发生</li>
+          <li><strong>🔍 侦探D</strong>（豪鱼）：告知一条<strong>坏鱼</strong>身份</li>
+          <li><strong>⚖️ 法官D</strong>（豪鱼）：宣判一只<strong>非豪鱼</strong>身份</li>
+          <li><strong>😈 邪恶D</strong>（坏鱼）：每晚会杀死一只豪鱼，会伪装成其他角色</li>
+          <li><strong>🎭 恶作剧D</strong>（中立）：翻开后会<strong>清空问询机会</strong></li>
         </ul>
         <p>白天你有 3 次"问询"机会，用完后可流放一只可疑的鱼！</p>
       </div>
@@ -50,7 +51,7 @@
         <span id="good-fish-alive" class="status-value">-</span>
       </div>
       <div class="status-item">
-        <span class="status-label">存活坏鱼</span>
+        <span class="status-label">存活中立/坏鱼</span>
         <span id="bad-fish-alive" class="status-value">?</span>
       </div>
     </div>
@@ -94,32 +95,48 @@
   <!-- 规则弹窗 -->
   <div id="rules-modal" class="modal-overlay" style="display:none">
     <div class="modal-content rules-content">
-      <h2>📜 SleepTown 完整规则</h2>
+      <h2>📜 SleepTown 完整规则 v2.0</h2>
       
       <div class="rules-section">
-        <h3>🎭 角色介绍</h3>
+        <h3>🎭 角色介绍（5种角色）</h3>
+        
         <div class="role-card good-role">
           <h4>🐟 摆烂D（豪鱼阵营）</h4>
-          <p>普通的好鱼，翻开后无事发生。你的任务是帮助找出所有坏鱼！</p>
+          <p>普通的好鱼，翻开后无事发生。你的任务是帮助找出所有坏鱼和中立者！</p>
         </div>
+        
         <div class="role-card detective-role">
           <h4>🔍 侦探D（豪鱼阵营）</h4>
-          <p>豪鱼中的精英！翻开后会告诉你一条真实坏鱼的编号。这是你最重要的情报来源！</p>
+          <p>豪鱼中的精英！翻开后会告诉你一条<strong>真实坏鱼</strong>的编号。这是你最可靠的情报来源！</p>
         </div>
+        
+        <div class="role-card judge-role">
+          <h4>⚖️ 法官D（豪鱼阵营）</h4>
+          <p>正义的审判者！翻开后会宣判一只<strong>非豪鱼</strong>（中立或坏鱼）的身份，告诉你"XX号不是豪鱼"！</p>
+        </div>
+        
         <div class="role-card evil-role">
           <h4>😈 邪恶D（坏鱼阵营）</h4>
-          <p>危险的反派！每晚会杀死一只豪鱼。被翻开时会伪装成其他角色（可能假装是侦探给出假信息）！</p>
+          <p>危险的反派！每晚会杀死一只豪鱼。被翻开时会伪装成其他角色（可能给出假信息或触发特殊效果！）</p>
+        </div>
+        
+        <div class="role-card neutral-role">
+          <h4>🎭 恶作剧D（中立阵营）</h4>
+          <p>混乱制造者！翻开后会<strong>立即清空你当天所有的问询机会</strong>！被坏人伪装时也会触发这个效果。</p>
         </div>
       </div>
 
       <div class="rules-section">
-        <h3>☀️ 白天阶段</h3>
+        <h3>☀️ 白天阶段 - 问询机制</h3>
         <ol>
           <li>所有鱼的初始身份都是隐藏的</li>
           <li>你有 <strong>3 次问询机会</strong></li>
-          <li>点击任意鱼进行"问询"，该鱼的身份会被揭示</li>
-          <li>如果问询到侦探D，你会获得一条关于坏鱼的线索</li>
-          <li>如果问询到邪恶D，它会伪装成随机角色（可能是侦探并给假信息！）</li>
+          <li>点击任意鱼进行"问询"，该鱼的身份会被揭示并触发对应效果</li>
+          <li><strong>摆烂D</strong>: 无事发生</li>
+          <li><strong>侦探D</strong>: 获得一条真实坏鱼的线索 ⭐</li>
+          <li><strong>法官D</strong>: 获得一条非豪鱼的线索（可能是坏鱼或中立）⭐</li>
+          <li><strong>恶作剧D</strong>: ⚠️ 当天剩余问询次数归零！</li>
+          <li><strong>邪恶D</strong>: 伪装成随机角色并触发该角色的效果（可能给假信息！）</li>
           <li>问询次数用完后，可以进入"流放模式"</li>
         </ol>
       </div>
@@ -131,7 +148,7 @@
           <li>选择一只你认为可疑的鱼进行流放</li>
           <li>被流放的鱼将被淘汰，其真实身份会揭晓</li>
           <li>如果流放的是坏鱼 → 太棒了！继续下一轮</li>
-          <li>如果流放的是豪鱼 → 可惜！少了一个盟友</li>
+          <li>如果流放的是豪鱼或中立 → 可惜！少了一个盟友</li>
         </ol>
       </div>
 
@@ -148,12 +165,12 @@
       <div class="rules-section">
         <h3>🏆 胜利条件</h3>
         <div class="win-condition">
-          <strong>✅ 豪鱼胜利</strong>: 所有坏鱼都被淘汰（流放或...）<br>
+          <strong>✅ 豪鱼胜利</strong>: 所有坏鱼都被淘汰<br>
           <em>"豪鱼胜利，你是豪人！"</em>
         </div>
         <div class="lose-condition">
-          <strong>❌ 坏鱼胜利</strong>: 存活的豪鱼数量 < 存活的坏鱼数量<br>
-          <em>"坏鱼胜利，你是坏人！"</em>
+          <strong>❌ 坏鱼胜利</strong>: 存活的豪鱼数量 ≤ 存活的非豪鱼数量<br>
+          <em>"坏人胜利，你是坏人！"</em>
         </div>
       </div>
 
@@ -165,16 +182,16 @@
 <script>
 // ==================== 游戏数据结构 ====================
 let gameState = {
-  phase: 'setup', // setup, day, night, exile, gameOver
+  phase: 'setup',
   day: 1,
   inquiriesLeft: 3,
-  fishes: [], // {id, role: 'slacker'|'detective'|'evil', revealed, alive, disguisedAs}
+  maxInquiriesPerDay: 3,
+  fishes: [],
   totalFish: 10,
   badFishCount: 3,
   goodFishCount: 7,
-  mode: 'inquiry', // inquiry | exile
-  logs: [],
-  gameHistory: []
+  mode: 'inquiry',
+  logs: []
 };
 
 // ==================== 工具函数 ====================
@@ -204,12 +221,12 @@ function updateStatusBar() {
   
   document.getElementById('inquiries-left').textContent = `${gameState.inquiriesLeft} 次`;
   
-  const aliveGood = gameState.fishes.filter(f => f.alive && f.role !== 'evil').length;
-  const aliveBad = gameState.fishes.filter(f => f.alive && f.role === 'evil').length;
+  const aliveGood = gameState.fishes.filter(f => f.alive && ['slacker', 'detective', 'judge'].includes(f.role)).length;
+  const aliveBadOrNeutral = gameState.fishes.filter(f => f.alive && ['evil', 'trickster'].includes(f.role)).length;
   
   document.getElementById('good-fish-alive').textContent = aliveGood;
   document.getElementById('bad-fish-alive').textContent = gameState.phase === 'gameOver' || 
-    gameState.fishes.some(f => f.revealed && f.role === 'evil') ? aliveBad : '?';
+    gameState.fishes.some(f => f.revealed && f.role === 'evil') ? aliveBadOrNeutral : '?';
 }
 
 function renderFishes() {
@@ -234,7 +251,8 @@ function renderFishes() {
         <div class="fish-avatar revealed-avatar">${getRoleAvatar(displayRole)}</div>
         <div class="fish-number">#${index + 1}</div>
         <div class="fish-role-name">${getRoleName(displayRole)}</div>
-        ${fish.role === 'detective' ? '<div class="detective-badge">侦探</div>' : ''}
+        ${['detective', 'judge'].includes(fish.role) ? `<div class="special-badge ${fish.role}-badge">${getRoleEmoji(fish.role)}${getRoleName(fish.role)}</div>` : ''}
+        ${fish.role === 'trickster' ? '<div class="trickster-badge">恶作剧</div>' : ''}
         ${fish.disguisedAs ? `<div class="disguised-hint">（实际：${getRoleEmoji(fish.role)}${getRoleName(fish.role)}）</div>` : ''}
       `;
     } else {
@@ -259,7 +277,9 @@ function getRoleEmoji(role) {
   switch(role) {
     case 'slacker': return '🐟';
     case 'detective': return '🔍';
+    case 'judge': return '⚖️';
     case 'evil': return '😈';
+    case 'trickster': return '🎭';
     default: return '❓';
   }
 }
@@ -272,7 +292,9 @@ function getRoleName(role) {
   switch(role) {
     case 'slacker': return '摆烂D';
     case 'detective': return '侦探D';
+    case 'judge': return '法官D';
     case 'evil': return '邪恶D';
+    case 'trickster': return '恶作剧D';
     default: return '未知';
   }
 }
@@ -281,12 +303,12 @@ function getRoleName(role) {
 function startGame() {
   const totalCount = parseInt(document.getElementById('fish-count').value);
   
-  // 计算角色分配（豪鱼 >= 坏鱼 * 2）
+  // 计算角色分配
   let badCount;
-  if (totalCount <= 7) badCount = 2;
-  else if (totalCount <= 11) badCount = 3;
-  else if (totalCount <= 16) badCount = Math.floor(totalCount / 3);
-  else badCount = Math.ceil(totalCount / 3);
+  if (totalCount <= 9) badCount = 2;
+  else if (totalCount <= 13) badCount = 3;
+  else if (totalCount <= 17) badCount = 4;
+  else badCount = Math.ceil(totalCount / 4);
   
   const goodCount = totalCount - badCount;
   
@@ -294,9 +316,17 @@ function startGame() {
   const roles = [];
   for (let i = 0; i < badCount; i++) roles.push('evil');
   
+  // 中立角色（恶作剧D）：约占总数的 10-15%
+  const tricksterCount = Math.max(1, Math.floor(totalCount * 0.12));
+  for (let i = 0; i < tricksterCount; i++) roles.push('trickster');
+  
   // 侦探数量：约占总数的 20%
   const detectiveCount = Math.max(1, Math.floor(goodCount * 0.25));
   for (let i = 0; i < detectiveCount; i++) roles.push('detective');
+  
+  // 法官数量：约占总数的 15%
+  const judgeCount = Math.max(1, Math.floor(goodCount * 0.18));
+  for (let i = 0; i < judgeCount; i++) roles.push('judge');
   
   // 其余为摆烂
   while (roles.length < totalCount) roles.push('slacker');
@@ -309,6 +339,7 @@ function startGame() {
     phase: 'day',
     day: 1,
     inquiriesLeft: 3,
+    maxInquiriesPerDay: 3,
     fishes: shuffledRoles.map((role, idx) => ({
       id: idx,
       role: role,
@@ -318,10 +349,10 @@ function startGame() {
     })),
     totalFish: totalCount,
     badFishCount: badCount,
-    goodFishCount: goodCount,
+    goodFishCount: goodCount - tricksterCount,
+    tricksterCount: tricksterCount,
     mode: 'inquiry',
-    logs: [],
-    gameHistory: []
+    logs: []
   };
   
   // 切换界面
@@ -331,14 +362,17 @@ function startGame() {
   // 清空日志
   document.getElementById('game-log').innerHTML = '';
   
-  // 初始化显示
-  addLog(`🎮 游戏开始！共有 ${totalCount} 条鱼 (${goodCount} 条豪鱼 vs ${badCount} 条坏鱼)`, 'system');
+  // 统计各阵营数量
+  const evilCount = shuffledRoles.filter(r => r === 'evil').length;
+  const tricksterCountActual = shuffledRoles.filter(r => r === 'trickster').length;
+  const goodCountActual = totalCount - evilCount - tricksterCountActual;
+  
+  addLog(`🎮 游戏开始！共有 ${totalCount} 条鱼 (${goodCountActual} 条豪鱼 vs ${tricksterCountActual} 条中立 vs ${evilCount} 条坏鱼)`, 'system');
   addLog(`☀️ 白天第 1 轮 - 你有 3 次问询机会`, 'day');
   
   updateStatusBar();
   renderFishes();
   
-  // 启用/禁用按钮
   document.getElementById('btn-exile').disabled = true;
 }
 
@@ -352,52 +386,87 @@ function inquireFish(index) {
   
   addLog(`🔍 问询 #${index + 1} 号鱼...`, 'action');
   
-  // 处理不同角色的反应
   setTimeout(() => {
-    if (fish.role === 'evil') {
-      // 坏鱼伪装
-      const disguiseOptions = ['slacker', 'detective'];
-      fish.disguisedAs = disguiseOptions[Math.floor(Math.random() * disguiseOptions.length)];
-      
-      addLog(`⚠️ #${index + 1} 号鱼是 **${getRoleEmoji(fish.disguisedAs)}${getRoleName(fish.disguisedAs)}**`, 'warning');
-      
-      if (fish.disguisedAs === 'detective') {
-        // 假装侦探，给出虚假信息
-        const aliveGoodFish = gameState.fishes.filter(f => f.alive && f.role !== 'evil' && f.id !== index);
-        if (aliveGoodFish.length > 0) {
-          const randomGoodFish = aliveGoodFish[Math.floor(Math.random() * aliveGoodFish.length)];
-          addLog(`🗣️ #${index + 1} 号（伪·侦探）：**#${randomGoodFish.id + 1} 号是坏鱼！**（这是假信息！）`, 'fake-clue');
-        }
-      } else {
-        addLog(`😴 #${index + 1} 号是一条普通的摆烂D，什么也没发生`, 'neutral');
-      }
-    } else if (fish.role === 'detective') {
-      // 真侦探，给出真实信息
-      const aliveBadFish = gameState.fishes.filter(f => f.alive && f.role === 'evil');
-      if (aliveBadFish.length > 0) {
-        const randomBadFish = aliveBadFish[Math.floor(Math.random() * aliveBadFish.length)];
-        addLog(`✨ #${index + 1} 号是 **🔍侦探D**！`, 'success');
-        addLog(`🎯 侦探告诉你：**#${randomBadFish.id + 1} 号是坏鱼！**（这条线索是真实的）`, 'clue');
-      } else {
-        addLog(`✨ #${index + 1} 号是 **🔍侦探D**！但看起来所有坏鱼都已被揭露...`, 'success');
-      }
-    } else {
-      // 摆烂鱼
-      addLog(`😴 #${index + 1} 号是一条普通的摆烂D，什么也没发生`, 'neutral');
-    }
+    handleInquireResult(fish, index);
     
     updateStatusBar();
     renderFishes();
     
-    // 检查是否可以进入流放模式
     if (gameState.inquiriesLeft === 0) {
       document.getElementById('btn-exile').disabled = false;
       addLog(`⚠️ 问询次数已用完！现在可以选择流放一只可疑的鱼`, 'warning');
     }
     
-    // 检查游戏是否结束
     checkGameEnd();
-  }, 500);
+  }, 600);
+}
+
+function handleInquireResult(fish, index) {
+  if (fish.role === 'evil') {
+    // 坏鱼伪装
+    const disguiseOptions = ['slacker', 'detective', 'judge', 'trickster'];
+    fish.disguisedAs = disguiseOptions[Math.floor(Math.random() * disguiseOptions.length)];
+    
+    addLog(`⚠️ #${index + 1} 号鱼是 **${getRoleEmoji(fish.disguisedAs)}${getRoleName(fish.disguisedAs)}**`, 'warning');
+    
+    // 根据伪装的角色触发对应效果
+    if (fish.disguisedAs === 'trickster') {
+      // 伪装成恶作剧D，清空问询机会
+      const lostInquiries = gameState.inquiriesLeft;
+      gameState.inquiriesLeft = 0;
+      addLog(`🎭 #${index + 1} 号触发了恶作剧效果！**你的问询机会被清空了！** (损失 ${lostInquiries} 次机会)`, 'trickster');
+      document.getElementById('btn-exile').disabled = false;
+      addLog(`⚠️ 问询次数已用完！现在可以选择流放一只可疑的鱼`, 'warning');
+    } else if (fish.disguisedAs === 'detective') {
+      // 假装侦探，给出虚假信息（指向好鱼）
+      const aliveGoodFish = gameState.fishes.filter(f => f.alive && !['evil', 'trickster'].includes(f.role) && f.id !== index);
+      if (aliveGoodFish.length > 0) {
+        const randomGoodFish = aliveGoodFish[Math.floor(Math.random() * aliveGoodFish.length)];
+        addLog(`🗣️ #${index + 1} 号（伪·侦探）：**#${randomGoodFish.id + 1} 号是坏鱼！**（这是假信息！）`, 'fake-clue');
+      }
+    } else if (fish.disguisedAs === 'judge') {
+      // 假装法官，给出错误信息（诬陷好鱼）
+      const aliveGoodFish = gameState.fishes.filter(f => f.alive && !['evil', 'trickster'].includes(f.role) && f.id !== index);
+      if (aliveGoodFish.length > 0) {
+        const randomGoodFish = aliveGoodFish[Math.floor(Math.random() * aliveGoodFish.length)];
+        addLog(`⚖️ #${index + 1} 号（伪·法官）：**#${randomGoodFish.id + 1} 号不是豪鱼！**（这是假信息！）`, 'fake-clue');
+      }
+    } else {
+      // 伪装成摆烂D
+      addLog(`😴 #${index + 1} 号是一条普通的摆烂D，什么也没发生`, 'neutral');
+    }
+  } else if (fish.role === 'trickster') {
+    // 真正的恶作剧D
+    const lostInquiries = gameState.inquiriesLeft;
+    gameState.inquiriesLeft = 0;
+    addLog(`🎭 #${index + 1} 号是 **🎭恶作剧D**！`, 'trickster');
+    addLog(`💥 恶作剧触发！**你的问询机会被全部清空了！** (损失 ${lostInquiries} 次机会)`, 'trickster');
+    document.getElementById('btn-exile').disabled = false;
+    addLog(`⚠️ 问询次数已用完！现在可以选择流放一只可疑的鱼`, 'warning');
+  } else if (fish.role === 'detective') {
+    // 真侦探，给出真实坏鱼信息
+    const aliveEvilFish = gameState.fishes.filter(f => f.alive && f.role === 'evil');
+    if (aliveEvilFish.length > 0) {
+      const randomEvilFish = aliveEvilFish[Math.floor(Math.random() * aliveEvilFish.length)];
+      addLog(`✨ #${index + 1} 号是 **🔍侦探D**！`, 'success');
+      addLog(`🎯 侦探告诉你：**#${randomEvilFish.id + 1} 号是坏鱼！**（这条线索是真实的）`, 'clue');
+    } else {
+      addLog(`✨ #${index + 1} 号是 **🔍侦探D**！但看起来所有坏鱼都已被揭露...`, 'success');
+    }
+  } else if (fish.role === 'judge') {
+    // 真法官，宣判非豪鱼（可能是坏鱼或中立）
+    const aliveNonGoodFish = gameState.fishes.filter(f => f.alive && ['evil', 'trickster'].includes(f.role) && f.id !== index);
+    if (aliveNonGoodFish.length > 0) {
+      const randomNonGoodFish = aliveNonGoodFish[Math.floor(Math.random() * aliveNonGoodFish.length)];
+      addLog(`✨ #${index + 1} 号是 **⚖️法官D**！`, 'success');
+      addLog(`⚖️ 法官宣判：**#${randomNonGoodFish.id + 1} 号不是豪鱼！**（这条信息是真实的）`, 'clue');
+    } else {
+      addLog(`✨ #${index + 1} 号是 **⚖️法官D**！但看起来所有非豪鱼都已被揭露...`, 'success');
+    }
+  } else {
+    // 摆烂鱼
+    addLog(`😴 #${index + 1} 号是一条普通的摆烂D，什么也没发生`, 'neutral');
+  }
 }
 
 function enterExileMode() {
@@ -426,13 +495,13 @@ function exileFish(index) {
   setTimeout(() => {
     if (fish.role === 'evil') {
       addLog(`🎉 太棒了！#${index + 1} 号确实是 **😈邪恶D（坏鱼）**！`, 'success');
+    } else if (fish.role === 'trickster') {
+      addLog(`😐 #${index + 1} 号是 **🎭恶作剧D（中立）**，虽然不是盟友但也算清除一个干扰项`, 'neutral');
     } else {
       addLog(`😢 遗憾...#${index + 1} 号是 **${getRoleEmoji(fish.role)}${getRoleName(fish.role)}（豪鱼）**，被误杀了`, 'error');
     }
     
-    // 检查游戏是否结束
     if (!checkGameEnd()) {
-      // 进入夜晚
       startNightPhase();
     }
   }, 800);
@@ -448,19 +517,16 @@ function startNightPhase() {
   renderFishes();
   
   setTimeout(() => {
-    // 坏鱼杀人
     const aliveEvilFish = gameState.fishes.filter(f => f.alive && f.role === 'evil');
-    const aliveGoodFish = gameState.fishes.filter(f => f.alive && f.role !== 'evil');
+    const aliveGoodFish = gameState.fishes.filter(f => f.alive && ['slacker', 'detective', 'judge'].includes(f.role));
     
     if (aliveEvilFish.length > 0 && aliveGoodFish.length > 0) {
       const victim = aliveGoodFish[Math.floor(Math.random() * aliveGoodFish.length)];
-      victim.alive = true; // 保持 alive=true 但标记为夜间死亡
       
       setTimeout(() => {
         victim.alive = false;
         addLog(`💀 夜深了...#${victim.id + 1} 号鱼被坏鱼杀害了！它是 **${getRoleEmoji(victim.role)}${getRoleName(victim.role)}**`, 'death');
         
-        // 进入新的一天
         gameState.day++;
         gameState.phase = 'day';
         
@@ -468,12 +534,9 @@ function startNightPhase() {
         
         updateStatusBar();
         renderFishes();
-        
-        // 检查游戏是否结束
         checkGameEnd();
       }, 1000);
     } else {
-      // 无法杀人，直接进入下一天
       gameState.day++;
       gameState.phase = 'day';
       
@@ -487,15 +550,15 @@ function startNightPhase() {
 }
 
 function checkGameEnd() {
-  const aliveGood = gameState.fishes.filter(f => f.alive && f.role !== 'evil').length;
-  const aliveBad = gameState.fishes.filter(f => f.alive && f.role === 'evil').length;
+  const aliveGood = gameState.fishes.filter(f => f.alive && ['slacker', 'detective', 'judge'].includes(f.role)).length;
+  const aliveBadOrNeutral = gameState.fishes.filter(f => f.alive && ['evil', 'trickster'].includes(f.role)).length;
   
-  if (aliveBad === 0) {
+  if (aliveBadOrNeutral === 0 || gameState.fishes.filter(f => f.alive && f.role === 'evil').length === 0) {
     endGame(true);
     return true;
   }
   
-  if (aliveGood < aliveBad || aliveGood === 0) {
+  if (aliveGood <= aliveBadOrNeutral || aliveGood === 0) {
     endGame(false);
     return true;
   }
@@ -515,20 +578,23 @@ function endGame(playerWins) {
   if (playerWins) {
     icon.textContent = '🎉';
     title.textContent = '豪鱼胜利！';
-    message.textContent = '你是豪人！成功找出了所有坏鱼，SleepTown 再次恢复了宁静！';
+    message.textContent = '你是豪人！成功找出了所有威胁，SleepTown 再次恢复了宁静！';
     modal.className = 'modal-overlay win-modal';
   } else {
     icon.textContent = '💀';
-    title.textContent = '坏鱼胜利！';
-    message.textContent = '你是坏人！坏鱼们占据了上风，SleepTown 陷入了黑暗...';
+    title.textContent = '坏人胜利！';
+    message.textContent = '你是坏人！混乱占据了上风，SleepTown 陷入了黑暗...';
     modal.className = 'modal-overlay lose-modal';
   }
   
-  // 显示所有鱼的真相
   let revealHTML = '<h3>📋 所有鱼的真相</h3><div class="truth-grid">';
   gameState.fishes.forEach((fish, index) => {
+    let bgColor = 'good-truth';
+    if (fish.role === 'evil') bgColor = 'evil-truth';
+    else if (fish.role === 'trickster') bgColor = 'neutral-truth';
+    
     revealHTML += `
-      <div class="truth-item ${fish.role === 'evil' ? 'evil-truth' : 'good-truth'}">
+      <div class="truth-item ${bgColor}">
         <span>#${index + 1}</span>
         <span>${getRoleEmoji(fish.role)} ${getRoleName(fish.role)}</span>
         <span>${fish.alive ? '✅ 存活' : '💀 死亡'}</span>
@@ -558,13 +624,13 @@ function resetGame() {
     phase: 'setup',
     day: 1,
     inquiriesLeft: 3,
+    maxInquiriesPerDay: 3,
     fishes: [],
     totalFish: 10,
     badFishCount: 3,
     goodFishCount: 7,
     mode: 'inquiry',
-    logs: [],
-    gameHistory: []
+    logs: []
   };
   
   document.getElementById('game-setup').style.display = 'block';
@@ -594,7 +660,7 @@ function resetGame() {
   background: var(--color-bg, #fff);
   border-radius: 24px;
   padding: 3rem;
-  max-width: 600px;
+  max-width: 650px;
   width: 100%;
   box-shadow: 0 8px 32px rgba(0,0,0,0.12);
   text-align: center;
@@ -768,10 +834,9 @@ function resetGame() {
   color: #fff;
 }
 
-/* ===== 日志区域 ===== */
 .game-log {
   min-height: 80px;
-  max-height: 200px;
+  max-height: 220px;
   overflow-y: auto;
   padding: 1rem;
   margin-bottom: 1.5rem;
@@ -808,13 +873,19 @@ function resetGame() {
 .log-clue { color: #2980b9; font-weight: 600; }
 .log-fake-clue { color: #c0392b; font-weight: 600; text-decoration: line-through; }
 .log-death { color: #8e44ad; font-weight: 600; }
+.log-trickster { color: #e67e22; font-weight: 700; animation: shake 0.5s ease; }
 
 @keyframes slideIn {
   from { opacity: 0; transform: translateX(-10px); }
   to { opacity: 1; transform: translateX(0); }
 }
 
-/* ===== 鱼塘区域 ===== */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
 .fish-pond {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -902,11 +973,30 @@ function resetGame() {
   color: #667eea;
 }
 
-.detective-badge {
+.special-badge {
   display: inline-block;
   padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-top: 0.3rem;
+}
+
+.detective-badge {
   background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
   color: #fff;
+}
+
+.judge-badge {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  color: #000;
+}
+
+.trickster-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  color: #000;
   border-radius: 10px;
   font-size: 0.75rem;
   font-weight: 600;
@@ -932,7 +1022,6 @@ function resetGame() {
   font-weight: 600;
 }
 
-/* ===== 操作按钮 ===== */
 .action-bar {
   display: flex;
   gap: 1rem;
@@ -996,7 +1085,6 @@ function resetGame() {
   background: #ee5a52;
 }
 
-/* ===== 弹窗样式 ===== */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -1033,7 +1121,6 @@ function resetGame() {
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* ===== 游戏结束 ===== */
 .game-over-content {
   text-align: center;
 }
@@ -1084,7 +1171,7 @@ function resetGame() {
 
 .truth-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
   gap: 0.8rem;
   margin-top: 1rem;
 }
@@ -1107,6 +1194,11 @@ function resetGame() {
 .evil-truth {
   background: #fadbd8;
   border: 2px solid #e74c3c;
+}
+
+.neutral-truth {
+  background: #fef9e7;
+  border: 2px solid #f39c12;
 }
 
 .result-actions {
@@ -1149,7 +1241,6 @@ function resetGame() {
   background: #e0e0e0;
 }
 
-/* ===== 规则弹窗 ===== */
 .rules-content h2 {
   font-size: 1.8rem;
   margin: 0 0 1.5rem 0;
@@ -1214,9 +1305,19 @@ function resetGame() {
   border-color: #9b59b6;
 }
 
+.judge-role {
+  background: #d6eaf8;
+  border-color: #3498db;
+}
+
 .evil-role {
   background: #fadbd8;
   border-color: #e74c3c;
+}
+
+.neutral-role {
+  background: #fef9e7;
+  border-color: #f39c12;
 }
 
 .role-card h4 {
@@ -1266,7 +1367,6 @@ function resetGame() {
   opacity: 0.9;
 }
 
-/* ===== 响应式设计 ===== */
 @media (max-width: 768px) {
   .setup-container {
     padding: 2rem 1.5rem;

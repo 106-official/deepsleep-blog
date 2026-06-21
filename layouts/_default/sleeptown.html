@@ -251,10 +251,18 @@ function renderFishes() {
         <div class="fish-avatar revealed-avatar">${getRoleAvatar(displayRole)}</div>
         <div class="fish-number">#${index + 1}</div>
         <div class="fish-role-name">${getRoleName(displayRole)}</div>
-        ${['detective', 'judge'].includes(fish.role) ? `<div class="special-badge ${fish.role}-badge">${getRoleEmoji(fish.role)}${getRoleName(fish.role)}</div>` : ''}
-        ${fish.role === 'trickster' ? '<div class="trickster-badge">恶作剧</div>' : ''}
-        ${fish.disguisedAs ? `<div class="disguised-hint">（实际：${getRoleEmoji(fish.role)}${getRoleName(fish.role)}）</div>` : ''}
+        ${['detective', 'judge'].includes(fish.role) && !fish.disguisedAs ? `<div class="special-badge ${fish.role}-badge">${getRoleEmoji(fish.role)}${getRoleName(fish.role)}</div>` : ''}
+        ${fish.role === 'trickster' && !fish.disguisedAs ? '<div class="trickster-badge">恶作剧</div>' : ''}
+        ${fish.disguisedAs ? '' : ''}
       `;
+      
+      // 允许流放已翻开的鱼（因为可能是伪装的！）
+      if (gameState.mode === 'exile') {
+        fishCard.onclick = () => exileFish(index);
+        if (!fishCard.className.includes('exile-mode')) {
+          fishCard.className += ' exile-mode';
+        }
+      }
     } else {
       fishCard.innerHTML = `
         <div class="fish-avatar hidden-avatar">❓</div>
@@ -422,14 +430,14 @@ function handleInquireResult(fish, index) {
       const aliveGoodFish = gameState.fishes.filter(f => f.alive && !['evil', 'trickster'].includes(f.role) && f.id !== index);
       if (aliveGoodFish.length > 0) {
         const randomGoodFish = aliveGoodFish[Math.floor(Math.random() * aliveGoodFish.length)];
-        addLog(`🗣️ #${index + 1} 号（伪·侦探）：**#${randomGoodFish.id + 1} 号是坏鱼！**（这是假信息！）`, 'fake-clue');
+        addLog(`🗣️ #${index + 1} 号（伪·侦探）：**#${randomGoodFish.id + 1} 号是坏鱼！**`, 'clue');
       }
     } else if (fish.disguisedAs === 'judge') {
       // 假装法官，给出错误信息（诬陷好鱼）
       const aliveGoodFish = gameState.fishes.filter(f => f.alive && !['evil', 'trickster'].includes(f.role) && f.id !== index);
       if (aliveGoodFish.length > 0) {
         const randomGoodFish = aliveGoodFish[Math.floor(Math.random() * aliveGoodFish.length)];
-        addLog(`⚖️ #${index + 1} 号（伪·法官）：**#${randomGoodFish.id + 1} 号不是豪鱼！**（这是假信息！）`, 'fake-clue');
+        addLog(`⚖️ #${index + 1} 号（伪·法官）：**#${randomGoodFish.id + 1} 号不是豪鱼！**`, 'clue');
       }
     } else {
       // 伪装成摆烂D
@@ -449,7 +457,7 @@ function handleInquireResult(fish, index) {
     if (aliveEvilFish.length > 0) {
       const randomEvilFish = aliveEvilFish[Math.floor(Math.random() * aliveEvilFish.length)];
       addLog(`✨ #${index + 1} 号是 **🔍侦探D**！`, 'success');
-      addLog(`🎯 侦探告诉你：**#${randomEvilFish.id + 1} 号是坏鱼！**（这条线索是真实的）`, 'clue');
+      addLog(`🎯 侦探告诉你：**#${randomEvilFish.id + 1} 号是坏鱼！**`, 'clue');
     } else {
       addLog(`✨ #${index + 1} 号是 **🔍侦探D**！但看起来所有坏鱼都已被揭露...`, 'success');
     }
@@ -459,7 +467,7 @@ function handleInquireResult(fish, index) {
     if (aliveNonGoodFish.length > 0) {
       const randomNonGoodFish = aliveNonGoodFish[Math.floor(Math.random() * aliveNonGoodFish.length)];
       addLog(`✨ #${index + 1} 号是 **⚖️法官D**！`, 'success');
-      addLog(`⚖️ 法官宣判：**#${randomNonGoodFish.id + 1} 号不是豪鱼！**（这条信息是真实的）`, 'clue');
+      addLog(`⚖️ 法官宣判：**#${randomNonGoodFish.id + 1} 号不是豪鱼！**`, 'clue');
     } else {
       addLog(`✨ #${index + 1} 号是 **⚖️法官D**！但看起来所有非豪鱼都已被揭露...`, 'success');
     }
@@ -484,11 +492,11 @@ function enterExileMode() {
 }
 
 function exileFish(index) {
-  if (!gameState.fishes[index].alive || gameState.fishes[index].revealed) return;
+  if (!gameState.fishes[index].alive) return;
   
   const fish = gameState.fishes[index];
   fish.alive = false;
-  fish.revealed = true;
+  fish.revealed = true; // 流放时揭示真实身份
   
   addLog(`⚖️ 流放 #${index + 1} 号鱼...`, 'action');
   

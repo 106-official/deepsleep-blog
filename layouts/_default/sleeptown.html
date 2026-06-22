@@ -317,232 +317,258 @@
       <!-- 返回按钮 -->
       <button onclick="backToModeSelection()" class="back-to-selection-btn">← 返回模式选择</button>
 
-      <!-- 关卡列表 -->
+      <!-- 关卡列表 - 章节折叠式设计 -->
       <div class="stage-list">
-        <!-- 关卡1-1 -->
-        <div class="stage-card unlocked-stage" onclick="startStageGame('1-1')">
-          <div class="stage-header">
-            <div class="stage-number">关卡 1-1</div>
-            <div class="stage-difficulty">⭐ 入门</div>
+
+        <!-- 第1章：基础教学 -->
+        <div class="chapter-container">
+          <div class="chapter-header" onclick="toggleChapter('chapter-1')">
+            <span class="chapter-title">📖 第1章 基础教学</span>
+            <span class="chapter-count">8个关卡</span>
+            <span class="chapter-arrow" id="arrow-chapter-1">▼</span>
           </div>
-          <div class="stage-info">
-            <h3>🔍 侦探的试炼</h3>
-            <p class="stage-description">
-              5只侦探D vs 1只邪恶D<br>
-              侦探D被翻开后会提示一只坏鱼的身份，<strong>但是会被坏鱼伪装！</strong><br>
-              多问几名侦探可以减少错误的概率^-^
-            </p>
+          <div class="chapter-content" id="chapter-1">
+
+            <!-- 关卡1-1 -->
+            <div class="stage-item" onclick="toggleStageDetail('stage-1-1')">
+              <div class="stage-item-header">
+                <span class="stage-item-number">1-1</span>
+                <span class="stage-item-name">🔍 侦探的试炼</span>
+                <span class="stage-item-difficulty">⭐ 入门</span>
+              </div>
+              <div class="stage-detail-panel" id="stage-1-1">
+                <p class="stage-detail-desc">
+                  5只侦探D vs 1只邪恶D<br>
+                  侦探D被翻开后会提示一只坏鱼的身份，<strong>但是会被坏鱼伪装！</strong><br>
+                  多问几名侦探可以减少错误的概率^-^
+                </p>
+                <div class="stage-detail-stats">
+                  <span>🐟 6条鱼</span>
+                  <span>❓ 未知身份</span>
+                  <span>⚠️ 有伪装</span>
+                </div>
+                <button class="start-stage-btn" onclick="event.stopPropagation(); startStageGame('1-1')">开始挑战 →</button>
+              </div>
+            </div>
+
+            <!-- 关卡1-2 -->
+            <div class="stage-item" onclick="toggleStageDetail('stage-1-2')">
+              <div class="stage-item-header">
+                <span class="stage-item-number">1-2</span>
+                <span class="stage-item-name">🎭 恶作剧的干扰</span>
+                <span class="stage-item-difficulty">⭐ 简单</span>
+              </div>
+              <div class="stage-detail-panel" id="stage-1-2">
+                <p class="stage-detail-desc">
+                  4只侦探D vs 1只恶作剧D vs 1只邪恶D<br>
+                  <strong>恶作剧D：中立阵营，翻开会减少一次问询机会！</strong><br>
+                  需要在问询机会和获取信息之间做出权衡。
+                </p>
+                <div class="stage-detail-stats">
+                  <span>🐟 6条鱼</span>
+                  <span>❓ 2种坏鱼</span>
+                  <span>⚠️ 问询干扰</span>
+                </div>
+                <button class="start-stage-btn" onclick="event.stopPropagation(); startStageGame('1-2')">开始挑战 →</button>
+              </div>
+            </div>
+
+            <!-- 关卡1-3 -->
+            <div class="stage-item" onclick="toggleStageDetail('stage-1-3')">
+              <div class="stage-item-header">
+                <span class="stage-item-number">1-3</span>
+                <span class="stage-item-name">😴 开摆！</span>
+                <span class="stage-item-difficulty">⭐ 简单</span>
+              </div>
+              <div class="stage-detail-panel" id="stage-1-3">
+                <p class="stage-detail-desc">
+                  2只侦探D vs 2只摆烂D vs 1只恶作剧D vs 1只邪恶D<br>
+                  <strong>摆烂D：豪鱼，但是因为太懒了并不能为你的推理提供任何帮助。</strong><br>
+                  当大量摆烂D出现时，会给推理造成很大的困扰。<br>
+                  如果信息不足以确认坏鱼，可以选择<strong>跳过流放</strong>来避免误伤好鱼^-^
+                </p>
+                <div class="stage-detail-stats">
+                  <span>🐟 6条鱼</span>
+                  <span>❓ 2种坏鱼</span>
+                  <span>⚠️ 信息不足</span>
+                </div>
+                <button class="start-stage-btn" onclick="event.stopPropagation(); startStageGame('1-3')">开始挑战 →</button>
+              </div>
+            </div>
+
+            <!-- 关卡1-4 -->
+            <div class="stage-item" onclick="toggleStageDetail('stage-1-4')">
+              <div class="stage-item-header">
+                <span class="stage-item-number">1-4</span>
+                <span class="stage-item-name">🎉 聚会</span>
+                <span class="stage-item-difficulty">⭐⭐ 中等</span>
+              </div>
+              <div class="stage-detail-panel" id="stage-1-4">
+                <p class="stage-detail-desc">
+                  4只侦探D vs 2只摆烂D vs 1只恶作剧D vs 2只邪恶D<br>
+                  <strong>有时一局游戏会出现更多的坏鱼，但是每晚仍然只能杀死一只鱼，</strong><br>
+                  需要依靠有效信息将它们一一找出来。
+                </p>
+                <div class="stage-detail-stats">
+                  <span>🐟 9条鱼</span>
+                  <span>❓ 双邪恶D</span>
+                  <span>⚠️ 高难度推理</span>
+                </div>
+                <button class="start-stage-btn" onclick="event.stopPropagation(); startStageGame('1-4')">开始挑战 →</button>
+              </div>
+            </div>
+
+            <!-- 关卡1-5 -->
+            <div class="stage-item" onclick="toggleStageDetail('stage-1-5')">
+              <div class="stage-item-header">
+                <span class="stage-item-number">1-5</span>
+                <span class="stage-item-name">⚖️ 法官裁定</span>
+                <span class="stage-item-difficulty">⭐ 简单</span>
+              </div>
+              <div class="stage-detail-panel" id="stage-1-5">
+                <p class="stage-detail-desc">
+                  1只法官D vs 2只侦探D vs 1只摆烂D vs 1只恶作剧D vs 1只邪恶D<br>
+                  <strong>法官D：公布一个非好鱼身份的编号，如果你相信法官的判罚，就可以大胆流放。</strong><br>
+                  结合法官的宣判和侦探的信息，快速锁定目标！
+                </p>
+                <div class="stage-detail-stats">
+                  <span>🐟 6条鱼</span>
+                  <span>⚖️ 法官助力</span>
+                  <span>🔍 信息交叉</span>
+                </div>
+                <button class="start-stage-btn" onclick="event.stopPropagation(); startStageGame('1-5')">开始挑战 →</button>
+              </div>
+            </div>
+
+            <!-- 关卡1-6 -->
+            <div class="stage-item" onclick="toggleStageDetail('stage-1-6')">
+              <div class="stage-item-header">
+                <span class="stage-item-number">1-6</span>
+                <span class="stage-item-name">💤 好梦</span>
+                <span class="stage-item-difficulty">⭐ 简单</span>
+              </div>
+              <div class="stage-detail-panel" id="stage-1-6">
+                <p class="stage-detail-desc">
+                  5只梦游D vs 1只邪恶D<br>
+                  <strong>梦游D：会随机梦到三个编号，三个编号中会有一只非好鱼身份。</strong><br>
+                  合理利用梦游D的推断可以帮助你缩小范围，<br>
+                  或者通过交叉推断确认高频出现的编号鱼^-^
+                </p>
+                <div class="stage-detail-stats">
+                  <span>🐟 6条鱼</span>
+                  <span>💤 全梦游阵容</span>
+                  <span>❓ 4次问询</span>
+                </div>
+                <button class="start-stage-btn" onclick="event.stopPropagation(); startStageGame('1-6')">开始挑战 →</button>
+              </div>
+            </div>
+
+            <!-- 关卡1-7 -->
+            <div class="stage-item" onclick="toggleStageDetail('stage-1-7')">
+              <div class="stage-item-header">
+                <span class="stage-item-number">1-7</span>
+                <span class="stage-item-name">📰 小道消息</span>
+                <span class="stage-item-difficulty">⭐ 简单</span>
+              </div>
+              <div class="stage-detail-panel" id="stage-1-7">
+                <p class="stage-detail-desc">
+                  5只八卦D vs 1只邪恶D<br>
+                  <strong>八卦D：对自己相邻编号的鱼很感兴趣。</strong><br>
+                  如果相邻编号有非好鱼角色，八卦D会回复<strong>"有瓜吃！"</strong><br>
+                  相反则失望地说<strong>"并没有瓜..."</strong>
+                </p>
+                <div class="stage-detail-stats">
+                  <span>🐟 6条鱼</span>
+                  <span>📰 全八卦阵容</span>
+                  <span>🔍 相邻检测</span>
+                </div>
+                <button class="start-stage-btn" onclick="event.stopPropagation(); startStageGame('1-7')">开始挑战 →</button>
+              </div>
+            </div>
+
+            <!-- 关卡1-8 -->
+            <div class="stage-item" onclick="toggleStageDetail('stage-1-8')">
+              <div class="stage-item-header">
+                <span class="stage-item-number">1-8</span>
+                <span class="stage-item-name">🔪 屠夫</span>
+                <span class="stage-item-difficulty">⭐⭐ 中等</span>
+              </div>
+              <div class="stage-detail-panel" id="stage-1-8">
+                <p class="stage-detail-desc">
+                  12条鱼的大混战！<br>
+                  <strong>虎鲸：不速之客的到来似乎影响到了原本的生态——它会无差别的攻击所有鱼！</strong><br>
+                  包含：摆烂、侦探、法官、梦游、八卦、恶作剧、邪恶、虎鲸<br>
+                  多种角色交织，每夜都可能发生意外！
+                </p>
+                <div class="stage-detail-stats">
+                  <span>🐟 12条鱼</span>
+                  <span>🐋 虎鲸登场</span>
+                  <span>⚠️ 混战模式</span>
+                </div>
+                <button class="start-stage-btn" onclick="event.stopPropagation(); startStageGame('1-8')">开始挑战 →</button>
+              </div>
+            </div>
+
           </div>
-          <div class="stage-stats">
-            <span>🐟 6条鱼</span>
-            <span>❓ 未知身份</span>
-            <span>⚠️ 有伪装</span>
-          </div>
-          <button class="start-stage-btn">开始挑战 →</button>
         </div>
 
-        <!-- 关卡1-2 -->
-        <div class="stage-card unlocked-stage" onclick="startStageGame('1-2')">
-          <div class="stage-header">
-            <div class="stage-number">关卡 1-2</div>
-            <div class="stage-difficulty">⭐ 简单</div>
+        <!-- 第2章：殉道士 -->
+        <div class="chapter-container">
+          <div class="chapter-header" onclick="toggleChapter('chapter-2')">
+            <span class="chapter-title">💀 第2章 殉道士</span>
+            <span class="chapter-count">2个关卡</span>
+            <span class="chapter-arrow" id="arrow-chapter-2">▼</span>
           </div>
-          <div class="stage-info">
-            <h3>🎭 恶作剧的干扰</h3>
-            <p class="stage-description">
-              4只侦探D vs 1只恶作剧D vs 1只邪恶D<br>
-              <strong>恶作剧D：中立阵营，翻开后会减少一次问询次数！</strong><br>
-              需要在问询机会和获取信息之间做出权衡。
-            </p>
+          <div class="chapter-content" id="chapter-2">
+
+            <!-- 关卡2-1 -->
+            <div class="stage-item" onclick="toggleStageDetail('stage-2-1')">
+              <div class="stage-item-header">
+                <span class="stage-item-number">2-1</span>
+                <span class="stage-item-name">💀 殉道士</span>
+                <span class="stage-item-difficulty">⭐ 简单</span>
+              </div>
+              <div class="stage-detail-panel" id="stage-2-1">
+                <p class="stage-detail-desc">
+                  6只侦探D vs 1只邪恶D vs 1只殉道D<br>
+                  <strong>殉道D：更具威胁性的坏鱼，被流放后会淘汰一只好鱼！</strong><br>
+                  虽然只有1个邪恶D，但流放错误会付出双倍代价！<br>
+                  充分利用6个侦探D的信息，精准定位目标！
+                </p>
+                <div class="stage-detail-stats">
+                  <span>🐟 8条鱼</span>
+                  <span>🔍 全侦探阵容</span>
+                  <span>💀 殉道威胁</span>
+                </div>
+                <button class="start-stage-btn" onclick="event.stopPropagation(); startStageGame('2-1')">开始挑战 →</button>
+              </div>
+            </div>
+
+            <!-- 关卡2-2 -->
+            <div class="stage-item" onclick="toggleStageDetail('stage-2-2')">
+              <div class="stage-item-header">
+                <span class="stage-item-number">2-2</span>
+                <span class="stage-item-name">💀💀 殉道士2.0</span>
+                <span class="stage-item-difficulty">⭐⭐ 中等</span>
+              </div>
+              <div class="stage-detail-panel" id="stage-2-2">
+                <p class="stage-detail-desc">
+                  10条鱼的混战！包含：侦探、法官、虎鲸、摆烂、梦游、恶作剧、**双殉道D**<br>
+                  <strong>更具随机性的破坏，会很大程度上干扰玩家决策。</strong><br>
+                  ——其实盲砍一个也不是不可以？
+                </p>
+                <div class="stage-detail-stats">
+                  <span>🐟 10条鱼</span>
+                  <span>💀💀 双殉道D</span>
+                  <span>🐋 虎鲸乱入</span>
+                </div>
+                <button class="start-stage-btn" onclick="event.stopPropagation(); startStageGame('2-2')">开始挑战 →</button>
+              </div>
+            </div>
+
           </div>
-          <div class="stage-stats">
-            <span>🐟 6条鱼</span>
-            <span>❓ 2种坏鱼</span>
-            <span>⚠️ 问询干扰</span>
-          </div>
-          <button class="start-stage-btn">开始挑战 →</button>
         </div>
 
-        <!-- 关卡1-3 -->
-        <div class="stage-card unlocked-stage" onclick="startStageGame('1-3')">
-          <div class="stage-header">
-            <div class="stage-number">关卡 1-3</div>
-            <div class="stage-difficulty">⭐ 简单</div>
-          </div>
-          <div class="stage-info">
-            <h3>😴 开摆！</h3>
-            <p class="stage-description">
-              2只侦探D vs 2只摆烂D vs 1只恶作剧D vs 1只邪恶D<br>
-              <strong>摆烂D：豪鱼，但是因为太懒了并不能为你的推理提供任何帮助。</strong><br>
-              当大量摆烂D出现时，会给推理造成很大的困扰。<br>
-              如果信息不足以确认坏鱼，可以选择<strong>跳过流放</strong>来避免误伤好鱼^-^
-            </p>
-          </div>
-          <div class="stage-stats">
-            <span>🐟 6条鱼</span>
-            <span>❓ 2种坏鱼</span>
-            <span>⚠️ 信息不足</span>
-          </div>
-          <button class="start-stage-btn">开始挑战 →</button>
-        </div>
-
-        <!-- 关卡1-4 -->
-        <div class="stage-card unlocked-stage" onclick="startStageGame('1-4')">
-          <div class="stage-header">
-            <div class="stage-number">关卡 1-4</div>
-            <div class="stage-difficulty">⭐⭐ 中等</div>
-          </div>
-          <div class="stage-info">
-            <h3>🎉 聚会</h3>
-            <p class="stage-description">
-              4只侦探D vs 2只摆烂D vs 1只恶作剧D vs 2只邪恶D<br>
-              <strong>有时一局游戏会出现更多的坏鱼，但是每晚仍然只能杀死一只鱼，</strong><br>
-              需要依靠有效信息将它们一一找出来。
-            </p>
-          </div>
-          <div class="stage-stats">
-            <span>🐟 9条鱼</span>
-            <span>❓ 双邪恶D</span>
-            <span>⚠️ 高难度推理</span>
-          </div>
-          <button class="start-stage-btn">开始挑战 →</button>
-        </div>
-
-        <!-- 关卡1-5 -->
-        <div class="stage-card unlocked-stage" onclick="startStageGame('1-5')">
-          <div class="stage-header">
-            <div class="stage-number">关卡 1-5</div>
-            <div class="stage-difficulty">⭐ 简单</div>
-          </div>
-          <div class="stage-info">
-            <h3>⚖️ 法官裁定</h3>
-            <p class="stage-description">
-              1只法官D vs 2只侦探D vs 1只摆烂D vs 1只恶作剧D vs 1只邪恶D<br>
-              <strong>法官D：公布一个非好鱼身份的编号，如果你相信法官的判罚，就可以大胆流放。</strong><br>
-              结合法官的宣判和侦探的信息，快速锁定目标！
-            </p>
-          </div>
-          <div class="stage-stats">
-            <span>🐟 6条鱼</span>
-            <span>⚖️ 法官助力</span>
-            <span>🔍 信息交叉</span>
-          </div>
-          <button class="start-stage-btn">开始挑战 →</button>
-        </div>
-
-        <!-- 关卡1-6 -->
-        <div class="stage-card unlocked-stage" onclick="startStageGame('1-6')">
-          <div class="stage-header">
-            <div class="stage-number">关卡 1-6</div>
-            <div class="stage-difficulty">⭐ 简单</div>
-          </div>
-          <div class="stage-info">
-            <h3>💤 好梦</h3>
-            <p class="stage-description">
-              5只梦游D vs 1只邪恶D<br>
-              <strong>梦游D：会随机梦到三个编号，三个编号中会有一只非好鱼身份。</strong><br>
-              合理利用梦游D的推断可以帮助你缩小范围，<br>
-              或者通过交叉推断确认高频出现的编号鱼^-^
-            </p>
-          </div>
-          <div class="stage-stats">
-            <span>🐟 6条鱼</span>
-            <span>💤 全梦游阵容</span>
-            <span>❓ 4次问询</span>
-          </div>
-          <button class="start-stage-btn">开始挑战 →</button>
-        </div>
-
-        <!-- 关卡1-7 -->
-        <div class="stage-card unlocked-stage" onclick="startStageGame('1-7')">
-          <div class="stage-header">
-            <div class="stage-number">关卡 1-7</div>
-            <div class="stage-difficulty">⭐ 简单</div>
-          </div>
-          <div class="stage-info">
-            <h3>📰 小道消息</h3>
-            <p class="stage-description">
-              5只八卦D vs 1只邪恶D<br>
-              <strong>八卦D：对自己相邻编号的鱼很感兴趣。</strong><br>
-              如果相邻编号有非好鱼角色，八卦D会回复<strong>"有瓜吃！"</strong><br>
-              相反则失望地说<strong>"并没有瓜..."</strong>
-            </p>
-          </div>
-          <div class="stage-stats">
-            <span>🐟 6条鱼</span>
-            <span>📰 全八卦阵容</span>
-            <span>🔍 相邻检测</span>
-          </div>
-          <button class="start-stage-btn">开始挑战 →</button>
-        </div>
-
-        <!-- 关卡1-8 -->
-        <div class="stage-card unlocked-stage" onclick="startStageGame('1-8')">
-          <div class="stage-header">
-            <div class="stage-number">关卡 1-8</div>
-            <div class="stage-difficulty">⭐⭐ 中等</div>
-          </div>
-          <div class="stage-info">
-            <h3>🔪 屠夫</h3>
-            <p class="stage-description">
-              12条鱼的大混战！<br>
-              <strong>虎鲸：不速之客的到来似乎影响到了原本的生态——它会无差别的攻击所有鱼！</strong><br>
-              包含：摆烂、侦探、法官、梦游、八卦、恶作剧、邪恶、虎鲸<br>
-              多种角色交织，每夜都可能发生意外！
-            </p>
-          </div>
-          <div class="stage-stats">
-            <span>🐟 12条鱼</span>
-            <span>🐋 虎鲸登场</span>
-            <span>⚠️ 混战模式</span>
-          </div>
-          <button class="start-stage-btn">开始挑战 →</button>
-        </div>
-
-        <!-- 关卡2-1 -->
-        <div class="stage-card unlocked-stage" onclick="startStageGame('2-1')">
-          <div class="stage-header">
-            <div class="stage-number">关卡 2-1</div>
-            <div class="stage-difficulty">⭐ 简单</div>
-          </div>
-          <div class="stage-info">
-            <h3>💀 殉道士</h3>
-            <p class="stage-description">
-              6只侦探D vs 1只邪恶D vs 1只殉道D<br>
-              <strong>殉道D：更具威胁性的坏鱼，被流放后会淘汰一只好鱼！</strong><br>
-              虽然只有1个邪恶D，但流放错误会付出双倍代价！<br>
-              充分利用6个侦探D的信息，精准定位目标！
-            </p>
-          </div>
-          <div class="stage-stats">
-            <span>🐟 8条鱼</span>
-            <span>🔍 全侦探阵容</span>
-            <span>💀 殉道威胁</span>
-          </div>
-          <button class="start-stage-btn">开始挑战 →</button>
-        </div>
-
-        <!-- 关卡2-2 -->
-        <div class="stage-card unlocked-stage" onclick="startStageGame('2-2')">
-          <div class="stage-header">
-            <div class="stage-number">关卡 2-2</div>
-            <div class="stage-difficulty">⭐⭐ 中等</div>
-          </div>
-          <div class="stage-info">
-            <h3>💀💀 殉道士2.0</h3>
-            <p class="stage-description">
-              10条鱼的混战！包含：侦探、法官、虎鲸、摆烂、梦游、恶作剧、**双殉道D**<br>
-              <strong>更具随机性的破坏，会很大程度上干扰玩家决策。</strong><br>
-              ——其实盲砍一个也不是不可以？
-            </p>
-          </div>
-          <div class="stage-stats">
-            <span>🐟 10条鱼</span>
-            <span>💀💀 双殉道D</span>
-            <span>🐋 虎鲸乱入</span>
-          </div>
-          <button class="start-stage-btn">开始挑战 →</button>
-        </div>
       </div>
     </div>
   </div>
@@ -883,6 +909,34 @@ function backToModeSelection() {
   document.getElementById('stagemode-setup').style.display = 'none';
   document.getElementById('game-main').style.display = 'none';
   document.getElementById('mode-selection').style.display = 'flex';
+}
+
+function toggleChapter(chapterId) {
+  const content = document.getElementById(chapterId);
+  const arrow = document.getElementById('arrow-' + chapterId);
+
+  if (content.style.display === 'none' || content.style.display === '') {
+    content.style.display = 'block';
+    arrow.textContent = '▲';
+    arrow.style.transform = 'rotate(0deg)';
+  } else {
+    content.style.display = 'none';
+    arrow.textContent = '▼';
+    arrow.style.transform = 'rotate(0deg)';
+  }
+}
+
+function toggleStageDetail(stageId) {
+  const detail = document.getElementById(stageId);
+  const stageItem = detail.parentElement;
+
+  if (detail.style.display === 'block') {
+    detail.style.display = 'none';
+    stageItem.classList.remove('expanded');
+  } else {
+    detail.style.display = 'block';
+    stageItem.classList.add('expanded');
+  }
 }
 
 function goBackToSetup() {
@@ -2651,9 +2705,213 @@ function resetGame() {
 
 /* ==================== 关卡模式样式 ==================== */
 .stage-list {
-  display: grid;
-  gap: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
   margin-top: 2rem;
+}
+
+/* 章节容器样式 */
+.chapter-container {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 12px;
+  overflow: hidden;
+  border: 2px solid #dee2e6;
+  transition: all 0.3s ease;
+}
+
+[data-theme="dark"] .chapter-container {
+  background: linear-gradient(135deg, #2a2a2a 0%, #1e1e1e 100%);
+  border-color: #444;
+}
+
+.chapter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  cursor: pointer;
+  background: rgba(255,255,255,0.05);
+  transition: background 0.3s ease;
+}
+
+[data-theme="dark"] .chapter-header {
+  background: rgba(255,255,255,0.03);
+}
+
+.chapter-header:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+[data-theme="dark"] .chapter-header:hover {
+  background: rgba(255,255,255,0.06);
+}
+
+.chapter-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--color-text, #333);
+}
+
+[data-theme="dark"] .chapter-title { color: #fff; }
+
+.chapter-count {
+  font-size: 0.9rem;
+  color: #6c757d;
+  padding: 4px 12px;
+  background: rgba(108,117,125,0.1);
+  border-radius: 20px;
+}
+
+[data-theme="dark"] .chapter-count {
+  color: #adb5bd;
+  background: rgba(173,181,189,0.1);
+}
+
+.chapter-arrow {
+  font-size: 1rem;
+  color: var(--color-text, #666);
+  transition: transform 0.3s ease;
+}
+
+[data-theme="dark"] .chapter-arrow { color: #adb5bd; }
+
+.chapter-content {
+  display: none;
+  padding: 0.5rem 1rem 1rem 1rem;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 紧凑关卡项样式 */
+.stage-item {
+  background: #fff;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+  border: 1px solid #e9ecef;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+[data-theme="dark"] .stage-item {
+  background: #333;
+  border-color: #444;
+}
+
+.stage-item:hover {
+  border-color: #667eea;
+  box-shadow: 0 2px 8px rgba(102,126,234,0.15);
+  transform: translateX(5px);
+}
+
+.stage-item.expanded {
+  border-color: #667eea;
+  background: linear-gradient(135deg, #f8f9ff 0%, #fff 100%);
+}
+
+[data-theme="dark"] .stage-item.expanded {
+  background: linear-gradient(135deg, #2a2a3a 0%, #2a2a2a 100%);
+  border-color: #667eea;
+}
+
+.stage-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+}
+
+.stage-item-number {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #667eea;
+  min-width: 40px;
+}
+
+.stage-item-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text, #333);
+  flex: 1;
+  margin-left: 1rem;
+}
+
+[data-theme="dark"] .stage-item-name { color: #e9ecef; }
+
+.stage-item-difficulty {
+  font-size: 0.85rem;
+  padding: 2px 10px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+  color: #fff;
+  font-weight: 600;
+}
+
+/* 关卡详情面板 */
+.stage-detail-panel {
+  display: none;
+  padding: 0 1rem 1rem 1rem;
+  border-top: 1px solid rgba(102,126,234,0.2);
+  background: rgba(102,126,234,0.03);
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.stage-detail-desc {
+  font-size: 0.9rem;
+  color: #555;
+  line-height: 1.6;
+  margin: 0.75rem 0;
+}
+
+[data-theme="dark"] .stage-detail-desc { color: #adb5bd; }
+
+.stage-detail-stats {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
+}
+
+.stage-detail-stats span {
+  font-size: 0.8rem;
+  padding: 4px 10px;
+  background: rgba(102,126,234,0.1);
+  border-radius: 12px;
+  color: #667eea;
+  font-weight: 600;
+}
+
+.start-stage-btn {
+  width: 100%;
+  padding: 0.65rem 1.25rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.start-stage-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102,126,234,0.4);
 }
 
 .stage-card {

@@ -3,8 +3,8 @@
   <!-- 模式选择界面 -->
   <div id="mode-selection" class="mode-selection">
     <div class="selection-container">
-      <h1>🐟 SleepTown 鱼塘推理 v2.1.1.1</h1>
-      <p class="game-intro">欢迎来到 SleepTown v2.1.1.1！全新角色系统，更多策略，更刺激的对决！</p>
+      <h1>🐟 SleepTown 鱼塘推理 v2.1.1.2</h1>
+      <p class="game-intro">欢迎来到 SleepTown v2.1.1.2！全新关卡模式，更智能的伪装系统！</p>
       
       <div class="mode-cards">
         <!-- 自由模式卡片 -->
@@ -24,19 +24,19 @@
         </div>
 
         <!-- 关卡模式卡片 -->
-        <div class="mode-card stagemode-card">
+        <div class="mode-card stagemode-card" onclick="showStageMode()">
           <div class="mode-icon">🏆</div>
           <h2>关卡模式</h2>
           <p class="mode-description">
             挑战精心设计的关卡，逐步提升难度
           </p>
           <ul class="mode-features">
-            <li>🔒 多个预设关卡挑战</li>
+            <li>✅ 关卡1-1已开放</li>
             <li>📈 难度递进式设计</li>
             <li>🎯 特殊规则和限制</li>
             <li>⭐ 解锁成就和奖励</li>
           </ul>
-          <button class="mode-btn stagemode-btn" disabled>即将开放 🔒</button>
+          <button class="mode-btn stagemode-btn">进入关卡模式 →</button>
         </div>
       </div>
 
@@ -47,7 +47,7 @@
       </div>
 
       <div class="rules-preview">
-        <h3 onclick="toggleRules()">📜 游戏规则 v2.1.1.1</h3>
+        <h3 onclick="toggleRules()">📜 游戏规则 v2.1.1.2</h3>
         
         <div class="rules-content-setup" id="rules-content-setup">
           <div class="rules-section-setup">
@@ -90,15 +90,17 @@
           </div>
 
           <div class="rules-section-setup">
-            <h4>⚠️ 重要：伪装机制</h4>
-            <p><strong>坏人被翻开时，会完美伪装成随机角色：</strong></p>
+            <h4>⚠️ 重要：伪装机制 (v2.1.1.2更新)</h4>
+            <p><strong>所有坏鱼阵营角色被翻开时，都会完美伪装：</strong></p>
             <ul>
+              <li><strong>邪恶D</strong> 和 <strong>殉道D</strong> 都会伪装</li>
+              <li><strong>只伪装成当前游戏中存在的角色</strong>（更智能的伪装）</li>
               <li>显示的角色名称与真角色完全相同</li>
               <li>触发的效果也与真角色一致</li>
               <li><strong>没有任何标记可以区分真假</strong></li>
               <li>只有在游戏结束时才会揭示真相</li>
             </ul>
-            <p class="warning-text">⚠️ 这意味着你看到的任何信息都可能是假的！</p>
+            <p class="warning-text">⚠️ 这意味着你看到的任何信息都可能是假的！多问几个人交叉验证！</p>
           </div>
 
           <div class="rules-section-setup">
@@ -287,6 +289,65 @@
     </div>
   </div>
 
+  <!-- 关卡模式选择界面 -->
+  <div id="stagemode-setup" class="game-setup" style="display:none">
+    <div class="setup-container">
+      <h1>🏆 SleepTown 关卡模式</h1>
+      <p class="game-intro">挑战精心设计的关卡，测试你的推理能力！</p>
+
+      <!-- 返回按钮 -->
+      <button onclick="backToModeSelection()" class="back-to-selection-btn">← 返回模式选择</button>
+
+      <!-- 关卡列表 -->
+      <div class="stage-list">
+        <!-- 关卡1-1 -->
+        <div class="stage-card unlocked-stage" onclick="startStageGame('1-1')">
+          <div class="stage-header">
+            <div class="stage-number">关卡 1-1</div>
+            <div class="stage-difficulty">⭐ 入门</div>
+          </div>
+          <div class="stage-info">
+            <h3>🔍 侦探的试炼</h3>
+            <p class="stage-description">
+              5只侦探D vs 1只邪恶D<br>
+              侦探D被翻开后会提示一只坏鱼的身份，<strong>但是会被坏鱼伪装！</strong><br>
+              多问几名侦探可以减少错误的概率^-^
+            </p>
+          </div>
+          <div class="stage-stats">
+            <span>🐟 6条鱼</span>
+            <span>❓ 未知身份</span>
+            <span>⚠️ 有伪装</span>
+          </div>
+          <button class="start-stage-btn">开始挑战 →</button>
+        </div>
+
+        <!-- 更多关卡（即将开放） -->
+        <div class="stage-card locked-stage">
+          <div class="stage-header">
+            <div class="stage-number">关卡 1-2</div>
+            <div class="stage-difficulty">🔒 未开放</div>
+          </div>
+          <div class="stage-info">
+            <h3>🎭 恶作剧的干扰</h3>
+            <p class="stage-description">敬请期待...</p>
+          </div>
+        </div>
+
+        <div class="stage-card locked-stage">
+          <div class="stage-header">
+            <div class="stage-number">关卡 2-1</div>
+            <div class="stage-difficulty">🔒 未开放</div>
+          </div>
+          <div class="stage-info">
+            <h3>💀 殉道的诅咒</h3>
+            <p class="stage-description">敬请期待...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- 游戏主界面 -->
   <div id="game-main" class="game-main" style="display:none">
     <!-- 状态栏 -->
@@ -358,7 +419,7 @@
   <!-- 规则弹窗 -->
   <div id="rules-modal" class="modal-overlay" style="display:none">
     <div class="modal-content rules-content">
-      <h2>📜 SleepTown 完整规则 v2.1.1.1</h2>
+      <h2>📜 SleepTown 完整规则 v2.1.1.2</h2>
 
       <div class="rules-section">
         <h3>🎭 角色介绍（9种角色）</h3>
@@ -390,12 +451,12 @@
 
         <div class="role-card evil-role">
           <h4>😈 邪恶D（坏鱼阵营）</h4>
-          <p>每晚会杀死一只豪鱼。被翻开时会<strong>完美伪装</strong>成其他角色。</p>
+          <p>每晚会杀死一只豪鱼。被翻开时会<strong>完美伪装成当前游戏中存在的其他角色</strong>。</p>
         </div>
 
         <div class="role-card martyr-role new-role-card">
           <h4>💀 殉道D（坏鱼阵营）<span class="new-badge">NEW</span></h4>
-          <p><strong>死亡后（被流放或杀死）会立即杀死一只好鱼</strong>作为报复！同样会伪装。</p>
+          <p><strong>死亡后（被流放或杀死）会立即杀死一只好鱼</strong>作为报复！同样会<strong>伪装成存在的角色</strong>。</p>
         </div>
 
         <div class="role-card neutral-role">
@@ -451,9 +512,98 @@ function showFreeModeSetup() {
   document.getElementById('freemode-setup').style.display = 'flex';
 }
 
+function showStageMode() {
+  document.getElementById('mode-selection').style.display = 'none';
+  document.getElementById('stagemode-setup').style.display = 'flex';
+}
+
+// 关卡配置数据
+const stageConfigs = {
+  '1-1': {
+    name: '侦探的试炼',
+    description: '5只侦探D vs 1只邪恶D，但是会被伪装！',
+    fishCount: 6,
+    roles: ['detective', 'detective', 'detective', 'detective', 'detective', 'evil'],
+    inquiriesPerDay: 3,
+    difficulty: 'easy'
+  }
+};
+
+function startStageGame(stageId) {
+  const config = stageConfigs[stageId];
+  
+  if (!config) {
+    alert('该关卡尚未开放！');
+    return;
+  }
+
+  gameState.mode = 'stagemode';
+  gameState.currentStage = stageId;
+  gameState.config = {
+    fishCount: config.fishCount,
+    roles: {
+      good: [...new Set(config.roles.filter(r => ['slacker', 'detective', 'judge', 'gossip', 'sleepwalker'].includes(r)))],
+      evil: [...new Set(config.roles.filter(r => ['evil', 'martyr'].includes(r)))],
+      neutral: [...new Set(config.roles.filter(r => ['trickster', 'orca'].includes(r)))]
+    },
+    inquiriesPerDay: config.inquiriesPerDay,
+    difficulty: config.difficulty
+  };
+
+  document.getElementById('stagemode-setup').style.display = 'none';
+  document.getElementById('game-main').style.display = 'block';
+
+  // 使用固定角色列表初始化游戏
+  initializeStageGame(config);
+}
+
+function initializeStageGame(config) {
+  const totalCount = config.fishCount;
+  const roleList = config.roles;
+
+  // 打乱顺序
+  const shuffledRoles = shuffleArray([...roleList]);
+
+  gameState = {
+    phase: 'day',
+    day: 1,
+    inquiriesLeft: config.inquiriesPerDay,
+    maxInquiriesPerDay: config.inquiriesPerDay,
+    fishes: shuffledRoles.map((role, idx) => ({
+      id: idx,
+      role: role,
+      revealed: false,
+      alive: true,
+      disguisedAs: null
+    })),
+    totalFish: totalCount,
+    mode: 'stagemode',
+    config: config,
+    gameMode: 'inquiry',
+    logs: []
+  };
+
+  document.getElementById('game-log').innerHTML = '';
+
+  const evilCount = shuffledRoles.filter(r => ['evil', 'martyr'].includes(r)).length;
+  const goodActual = shuffledRoles.filter(r => ['slacker', 'detective', 'judge', 'gossip', 'sleepwalker'].includes(r)).length;
+
+  addLog(`🏆 关卡 ${gameState.currentStage} 开始！共 ${totalCount} 条鱼 (${goodActual} 豪鱼 vs ${evilCount} 坏鱼)`, 'system');
+  addLog(`💡 关卡提示：${stageConfigs[gameState.currentStage].description}`, 'info');
+  addLog(`☀️ 白天第 1 轮 - 你有 ${config.inquiriesPerDay} 次问询机会`, 'day');
+
+  updateStatusBar();
+  renderFishes();
+
+  document.getElementById('btn-exile').disabled = true;
+  document.getElementById('btn-skip-inquiry').style.display = 'none';
+  document.getElementById('btn-skip-exile').style.display = 'none';
+}
+
 function backToModeSelection() {
   closeModal('game-over-modal');
   document.getElementById('freemode-setup').style.display = 'none';
+  document.getElementById('stagemode-setup').style.display = 'none';
   document.getElementById('game-main').style.display = 'none';
   document.getElementById('mode-selection').style.display = 'flex';
 }
@@ -966,14 +1116,25 @@ function inquireFish(index) {
 }
 
 function handleInquireResult(fish, index) {
-  if (fish.role === 'evil') {
-    const disguiseOptions = ['slacker', 'detective', 'judge', 'gossip', 'sleepwalker', 'trickster'];
-    fish.disguisedAs = disguiseOptions[Math.floor(Math.random() * disguiseOptions.length)];
-
-    addLog(`⚠️ #${index + 1} 号鱼是 **${getRoleEmoji(fish.disguisedAs)}${getRoleName(fish.disguisedAs)}**`, 'warning');
-
-    triggerRoleEffect(fish.disguisedAs, index, true);
-
+  // v2.1.1.2: 所有坏鱼阵营角色都会伪装
+  if (['evil', 'martyr'].includes(fish.role)) {
+    // 获取当前游戏中存在的所有非坏鱼角色
+    const availableRoles = [...new Set(
+      gameState.fishes
+        .filter(f => !['evil', 'martyr'].includes(f.role))
+        .map(f => f.role)
+    )];
+    
+    if (availableRoles.length > 0) {
+      fish.disguisedAs = availableRoles[Math.floor(Math.random() * availableRoles.length)];
+      
+      addLog(`⚠️ #${index + 1} 号鱼是 **${getRoleEmoji(fish.disguisedAs)}${getRoleName(fish.disguisedAs)}**`, 'warning');
+      triggerRoleEffect(fish.disguisedAs, index, true);
+    } else {
+      // 如果没有可伪装的角色（极端情况），显示真实身份
+      addLog(`⚠️ #${index + 1} 号是 **${getRoleEmoji(fish.role)}${getRoleName(fish.role)}**`, 'warning');
+      triggerRoleEffect(fish.role, index, false);
+    }
   } else {
     addLog(`✨ #${index + 1} 号是 **${getRoleEmoji(fish.role)}${getRoleName(fish.role)}**`,
            ['slacker'].includes(fish.role) ? 'neutral' : 'success');
@@ -2072,6 +2233,127 @@ function resetGame() {
 .start-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+/* ==================== 关卡模式样式 ==================== */
+.stage-list {
+  display: grid;
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.stage-card {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 16px;
+  padding: 1.5rem;
+  border: 2px solid #e0e0e0;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+[data-theme="dark"] .stage-card { 
+  background: linear-gradient(135deg, #2a2a2a 0%, #1e1e1e 100%); 
+}
+
+.stage-card:hover:not(.locked-stage) {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  border-color: #f39c12;
+}
+
+.unlocked-stage {
+  border-left: 4px solid #27ae60;
+}
+
+.locked-stage {
+  opacity: 0.6;
+  cursor: not-allowed;
+  filter: grayscale(0.5);
+}
+
+.stage-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.8rem;
+  border-bottom: 2px solid rgba(0,0,0,0.05);
+}
+
+[data-theme="dark"] .stage-header {
+  border-bottom-color: rgba(255,255,255,0.05);
+}
+
+.stage-number {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--color-text, #333);
+}
+
+[data-theme="dark"] .stage-number { color: #fff; }
+
+.stage-difficulty {
+  font-size: 0.9rem;
+  padding: 4px 12px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+  color: #fff;
+  font-weight: 600;
+}
+
+.stage-info h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.2rem;
+  color: var(--color-text, #333);
+}
+
+[data-theme="dark"] .stage-info h3 { color: #fff; }
+
+.stage-description {
+  font-size: 0.95rem;
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+[data-theme="dark"] .stage-description { color: #ccc; }
+
+.stage-stats {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 1rem 0;
+  padding: 0.8rem;
+  background: rgba(102,126,234,0.05);
+  border-radius: 8px;
+}
+
+.stage-stats span {
+  font-size: 0.9rem;
+  color: #555;
+  font-weight: 600;
+}
+
+[data-theme="dark"] .stage-stats span { color: #aaa; }
+
+.start-stage-btn {
+  width: 100%;
+  padding: 14px 28px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-top: 0.5rem;
+}
+
+.start-stage-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(243,156,18,0.4);
 }
 
 /* ==================== 游戏主界面样式 ==================== */

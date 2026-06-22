@@ -3,8 +3,8 @@
   <!-- 模式选择界面 -->
   <div id="mode-selection" class="mode-selection">
     <div class="selection-container">
-      <h1>🐟 SleepTown 鱼塘推理 v2.1.1.7</h1>
-      <p class="game-intro">欢迎来到 SleepTown v2.1.1.7！新关卡"好梦"已开放，翻开的鱼可以再次问询获取更多信息！</p>
+      <h1>🐟 SleepTown 鱼塘推理 v2.1.1.8</h1>
+      <p class="game-intro">欢迎来到 SleepTown v2.1.1.8！新关卡"小道消息"已开放，每只鱼每天只能被问询一次！</p>
       
       <div class="mode-cards">
         <!-- 自由模式卡片 -->
@@ -31,7 +31,7 @@
             挑战精心设计的关卡，逐步提升难度
           </p>
           <ul class="mode-features">
-            <li>✅ 关卡1-1至1-6已开放</li>
+            <li>✅ 关卡1-1至1-7已开放</li>
             <li>📈 难度递进式设计</li>
             <li>🎯 特殊规则和限制</li>
             <li>⭐ 通关后可连续挑战下一关</li>
@@ -444,6 +444,29 @@
           <button class="start-stage-btn">开始挑战 →</button>
         </div>
 
+        <!-- 关卡1-7 -->
+        <div class="stage-card unlocked-stage" onclick="startStageGame('1-7')">
+          <div class="stage-header">
+            <div class="stage-number">关卡 1-7</div>
+            <div class="stage-difficulty">⭐ 简单</div>
+          </div>
+          <div class="stage-info">
+            <h3>📰 小道消息</h3>
+            <p class="stage-description">
+              5只八卦D vs 1只邪恶D<br>
+              <strong>八卦D：对自己相邻编号的鱼很感兴趣。</strong><br>
+              如果相邻编号有非好鱼角色，八卦D会回复<strong>"有瓜吃！"</strong><br>
+              相反则失望地说<strong>"并没有瓜..."</strong>
+            </p>
+          </div>
+          <div class="stage-stats">
+            <span>🐟 6条鱼</span>
+            <span>📰 全八卦阵容</span>
+            <span>🔍 相邻检测</span>
+          </div>
+          <button class="start-stage-btn">开始挑战 →</button>
+        </div>
+
         <!-- 关卡2-1（即将开放） -->
         <div class="stage-card locked-stage">
           <div class="stage-header">
@@ -531,7 +554,7 @@
   <!-- 规则弹窗 -->
   <div id="rules-modal" class="modal-overlay" style="display:none">
     <div class="modal-content rules-content">
-      <h2>📜 SleepTown 完整规则 v2.1.1.7</h2>
+      <h2>📜 SleepTown 完整规则 v2.1.1.8</h2>
 
       <div class="rules-section">
         <h3>🎭 角色介绍（9种角色）</h3>
@@ -615,7 +638,8 @@ let gameState = {
     inquiriesPerDay: 3,
     difficulty: 'normal'
   },
-  logs: []
+  logs: [],
+  inquiredThisDay: []
 };
 
 // ==================== 页面导航函数 ====================
@@ -678,6 +702,14 @@ const stageConfigs = {
     roles: ['sleepwalker', 'sleepwalker', 'sleepwalker', 'sleepwalker', 'sleepwalker', 'evil'],
     inquiriesPerDay: 4,
     difficulty: 'easy'
+  },
+  '1-7': {
+    name: '小道消息',
+    description: '八卦D：对自己相邻编号的鱼很感兴趣，如果相邻编号有非好鱼角色，八卦D会前往吃瓜，相反则失望离开。',
+    fishCount: 6,
+    roles: ['gossip', 'gossip', 'gossip', 'gossip', 'gossip', 'evil'],
+    inquiriesPerDay: 3,
+    difficulty: 'easy'
   }
 };
 
@@ -733,7 +765,8 @@ function initializeStageGame(config) {
     currentStage: gameState.currentStage,
     config: config,
     gameMode: 'inquiry',
-    logs: []
+    logs: [],
+    inquiredThisDay: []
   };
 
   document.getElementById('game-log').innerHTML = '';
@@ -967,7 +1000,8 @@ function initializeGame(config) {
     mode: 'freemode',
     config: config,
     gameMode: 'inquiry',
-    logs: []
+    logs: [],
+    inquiredThisDay: []
   };
 
   document.getElementById('game-log').innerHTML = '';
@@ -1250,10 +1284,16 @@ function inquireFish(index) {
 
   const fish = gameState.fishes[index];
 
+  if (gameState.inquiredThisDay.includes(index)) {
+    addLog(`⚠️ #${index + 1} 号鱼今天已经被问询过了，每只鱼每天只能被问询一次`, 'warning');
+    return;
+  }
+
   if (!fish.revealed) {
     fish.revealed = true;
   }
 
+  gameState.inquiredThisDay.push(index);
   gameState.inquiriesLeft--;
 
   addLog(`🔍 问询 #${index + 1} 号鱼...`, 'action');
@@ -1324,11 +1364,24 @@ function triggerRoleEffect(role, index, isDisguised) {
       // 新增：梦游D效果 - 提供3个号码提示
       let sleepwalkerTargets;
       if (isDisguised) {
-        // 如果是伪装的，随机选3个非豪鱼
-        sleepwalkerTargets = gameState.fishes
-          .filter(f => f.alive && !['slacker', 'detective', 'judge', 'gossip', 'sleepwalker'].includes(f.role) && f.id !== index)
+        // 如果是坏鱼伪装成梦游D，提供虚假信息干扰玩家
+        // 随机选择3个存活的鱼（可能包含豪鱼），制造混淆
+        const allAliveFish = gameState.fishes.filter(f => f.alive && f.id !== index);
+        sleepwalkerTargets = allAliveFish
           .sort(() => Math.random() - 0.5)
           .slice(0, 3);
+
+        // 确保至少有1个是真正的非豪鱼（让虚假信息看起来更真实）
+        const realNonGood = gameState.fishes.filter(f =>
+          f.alive && ['evil', 'martyr', 'trickster', 'orca'].includes(f.role) && f.id !== index
+        );
+
+        if (realNonGood.length > 0 && sleepwalkerTargets.length === 3) {
+          // 随机替换其中一个为真实的非豪鱼
+          const replaceIndex = Math.floor(Math.random() * 3);
+          const realTarget = realNonGood[Math.floor(Math.random() * realNonGood.length)];
+          sleepwalkerTargets[replaceIndex] = realTarget;
+        }
       } else {
         // 真实的梦游D，选择坏鱼或中立角色
         sleepwalkerTargets = gameState.fishes
@@ -1564,6 +1617,7 @@ function startNightPhase() {
 
         gameState.day++;
         gameState.phase = 'day';
+        gameState.inquiredThisDay = [];
 
         addLog(`☀️ 白天第 ${gameState.day} 轮 - 你有 ${gameState.config.inquiriesPerDay} 次新的问询机会`, 'day');
 
@@ -1574,6 +1628,7 @@ function startNightPhase() {
     } else {
       gameState.day++;
       gameState.phase = 'day';
+      gameState.inquiredThisDay = [];
 
       addLog(`☀️ 白天第 ${gameState.day} 轮 - 今夜平安无事`, 'day');
 
@@ -1676,7 +1731,7 @@ function showRulesModal() {
 
 // 获取下一关的ID
 function getNextStageId(currentStageId) {
-  const stageOrder = ['1-1', '1-2', '1-3', '1-4', '1-5', '1-6'];
+  const stageOrder = ['1-1', '1-2', '1-3', '1-4', '1-5', '1-6', '1-7'];
   const currentIndex = stageOrder.indexOf(currentStageId);
   if (currentIndex !== -1 && currentIndex < stageOrder.length - 1) {
     return stageOrder[currentIndex + 1];

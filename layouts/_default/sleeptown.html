@@ -247,6 +247,10 @@
                 <input type="checkbox" id="role-orca" checked onchange="updateRoleSelection()">
                 <span>🐋 虎鲸</span>
               </label>
+              <label class="role-checkbox-label">
+                <input type="checkbox" id="role-mage" onchange="updateRoleSelection()">
+                <span>🧙 法师D</span>
+              </label>
             </div>
           </div>
         </div>
@@ -910,7 +914,8 @@ function updateRoleSelection() {
   // 中立阵营角色
   const neutralRoles = [
     document.getElementById('role-trickster').checked ? '恶作剧D' : null,
-    document.getElementById('role-orca').checked ? '虎鲸' : null
+    document.getElementById('role-orca').checked ? '虎鲸' : null,
+    document.getElementById('role-mage').checked ? '法师D' : null
   ].filter(r => r !== null);
 
   const warning = document.getElementById('role-warning');
@@ -965,6 +970,7 @@ function updateConfigPreview() {
   const neutralRolesList = [];
   if (document.getElementById('role-trickster').checked) neutralRolesList.push('恶作剧D');
   if (document.getElementById('role-orca').checked) neutralRolesList.push('虎鲸');
+  if (document.getElementById('role-mage').checked) neutralRolesList.push('法师D');
   document.getElementById('preview-neutral-roles').textContent = neutralRolesList.join('、') || '未选择';
 
   document.getElementById('preview-inquiries').textContent = inquiries;
@@ -1005,6 +1011,7 @@ function startFreeModeGame() {
   // 收集中立阵营角色
   if (document.getElementById('role-trickster').checked) config.roles.neutral.push('trickster');
   if (document.getElementById('role-orca').checked) config.roles.neutral.push('orca');
+  if (document.getElementById('role-mage').checked) config.roles.neutral.push('mage');
 
   gameState.config = config;
 

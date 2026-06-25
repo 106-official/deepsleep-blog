@@ -31,7 +31,7 @@ showtoc: false
 
 | 技能 | 熟练度 | 应用场景 |
 |------|:-----:|---------|
-| **Python** | ⭐⭐ | 数据分析（pandas/numpy/statsmodels）、GUI 开发（tkinter）、自动化脚本 |
+| **Python** | ⭐⭐ | 数据分析（statsmodels）、GUI 开发（tkinter）、自动化脚本 |
 | **Node.js & npm** | ⭐ | 基础环境配置、包管理、简单脚本运行 |
 | **NumPy** | ⭐ | 数组操作、基础数学运算 |
 | **Pandas** | ⭐ | DataFrame 数据处理、CSV/Excel 读写 |

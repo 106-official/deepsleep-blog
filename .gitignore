@@ -17,3 +17,10 @@ Thumbs.db
 *.tmp
 *.temp
 ~$*
+
+# SleepTownApp (独立的 React Native 项目，独立 Git 仓库)
+# 放在 n8n 目录方便管理，但不推送到博客仓库
+/SleepTownApp/
+../SleepTownApp/
+../../SleepTownApp/
+/node_modules/

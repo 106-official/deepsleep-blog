@@ -35,6 +35,9 @@ layout: single
 | 技能 | 能力描述 |
 |------|---------|
 | **Python** | 数据分析（pandas/numpy/statsmodels）、GUI 开发（tkinter）、自动化脚本 |
+| **NumPy** | 轻度使用，数组操作、基础数学运算 |
+| **Pandas** | 轻度使用，DataFrame 数据处理、CSV/Excel 读写 |
+| **Matplotlib** | 轻度使用，基础数据可视化、折线图/柱状图绘制 |
 | **Node.js & npm** | 轻度使用，基础环境配置、包管理、简单脚本运行 |
 | **Hugo** | 静态博客搭建与部署，主题定制 |
 | **Git** | 版本管理，GitHub 协作 |

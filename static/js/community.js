@@ -287,6 +287,24 @@ function closeProfileSection() {
 // Init
 document.addEventListener('DOMContentLoaded', () => {
   updateHeaderUI();
+
+  // 检查登录状态，切换认证区/已登录区
+  const user = getUser();
+  if (user) {
+    const authSection = document.getElementById('auth-section');
+    const loggedInSection = document.getElementById('logged-in-section');
+    if (authSection) authSection.style.display = 'none';
+    if (loggedInSection) loggedInSection.style.display = 'block';
+    const profileName = document.getElementById('profile-name');
+    const profileAvatar = document.getElementById('profile-avatar');
+    const profileBio = document.getElementById('profile-bio');
+    if (profileName) profileName.value = user.displayName || '';
+    if (profileAvatar) profileAvatar.value = user.avatarUrl || '';
+    if (profileBio) profileBio.value = user.bio || '';
+    const preview = document.getElementById('avatar-preview');
+    if (preview) preview.src = user.avatarUrl || getDefaultAvatar(user.displayName);
+  }
+
   const postsList = document.getElementById('posts-list');
   if (postsList) loadPosts(1);
 

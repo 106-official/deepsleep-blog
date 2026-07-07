@@ -128,22 +128,4 @@
 
   </div>
 </div>
-
-<script>
-(function() {
-  function checkAuth() {
-    const user = getUser();
-    if (user) {
-      document.getElementById('auth-section').style.display = 'none';
-      document.getElementById('logged-in-section').style.display = 'block';
-      document.getElementById('profile-name').value = user.displayName || '';
-      document.getElementById('profile-avatar').value = user.avatarUrl || '';
-      document.getElementById('profile-bio').value = user.bio || '';
-      var preview = document.getElementById('avatar-preview');
-      preview.src = user.avatarUrl || getDefaultAvatar(user.displayName);
-    }
-  }
-  checkAuth();
-})();
-</script>
 {{ end }}

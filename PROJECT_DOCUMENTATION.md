@@ -1,8 +1,8 @@
 # DeepSleep Blog - 项目技术文档
 
-> **最后更新**: 2026-06-17
-> **版本**: v5.2
-> **状态**: ✅ 生产就绪 | 🎉 评论系统正常运行 (Neon PostgreSQL) | 💬 社区系统已上线 | 👤 全局个人中心 | 📝 文章板块整合
+> **最后更新**: 2026-07-07
+> **版本**: v5.3
+> **状态**: ✅ 生产就绪 |  评论系统正常运行 (Neon PostgreSQL) | 💬 社区系统已上线 | 👤 全局个人中心 | 📝 文章板块整合 |  JS 重复加载修复
 
 ---
 
@@ -1007,9 +1007,112 @@ const targetForm = document.querySelector(`.auth-form#${tabName}`);
 
 ---
 
+### Bug Fix 9: community.js 重复加载导致 API_BASE 重复声明 (2026-07-07)
+
+**❓ Problem**: 社区页面注册/登录显示 "Failed to fetch"
+
+**Symptoms**:
+- 点击注册或登录按钮后显示 "Failed to fetch" 错误
+- 后端 API 和 CORS 配置均正常（OPTIONS 200 + POST 200）
+- 前端 JS 代码逻辑正确
+
+**Environment Context**:
+- Date: 2026-07-07
+- Affected Component: community.html + extend_footer.html + extended_head.html
+- Browser: Chrome/Edge DevTools Console
+
+---
+
+### 🔍 Root Cause Analysis（通过浏览器 DevTools 排查）
+
+**浏览器控制台错误**:
+```
+[error] SyntaxError: Identifier 'API_BASE' has already been declared
+[info] SCRIPT: https://deepsleep.fun/js/community.js?v=5.2
+[info] SCRIPT: https://deepsleep.fun/js/community.js
+[error] ReferenceError: getUser is not defined
+```
+
+**Technical Root Cause**:
+`community.js` 被加载了**两次**，导致 `const API_BASE` 重复声明 → 整个 JS 脚本崩溃 → 所有函数（`getUser`、`api`、`handleRegister` 等）未定义 → 点击注册时 `fetch` 无法执行 → **"Failed to fetch"**
+
+**两个加载来源**:
+
+| 来源 | 文件 | 加载方式 |
+|------|------|---------|
+| 来源 1 | `layouts/_default/community.html` | `<script src="/js/community.js?v=5.2"></script>` |
+| 来源 2 | `layouts/partials/extend_footer.html` | `<script src="{{ "js/community.js" \| relURL }}"></script>` |
+
+**触发条件**:
+社区页面同时渲染了 `community.html` 模板和全局 `partials`（`extended_head.html` + `extend_footer.html`），导致 JS 和 CSS 各被加载两次。
+
+```mermaid
+flowchart TD
+    A[浏览器访问 /community/] --> B[Hugo 渲染 community.html]
+    B --> C[加载 community.js?v=5.2]
+    B --> D[渲染全局 partials]
+    D --> E[extended_head.html 加载 community.css]
+    D --> F[extend_footer.html 加载 community.js]
+    C --> G[const API_BASE = ...]
+    F --> H[const API_BASE = ... ← 重复声明!]
+    G --> I[SyntaxError!]
+    H --> I
+    I --> J[JS 脚本崩溃]
+    J --> K[getUser/api 等函数未定义]
+    K --> L[点击注册 → fetch 失败]
+    L --> M["Failed to fetch"]
+    
+    style I fill:#fee,stroke:#f66
+    style M fill:#fcc,stroke:#f00
+```
+
+---
+
+### ✅ Solution: 移除 community.html 中的重复加载
+
+**Fix Applied**:
+
+从 `layouts/_default/community.html` 中移除重复的 `<link>` 和 `<script>` 标签，因为全局 partials 已经负责加载：
+
+```diff
+ {{ define "main" }}
+-<link rel="stylesheet" href="/css/community.css?v=5.2">
+-<script src="/js/community.js?v=5.2"></script>
++<!-- community.css 和 community.js 已通过全局 partials 加载，此处不再重复引入 -->
+ 
+ <div class="community-container">
+```
+
+**Files Modified**:
+| 文件 | 变更 |
+|------|------|
+| `layouts/_default/community.html` | 移除重复的 `<link>` 和 `<script>` 标签 |
+
+---
+
+###  Verification
+
+**Test Results**:
+- ✅ 浏览器 DevTools Console: 无 `SyntaxError` 错误
+- ✅ 浏览器 DevTools Network: `community.js` 仅加载 1 次
+- ✅ 后端 API 正常响应（OPTIONS 200 + POST 200）
+- ✅ 注册/登录功能正常工作
+
+**💡 Prevention**: 
+- 模板文件中不要重复引入已由全局 partials 加载的资源
+- 使用浏览器 DevTools Console 检查 JS 错误，不要仅依赖后端 API 测试
+- 修改模板后务必用浏览器实际访问验证
+
+---
+
 ## 📝 更新日志
 
-### v5.1 (2026-06-17) - 社区论坛系统上线
+### v5.3 (2026-07-07) - JS 重复加载修复
+
+**Bug 修复**:
+- ✅ 修复 community.js 重复加载导致 API_BASE 重复声明 → "Failed to fetch"（移除 community.html 中的重复 script/link 标签）
+
+### v5.2 (2026-06-17) - 社区论坛系统上线
 
 **新增功能**:
 - ✅ **社区论坛系统** — 用户注册/登录 + 发帖 + 帖子列表

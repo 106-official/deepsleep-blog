@@ -1,0 +1,508 @@
+{{ define "main" }}
+{{ $pageResources := where .Resources "ResourceType" "page" }}
+{{ $campusPages := sort (where $pageResources ".Params.group" "campus") ".Params.weight" }}
+{{ $offcampusPages := sort (where $pageResources ".Params.group" "offcampus") ".Params.weight" }}
+<div class="lx-page">
+  <!-- ========== HERO ========== -->
+  <div class="lx-hero">
+    <div class="lx-hero-bg"></div>
+    <div class="lx-hero-content">
+      <h1 class="lx-hero-title">上海立信会计金融学院</h1>
+      <p class="lx-hero-en">Shanghai Lixin University of Accounting and Finance</p>
+      <div class="lx-hero-divider"></div>
+      <p class="lx-hero-motto">信以立志 · 信以守身 · 信以处事 · 信以待人</p>
+    </div>
+  </div>
+
+  <!-- ========== TOP TABS ========== -->
+  <div class="lx-topbar">
+    <div class="lx-topbar-inner">
+      <button class="lx-tab-top active" data-target="campus">
+        <span class="lx-tab-icon">🏫</span>
+        <span class="lx-tab-label">校内</span>
+      </button>
+      <button class="lx-tab-top" data-target="offcampus">
+        <span class="lx-tab-icon">💼</span>
+        <span class="lx-tab-label">校外</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="lx-container">
+    <!-- ========== CAMPUS ========== -->
+    <div class="lx-section active" id="lx-campus">
+      <div class="lx-subtabs">
+        {{ range $i, $p := $campusPages }}
+        <button class="lx-subtab {{ if eq $i 0 }}active{{ end }}" data-parent="campus" data-idx="{{ $i }}">{{ $p.Title }}</button>
+        {{ end }}
+      </div>
+      <div class="lx-subcontents">
+        {{ range $i, $p := $campusPages }}
+        <div class="lx-subcontent {{ if eq $i 0 }}active{{ end }}" data-parent="campus" data-idx="{{ $i }}">
+          {{ $p.Content }}
+        </div>
+        {{ end }}
+      </div>
+    </div>
+
+    <!-- ========== OFFCAMPUS ========== -->
+    <div class="lx-section" id="lx-offcampus">
+      <div class="lx-subtabs">
+        {{ range $i, $p := $offcampusPages }}
+        <button class="lx-subtab {{ if eq $i 0 }}active{{ end }}" data-parent="offcampus" data-idx="{{ $i }}">{{ $p.Title }}</button>
+        {{ end }}
+      </div>
+      <div class="lx-subcontents">
+        {{ range $i, $p := $offcampusPages }}
+        <div class="lx-subcontent {{ if eq $i 0 }}active{{ end }}" data-parent="offcampus" data-idx="{{ $i }}">
+          {{ $p.Content }}
+        </div>
+        {{ end }}
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+/* ============================================
+   立信页面 - 全局样式
+   ============================================ */
+.lx-page {
+  --lx-gold: #D4AF37;
+  --lx-gold-light: #F4E5B2;
+  --lx-gold-dark: #B8960C;
+  --lx-bg: #fafafa;
+  --lx-card: #ffffff;
+  --lx-text: #2d2d2d;
+  --lx-text-secondary: #666666;
+  --lx-text-muted: #999999;
+  --lx-border: #e8e8e8;
+  --lx-radius: 16px;
+  --lx-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  --lx-transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  min-height: 100vh;
+  background: var(--lx-bg);
+}
+
+[data-theme="dark"] .lx-page {
+  --lx-bg: #1a1a1a;
+  --lx-card: #242424;
+  --lx-text: #e0e0e0;
+  --lx-text-secondary: #aaa;
+  --lx-text-muted: #777;
+  --lx-border: #333;
+  --lx-shadow: 0 4px 24px rgba(0,0,0,0.3);
+}
+
+/* ========== HERO ========== */
+.lx-hero {
+  position: relative;
+  padding: 5rem 2rem 4rem;
+  text-align: center;
+  overflow: hidden;
+  background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);
+}
+
+.lx-hero-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(212,175,55,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 50%, rgba(212,175,55,0.08) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.lx-hero-content {
+  position: relative;
+  z-index: 1;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.lx-hero-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 0.6rem;
+  letter-spacing: 0.05em;
+}
+
+.lx-hero-en {
+  font-size: clamp(0.85rem, 2vw, 1.05rem);
+  color: rgba(255,255,255,0.6);
+  margin: 0 0 1.5rem;
+  font-weight: 300;
+  letter-spacing: 0.08em;
+}
+
+.lx-hero-divider {
+  width: 80px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--lx-gold), var(--lx-gold-light));
+  margin: 0 auto 1.5rem;
+  border-radius: 2px;
+}
+
+.lx-hero-motto {
+  font-size: clamp(0.95rem, 1.5vw, 1.1rem);
+  color: var(--lx-gold);
+  margin: 0;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  opacity: 0.9;
+}
+
+/* ========== TOP TAB BAR ========== */
+.lx-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--lx-border);
+  box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+}
+
+[data-theme="dark"] .lx-topbar {
+  background: rgba(30,30,30,0.95);
+}
+
+.lx-topbar-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  gap: 0;
+  padding: 0 1rem;
+}
+
+.lx-tab-top {
+  flex: 1;
+  max-width: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem 1.5rem;
+  border: none;
+  background: transparent;
+  color: var(--lx-text-muted);
+  font-size: 1.05rem;
+  font-weight: 500;
+  cursor: pointer;
+  position: relative;
+  transition: color var(--lx-transition);
+}
+
+.lx-tab-top::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 3px;
+  background: var(--lx-gold);
+  border-radius: 3px 3px 0 0;
+  transition: width var(--lx-transition);
+}
+
+.lx-tab-top:hover {
+  color: var(--lx-text);
+}
+
+.lx-tab-top.active {
+  color: var(--lx-gold-dark);
+}
+
+.lx-tab-top.active::after {
+  width: 60%;
+}
+
+.lx-tab-icon {
+  font-size: 1.2rem;
+}
+
+/* ========== CONTAINER ========== */
+.lx-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+}
+
+/* ========== SECTIONS ========== */
+.lx-section {
+  display: none;
+  animation: lxFadeIn 0.4s ease-out;
+}
+
+.lx-section.active {
+  display: block;
+}
+
+@keyframes lxFadeIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ========== SUB TABS ========== */
+.lx-subtabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--lx-border);
+  flex-wrap: wrap;
+}
+
+.lx-subtab {
+  padding: 0.6rem 1.4rem;
+  border: 2px solid var(--lx-border);
+  border-radius: 100px;
+  background: transparent;
+  color: var(--lx-text-secondary);
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--lx-transition);
+  white-space: nowrap;
+}
+
+.lx-subtab:hover {
+  border-color: var(--lx-gold);
+  color: var(--lx-gold-dark);
+}
+
+.lx-subtab.active {
+  background: linear-gradient(135deg, var(--lx-gold), var(--lx-gold-light));
+  border-color: transparent;
+  color: #000;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(212,175,55,0.25);
+}
+
+/* ========== SUB CONTENT ========== */
+.lx-subcontents {
+  background: var(--lx-card);
+  border-radius: var(--lx-radius);
+  padding: 2.5rem;
+  box-shadow: var(--lx-shadow);
+  border: 1px solid var(--lx-border);
+  line-height: 1.9;
+  color: var(--lx-text);
+}
+
+.lx-subcontent {
+  display: none;
+  animation: lxFadeIn 0.35s ease-out;
+}
+
+.lx-subcontent.active {
+  display: block;
+}
+
+/* 子内容内部的标题样式 */
+.lx-subcontent h1 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 2rem;
+  color: var(--lx-text);
+  margin: 0 0 0.5rem;
+  padding-bottom: 0.8rem;
+  border-bottom: 3px solid var(--lx-gold-light);
+  display: inline-block;
+}
+
+.lx-subcontent h2 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.5rem;
+  color: var(--lx-text);
+  margin: 2rem 0 1rem;
+  padding-left: 0.8rem;
+  border-left: 4px solid var(--lx-gold);
+}
+
+.lx-subcontent h3 {
+  font-size: 1.2rem;
+  color: var(--lx-text);
+  margin: 1.5rem 0 0.8rem;
+}
+
+.lx-subcontent p {
+  margin-bottom: 1rem;
+  color: var(--lx-text-secondary);
+}
+
+.lx-subcontent hr {
+  border: none;
+  height: 2px;
+  background: linear-gradient(90deg, var(--lx-gold-light), transparent);
+  margin: 2rem 0;
+}
+
+.lx-subcontent em {
+  color: var(--lx-gold-dark);
+  font-style: italic;
+}
+
+.lx-subcontent ul,
+.lx-subcontent ol {
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+  color: var(--lx-text-secondary);
+}
+
+.lx-subcontent li {
+  margin-bottom: 0.6rem;
+}
+
+.lx-subcontent ul li::marker {
+  color: var(--lx-gold);
+  font-weight: bold;
+}
+
+.lx-subcontent img {
+  max-width: 100%;
+  border-radius: 12px;
+  box-shadow: var(--lx-shadow);
+  margin: 1.5rem 0;
+}
+
+.lx-subcontent a {
+  color: var(--lx-gold-dark);
+  text-decoration: none;
+  border-bottom: 2px solid var(--lx-gold-light);
+  transition: all 0.2s;
+}
+
+.lx-subcontent a:hover {
+  background: var(--lx-gold-light);
+  color: #000;
+  border-bottom-color: var(--lx-gold);
+}
+
+.lx-subcontent blockquote {
+  margin: 1.5rem 0;
+  padding: 1.2rem 1.5rem;
+  background: linear-gradient(135deg, var(--lx-bg), #f5f5f5);
+  border-left: 5px solid var(--lx-gold);
+  border-radius: 0 12px 12px 0;
+  color: var(--lx-text-secondary);
+  font-style: italic;
+}
+
+[data-theme="dark"] .lx-subcontent blockquote {
+  background: #2a2a2a;
+}
+
+.lx-subcontent code {
+  background: #f5f5f5;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.9em;
+  color: var(--lx-gold-dark);
+  border: 1px solid var(--lx-border);
+}
+
+[data-theme="dark"] .lx-subcontent code {
+  background: #333;
+}
+
+.lx-subcontent pre {
+  margin: 1.5rem 0;
+  padding: 1.5rem;
+  background: #282c34;
+  border-radius: 12px;
+  overflow-x: auto;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05);
+}
+
+.lx-subcontent pre code {
+  background: none;
+  padding: 0;
+  border: none;
+  color: #abb2bf;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 768px) {
+  .lx-hero {
+    padding: 3.5rem 1.5rem 3rem;
+  }
+
+  .lx-topbar-inner {
+    padding: 0;
+  }
+
+  .lx-tab-top {
+    font-size: 0.95rem;
+    padding: 0.85rem 1rem;
+  }
+
+  .lx-container {
+    padding: 1.5rem 1rem 3rem;
+  }
+
+  .lx-subcontents {
+    padding: 1.5rem;
+  }
+
+  .lx-subtabs {
+    gap: 0.4rem;
+  }
+
+  .lx-subtab {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .lx-subcontent h1 {
+    font-size: 1.6rem;
+  }
+}
+</style>
+
+<script>
+(function() {
+  'use strict';
+
+  const topTabs = document.querySelectorAll('.lx-tab-top');
+  const sections = {
+    campus: document.getElementById('lx-campus'),
+    offcampus: document.getElementById('lx-offcampus')
+  };
+
+  // Top tab switching
+  topTabs.forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      const target = this.dataset.target;
+      // Deactivate all top tabs
+      topTabs.forEach(function(t) { t.classList.remove('active'); });
+      this.classList.add('active');
+      // Toggle sections
+      Object.keys(sections).forEach(function(key) {
+        sections[key].classList.toggle('active', key === target);
+      });
+    });
+  });
+
+  // Sub tab switching
+  document.querySelectorAll('.lx-subtab').forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      const parent = this.dataset.parent;
+      const idx = this.dataset.idx;
+      const siblings = document.querySelectorAll('.lx-subtab[data-parent="' + parent + '"]');
+      const contents = document.querySelectorAll('.lx-subcontent[data-parent="' + parent + '"]');
+
+      siblings.forEach(function(s) { s.classList.remove('active'); });
+      this.classList.add('active');
+
+      contents.forEach(function(c) {
+        c.classList.toggle('active', c.dataset.idx === idx);
+      });
+    });
+  });
+})();
+</script>
+{{ end }}

@@ -100,31 +100,31 @@ theme = ["PaperMod"]
 # 导航菜单
 [[menu.main]]
   identifier = "posts"
-  name = "📝 文章"
+  name = "文章"
   url = "/posts/"
   weight = 10
 
 [[menu.main]]
   identifier = "resources"
-  name = "📦 资源"
+  name = "资源"
   url = "/resources/"
   weight = 20
 
 [[menu.main]]
   identifier = "me"
-  name = "🧑‍💻 我"
+  name = "我"
   url = "/me/"
   weight = 30
 
 [[menu.main]]
   identifier = "community"
-  name = "💬 社区"
+  name = "社区"
   url = "/community/"
   weight = 40
 
 [[menu.main]]
   identifier = "play"
-  name = "🎮 娱乐"
+  name = "娱乐"
   url = "/play/"
   weight = 50
 

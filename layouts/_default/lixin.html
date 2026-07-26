@@ -425,6 +425,99 @@
   color: #abb2bf;
 }
 
+/* ========== CAMPUS CARDS ========== */
+.lx-campus-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+.lx-campus-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 2.5rem 1.5rem;
+  background: linear-gradient(135deg, #fafafa, #f0f0f0);
+  border: 2px solid var(--lx-border);
+  border-radius: var(--lx-radius);
+  text-decoration: none;
+  transition: all var(--lx-transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.lx-campus-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(212,175,55,0.08), transparent);
+  opacity: 0;
+  transition: opacity var(--lx-transition);
+}
+
+.lx-campus-card:hover {
+  border-color: var(--lx-gold);
+  transform: translateY(-6px);
+  box-shadow: 0 12px 32px rgba(212,175,55,0.2);
+}
+
+.lx-campus-card:hover::before {
+  opacity: 1;
+}
+
+.lx-campus-icon {
+  font-size: 2.8rem;
+  position: relative;
+  z-index: 1;
+}
+
+.lx-campus-card h2 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.4rem;
+  color: var(--lx-text);
+  margin: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.lx-campus-desc {
+  font-size: 0.9rem;
+  color: var(--lx-text-muted);
+  margin: 0;
+  position: relative;
+  z-index: 1;
+  text-align: center;
+}
+
+.lx-campus-btn {
+  display: inline-block;
+  padding: 0.5rem 1.5rem;
+  background: linear-gradient(135deg, var(--lx-gold), var(--lx-gold-light));
+  color: #000;
+  border-radius: 100px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  position: relative;
+  z-index: 1;
+  transition: transform var(--lx-transition);
+}
+
+.lx-campus-card:hover .lx-campus-btn {
+  transform: scale(1.05);
+}
+
+[data-theme="dark"] .lx-campus-card {
+  background: linear-gradient(135deg, #2a2a2a, #222);
+}
+
+@media (max-width: 600px) {
+  .lx-campus-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* ========== RESPONSIVE ========== */
 @media (max-width: 768px) {
   .lx-hero {

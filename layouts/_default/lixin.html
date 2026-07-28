@@ -425,6 +425,51 @@
   color: #abb2bf;
 }
 
+/* ========== TABLE ========== */
+.lx-subcontent table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.2rem 0;
+  font-size: 0.95rem;
+  display: block;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.lx-subcontent table th,
+.lx-subcontent table td {
+  padding: 0.7rem 1rem;
+  text-align: left;
+  border: 1px solid var(--lx-border);
+  white-space: nowrap;
+}
+
+.lx-subcontent table th {
+  background: linear-gradient(135deg, var(--lx-gold), var(--lx-gold-light));
+  color: #000;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.lx-subcontent table td {
+  color: var(--lx-text-secondary);
+  white-space: normal;
+  min-width: 0;
+}
+
+.lx-subcontent table tr:nth-child(even) td {
+  background: var(--lx-bg);
+}
+
+[data-theme="dark"] .lx-subcontent table th {
+  background: linear-gradient(135deg, #8a7210, #b8960c);
+  color: #fff;
+}
+
+[data-theme="dark"] .lx-subcontent table td {
+  color: #ccc;
+}
+
 /* ========== CAMPUS CARDS ========== */
 .lx-campus-grid {
   display: grid;

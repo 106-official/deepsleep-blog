@@ -14,6 +14,20 @@
     </div>
   </div>
 
+  <!-- ========== NOTICE ========== -->
+  <div class="lx-notice">
+    <div class="lx-notice-icon">📜</div>
+    <div class="lx-notice-body">
+      <div class="lx-notice-title">使用说明</div>
+      <p>本页面公开内容允许机构/个人账号复制、下载、分享。觉得复制太麻烦可以直接<a href="mailto:2651699459@QQ.com">问我要原文档</a>。</p>
+      <p>但<strong>请不要用作宣传商用</strong>，不要以此哄骗甚至圈新生的钱。愿立信变得更好 <span class="lx-notice-heart">^-^</span></p>
+    </div>
+    <div class="lx-notice-contact">
+      <div><span class="lx-notice-label">邮箱</span><a href="mailto:2651699459@QQ.com">2651699459@QQ.com</a></div>
+      <div><span class="lx-notice-label">微信</span>QwQQvQQmQQAQ</div>
+    </div>
+  </div>
+
   <!-- ========== TOP TABS ========== -->
   <div class="lx-topbar">
     <div class="lx-topbar-inner">
@@ -153,6 +167,107 @@
   font-weight: 500;
   letter-spacing: 0.15em;
   opacity: 0.9;
+}
+
+/* ========== NOTICE ========== */
+.lx-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  max-width: 900px;
+  margin: 1.5rem auto 0;
+  padding: 1.2rem 1.5rem;
+  background: var(--lx-card);
+  border: 1px solid var(--lx-gold-light);
+  border-radius: var(--lx-radius);
+  box-shadow: 0 2px 12px rgba(212,175,55,0.12);
+  line-height: 1.6;
+}
+
+[data-theme="dark"] .lx-notice {
+  border-color: #555;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+}
+
+.lx-notice-icon {
+  font-size: 1.8rem;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.lx-notice-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.lx-notice-title {
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--lx-gold-dark);
+  margin-bottom: 0.4rem;
+}
+
+.lx-notice-body p {
+  margin: 0 0 0.3rem;
+  font-size: 0.92rem;
+  color: var(--lx-text-secondary);
+}
+
+.lx-notice-body p:last-child {
+  margin-bottom: 0;
+}
+
+.lx-notice-body a {
+  color: var(--lx-gold-dark);
+  text-decoration: none;
+  border-bottom: 1px solid var(--lx-gold-light);
+}
+
+.lx-notice-heart {
+  white-space: nowrap;
+}
+
+.lx-notice-contact {
+  flex-shrink: 0;
+  font-size: 0.88rem;
+  color: var(--lx-text-secondary);
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding-left: 1rem;
+  border-left: 1px solid var(--lx-border);
+}
+
+.lx-notice-contact a {
+  color: var(--lx-text);
+  text-decoration: none;
+}
+
+.lx-notice-label {
+  display: inline-block;
+  width: 2.2em;
+  font-weight: 600;
+  color: var(--lx-gold-dark);
+  margin-right: 0.3rem;
+}
+
+@media (max-width: 640px) {
+  .lx-notice {
+    flex-wrap: wrap;
+    margin: 1rem 1rem 0;
+    padding: 1rem;
+  }
+
+  .lx-notice-contact {
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+    padding-left: 0;
+    padding-top: 0.8rem;
+    border-left: none;
+    border-top: 1px solid var(--lx-border);
+  }
 }
 
 /* ========== TOP TAB BAR ========== */

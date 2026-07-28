@@ -887,10 +887,33 @@
   color: var(--lx-text) !important;
   border: 1px solid var(--lx-border);
   border-bottom-left-radius: 4px;
+  /* bot 气泡用 <br> 控制换行，关闭 pre-wrap 避免双重换行 */
+  white-space: normal !important;
 }
 .lx-msg-bot.loading .lx-msg-bubble {
   color: var(--lx-text-muted) !important;
   font-style: italic;
+}
+/* Markdown 子元素样式 */
+.lx-msg-bubble strong { font-weight: 700; }
+.lx-msg-bubble code {
+  background: rgba(0,0,0,0.06);
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.88em;
+}
+.lx-msg-bubble ul {
+  margin: 0.4em 0;
+  padding-left: 1.3em;
+}
+.lx-msg-bubble li {
+  margin: 0.15em 0;
+}
+.lx-msg-bubble ul + br,
+.lx-msg-bubble br + ul { display: none; }
+[data-theme="dark"] .lx-msg-bubble code {
+  background: rgba(255,255,255,0.1);
 }
 
 .lx-chat-input-row {
@@ -1041,12 +1064,66 @@
     messages.scrollTop = messages.scrollHeight;
   }
 
+  // 轻量 Markdown 渲染（仅用于 bot 回答，用户输入不渲染）
+  // 支持：**bold**、`code`、* item / - item 列表、换行
+  // 流式半截处理：** 或 ` 出现奇数次时临时补全闭合，让用户提前看到样式
+  function renderMarkdown(text) {
+    if (!text) return '';
+    // 1. 转义 HTML 防 XSS
+    let s = text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+
+    // 2. 流式半截补全：奇数个 ** 或 ` 时末尾补一个，临时闭合
+    if ((s.match(/\*\*/g) || []).length % 2 === 1) s += '**';
+    if ((s.match(/`/g) || []).length % 2 === 1) s += '`';
+
+    // 3. 行内代码 `code`
+    s = s.replace(/`([^`]+)`/g, '<code>$1</code>');
+    // 4. 粗体 **text**
+    s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+
+    // 5. 列表：连续 * 或 - 开头的行包裹为 <ul><li>
+    const lines = s.split('\n');
+    const out = [];
+    let inList = false;
+    for (const line of lines) {
+      const m = line.match(/^\s*[\*\-]\s+(.*)$/);
+      if (m) {
+        if (!inList) { out.push('<ul>'); inList = true; }
+        out.push('<li>' + m[1] + '</li>');
+      } else {
+        if (inList) { out.push('</ul>'); inList = false; }
+        out.push(line);
+      }
+    }
+    if (inList) out.push('</ul>');
+
+    // 6. 列表标签紧贴，其他换行转 <br>，只清理列表标签紧贴的 <br>（保留段落间换行）
+    s = out.join('\n')
+      .replace(/<\/li>\n<li>/g, '</li><li>')
+      .replace(/<ul>\n<li>/g, '<ul><li>')
+      .replace(/<\/li>\n<\/ul>/g, '</li></ul>')
+      .replace(/\n/g, '<br>');
+    s = s.replace(/<ul><br>/g, '<ul>')
+         .replace(/<br><\/ul>/g, '</ul>')
+         .replace(/<li><br>/g, '<li>')
+         .replace(/<br><\/li>/g, '</li>');
+    return s;
+  }
+
   function appendMsg(role, text) {
     const msg = document.createElement('div');
     msg.className = 'lx-msg lx-msg-' + role;
     const bubble = document.createElement('div');
     bubble.className = 'lx-msg-bubble';
-    bubble.textContent = text;
+    // bot 回答渲染 Markdown，user 输入纯文本（安全）
+    if (role === 'bot') {
+      bubble.innerHTML = renderMarkdown(text);
+    } else {
+      bubble.textContent = text;
+    }
     msg.appendChild(bubble);
     messages.appendChild(msg);
     scrollToBottom();
@@ -1130,7 +1207,7 @@
             const obj = JSON.parse(payload);
             if (obj.delta) {
               answerText += obj.delta;
-              loadingBubble.textContent = answerText;
+              loadingBubble.innerHTML = renderMarkdown(answerText);
               scrollToBottom();
             }
             if (obj.done) {
@@ -1138,7 +1215,7 @@
             }
             if (obj.error) {
               answerText += (answerText ? '\n' : '') + '[流式中断]';
-              loadingBubble.textContent = answerText;
+              loadingBubble.innerHTML = renderMarkdown(answerText);
             }
           } catch (e) {}
         }

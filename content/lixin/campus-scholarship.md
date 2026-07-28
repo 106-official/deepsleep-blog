@@ -1,7 +1,7 @@
 ---
 title: "奖助学金"
 group: "campus"
-weight: 4
+weight: 6
 ---
 
 # 奖助学金全攻略

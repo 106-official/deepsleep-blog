@@ -1,7 +1,7 @@
 ---
 title: "社团与组织"
 group: "campus"
-weight: 5
+weight: 7
 ---
 
 # 社团与学生组织

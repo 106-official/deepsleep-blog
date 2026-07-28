@@ -1,7 +1,7 @@
 ---
 title: "图书馆"
 group: "campus"
-weight: 6
+weight: 8
 ---
 
 # 图书馆

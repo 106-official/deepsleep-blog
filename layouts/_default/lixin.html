@@ -121,7 +121,8 @@
 /* ============================================
    立信页面 - 全局样式
    ============================================ */
-.lx-page {
+/* 变量定义在 :root 而非 .lx-page，确保 #lx-chat-window（兄弟节点）也能继承 */
+:root {
   --lx-gold: #D4AF37;
   --lx-gold-light: #F4E5B2;
   --lx-gold-dark: #B8960C;
@@ -134,13 +135,9 @@
   --lx-radius: 16px;
   --lx-shadow: 0 4px 24px rgba(0,0,0,0.08);
   --lx-transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  min-height: 100vh;
-  background: var(--lx-bg);
 }
 
-[data-theme="dark"] .lx-page {
+[data-theme="dark"] {
   --lx-bg: #1a1a1a;
   --lx-card: #242424;
   --lx-text: #e0e0e0;
@@ -148,6 +145,12 @@
   --lx-text-muted: #777;
   --lx-border: #333;
   --lx-shadow: 0 4px 24px rgba(0,0,0,0.3);
+}
+
+.lx-page {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  min-height: 100vh;
+  background: var(--lx-bg);
 }
 
 /* ========== HERO ========== */
@@ -1158,30 +1161,51 @@
     const loadingBubble = loading.bubble;
     const loadingMsg = loading.msg;
 
+    // loading 计时器：显示已等待秒数，让用户知道在进展
+    let waitSeconds = 0;
+    const waitTimer = setInterval(() => {
+      waitSeconds++;
+      if (loadingMsg.classList.contains('loading')) {
+        loadingBubble.textContent = '正在思考… (' + waitSeconds + 's)';
+      } else {
+        clearInterval(waitTimer);
+      }
+    }, 1000);
+
+    // 30 秒超时：防止冷启动/慢网下 fetch 无限挂起
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000);
+
     try {
       const resp = await fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ question, context: contextData }),
+        signal: controller.signal,
       });
+      clearTimeout(timeoutId);
 
       if (resp.status === 429) {
+        clearInterval(waitTimer);
         loadingMsg.classList.remove('loading');
         loadingBubble.textContent = '提问太频繁，请稍后再试。';
         return;
       }
       if (resp.status === 503) {
+        clearInterval(waitTimer);
         loadingMsg.classList.remove('loading');
         loadingBubble.textContent = '助手暂时休息，请直接翻阅上方避雷指南。';
         return;
       }
       if (!resp.ok) {
+        clearInterval(waitTimer);
         loadingMsg.classList.remove('loading');
         loadingBubble.textContent = '服务异常，请稍后再试。';
         return;
       }
 
       // 替换 loading 气泡为真实回答气泡
+      clearInterval(waitTimer);
       loadingMsg.classList.remove('loading');
       loadingBubble.textContent = '';
 
@@ -1222,9 +1246,15 @@
         loadingBubble.textContent = '（未收到回复，请重试）';
       }
     } catch (e) {
+      clearTimeout(timeoutId);
+      clearInterval(waitTimer);
       console.error('[lx-chat] send error', e);
       loadingMsg.classList.remove('loading');
-      loadingBubble.textContent = '网络异常，请检查连接后重试。';
+      if (e.name === 'AbortError') {
+        loadingBubble.textContent = '请求超时（30s），请重试。';
+      } else {
+        loadingBubble.textContent = '网络异常，请检查连接后重试。';
+      }
     } finally {
       sending = false;
       sendBtn.disabled = false;

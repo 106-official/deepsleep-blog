@@ -133,8 +133,8 @@ content/learn/
 | `--learn-radius` | `12px` | 同 | 圆角 |
 | `--learn-shadow` | `0 2px 12px rgba(0,0,0,0.06)` | `0 2px 12px rgba(0,0,0,0.3)` | 阴影 |
 | `--learn-transition` | `0.3s cubic-bezier(0.4,0,0.2,1)` | 同 | 过渡曲线 |
-| `--learn-sidebar-width` | `280px` | 同 | sidebar 宽度 |
-| `--learn-article-max` | `1100px` | 同 | 主内容区最大宽度 |
+| `--learn-sidebar-width` | `300px` | 同 | sidebar 宽度 |
+| `--learn-main-max` | `1440px` | 同 | 主内容区最大宽度（含 padding）|
 
 ### 暗色模式
 
@@ -346,7 +346,7 @@ draft: false                         # 必填，false 让占位章节也能访�
 | 想调整 | 改哪个变量 |
 |--------|-----------|
 | sidebar 宽度 | `--learn-sidebar-width` |
-| 内容区最大宽度 | `--learn-article-max` |
+| 主内容区最大宽度 | `--learn-main-max` |
 | 圆角大小 | `--learn-radius` |
 | 主题色 | `--learn-gold` / `--learn-gold-light` / `--learn-gold-dark` |
 
@@ -366,6 +366,18 @@ draft: false                         # 必填，false 让占位章节也能访�
 
 **效果**：1920px 屏下，sidebar 280 + main 1640（padding 后内容约 1480），article 1100 居中，两侧各约 190px 空白，比初版 410px 改善 50%+。阅读宽度从 820 提升到 1100，信息密度更合理。
 
+### 2026-07-30（第二次）：去掉卡片样式，让内容自然铺展
+
+**问题**：卡片式 `.learn-article`（白底 + 边框 + 阴影 + 内边距）套在 main 内部，视觉上像「盒中盒」，内容区虽有 1100px 但看起来仍然紧凑。参考 itcharge.cn，其内容直接铺在页面背景上，无卡片感。
+
+**修复**：
+- `.learn-article` 去掉所有卡片样式：`background: transparent; border: none; border-radius: 0; box-shadow: none; padding: 0;`
+- 不再限制 article 宽度，改为在 `.learn-main` 上设置 `max-width: var(--learn-main-max)`（1440px）
+- sidebar 宽度从 280px 略微增加到 300px
+- `.learn-main` padding 改用固定值 `2.5rem 1.5rem 4rem`（去掉 clamp 自适应，简化）
+
+**效果**：1920px 屏下，grid 总可用宽约 1920px：sidebar 300 + main 1440（含 padding 后内容约 1416px）。内容自然铺展无卡片感，接近 itcharge.cn 的阅读体验。1440px 就是博客内容区合理极限（再多右侧视觉会显得空旷）。
+
 ---
 
 ## 9. 关键约束（吸取的教训）
@@ -377,6 +389,7 @@ draft: false                         # 必填，false 让占位章节也能访�
 5. **`CurrentSection.RelPermalink` 过滤** —— 用 `.CurrentSection` 而非 `.Section`，确保 nested section（`learn/cpa/`）正确匹配。
 6. **Git 推送走代理** `http://127.0.0.1:65532`（项目硬约束）。
 7. **`min-width: 0`** 加在 grid item（`.learn-main`）上 —— 防止内容溢出导致 grid 列撑开。
+8. **`.learn-article` 无卡片样式** —— 不要给 `.learn-article` 加 background/border/box-shadow/padding。内容直接铺在页面背景上，空间感更开阔。阅读宽度通过 `.learn-main` 的 `max-width: 1440px` 控制。
 
 ---
 

@@ -1501,6 +1501,15 @@ Hugo 的 partial 查找是精确匹配文件名，找不到 `extend_head.html` �
 - 📊 **效果**：页脚现在全宽显示，白天模式白底深字+深金链接，暗色模式黑底浅字+浅金链接，与整体主题协调
 - 💡 **教训**：custom.css 早期为 `.footer` / `body` 等全局元素硬编码颜色（#2d2d2d、#fafafa 渐变）未配套 `[data-theme="dark"]` 覆盖，是 v5.8 追加 4 / 追加 5 两轮 bug 的共同根因；后续全局元素配色应直接复用 PaperMod 主题变量（`var(--theme)`/`var(--primary)`/`var(--secondary)`）而非硬编码
 
+**视觉一致性微调（同日追加 6 - SleepTown 关卡模式界面优化，不升版本）**:
+- 🎨 **动机**：关卡模式 sidebar 每个关卡名前都有表情（🔍🎭😴🎉⚖️💤📰🔪💀），关卡卡片也有 🎯/🎮 表情 + ⭐ 难度星，配合原橙金按钮（#f39c12）整体偏幼稚；与博客其他板块（learn/posts/resources）沉稳风格不一致
+- ✅ **删除侧边栏关卡名表情**：第1章 8 关 + 第2章 2 关的 `.stagemode-nav-text` 前表情全部移除；分组标题 `.stagemode-nav-group-icon`（📖/💀）移除
+- ✅ **难度星改文字**：`.stagemode-nav-diff` 由 `⭐`/`⭐⭐` 改为 `入门`/`简单`/`中等` 文字标签；`stageDetails.difficulty` 字段同步去 `⭐` 前缀
+- ✅ **关卡卡片去表情**：`selectStage()` 渲染中 `${detail.highlight}` 去 `🎯` 前缀、开始按钮去 `🎮`、`statsHTML` 移除 `.stagemode-stat-icon`（仅保留 `.stagemode-stat-label` 显示 `s.text`）
+- ✅ **按钮配色沉稳化**：`:root` 主题变量 `--stagemode-gold` 由橙金 `#f39c12` → 深海蓝 `#2c5282`、`--stagemode-gold-light` `#ffe0b3` → `#5a8bbf`、`--stagemode-gold-dark` `#e67e22` → `#1e3a5f`；联动更新 `.new-badge` 渐变、`.stagemode-card-highlight` 背景、`[data-theme="dark"] .stagemode-stat` 背景/边框
+- 📋 **范围**：仅 `layouts/_default/sleeptown.html` 一个文件（80 行变更，39 增 41 删），不升版本号
+- 💡 **教训**：硬编码 `rgba(243,156,18,...)` 散落在多处的暗色模式覆盖，统一改用 `var(--stagemode-gold*)` 后未来调色只需改 `:root` 三行
+
 **新 HTML 结构**:
 ```
 .lx-page (grid: 300px 1fr)

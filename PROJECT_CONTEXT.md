@@ -104,7 +104,7 @@ blog-static/
 ├── layouts/
 │   ├── partials/
 │   │   ├── comments.html              # Waline 评论组件
-│   │   ├── extended_head.html         # ⭐ 全局头部 (字体/CSS/表单样式) v5.2.1 更新
+│   │   ├── extend_head.html          # ⭐ 全局头部 (字体/CSS/表单样式) v5.2.1 更新；v5.8 修正文件名（原 extended_head.html 未被 PaperMod 加载）
 │   │   └── extend_footer.html         # ⭐ 全局页脚 (个人按钮注入+JS) v5.2.1 简化
 │   └── _default/
 │       ├── community.html             # 社区布局模板 (纯 HTML, 无 Markdown)

@@ -215,7 +215,7 @@ blog-static/
 │   ├── partials/
 │   │   ├── comments.html            # Waline 评论组件
 │   │   ├── extend_footer.html       # ⭐ 全局功能（个人弹窗 + JS）v5.2 更新
-│   │   └── extended_head.html       # ⭐ 全局样式（个人按钮 + 弹窗样式）v5.2 更新
+│   │   └── extend_head.html          # ⭐ 全局样式（个人按钮 + 弹窗样式）v5.2 更新；v5.8 修正文件名（extended_head.html 未被 PaperMod 加载）
 │   └── _default/
 │       ├── community.html           # 社区布局模板
 │       ├── posts.html              # ⭐ 文章列表模板 (learn 风格 sidebar) v5.5 改造
@@ -1076,7 +1076,7 @@ const targetForm = document.querySelector(`.auth-form#${tabName}`);
 
 **Environment Context**:
 - Date: 2026-07-07
-- Affected Component: community.html + extend_footer.html + extended_head.html
+- Affected Component: community.html + extend_footer.html + extend_head.html
 - Browser: Chrome/Edge DevTools Console
 
 ---
@@ -1156,10 +1156,151 @@ flowchart TD
 - ✅ 后端 API 正常响应（OPTIONS 200 + POST 200）
 - ✅ 注册/登录功能正常工作
 
-**💡 Prevention**: 
+**💡 Prevention**:
 - 模板文件中不要重复引入已由全局 partials 加载的资源
 - 使用浏览器 DevTools Console 检查 JS 错误，不要仅依赖后端 API 测试
 - 修改模板后务必用浏览器实际访问验证
+
+---
+
+## 📚 Bug Fix Q&A: extend_head.html 文件名拼写错误导致 head CSS 全部失效 (2026-07-31)
+
+### ❓ Problem: Aa 字体调节按钮显示异常（Aa80%90%100%110%120%）且点击无响应
+
+**Symptoms**:
+- 部署后 Aa 字体调节按钮在浏览器中渲染为"Aa80%90%100%110%120%"（所有 5 个档位按钮 + Aa 挤在一行可见）
+- 点击 Aa 按钮切换 `.open` 类后视觉上无任何变化（弹窗本应隐藏/显示）
+- 主题切换圆形扩散动画的 CSS 装饰（`::view-transition-new(root)` z-index 层级）缺失，仅 JS 动画生效
+- v5.2 起累积的个人按钮/弹窗 CSS 也未生效（依赖 `static/css/custom.css` 兜底才未暴露）
+
+**Environment Context**:
+- Date: 2026-07-31
+- Affected Component: `layouts/partials/extended_head.html`（错误文件名）→ `layouts/partials/extend_head.html`（正确文件名）
+- Browser: Chrome/Edge/Firefox 所有浏览器均受影响
+- 影响版本：v5.2 → v5.8（自首次创建该文件起一直存在）
+
+---
+
+### 🔍 Root Cause Analysis
+
+**Technical Root Cause**:
+PaperMod 主题的 `themes/PaperMod/layouts/_partials/head.html:186` 引用扩展 partial 的代码是：
+```go
+{{- partial "extend_head.html" . -}}
+```
+但项目从 v5.2 起创建的文件名是 `layouts/partials/extended_head.html`（带 ed 过去分词），与 PaperMod 引用的 `extend_head.html`（动词原形）不匹配。
+
+Hugo 的 partial 查找是精确匹配文件名，找不到 `extend_head.html` 就静默跳过（不报错），导致该文件中累积的所有 CSS 从未注入到 `<head>` 中。
+
+**Discovery Method**:
+- `git status` 发现 `extended_head.html` 一直存在且被提交
+- 检查 `public/index.html` 的 `<head>` 段长度仅 2818 字节，且不包含 `font-scale`/`font-toggle`/`font-popup`/`view-transition` 任何 CSS 规则
+- `Select-String` 检查 PaperMod `head.html` partial 引用，发现引用的是 `extend_head.html`（不带 ed）
+- 对比项目实际文件名 `extended_head.html`（带 ed），确认文件名拼写错误
+
+**Why It Failed**:
+- JS 在 `extend_footer.html` 中（文件名正确匹配 PaperMod 的 `extend_footer.html` 引用），所以 JS 一直生效
+- HTML 元素由 JS 动态注入（如 `.font-toggle-wrap`），所以 DOM 结构正常渲染
+- 但 CSS 在 `extended_head.html` 中（文件名不匹配），从未被加载
+- `.font-popup` 缺失 `visibility:hidden` 和 `position:absolute`，导致 5 个档位按钮一直可见且挤在 Aa 旁
+- 切换 `.open` 类时没有 CSS 响应这个状态变化，所以视觉上无效果 → "点击无响应"
+
+---
+
+### ✅ Solution: 修正文件名（git mv 保留历史）
+
+**Fix Applied**:
+1. **Step 1**: 用 `git mv` 重命名文件（保留 git 历史）
+   ```powershell
+   git mv layouts/partials/extended_head.html layouts/partials/extend_head.html
+   ```
+   - Before: `layouts/partials/extended_head.html`（带 ed，PaperMod 不识别）
+   - After: `layouts/partials/extend_head.html`（不带 ed，匹配 PaperMod 引用）
+
+2. **Step 2**: 重新 build 验证
+   ```powershell
+   hugo --minify --gc
+   ```
+   - 验证 `public/index.html` 的 `<head>` 段长度从 2818 字节增长到 6953 字节
+   - 确认包含 `font-scale`/`font-toggle`/`font-popup`/`view-transition`/`custom.css` 全部 CSS
+
+3. **Step 3**: 同步更新项目文档中所有提到 `extended_head.html` 的位置（共 9 处）
+
+**Files Modified**:
+- [`layouts/partials/extend_head.html`](layouts/partials/extend_head.html): 由 `extended_head.html` 重命名而来，内容未变
+- [`PROJECT_DOCUMENTATION.md`](PROJECT_DOCUMENTATION.md): 9 处文件名引用更新 + 新增本 Q&A 条目 + v5.8 章节追加 Bug Fix 说明
+- [`PROJECT_CONTEXT.md`](PROJECT_CONTEXT.md): 1 处文件名引用更新
+
+**Configuration Changes**:
+| Variable | Old Value | New Value | Location |
+|----------|-----------|-----------|----------|
+| Partial 文件名 | `extended_head.html` | `extend_head.html` | `layouts/partials/` |
+
+---
+
+### 🧪 Verification
+
+**Test Results**:
+- ✅ `hugo --minify --gc` 构建成功（225 页，0 错误）
+- ✅ `public/index.html` `<head>` 段长度从 2818 字节增长到 6953 字节
+- ✅ `<head>` 中包含 `--font-scale` CSS 变量定义
+- ✅ `<head>` 中包含 `.font-toggle` / `.font-popup` / `.font-scale-btn` 选择器规则
+- ✅ `<head>` 中包含 `::view-transition-new(root)` 伪元素规则
+- ✅ `<head>` 中引用 `/css/custom.css` 和 `/css/community.css`
+- ✅ `hugo server` 启动正常，无模板查找错误
+
+**Evidence**:
+- PowerShell 验证输出：
+  ```
+  Has font-scale: True
+  Has font-toggle: True
+  Has font-popup: True
+  Has view-transition: True
+  Has custom.css: True
+  ```
+
+**Rollback Plan**:
+如需回滚，只需 `git mv layouts/partials/extend_head.html layouts/partials/extended_head.html` 即可恢复到错误状态（不推荐）。
+
+---
+
+### 💡 Prevention & Best Practices
+
+**To Prevent Recurrence**:
+1. **PaperMod 扩展点文件名规范**：扩展 partial 必须用动词原形 `extend_head.html` / `extend_footer.html`，不要用过去分词 `extended_*.html`
+2. **新建 partial 后必须验证加载**：用 `Select-String -Path public/index.html -Pattern "<关键 CSS 选择器>"` 确认 CSS 实际渲染到 HTML 中
+3. **本地 build 后浏览器实测**：`hugo server` 后访问页面，用 DevTools Elements 面板检查元素样式是否生效
+4. **JS 与 CSS 同源原则**：若 JS 注入 DOM 元素并依赖 CSS 控制可见性，JS 和 CSS 必须放在都生效的 partial 中（都用 `extend_*.html` 或都用 `extend_*.html`）
+
+**Monitoring Recommendations**:
+- 每次 hugo build 后抽查 `public/index.html` 的 `<head>` 段长度（应稳定在 6KB+）
+- CI 部署后用 `curl https://deepsleep.fun/ | grep "font-popup"` 验证关键 CSS 在线生效
+
+**Related Documentation**:
+- v5.6 主题切换圆形扩散动画章节（`::view-transition-*` CSS 现已生效）
+- v5.7 字体大小调节功能章节（`.font-toggle`/`.font-popup` CSS 现已生效）
+
+---
+
+### 📊 Impact Summary
+
+| Metric | Value |
+|--------|-------|
+| **Severity** | 🔴 Critical（影响多个版本累积的 CSS） |
+| **Downtime** | 无（功能降级运行，非完全不可用） |
+| **Users Affected** | 100% 访客（自 v5.2 起） |
+| **Time to Fix** | ~30 分钟（含根因分析） |
+| **Complexity** | Low（一行 `git mv`）但 High（根因定位需要理解 Hugo partial 查找机制） |
+
+---
+
+**🎓 Key Learnings**:
+> PaperMod 主题的扩展点文件名是 `extend_head.html` / `extend_footer.html`（动词原形），不是 `extended_head.html` / `extended_footer.html`（过去分词）。Hugo partial 查找是精确匹配文件名且静默失败（不报错），所以拼写错误的 partial 文件会被默默忽略，CSS/JS 看似"配置正确"实则从未加载。诊断这类问题的金标准是检查 `public/<page>.html` 渲染后的实际内容，而非只看源文件。
+
+**🔗 Related Issues**:
+- v5.2 全局个人按钮/弹窗样式（受影响但 custom.css 兜底）
+- v5.6 主题切换圆形扩散动画 CSS（受影响，JS 生效但 CSS 缺失）
+- v5.7 字体大小调节功能 CSS（受影响，本次 bug 报告的直接触发点）
 
 ---
 
@@ -1232,6 +1373,17 @@ flowchart TD
 
 **v5.5 sidebar 统一完成**：至此 learn/posts/resources/SleepTown/lixin 5 个板块全部统一为 learn 风格 sidebar 设计。
 
+**Bug Fix - extend_head.html 文件名修正**：
+- 🐛 **问题**：Aa 字体调节按钮在浏览器中显示为"Aa80%90%100%110%120%"且点击无响应
+- 🔍 **根因**：项目自 v5.2 起一直使用文件名 `layouts/partials/extended_head.html`（带 ed），但 PaperMod 主题的 `themes/PaperMod/layouts/_partials/head.html:186` 引用的是 `extend_head.html`（不带 ed）。文件名不匹配导致 partial 查找失败，**所有累积在 `extended_head.html` 中的 CSS 从未加载**（包括 v5.6 主题切换动画的 `::view-transition-*` CSS、v5.7 字体调节的 `.font-toggle`/`.font-popup`/`.font-scale-btn` 样式、以及更早的个人按钮/弹窗样式）。
+- ✅ **修复**：`git mv layouts/partials/extended_head.html layouts/partials/extend_head.html` 修正文件名
+- 📊 **影响范围**：
+  - v5.6 主题切换圆形扩散动画：JS 生效（在 `extend_footer.html`），但 CSS 装饰（`::view-transition-new(root)` z-index）缺失 → 现在完整生效
+  - v5.7 字体调节：JS 注入按钮生效，但 CSS 缺失导致弹窗一直可见 + 5 档按钮挤在 Aa 旁 + 切换 `.open` 无视觉效果 → 现在完整生效
+  - v5.2 个人按钮/弹窗样式：之前依赖 `static/css/custom.css` 兜底，现 `extend_head.html` 内的样式也生效
+- 🔎 **验证**：`hugo --minify --gc` 后 `public/index.html` head 段从 2818 字节增长到 6953 字节，包含 `font-scale`/`font-toggle`/`font-popup`/`view-transition` 全部 CSS 规则
+- 💡 **教训**：PaperMod 主题的扩展点文件名是 `extend_head.html` / `extend_footer.html`（动词原形），不是 `extended_head.html` / `extended_footer.html`（过去分词）；项目里 `extend_footer.html` 一直正确，但 `extended_head.html` 从 v5.2 起就拼错了
+
 ---
 
 ### v5.7 (2026-07-31) - 字体大小调节功能
@@ -1281,7 +1433,7 @@ flowchart TD
 | 文件 | 变更 |
 |------|------|
 | `layouts/partials/extend_footer.html` | 追加捕获阶段拦截脚本 + startViewTransition + clipPath 动画 |
-| `layouts/partials/extended_head.html` | 追加 `::view-transition-*` CSS（禁用默认 cross-fade、设置层级、reduced-motion 降级） |
+| `layouts/partials/extend_head.html` | 追加 `::view-transition-*` CSS（禁用默认 cross-fade、设置层级、reduced-motion 降级）（v5.8 修正文件名同步） |
 | `PROJECT_CONTEXT.md` | 版本号 v5.5→v5.6、功能清单新增、版本演进表、技术决策表 |
 | `PROJECT_DOCUMENTATION.md` | 版本号、功能特性、技术决策表、新增动画说明章节、更新日志 |
 

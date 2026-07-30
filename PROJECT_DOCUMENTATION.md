@@ -1,7 +1,7 @@
 # DeepSleep Blog - 项目技术文档
 
 > **最后更新**: 2026-07-31
-> **版本**: v5.9
+> **版本**: v5.10
 > **状态**: ✅ 生产就绪 | 评论系统正常运行 (Neon PostgreSQL) | 💬 社区系统已上线 | 👤 全局个人中心 | 📝 文章板块整合 (learn 风格 sidebar) | 🌗 主题切换圆形扩散动画 | 🐟 SleepTown 首页 sidebar 改造 | 🎮 交互式自我介绍 (/play/me/)
 
 ---
@@ -51,7 +51,7 @@
 - 🏫 **lixin sidebar 改造 + LLM 对话主页化**（双层 Tab → learn 风格 sidebar，悬浮弹窗 → 主内容区默认全屏对话视图）✅ v5.8 新增
 - 🐟 **SleepTown 首页 sidebar 改造**（花哨彩色卡片 → learn 风格 sidebar + 简洁模式按钮 + 10 种鱼角色图鉴 + 规则 modal 弹窗）✅ v5.9 新增
 - ⚡ 零 CDN 依赖（Waline 前端资源完全本地化）
-- 🎮 **交互式自我介绍**（`/play/me/` 滚动叙事 + 数据可视化 + 打字机流式）✅ v5.9 新增
+- 🎮 **交互式自我介绍**（`/play/me/` 滚动叙事 + 数据可视化 + 打字机流式）✅ v5.10 新增
 
 ---
 
@@ -225,7 +225,7 @@ blog-static/
 │       ├── posts.html              # ⭐ 文章列表模板 (learn 风格 sidebar) v5.5 改造
 │       ├── resources.html           # ⭐ 资源列表模板 (learn 风格 sidebar) v5.5 新增
 │       ├── play.html                # 娱乐中心模板 (Playfair Display 标题 + 紧凑卡片) v5.6
-│       ├── me-game.html            # ⭐ 交互式自我介绍模板 (5 section + 打字机流式) v5.9 新增
+│       ├── me-game.html            # ⭐ 交互式自我介绍模板 (5 section + 打字机流式) v5.10 新增
 │       └── sleeptown.html          # ⭐ SleepTown 游戏模板 (含关卡模式 sidebar) v2.2.2.0
 ├── static/
 │   ├── css/
@@ -1311,7 +1311,7 @@ Hugo 的 partial 查找是精确匹配文件名，找不到 `extend_head.html` �
 
 ## 📝 更新日志
 
-### v5.9 (2026-07-31) - 交互式自我介绍页面
+### v5.10 (2026-07-31) - 交互式自我介绍页面
 
 **新增功能**:
 - ✅ **交互式自我介绍** (`/play/me/`)：滚动叙事 + 数据可视化，5 个 section
@@ -1340,8 +1340,8 @@ Hugo 的 partial 查找是精确匹配文件名，找不到 `extend_head.html` �
 | `content/play/me.md` | 新增：front matter 声明 layout: me-game |
 | `layouts/_default/me-game.html` | 新增：自包含模板（5 section HTML + CSS + JS） |
 | `layouts/_default/play.html` | 修改：.games-grid 新增「关于我」卡片 |
-| `PROJECT_CONTEXT.md` | 版本号 v5.8→v5.9、功能清单、版本演进表、技术决策表 |
-| `PROJECT_DOCUMENTATION.md` | 版本号、功能特性、目录结构、更新日志 v5.9 条目 |
+| `PROJECT_CONTEXT.md` | 版本号 v5.9→v5.10、功能清单、版本演进表、技术决策表 |
+| `PROJECT_DOCUMENTATION.md` | 版本号、功能特性、目录结构、更新日志 v5.10 条目 |
 
 **设计文档**：`docs/superpowers/specs/2026-07-31-play-me-interactive-intro-design.md`
 

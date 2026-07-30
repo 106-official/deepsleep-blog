@@ -15,33 +15,63 @@
       </a>
     </div>
     <nav class="learn-nav">
-      {{ $cpaPages := where .Site.RegularPages "CurrentSection.RelPermalink" "/learn/cpa/" }}
-      <div class="learn-nav-group">
-        <a href="/learn/cpa/" class="learn-nav-group-title {{ if eq .CurrentSection.RelPermalink "/learn/cpa/" }}current{{ end }}">
+      {{- /* ============= CPA ============= */ -}}
+      {{- $cpa := .Site.GetPage "/learn/cpa" -}}
+      {{- if $cpa -}}
+      <div class="learn-nav-group learn-nav-cert">
+        <a href="{{ $cpa.Permalink }}" class="learn-nav-group-title {{ if eq .CurrentSection.RelPermalink "/learn/cpa/" }}current{{ end }}">
           <span class="learn-nav-group-icon">📊</span>
           <span>CPA · 注册会计师</span>
         </a>
-        {{ range $cpaPages.ByParam "weight" }}
+        {{- /* 顶层普通页（01-overview, 08-comprehensive） */ -}}
+        {{- range $cpa.RegularPages.ByParam "weight" -}}
         <a href="{{ .Permalink }}" class="learn-nav-link {{ if eq $.Permalink .Permalink }}active{{ end }}">
           <span class="learn-nav-num">{{ printf "%02d" .Params.weight }}</span>
           <span class="learn-nav-text">{{ .Title }}</span>
         </a>
-        {{ end }}
+        {{- end -}}
+        {{- /* 科目子节（折叠式） */ -}}
+        {{- range $cpa.Sections.ByParam "weight" -}}
+        {{- $isCurrentSubject := eq $.CurrentSection.RelPermalink .RelPermalink -}}
+        <details class="learn-nav-subject"{{ if $isCurrentSubject }} open{{ end }}>
+          <summary class="learn-nav-subject-title {{ if $isCurrentSubject }}current{{ end }}">
+            <span class="learn-nav-subject-icon">{{ .Params.icon | default "📖" }}</span>
+            <span class="learn-nav-subject-text">{{ .Title }}</span>
+            <span class="learn-nav-count">{{ len .Pages }}</span>
+          </summary>
+          <div class="learn-nav-chapters">
+            <a href="{{ .Permalink }}" class="learn-nav-link learn-nav-overview {{ if eq $.Permalink .Permalink }}active{{ end }}">
+              <span class="learn-nav-num">→</span>
+              <span class="learn-nav-text">科目概览</span>
+            </a>
+            {{- range .Pages.ByParam "weight" -}}
+            <a href="{{ .Permalink }}" class="learn-nav-link {{ if eq $.Permalink .Permalink }}active{{ end }}">
+              <span class="learn-nav-num">{{ printf "%02d" .Params.weight }}</span>
+              <span class="learn-nav-text">{{ .Title }}</span>
+            </a>
+            {{- end -}}
+          </div>
+        </details>
+        {{- end -}}
       </div>
+      {{- end -}}
 
-      {{ $accaPages := where .Site.RegularPages "CurrentSection.RelPermalink" "/learn/acca/" }}
-      <div class="learn-nav-group">
-        <a href="/learn/acca/" class="learn-nav-group-title {{ if eq .CurrentSection.RelPermalink "/learn/acca/" }}current{{ end }}">
+      {{- /* ============= ACCA ============= */ -}}
+      {{- $acca := .Site.GetPage "/learn/acca" -}}
+      {{- if $acca -}}
+      <div class="learn-nav-group learn-nav-cert">
+        <a href="{{ $acca.Permalink }}" class="learn-nav-group-title {{ if eq .CurrentSection.RelPermalink "/learn/acca/" }}current{{ end }}">
           <span class="learn-nav-group-icon">🌍</span>
           <span>ACCA · 特许公认会计师</span>
         </a>
-        {{ range $accaPages.ByParam "weight" }}
+        {{- range $acca.RegularPages.ByParam "weight" -}}
         <a href="{{ .Permalink }}" class="learn-nav-link {{ if eq $.Permalink .Permalink }}active{{ end }}">
           <span class="learn-nav-num">{{ printf "%02d" .Params.weight }}</span>
           <span class="learn-nav-text">{{ .Title }}</span>
         </a>
-        {{ end }}
+        {{- end -}}
       </div>
+      {{- end -}}
     </nav>
   </aside>
 
@@ -261,6 +291,105 @@
 }
 .learn-nav-link.active .learn-nav-num { color: var(--learn-gold-dark); }
 .learn-nav-text { flex: 1; min-width: 0; }
+
+/* ========== Subject subsections (collapsible) ========== */
+.learn-nav-subject {
+  margin: 0.2rem 0 0.3rem;
+  border-radius: 6px;
+  overflow: hidden;
+}
+.learn-nav-subject-title {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.5rem 0.7rem;
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--learn-text);
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+  border-radius: 6px;
+  border-left: 3px solid transparent;
+  transition: all var(--learn-transition);
+}
+.learn-nav-subject-title::-webkit-details-marker { display: none; }
+.learn-nav-subject-title::-marker { content: ''; }
+.learn-nav-subject-title::before {
+  content: '▸';
+  display: inline-block;
+  font-size: 0.7rem;
+  color: var(--learn-text-muted);
+  transition: transform var(--learn-transition);
+  flex-shrink: 0;
+}
+.learn-nav-subject[open] > .learn-nav-subject-title::before {
+  transform: rotate(90deg);
+}
+.learn-nav-subject-title:hover {
+  background: rgba(212,175,55,0.06);
+  color: var(--learn-gold-dark);
+}
+.learn-nav-subject-title.current {
+  color: var(--learn-gold-dark);
+  background: rgba(212,175,55,0.08);
+  border-left-color: var(--learn-gold-light);
+}
+.learn-nav-subject-icon {
+  font-size: 0.95rem;
+  flex-shrink: 0;
+}
+.learn-nav-subject-text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.learn-nav-count {
+  flex-shrink: 0;
+  font-size: 0.68rem;
+  font-family: 'SF Mono', Consolas, monospace;
+  color: var(--learn-text-muted);
+  background: var(--learn-bg);
+  border: 1px solid var(--learn-border);
+  padding: 0.05rem 0.35rem;
+  border-radius: 10px;
+  min-width: 1.4rem;
+  text-align: center;
+}
+.learn-nav-subject-title.current .learn-nav-count {
+  color: var(--learn-gold-dark);
+  border-color: var(--learn-gold-light);
+  background: rgba(212,175,55,0.08);
+}
+.learn-nav-chapters {
+  padding: 0.15rem 0 0.4rem;
+  border-left: 2px dotted var(--learn-border);
+  margin-left: 1.05rem;
+}
+.learn-nav-chapters .learn-nav-link {
+  padding-left: 0.9rem;
+  font-size: 0.83rem;
+  font-weight: 400;
+}
+.learn-nav-chapters .learn-nav-link.active {
+  font-weight: 500;
+}
+.learn-nav-overview {
+  font-style: italic;
+  color: var(--learn-text-muted);
+  border-bottom: 1px dashed var(--learn-border);
+  border-radius: 0;
+  margin-bottom: 0.2rem;
+}
+.learn-nav-overview .learn-nav-num {
+  font-style: normal;
+}
+.learn-nav-overview:hover {
+  color: var(--learn-gold-dark);
+  font-style: normal;
+}
 
 /* ========== Main Content ========== */
 .learn-main {

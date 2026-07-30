@@ -18,36 +18,38 @@
 
 ## 2. URL 与目录结构
 
-采用 Hugo 标准 Section（Branch Bundle），URL 自动生成：
+采用 Hugo 标准 Section（Branch Bundle），URL 自动生成。**CPA 为两级嵌套结构**（科目 → 章节），ACCA 暂为扁平结构（待内容增长后迁移）：
 
 ```
 content/learn/
 ├── _index.md                       # /learn/              首页（CPA/ACCA 双卡片入口）
 ├── cpa/
 │   ├── _index.md                   # /learn/cpa/          CPA 证书概览
-│   ├── 01-overview.md              # /learn/cpa/01-overview/         CPA 概览（完整）
-│   ├── 02-accounting.md            # /learn/cpa/02-accounting/      会计（占位）
-│   ├── 03-audit.md                 # /learn/cpa/03-audit/           审计（占位）
-│   ├── 04-fm.md                    # /learn/cpa/04-fm/              财务成本管理（占位）
-│   ├── 05-strategy.md              # /learn/cpa/05-strategy/        公司战略与风险管理（占位）
-│   ├── 06-economic-law.md          # /learn/cpa/06-economic-law/   经济法（占位）
-│   ├── 07-tax-law.md               # /learn/cpa/07-tax-law/         税法（占位）
-│   └── 08-comprehensive.md         # /learn/cpa/08-comprehensive/  综合阶段（占位）
-└── acca/
-    ├── _index.md                   # /learn/acca/         ACCA 证书概览
-    ├── 01-overview.md              # /learn/acca/01-overview/        ACCA 概览（完整）
-    ├── 02-applied-knowledge.md     # /learn/acca/02-applied-knowledge/  应用知识阶段（占位）
-    ├── 03-applied-skills.md        # /learn/acca/03-applied-skills/     应用技能阶段（占位）
-    ├── 04-strategic-pro.md         # /learn/acca/04-strategic-pro/      战略专业核心（占位）
-    ├── 05-strategic-elective.md    # /learn/acca/05-strategic-elective/ 战略专业选修（占位）
-    └── 06-ethics-per.md            # /learn/acca/06-ethics-per/         职业道德与PER（占位）
+│   ├── 01-overview.md              # /learn/cpa/01-overview/         报考指南（完整）
+│   ├── 02-accounting/              # /learn/cpa/02-accounting/       会计科目录页
+│   │   ├── _index.md               #   科目概览（科目信息+章节表）
+│   │   ├── 01-basic-concepts.md    # /learn/cpa/02-accounting/01-basic-concepts/   总论
+│   │   ├── 02-inventory.md         #                                          存货
+│   │   ├── ...                     #                                          （共 25 章）
+│   │   └── 25-government-accounting.md                                     政府会计
+│   ├── 03-audit/                   # /learn/cpa/03-audit/            审计（12 章）
+│   ├── 04-fm/                      # /learn/cpa/04-fm/              财务成本管理（15 章）
+│   ├── 05-strategy/                # /learn/cpa/05-strategy/        公司战略与风险管理（8 章）
+│   ├── 06-economic-law/            # /learn/cpa/06-economic-law/    经济法（12 章）
+│   ├── 07-tax-law/                 # /learn/cpa/07-tax-law/         税法（14 章）
+│   └── 08-comprehensive.md         # /learn/cpa/08-comprehensive/   综合阶段（占位）
+└── acca/                           # /learn/acca/  扁平结构（待迁移）
 ```
+
+**CPA 共 ~86 章节页**（6 科 × 8-25 章 + 3 个顶层页），构成完整教材级别内容。
 
 ### 文件命名规则
 
-- `_index.md`：每个 section 的首页（Hugo Branch Bundle 约定）
+- `_index.md`：每个 section 的首页（Hugo Branch Bundle 约定），URL 为 `/learn/cpa/<subject>/`
 - `NN-slug.md`：章节文件，`NN` 为两位序号（与 front matter `weight` 一致），`slug` 为 URL 友好的英文短名
 - 序号决定 sidebar 排序与上下篇导航顺序
+- 科目目录 slug：`02-accounting` / `03-audit` / `04-fm` / `05-strategy` / `06-economic-law` / `07-tax-law`
+- 章节文件 slug：英文短名，如 `06-long-term-equity`、`12-financial-instruments`
 
 ---
 
@@ -68,10 +70,14 @@ content/learn/
 │   └── nav.learn-nav
 │       ├── .learn-nav-group（CPA）
 │       │   ├── a.learn-nav-group-title（指向 /learn/cpa/）
-│       │   └── a.learn-nav-link × N（各章节，当前页 .active）
+│       │   ├── a.learn-nav-link × N（顶层普通页 01-overview, 08-comprehensive）
+│       │   └── details.learn-nav-subject × 6（科目折叠组）
+│       │       ├── summary.learn-nav-subject-title（图标+科目名+章数徽章）
+│       │       └── .learn-nav-chapters
+│       │           ├── a.learn-nav-overview（科目概览链接，斜体）
+│       │           └── a.learn-nav-link × N（各章节）
 │       └── .learn-nav-group（ACCA）
-│           ├── a.learn-nav-group-title（指向 /learn/acca/）
-│           └── a.learn-nav-link × N
+│           └── a.learn-nav-link × N（扁平结构）
 └── main.learn-main
     ├── partial "breadcrumbs.html"
     └── article.learn-article
@@ -153,6 +159,27 @@ content/learn/
   - `.active`：金色左边框 + 渐变背景 + 加粗
   - hover：浅金背景 + 浅金左边框
 - 序号 `.learn-nav-num`：等宽字体，两位数字（`01`、`02`...）
+
+### 5.1.1 嵌套导航（CPA 两级结构）
+
+CPA 板块采用**两级嵌套 sidebar**（科目 → 章节），核心组件：
+
+| 组件 | 说明 |
+|------|------|
+| `.learn-nav-cert` | 证书分组容器（CPA / ACCA） |
+| `.learn-nav-subject` | `<details>` 元素，科目折叠组（会计/审计/财管/战略/经济法/税法）|
+| `.learn-nav-subject-title` | `<summary>` 元素，纯 toggle（不导航），含图标+科目名+章数徽章 |
+| `.learn-nav-subject-icon` | 科目图标，从 front matter `icon` 读取（如 📒/🔍/📊/🎯/⚖️/💰）|
+| `.learn-nav-count` | 章数徽章（圆形小标签），自动从 `len .Pages` 计算 |
+| `.learn-nav-chapters` | 章节列表容器，含点状左边框模拟树状结构 |
+| `.learn-nav-overview` | 「科目概览」链接，斜体显示，点击导航到科目 _index.md |
+
+**自动展开逻辑**：模板通过 `eq $.CurrentSection.RelPermalink .RelPermalink` 判断当前页所属科目，给对应 `<details>` 添加 `open` 属性。用户也可手动点击 summary 展开/折叠其他科目。
+
+**数据查询**：
+- 顶层普通页：`$cpa.RegularPages`（01-overview, 08-comprehensive）
+- 科目子节：`$cpa.Sections`（02-accounting, 03-audit, ...）
+- 各科章节：`$subject.Pages`（按 `weight` 排序）
 
 ### 5.2 TOC 此页内容
 
@@ -289,57 +316,67 @@ draft: false                         # 必填，false 让占位章节也能访�
 
 ## 7. 扩展指南
 
-### 7.1 新增章节（已有证书）
+### 7.1 新增章节（已有科目）
 
-以 CPA 新增第 9 章「历年真题」为例：
+以 CPA 会计新增第 26 章「每股收益」为例：
 
-1. 创建 `content/learn/cpa/09-past-exams.md`
+1. 创建 `content/learn/cpa/02-accounting/26-eps.md`
 2. front matter：
    ```yaml
    ---
-   title: "历年真题"
-   description: "CPA 历年真题汇编与解析"
+   title: "每股收益"
+   description: "CPA 会计 - 每股收益"
    layout: "learn"
-   slug: "09-past-exams"
    cert: "CPA"
-   weight: 9
+   subject: "02-accounting"
+   weight: 26
+   difficulty: "⭐⭐"
+   exam_weight: "2-3分"
+   hours: "3-4h"
+   keywords: ["基本每股收益", "稀释每股收益"]
    ShowToc: true
    TocOpen: true
-   draft: false
    ---
    ```
-3. 写正文（参考 6.2 或 6.3 模板）
-4. **无需修改 learn.html** — sidebar 自动通过 `.Site.RegularPages` 查询渲染
+3. 写正文（参考 6.x 章节模板，含考情分析/知识框架/核心精讲/典型例题/记忆口诀/同步练习六段）
+4. **无需修改 learn.html** — sidebar 自动通过 `$cpa.Sections` 查询渲染，章数徽章自动 +1
 
-### 7.2 新增证书（如 CFA）
+### 7.2 新增科目（已有证书）
 
-1. 创建 `content/learn/cfa/_index.md`（section 首页，front matter 含 `layout: "learn"` `cert: "CFA"`）
-2. 创建各章节 `content/learn/cfa/01-overview.md` 等
-3. 修改 `layouts/_default/learn.html`，在 sidebar 的 `<nav class="learn-nav">` 内追加一组：
+以 CPA 新增第 9 科「综合阶段」详细化为例：
 
-```html-html
-{{ $cfaPages := where .Site.RegularPages "CurrentSection.RelPermalink" "/learn/cfa/" }}
-<div class="learn-nav-group">
-  <a href="/learn/cfa/" class="learn-nav-group-title {{ if eq .CurrentSection.RelPermalink "/learn/cfa/" }}current{{ end }}">
-    <span class="learn-nav-group-icon">📈</span>
-    <span>CFA · 特许金融分析师</span>
-  </a>
-  {{ range $cfaPages.ByParam "weight" }}
-  <a href="{{ .Permalink }}" class="learn-nav-link {{ if eq $.Permalink .Permalink }}active{{ end }}">
-    <span class="learn-nav-num">{{ printf "%02d" .Params.weight }}</span>
-    <span class="learn-nav-text">{{ .Title }}</span>
-  </a>
-  {{ end }}
-</div>
-```
+1. 创建 `content/learn/cpa/09-comprehensive/_index.md`（科目目录首页）
+   - front matter 含 `layout: "learn"`、`cert: "CPA"`、`weight: 9`、`icon: "🎯"`、`subject: "09-comprehensive"`
+   - 内容参考 02-accounting/_index.md 模板（科目信息表 + 章节目录表 + 学习建议）
+2. 创建各章节 `content/learn/cpa/09-comprehensive/01-overview.md` 等
+3. **无需修改 learn.html** — sidebar 自动遍历 `$cpa.Sections` 渲染为新折叠组
+4. 旧扁平 `08-comprehensive.md` 可保留或迁移到 `09-comprehensive/` 目录
 
-4. 新增 cert badge 样式（在 learn.html `<style>` 内）：
+### 7.3 新增证书（如 CFA）
+
+1. 创建 `content/learn/cfa/_index.md`（section 首页）
+2. 创建各章节（推荐直接用两级嵌套结构）
+3. 修改 `layouts/_default/learn.html`，在 sidebar 的 `<nav class="learn-nav">` 内追加（参考 CPA 块）：
+   ```hugo
+   {{- $cfa := .Site.GetPage "/learn/cfa" -}}
+   {{- if $cfa -}}
+   <div class="learn-nav-group learn-nav-cert">
+     <a href="{{ $cfa.Permalink }}" class="learn-nav-group-title {{ if eq .CurrentSection.RelPermalink "/learn/cfa/" }}current{{ end }}">
+       <span class="learn-nav-group-icon">📈</span>
+       <span>CFA · 特许金融分析师</span>
+     </a>
+     {{- range $cfa.RegularPages.ByParam "weight" }}...{{ end -}}
+     {{- range $cfa.Sections.ByParam "weight" }}<details>...</details>{{ end -}}
+   </div>
+   {{- end -}}
+   ```
+4. 新增 cert badge 样式：
    ```css
    .learn-cert-badge-cfa { background: linear-gradient(135deg, #1a7f37, #0d5a26); color: #fff; }
    ```
 5. 在 `content/learn/_index.md` 首页追加一张 CFA 卡片
 
-### 7.3 修改布局
+### 7.4 修改布局
 
 所有布局参数都在 `:root` 的 CSS 变量里：
 

@@ -131,4 +131,26 @@
     background: #203a20;
     color: #66ff66;
   }
+
+  /* ==================== 主题切换圆形扩散动画 (View Transitions API) v5.6 ==================== */
+  /* 禁用默认的 cross-fade，改用自定义 clip-path 动画 */
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+  }
+  /* 旧主题层级在下，新主题用 clip-path 揭示 */
+  ::view-transition-old(root) {
+    z-index: 1;
+  }
+  ::view-transition-new(root) {
+    z-index: 9999;
+  }
+  /* 尊重用户减少动画偏好 */
+  @media (prefers-reduced-motion: reduce) {
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+      animation: none !important;
+    }
+  }
 </style>

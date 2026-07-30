@@ -1,8 +1,8 @@
 # DeepSleep Blog - 项目技术文档
 
 > **最后更新**: 2026-07-30
-> **版本**: v5.5
-> **状态**: ✅ 生产就绪 | 评论系统正常运行 (Neon PostgreSQL) | 💬 社区系统已上线 | 👤 全局个人中心 | 📝 文章板块整合 (learn 风格 sidebar) | 🧹 停用项目资料已清理
+> **版本**: v5.6
+> **状态**: ✅ 生产就绪 | 评论系统正常运行 (Neon PostgreSQL) | 💬 社区系统已上线 | 👤 全局个人中心 | 📝 文章板块整合 (learn 风格 sidebar) | 🌗 主题切换圆形扩散动画 | 🧹 停用项目资料已清理
 
 ---
 
@@ -46,6 +46,7 @@
 - 👤 关于我
 - 📚 归档与搜索页面
 - 📱 响应式设计 + 暗色/亮色主题切换
+- 🌗 **主题切换圆形扩散动画**（View Transitions API，以按钮为圆心双向扩散）✅ v5.6 新增
 - ⚡ 零 CDN 依赖（Waline 前端资源完全本地化）
 
 ---
@@ -138,6 +139,7 @@
 | **文章列表页 sidebar** | **learn 同款设计** (v5.5) | **CSS 变量/Playfair Display 字体/移动端抽屉复用，视觉一致性** |
 | **资源列表页 sidebar** | **learn 同款设计** (v5.5) | **资源卡片网格 + 标签 + 快速导航，视觉一致** |
 | **SleepTown 关卡页 sidebar** | **learn 同款设计** (v5.5 / SleepTown v2.2.2.0) | **左章节列表 + 右关卡详情卡片，10 关扩展** |
+| **主题切换动画** | **View Transitions API + clip-path 圆形扩散** (v5.6) | **以按钮为圆心双向自适应扩散，不破坏原生降级路径** |
 
 ### 🎨 Sidebar 设计模式（learn 风格，v5.5 统一）
 
@@ -159,6 +161,32 @@ DeepSleep 博客的 4 个板块复用同一套 learn 风格 sidebar 设计模式
 - **暗色模式**：`[data-theme="dark"]` 覆盖 `--<prefix>-*` 变量（不嵌套板块根元素）
 - **active 高亮**：`linear-gradient(90deg, rgba(gold,0.12), transparent)` + 左边框主题色
 - **grid item 防 overflow**：主内容区加 `min-width: 0`
+
+### 🌗 主题切换圆形扩散动画（View Transitions API，v5.6 新增）
+
+DeepSleep 博客的主题切换按钮（`#theme-toggle`）点击时，新主题以按钮为圆心向外圆形扩散覆盖旧主题，灵感来源于 [algo.itcharge.cn](https://algo.itcharge.cn)。
+
+**技术实现**：
+- **API**：`document.startViewTransition()` + `::view-transition-new(root)` 伪元素 + `clipPath` Web Animations API
+- **拦截策略**：在 `extend_footer.html` 用**捕获阶段** `addEventListener('click', fn, true)` 拦截 PaperMod 原生 click（`footer.html:96` 在 bubbling 阶段绑定），`stopImmediatePropagation()` 阻止原生逻辑，自行用 `startViewTransition` 包裹主题切换
+- **圆心计算**：`toggle.getBoundingClientRect()` 取按钮中心 `x/y`
+- **半径计算**：`Math.hypot(max(x, W-x), max(y, H-y))` 覆盖到屏幕最远角
+- **双向自适应**：亮→暗 用 `circle(0) → circle(R)`（黑幕从按钮合拢覆盖全屏）；暗→亮 用 `clipPath.reverse()`（光明绽放）
+- **动画参数**：600ms `cubic-bezier(0.4, 0, 0.2, 1)`
+- **CSS 层级**：`::view-transition-new(root) { z-index: 9999 }` 确保新主题在上层
+
+**降级路径**（不破坏原生）：
+- 浏览器不支持 `document.startViewTransition` → 不拦截，走 PaperMod 原生瞬间切换
+- 用户设置 `prefers-reduced-motion: reduce` → 不拦截，走原生
+- `transition.ready` Promise reject → 主题已在回调中切换，仅动画跳过
+
+**关键文件**：
+| 文件 | 作用 |
+|------|------|
+| `layouts/partials/extend_footer.html` | 捕获阶段拦截 + startViewTransition + clipPath 动画 |
+| `layouts/partials/extended_head.html` | `::view-transition-*` CSS（禁用默认 cross-fade、设置层级、reduced-motion 降级） |
+
+**浏览器兼容性**：Chrome/Edge 111+、Safari 18+、Opera 99+ 原生支持；Firefox 暂不支持，自动降级为瞬间切换。
 
 ---
 
@@ -1132,6 +1160,33 @@ flowchart TD
 
 ## 📝 更新日志
 
+### v5.6 (2026-07-30) - 主题切换圆形扩散动画
+
+**新增功能**:
+- ✅ **主题切换按钮圆形扩散动画**：点击 `#theme-toggle` 时，新主题以按钮为圆心向外圆形扩散覆盖旧主题
+- ✅ 双向自适应：亮→暗 用黑幕从按钮合拢覆盖全屏；暗→亮 用反向光明绽放
+- ✅ 600ms `cubic-bezier(0.4, 0, 0.2, 1)` 缓动
+- ✅ 灵感来源于 [algo.itcharge.cn](https://algo.itcharge.cn)
+
+**技术实现**:
+- 使用 View Transitions API（`document.startViewTransition()`）+ `::view-transition-new(root)` 伪元素 + `clipPath` Web Animations API
+- **捕获阶段拦截**：`addEventListener('click', fn, true)` 拦截 PaperMod 原生 click（`footer.html:96` 在 bubbling 阶段绑定），`stopImmediatePropagation()` 阻止原生逻辑
+- **圆心和半径**：`toggle.getBoundingClientRect()` 取按钮中心；半径 `Math.hypot(max(x, W-x), max(y, H-y))` 覆盖到屏幕最远角
+- **不破坏原生降级路径**：不支持 `startViewTransition` / `prefers-reduced-motion: reduce` → 不拦截，走 PaperMod 原生瞬间切换
+- **CSS 层级**：`::view-transition-new(root) { z-index: 9999 }` 确保新主题在上层；禁用默认 cross-fade 动画
+
+**Files Modified**:
+| 文件 | 变更 |
+|------|------|
+| `layouts/partials/extend_footer.html` | 追加捕获阶段拦截脚本 + startViewTransition + clipPath 动画 |
+| `layouts/partials/extended_head.html` | 追加 `::view-transition-*` CSS（禁用默认 cross-fade、设置层级、reduced-motion 降级） |
+| `PROJECT_CONTEXT.md` | 版本号 v5.5→v5.6、功能清单新增、版本演进表、技术决策表 |
+| `PROJECT_DOCUMENTATION.md` | 版本号、功能特性、技术决策表、新增动画说明章节、更新日志 |
+
+**浏览器兼容性**：Chrome/Edge 111+、Safari 18+、Opera 99+ 原生支持；Firefox 暂不支持，自动降级为瞬间切换无动画。
+
+---
+
 ### v5.5 (2026-07-30) - 文章列表页 learn 风格改造
 
 **UI 改造**:
@@ -1242,4 +1297,4 @@ flowchart TD
 
 ---
 
-*文档结束 | 最后更新: 2026-07-30 | 版本: v5.5 | 状态: ✅ 生产就绪*
+*文档结束 | 最后更新: 2026-07-30 | 版本: v5.6 | 状态: ✅ 生产就绪*

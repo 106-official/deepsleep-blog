@@ -98,6 +98,13 @@
   --learn-main-max: 1440px;
 }
 
+/* 让 learn 页面突破 PaperMod .main 的 768px max-width 约束 */
+.main:has(.learn-page) {
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
 [data-theme="dark"] {
   --learn-bg: #1a1a1a;
   --learn-surface: #242424;

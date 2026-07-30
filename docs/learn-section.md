@@ -378,6 +378,23 @@ draft: false                         # 必填，false 让占位章节也能访�
 
 **效果**：1920px 屏下，grid 总可用宽约 1920px：sidebar 300 + main 1440（含 padding 后内容约 1416px）。内容自然铺展无卡片感，接近 itcharge.cn 的阅读体验。1440px 就是博客内容区合理极限（再多右侧视觉会显得空旷）。
 
+### 2026-07-30（第三次）：突破 PaperMod .main 容器约束
+
+**问题**：`.learn-page` 被包裹在 PaperMod 主题的 `<main class="main">` 内，该容器有 `max-width: 768px`（`720px + 24px × 2`）和 `margin: auto`。导致 sidebar + 内容区整体在 768px 宽度的盒子里居中，1920px 屏上 sidebar 距左约 576px，视觉上「左边有大片空白」。
+
+**修复**：
+- 在 learn.html 的 `<style>` 中添加 `.main:has(.learn-page)` 规则：
+  ```css
+  .main:has(.learn-page) {
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  ```
+- `:has()` 伪类从 doc 树向上选择 `.main`，覆盖其宽度约束。`.learn-page` grid 填满视口宽度
+
+**效果**：1920px 屏下 sidebar 从 x=0 开始，header 下方无缝衔接。sidebar 300px + 内容区 1620px（`.learn-main` 内部再约束到 1440px 居中），无多余左侧空白。
+
 ---
 
 ## 9. 关键约束（吸取的教训）
@@ -390,6 +407,7 @@ draft: false                         # 必填，false 让占位章节也能访�
 6. **Git 推送走代理** `http://127.0.0.1:65532`（项目硬约束）。
 7. **`min-width: 0`** 加在 grid item（`.learn-main`）上 —— 防止内容溢出导致 grid 列撑开。
 8. **`.learn-article` 无卡片样式** —— 不要给 `.learn-article` 加 background/border/box-shadow/padding。内容直接铺在页面背景上，空间感更开阔。阅读宽度通过 `.learn-main` 的 `max-width: 1440px` 控制。
+9. **必须突破 PaperMod `.main` 容器** —— 用 `.main:has(.learn-page)` 覆盖其 `max-width` 和 `margin: auto` 约束，让 `.learn-page` grid 填满视口宽度。`.main:has(.learn-page) { max-width: 100% !important; margin: 0 !important; padding: 0 !important; }`
 
 ---
 

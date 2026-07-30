@@ -1183,12 +1183,45 @@ flowchart TD
 - ✅ **使用说明保留**：放在内容视图底部（避雷指南内容下方）
 - ✅ **移动端抽屉**：≤1024px 汉堡按钮 + 遮罩 + ESC 关闭 + 选中后自动关闭
 
+**新 HTML 结构**:
+```
+.lx-page (grid: 300px 1fr)
+  ├─ .lx-menu-toggle (移动端汉堡，≤1024px 显示)
+  ├─ .lx-overlay (移动端遮罩)
+  ├─ aside.lx-sidebar
+  │   ├─ .lx-sidebar-header (精简 Hero：黑底+金光+校名+分割线+校训)
+  │   └─ nav.lx-nav
+  │       ├─ 智能助手组：💬 立信问答 (data-view="chat", 默认 active)
+  │       ├─ 🏫 校内组：10 个导航项 (data-view="content", data-parent="campus", data-idx=0-9)
+  │       └─ 💼 校外组：2 个导航项 (data-view="content", data-parent="offcampus", data-idx=0-1)
+  └─ main.lx-main
+      ├─ section.lx-view.lx-view-chat.active (LLM 对话，默认显示)
+      │   ├─ .lx-chat-header (标题"立信避雷助手"，无关闭按钮)
+      │   ├─ .lx-chat-suggest (3 个推荐问题 chips)
+      │   ├─ .lx-chat-messages (flex:1 可滚动，历史消息)
+      │   └─ .lx-chat-input-row (输入框 + 发送按钮，固定底部)
+      └─ section.lx-view.lx-view-content (避雷指南，默认隐藏)
+          ├─ .lx-content-body (12 个 .lx-subcontent，靠 data-parent+data-idx 切换显示)
+          └─ .lx-notice (使用说明，保留原样)
+
+#lx-context (隐藏 JSON，保留，LLM 上下文数据)
+```
+
 **技术实现**:
 - **删除**：`.lx-hero`（移入 sidebar）、`.lx-topbar`/`.lx-tab-top`（双层 Tab）、`.lx-subtabs`、`.lx-chat-fab`（悬浮按钮）、`.lx-chat-close`（关闭按钮）、`.lx-section` 包裹层
 - **保留**：`#lx-context`、所有 `.lx-subcontent` 排版样式、`.lx-notice` 使用说明、LLM 逻辑（API_URL/send/SSE/renderMarkdown/AbortController/loading 计时器）
 - **LLM 逻辑改造**：删除 `openWindow()`/`closeWindow()` 和 fab/closeBtn 事件绑定；DOM ID（`lx-chat-messages`/`lx-chat-input`/`lx-chat-send`/`lx-chat-suggest`）不变，`send()`/`appendMsg()`/`renderMarkdown()` 函数体不改
 - **CSS 变量**：新增 `--lx-sidebar-width: 300px`/`--lx-main-max: 1440px`/`--lx-sidebar-bg`/`--lx-sidebar-border`，定义在 `:root`
 - **PaperMod 突破**：`.main:has(.lx-page)` 突破 768px
+- **视图切换核心**：`switchView(link)` 依据 `data-view` 切换 `.active`；非 chat 视图额外用 `data-parent` + `data-idx` 匹配 `.lx-subcontent` 显示对应内容
+- **移动端抽屉**：≤1024px 汉堡按钮 + 遮罩 + `transform: translateX(-100%)` 滑入 + ESC 关闭 + 选中后 `setTimeout(closeSidebar, 100)`
+
+**关键挑战与解决**:
+| 挑战 | 解决 |
+|------|------|
+| LLM 对话占满主内容区高度 | `.lx-view-chat.active` flex 列 + `height: calc(100vh - 3rem)`，messages `flex:1; min-height:0; overflow-y:auto` |
+| 视图切换不丢失对话状态 | 两个视图始终在 DOM 中，仅靠 `.active` 切 `display`；messages 不重建，历史消息完整保留 |
+| 对话视图 vs 内容视图滚动行为不同 | 对话：固定高度+内部滚动；内容：`display:block` 正常流式，整页滚动；sidebar `position:sticky` 两种模式都正常 |
 
 **Files Modified**:
 | 文件 | 变更 |

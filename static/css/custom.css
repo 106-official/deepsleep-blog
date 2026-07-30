@@ -596,10 +596,16 @@ body {
 /* ============================================
    页脚
    ============================================ */
+/* 页脚：全宽 + 主题感知背景
+   修复点：
+   1. max-width: 100% 覆盖 PaperMod footer.css 的 768px 限制，消除两侧空白
+   2. 背景改用主题感知颜色，白天模式不再为黑色
+   3. 链接颜色随主题切换，保证对比度 */
 .footer {
-  background: linear-gradient(135deg, #2d2d2d, #1a1a1a);
-  color: #ccc;
-  padding: 3rem 2rem;
+  max-width: 100% !important; /* 覆盖 PaperMod 的 calc(var(--main-width) + var(--gap) * 2) = 768px */
+  background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%) !important; /* 白天模式：浅色 */
+  color: var(--color-text-secondary) !important;
+  padding: 2.5rem 2rem !important;
   margin-top: 4rem;
   border-top: 4px solid var(--color-accent);
 }
@@ -618,13 +624,23 @@ body {
 }
 
 .footer a {
-  color: var(--color-accent-light);
+  color: var(--color-accent-dark); /* 白天模式：深金色链接，保证对比度 */
   text-decoration: none;
   transition: color 0.3s ease;
 }
 
 .footer a:hover {
   color: var(--color-accent);
+}
+
+/* 暗色模式：深色背景 + 浅色链接 */
+[data-theme="dark"] .footer {
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%) !important;
+  color: var(--secondary) !important;
+}
+
+[data-theme="dark"] .footer a {
+  color: var(--color-accent-light); /* 暗色模式：浅金色链接 */
 }
 
 /* ============================================

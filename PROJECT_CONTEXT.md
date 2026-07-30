@@ -282,7 +282,7 @@ git config --global https.proxy http://127.0.0.1:65532
 | **v5.5** | 2026-07-30 | 文章/资源/SleepTown 关卡页统一改造为 learn 风格 sidebar + 移动端抽屉 |
 | **v5.6** | 2026-07-30 | 主题切换圆形扩散动画 (View Transitions API) + 娱乐中心/SleepTown 模式选择页视觉统一（Playfair Display 标题、删表情、紧凑按钮） |
 | **v5.7** | 2026-07-31 | 字体大小调节功能（Aa 按钮 + 5 档弹窗 + localStorage 持久化，CSS 变量 --font-scale 控制 rem 缩放） |
-| **v5.8** | 2026-07-31 | lixin 页面 sidebar 改造（双层 Tab → learn 风格 sidebar）+ LLM 对话主页化（悬浮弹窗 → 主内容区默认全屏视图）+ 对话视图去边框融入主界面 + 发送按钮改圆形↑箭头（灰→白状态切换）+ 修复 extend_head.html 文件名拼写错误（v5.2 起累积 head CSS 全部失效） |
+| **v5.8** | 2026-07-31 | lixin 页面 sidebar 改造（双层 Tab → learn 风格 sidebar）+ LLM 对话主页化（悬浮弹窗 → 主内容区默认全屏视图）+ 对话视图去边框融入主界面 + 发送按钮改圆形↑箭头（灰→白状态切换）+ 修复 extend_head.html 文件名拼写错误（v5.2 起累积 head CSS 全部失效）+ footer 全宽+主题感知背景修复（覆盖 PaperMod 768px 限制消除两侧留白，白天模式黑底→浅色渐变，链接颜色随主题切换） |
 
 ---
 

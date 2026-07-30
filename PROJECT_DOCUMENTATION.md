@@ -1354,6 +1354,22 @@ Hugo 的 partial 查找是精确匹配文件名，找不到 `extend_head.html` �
   - **修复**：`extend_head.html` 新增 `[data-theme="dark"] body { background: var(--theme) !important; color: var(--primary) !important; }`，选择器优先级 (0,1,1) > `body` (0,0,1)，覆盖 custom.css 硬编码值；复用 PaperMod 的 `--theme`（暗色 rgb(29,30,32)）和 `--primary`（暗色 rgb(218,218,219)）变量自动切换
   - **验证**：浏览器实测 lixin 页面暗色模式下 body 背景 = rgb(29,30,32) 深色 ✓，菜单文字 = rgb(218,218,219) 浅色 ✓
 
+**视觉微调（同日追加 5 - footer 全宽 + 主题感知背景修复）**:
+- 🐛 **问题**：`© 2026 DeepSleep Blog · Powered by Hugo & PaperMod` 页脚模块渲染异常，两个症状：
+  1. **白天模式仍然是黑色**：页脚背景在 light/dark 模式下都是黑色
+  2. **长度不够（模块两端和到屏幕有空白）**：页脚宽度仅 768px 居中显示，两侧大量留白
+- 🔍 **根因分析**：
+  - **黑底根因**：`static/css/custom.css:599` 的 `.footer { background: linear-gradient(135deg, #2d2d2d, #1a1a1a); }` 硬编码深色渐变，**无 `[data-theme="dark"]` 覆盖**，导致 light 模式下也强制黑底（与 v5.8 追加 4 的 body 白底问题同源——custom.css 早期硬编码颜色未做主题适配）。v5.8 追加 2 的临时方案是给 lixin 页加 `hideFooter: true` 直接隐藏，但其他页面仍暴露问题
+  - **宽度根因**：PaperMod `themes/PaperMod/assets/css/common/footer.css:8` 设 `max-width: calc(var(--main-width) + var(--gap) * 2)` = `720px + 48px` = **768px** + `margin: auto` 居中，custom.css 此前未覆盖该 `max-width`，故页脚被限制在 768px 宽度
+- ✅ **修复**（`static/css/custom.css` 页脚段重写）：
+  - **全宽**：`.footer { max-width: 100% !important; }` 覆盖 PaperMod 的 768px 限制，使页脚延伸至屏幕两侧（`margin: auto` 在 max-width:100% 下等效 0 边距，自然全宽）
+  - **白天模式浅色背景**：`.footer { background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%) !important; color: var(--color-text-secondary) !important; }`
+  - **暗色模式深色背景**：新增 `[data-theme="dark"] .footer { background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%) !important; color: var(--secondary) !important; }`
+  - **链接颜色主题感知**：白天用 `--color-accent-dark`(#B8960C 深金，浅底高对比)；暗色用 `--color-accent-light`(#F4E5B2 浅金，深底高对比)
+  - **金色顶边框保留**：`border-top: 4px solid var(--color-accent)` 在两种模式下都可见（金色对白底/黑底均有对比度）
+- 📊 **效果**：页脚现在全宽显示，白天模式白底深字+深金链接，暗色模式黑底浅字+浅金链接，与整体主题协调
+- 💡 **教训**：custom.css 早期为 `.footer` / `body` 等全局元素硬编码颜色（#2d2d2d、#fafafa 渐变）未配套 `[data-theme="dark"]` 覆盖，是 v5.8 追加 4 / 追加 5 两轮 bug 的共同根因；后续全局元素配色应直接复用 PaperMod 主题变量（`var(--theme)`/`var(--primary)`/`var(--secondary)`）而非硬编码
+
 **新 HTML 结构**:
 ```
 .lx-page (grid: 300px 1fr)

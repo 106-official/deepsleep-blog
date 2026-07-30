@@ -693,6 +693,95 @@
 @media (prefers-reduced-motion: reduce) {
   .me-cursor { display: none; }
 }
+
+/* === 移动端响应式（≤768px）=== */
+@media (max-width: 768px) {
+  .me-game-page {
+    padding: 0 1rem;
+  }
+
+  .me-section {
+    padding: 2.5rem 0;
+  }
+
+  .me-section-title {
+    font-size: 1.5rem;
+  }
+
+  /* Hero */
+  .me-hero {
+    min-height: 80vh;
+  }
+
+  .me-hero-avatar {
+    width: 110px;
+    height: 110px;
+  }
+
+  .me-hero-name {
+    font-size: 2rem;
+  }
+
+  .me-hero-tagline {
+    font-size: 1rem;
+  }
+
+  /* Timeline：单列左对齐，竖线移到左侧 */
+  .me-timeline-track::before {
+    left: 14px;
+  }
+
+  .me-timeline-item {
+    width: 100%;
+    left: 0 !important;
+    text-align: left !important;
+    padding: 1rem 1rem 1rem 2.8rem;
+  }
+
+  .me-timeline-item .me-timeline-node {
+    left: 7px !important;
+    right: auto !important;
+  }
+
+  .me-timeline-card {
+    display: block;
+  }
+
+  /* Skills：单列 */
+  .me-skills-grid {
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+  }
+
+  /* Works：单列 */
+  .me-works-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  /* Contact：单列 */
+  .me-contact-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+
+/* === 平板断点（769-1024px）：Works/Contact 2 列 === */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .me-works-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .me-contact-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* === 隐藏空 section（无内容时）=== */
+.me-section:empty,
+.me-section > *:only-child:empty {
+  display: none;
+}
 </style>
 
 <script>

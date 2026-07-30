@@ -1,8 +1,8 @@
 # DeepSleep Blog - 项目技术文档
 
-> **最后更新**: 2026-07-30
-> **版本**: v5.8
-> **状态**: ✅ 生产就绪 | 评论系统正常运行 (Neon PostgreSQL) | 💬 社区系统已上线 | 👤 全局个人中心 | 📝 文章板块整合 (learn 风格 sidebar) | 🌗 主题切换圆形扩散动画 | 🧹 停用项目资料已清理
+> **最后更新**: 2026-07-31
+> **版本**: v5.9
+> **状态**: ✅ 生产就绪 | 评论系统正常运行 (Neon PostgreSQL) | 💬 社区系统已上线 | 👤 全局个人中心 | 📝 文章板块整合 (learn 风格 sidebar) | 🌗 主题切换圆形扩散动画 | 🐟 SleepTown 首页 sidebar 改造
 
 ---
 
@@ -49,6 +49,7 @@
 - 🌗 **主题切换圆形扩散动画**（View Transitions API，以按钮为圆心双向扩散）✅ v5.6 新增
 - 🔤 **字体大小调节**（Aa 按钮 + 5 档弹窗 80%-120% + localStorage 持久化）✅ v5.7 新增
 - 🏫 **lixin sidebar 改造 + LLM 对话主页化**（双层 Tab → learn 风格 sidebar，悬浮弹窗 → 主内容区默认全屏对话视图）✅ v5.8 新增
+- 🐟 **SleepTown 首页 sidebar 改造**（花哨彩色卡片 → learn 风格 sidebar + 简洁模式按钮 + 10 种鱼角色图鉴 + 规则 modal 弹窗）✅ v5.9 新增
 - ⚡ 零 CDN 依赖（Waline 前端资源完全本地化）
 
 ---
@@ -144,9 +145,10 @@
 | **主题切换动画** | **View Transitions API + clip-path 圆形扩散** (v5.6) | **以按钮为圆心双向自适应扩散，不破坏原生降级路径** ⭐ |
 | **字体大小调节** | **CSS 变量 --font-scale + rem 缩放** (v5.7) | **Aa 按钮弹窗 5 档 80%-120%，localStorage 持久化，body 用 1rem !important 覆盖 custom.css 的 16px** ⭐ |
 | **lixin sidebar 改造** | **双层 Tab → learn 风格 sidebar + LLM 对话主页化** (v5.8) | **悬浮弹窗 → 主内容区默认全屏 flex 视图，sidebar 含精简 Hero + 导航组（立信问答/校内 10 项/校外 2 项），视图切换不丢失对话状态** ⭐ 新增 |
+| **SleepTown 首页 sidebar 改造** | **花哨彩色卡片 → learn 风格 sidebar + 鱼图鉴** (v5.9) | **原 mode-cards 双卡片 + 表情过多 → sidebar 导航 + 3 个简洁垂直按钮 + 10 种鱼角色图鉴（按阵营分组）+ 规则 modal 弹窗** ⭐ 新增 |
 ### 🎨 Sidebar 设计模式（learn 风格，v5.5 统一）
 
-DeepSleep 博客的 4 个板块复用同一套 learn 风格 sidebar 设计模式，保证视觉与交互一致性：
+DeepSleep 博客的 5 个板块复用同一套 learn 风格 sidebar 设计模式，保证视觉与交互一致性：
 
 | 板块 | 模板文件 | CSS 前缀 | 主题色 | Sidebar 内容 |
 |------|---------|---------|--------|-------------|
@@ -154,6 +156,7 @@ DeepSleep 博客的 4 个板块复用同一套 learn 风格 sidebar 设计模式
 | 文章与动态 | `layouts/_default/posts.html` | `posts-` | 金色 `#D4AF37` | 所有文章 + 标签 + 快速导航 |
 | 资源分享 | `layouts/_default/resources.html` | `resources-` | 金色 `#D4AF37` | 所有资源 + 标签 + 快速导航 |
 | SleepTown 关卡 | `layouts/_default/sleeptown.html` | `stagemode-` | 橙金 `#f39c12` | 章节关卡列表（2 章 10 关） |
+| SleepTown 首页 | `layouts/_default/sleeptown.html` | `stagemode-` | 橙金 `#f39c12` | 游戏模式 + 10 种鱼图鉴（按阵营分组）+ 游戏规则 modal |
 
 **统一设计规范**：
 - **布局**：`display: grid; grid-template-columns: <sidebar-width> 1fr`，sidebar 宽度 300px，主内容 max-width 1100-1440px
@@ -1368,6 +1371,79 @@ Hugo 的 partial 查找是精确匹配文件名，找不到 `extend_head.html` �
   - `:has()` 选择器兼容性（2026 年）：Chrome 105+、Safari 15.4+、Firefox 121+ 广泛支持
   - 只在有汉堡按钮的 sidebar 页面生效，首页/社区/娱乐等无 sidebar 页面不受影响
 - ✅ **验证**：浏览器实测移动端 lixin 页面 logo.left=60 ≥ menuToggle.right=54，无重叠 ✓；首页 paddingLeft=14px（默认值）不受影响 ✓
+
+### v5.9 (2026-07-31) - SleepTown 首页 sidebar 改造 + 鱼图鉴
+**改造动机**：原 SleepTown 首页 mode-cards 双卡片设计"花销过多"（彩色渐变卡片 + 大量表情图标 + 4 项 features 列表 + 独立快速开始区 + 折叠规则区含 10 种鱼角色介绍），视觉与博客其他 sidebar 板块（learn/posts/resources）不一致。
+
+**改造内容**：
+- ✅ **删除原花哨元素**：
+  - 删除 `.mode-cards` 两个彩色渐变卡片（freemode-card 绿色 / stagemode-card 橙色）
+  - 删除 `.mode-features` 4 项 features 列表 + 表情图标
+  - 删除 `.mode-description` 介绍段落
+  - 删除 `.quick-start-section` 独立快速开始区
+  - 删除 `.rules-preview` 折叠规则区（含 10 种鱼 `.role-card-setup`）
+  - 删除对应 CSS 约 305 行（`.mode-selection` / `.selection-container` / `.mode-cards` / `.mode-card` / `.freemode-btn` / `.stagemode-btn` / `.quick-start-section` / `.rules-preview` / `.role-card-setup` / `.toggle-rules-btn` 等）
+- ✅ **新增 sidebar 布局**（复用 `.stagemode-` CSS 前缀）：
+  - 5 个导航分组：游戏模式（3 项）/ 豪鱼阵营（5 项）/ 中立阵营（3 项）/ 坏鱼阵营（2 项）/ 其他（1 项规则）
+  - 10 种鱼角色按阵营归类：豪鱼(摆烂D/侦探D/法官D/八卦鱼/梦游D)、中立(法师D/恶作剧D/虎鲸)、坏鱼(邪恶D/殉道D)
+  - sidebar header 含 logo + 版本号（v2.2.2.0 · 第2章"殉道士"）
+- ✅ **主内容区双视图切换**：
+  - 视图1（默认 active）：模式选择视图，含 hero 标题 + 3 个垂直堆叠简洁按钮（自由/关卡/快速开始）
+  - 视图2（隐藏）：鱼角色详情视图，含角色 icon+名+阵营徽章+能力描述 + 返回按钮
+- ✅ **JS 函数**：
+  - `switchFishRole(roleId)`：切换到鱼详情视图，渲染角色信息，更新 sidebar active，移动端自动关闭 sidebar
+  - `backToModes()`：返回模式选择视图，重置 sidebar active 到默认（自由模式）
+  - `openRulesModal()` / `closeRulesModal()`：游戏规则 modal 弹窗开关，锁定 body 滚动
+  - `FISH_ROLES` 常量：10 种鱼的数据对象（name/faction/icon/badge/desc）
+  - `openStagemodeSidebarHome()` / `closeStagemodeSidebarHome()`：首页 sidebar 抽屉开关（独立于关卡模式的 `closeStagemodeSidebar`）
+  - `initStagemodeDrawerHome()` IIFE：首页抽屉事件绑定（toggle/overlay/ESC）
+  - `backToModeSelection()` 修改：返回首页时调用 `backToModes()` 重置视图
+- ✅ **游戏规则 modal 弹窗**：
+  - `#rules-modal` 全屏 overlay + 居中 content 卡片
+  - 含原 rules-section-setup 内容（伪装机制 / 白天问询 / 流放 / 夜晚 / 胜利条件）
+  - 关闭方式：点击 × 按钮 / 点击 overlay / 点击 ESC
+  - 锁定 body overflow 防止背景滚动
+- ✅ **模式按钮垂直堆叠**：`.home-mode-buttons { flex-direction: column; gap: 0.8rem; max-width: 320px; margin: 2rem auto }`，3 个按钮居中显示
+  - 自由/关卡模式：白底 + 左边框橙色 + hover translateX(2px)
+  - 快速开始：橙色渐变背景 + 白字
+- ✅ **鱼详情卡片设计**：
+  - `.fish-detail-card`：白底卡片 + 圆角 + 阴影
+  - `.fish-detail-header`：icon(2rem) + 名(Playfair Display 1.5rem) + NEW 徽章 + 阵营徽章（faction-good/neutral/evil 三色）
+  - `.fish-detail-body`：能力描述（保留 `<strong>` 加粗）
+  - 阵营徽章暗色模式适配（rgba 透明背景 + 浅色文字）
+
+**新 HTML 结构**：
+```
+#mode-selection.stagemode-page.stagemode-home.active
+├── .stagemode-menu-toggle (移动端汉堡)
+├── .stagemode-overlay
+├── aside#stagemode-sidebar-home
+│   ├── .stagemode-sidebar-header (logo + version)
+│   └── nav.stagemode-nav (5 groups)
+└── main.stagemode-home-main
+    ├── section#home-view-modes.home-view.active
+    │   ├── .home-hero (h1 + subtitle)
+    │   ├── .home-mode-buttons (3 个垂直按钮)
+    │   └── .home-tip
+    └── section#home-view-fish.home-view
+        ├── .fish-detail-card (header + body)
+        └── .back-to-modes-btn
+
+#rules-modal.rules-modal (独立 modal)
+├── .rules-modal-overlay
+└── .rules-modal-content
+    ├── .rules-modal-close (×)
+    ├── .rules-modal-title
+    └── 5 个 .rules-section-setup (伪装/白天/流放/夜晚/胜利)
+```
+
+**验证**：浏览器实测全部功能正常 ✓
+- 首页结构：sidebar + 主区 + 5 个导航组 + 3 个模式按钮 ✓
+- 鱼角色切换：点击 sidebar → 显示详情（icon+名+阵营+描述）✓
+- 返回按钮：正常返回模式视图 ✓
+- 规则弹窗：打开/关闭/ESC/overlay 点击 ✓
+- 模式按钮：自由模式按钮 → 进入 freemode-setup 配置界面 ✓
+- 视觉效果：简洁深色风格，无原花哨彩色卡片 + 表情过多 ✓
 
 **视觉微调（同日追加 5 - footer 全宽 + 主题感知背景修复）**:
 - 🐛 **问题**：`© 2026 DeepSleep Blog · Powered by Hugo & PaperMod` 页脚模块渲染异常，两个症状：

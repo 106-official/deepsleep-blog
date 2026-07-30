@@ -1,8 +1,8 @@
 # DeepSleep Blog 项目上下文 - 快速上手指南
 
 > **生成时间**: 2026-07-30
-> **当前版本**: v5.8
-> **最后更新**: 2026-07-30
+> **当前版本**: v5.9
+> **最后更新**: 2026-07-31
 
 ---
 
@@ -44,7 +44,7 @@
 
 ---
 
-## 🎯 当前核心功能清单 (v5.8)
+## 🎯 当前核心功能清单 (v5.9)
 
 ### 已实现功能
 
@@ -86,6 +86,12 @@
   - 删除独立"👤 个人"按钮，改为原生 menu 项（hugo.toml 配置 weight=60 置于最右），删除 extend_footer.html 的 initGlobalProfile JS + extend_head.html 的 .global-profile-btn CSS；导航菜单顺序：文章→资源→学习→我→社区→娱乐→个人
   - 修复暗色模式导航栏白色问题：custom.css body 硬编码白色渐变 + 深色文字无暗色覆盖，普通页面（非 .list）暗色模式下仍白色；extend_head.html 新增 [data-theme="dark"] body 覆盖，复用 PaperMod --theme/--primary 变量
   - 修复移动端 sidebar 汉堡按钮挡住 logo：5 个 sidebar 页面（lixin/learn/posts/resources/sleeptown）汉堡按钮 fixed 在 left:14px 挡住 PaperMod logo；extend_head.html 新增 @media (max-width:1024px) body:has(...) .header-nav { padding-left:60px } 全局让位
+- [x] SleepTown 首页 sidebar 改造 + 鱼图鉴 (v5.5 sidebar 统一完成) ⭐ v5.9
+  - 花哨彩色 mode-cards → learn 风格 sidebar + 简洁垂直模式按钮
+  - sidebar 含 5 个分组：游戏模式/豪鱼阵营(5)/中立阵营(3)/坏鱼阵营(2)/其他(规则)
+  - 10 种鱼角色图鉴，点击 sidebar 鱼名 → 主区显示详情（icon+阵营徽章+能力描述）
+  - 游戏规则移到 modal 弹窗（伪装机制/白天/流放/夜晚/胜利）
+  - 复用 .stagemode- CSS 前缀，新增独立首页抽屉函数 closeStagemodeSidebarHome()
   - 点击切换按钮时以按钮为圆心圆形扩散变色
   - 双向自适应：亮→暗黑幕合拢 / 暗→亮光明绽放
   - 600ms cubic-bezier 缓动
@@ -283,7 +289,8 @@ git config --global https.proxy http://127.0.0.1:65532
 | **v5.5** | 2026-07-30 | 文章/资源/SleepTown 关卡页统一改造为 learn 风格 sidebar + 移动端抽屉 |
 | **v5.6** | 2026-07-30 | 主题切换圆形扩散动画 (View Transitions API) + 娱乐中心/SleepTown 模式选择页视觉统一（Playfair Display 标题、删表情、紧凑按钮） |
 | **v5.7** | 2026-07-31 | 字体大小调节功能（Aa 按钮 + 5 档弹窗 + localStorage 持久化，CSS 变量 --font-scale 控制 rem 缩放） |
-| **v5.8** | 2026-07-31 | lixin 页面 sidebar 改造（双层 Tab → learn 风格 sidebar）+ LLM 对话主页化（悬浮弹窗 → 主内容区默认全屏视图）+ 对话视图去边框融入主界面 + 发送按钮改圆形↑箭头（灰→白状态切换）+ 修复 extend_head.html 文件名拼写错误（v5.2 起累积 head CSS 全部失效）+ footer 全宽+主题感知背景修复（覆盖 PaperMod 768px 限制消除两侧留白，白天模式黑底→浅色渐变，链接颜色随主题切换） |
+| **v5.8** | 2026-07-31 | lixin 页面 sidebar 改造（双层 Tab → learn 风格 sidebar）+ LLM 对话主页化（悬浮弹窗 → 主内容区默认全屏视图）+ 对话视图去边框融入主界面 + 发送按钮改圆形↑箭头（灰→白状态切换）+ 修复 extend_head.html 文件名拼写错误（v5.2 起累积 head CSS 全部失效）+ footer 全宽+主题感知背景修复（覆盖 PaperMod 768px 限制消除两侧留白，白天模式黑底→浅色渐变，链接颜色随主题切换）+ 个人按钮并入导航菜单（删除 JS 注入，改 hugo.toml 原生 menu weight=60 置右）+ 修复暗色模式导航栏白色（custom.css body 硬编码白色渐变无暗色覆盖，extend_head.html 新增 [data-theme="dark"] body 覆盖）+ 修复移动端 sidebar 汉堡按钮挡住 logo（body:has(...) .header-nav padding-left:60px 让位） |
+| **v5.9** | 2026-07-31 | SleepTown 首页 sidebar 改造（花哨彩色 mode-cards → learn 风格 sidebar + 简洁垂直模式按钮 + 10 种鱼角色图鉴按阵营分组 + 游戏规则移到 modal 弹窗）+ 删除原 305 行花哨 CSS（.mode-cards/.mode-card/.freemode-btn/.stagemode-btn/.quick-start-section/.rules-preview/.role-card-setup/.toggle-rules-btn 等） |
 
 ---
 

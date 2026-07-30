@@ -1,166 +1,221 @@
 {{ define "main" }}
 <div class="sleeptown-game">
-  <!-- 模式选择界面 -->
-  <div id="mode-selection" class="mode-selection">
-    <div class="selection-container">
-      <h1>SleepTown 鱼塘推理 v2.2.2.0</h1>
-      <p class="game-intro">欢迎来到 SleepTown v2.2.2.0！第2章"殉道士"篇章开启，挑战更具威胁性的坏鱼！</p>
+  <!-- ============ 首页：sidebar + 模式按钮 + 鱼图鉴 (v5.9) ============ -->
+  <div id="mode-selection" class="stagemode-page stagemode-home active">
+    <button class="stagemode-menu-toggle" aria-label="打开导航">
+      <span class="stagemode-toggle-bar"></span>
+      <span class="stagemode-toggle-bar"></span>
+      <span class="stagemode-toggle-bar"></span>
+    </button>
+    <div class="stagemode-overlay" aria-hidden="true"></div>
 
-      <div class="mode-cards">
-        <!-- 自由模式卡片 -->
-        <div class="mode-card freemode-card" onclick="showFreeModeSetup()">
-          <h2>自由模式</h2>
-          <p class="mode-description">
-            自定义游戏配置，完全掌控游戏参数
-          </p>
-          <ul class="mode-features">
-            <li>✅ 自由选择鱼的数量（6-20只）</li>
-            <li>✅ 自定义参与的角色种类</li>
-            <li>✅ 灵活调整游戏难度</li>
-            <li>✅ 适合熟悉规则的玩家</li>
-          </ul>
-          <button class="mode-btn freemode-btn">进入自由模式 →</button>
+    <!-- SIDEBAR -->
+    <aside class="stagemode-sidebar" id="stagemode-sidebar-home">
+      <div class="stagemode-sidebar-header">
+        <div class="stagemode-logo">
+          <span class="stagemode-logo-icon">🐟</span>
+          <span>SleepTown 鱼塘推理</span>
+        </div>
+        <p class="stagemode-version">v2.2.2.0 · 第2章"殉道士"</p>
+      </div>
+      <nav class="stagemode-nav">
+        <!-- 游戏模式 -->
+        <div class="stagemode-nav-group">
+          <div class="stagemode-nav-group-title">
+            <span class="stagemode-nav-group-icon">🎮</span>
+            <span>游戏模式</span>
+          </div>
+          <a href="javascript:void(0)" class="stagemode-nav-link active" data-mode="freemode" onclick="showFreeModeSetup()">
+            <span class="stagemode-nav-num">→</span>
+            <span class="stagemode-nav-text">自由模式</span>
+          </a>
+          <a href="javascript:void(0)" class="stagemode-nav-link" data-mode="stagemode" onclick="showStageMode()">
+            <span class="stagemode-nav-num">→</span>
+            <span class="stagemode-nav-text">关卡模式</span>
+          </a>
+          <a href="javascript:void(0)" class="stagemode-nav-link" data-mode="quick" onclick="quickStart()">
+            <span class="stagemode-nav-num">→</span>
+            <span class="stagemode-nav-text">快速开始（10只鱼）</span>
+          </a>
         </div>
 
-        <!-- 关卡模式卡片 -->
-        <div class="mode-card stagemode-card" onclick="showStageMode()">
-          <h2>关卡模式</h2>
-          <p class="mode-description">
-            挑战精心设计的关卡，逐步提升难度
-          </p>
-          <ul class="mode-features">
-            <li>✅ 关卡1-1至2-2已开放</li>
-            <li>📈 难度递进式设计</li>
-            <li>🎯 特殊规则和限制</li>
-            <li>⭐ 通关后可连续挑战下一关</li>
-          </ul>
-          <button class="mode-btn stagemode-btn">进入关卡模式 →</button>
+        <!-- 角色图鉴 - 豪鱼阵营 -->
+        <div class="stagemode-nav-group">
+          <div class="stagemode-nav-group-title">
+            <span class="stagemode-nav-group-icon">🌊</span>
+            <span>豪鱼阵营</span>
+          </div>
+          <a href="javascript:void(0)" class="stagemode-nav-link" data-fish="slacker" onclick="switchFishRole('slacker')">
+            <span class="stagemode-nav-num">🐟</span>
+            <span class="stagemode-nav-text">摆烂D</span>
+          </a>
+          <a href="javascript:void(0)" class="stagemode-nav-link" data-fish="detective" onclick="switchFishRole('detective')">
+            <span class="stagemode-nav-num">🔍</span>
+            <span class="stagemode-nav-text">侦探D</span>
+          </a>
+          <a href="javascript:void(0)" class="stagemode-nav-link" data-fish="judge" onclick="switchFishRole('judge')">
+            <span class="stagemode-nav-num">⚖️</span>
+            <span class="stagemode-nav-text">法官D</span>
+          </a>
+          <a href="javascript:void(0)" class="stagemode-nav-link" data-fish="gossip" onclick="switchFishRole('gossip')">
+            <span class="stagemode-nav-num">📰</span>
+            <span class="stagemode-nav-text">八卦鱼</span>
+          </a>
+          <a href="javascript:void(0)" class="stagemode-nav-link" data-fish="sleepwalker" onclick="switchFishRole('sleepwalker')">
+            <span class="stagemode-nav-num">💤</span>
+            <span class="stagemode-nav-text">梦游D</span>
+            <span class="stagemode-nav-diff">NEW</span>
+          </a>
         </div>
+
+        <!-- 角色图鉴 - 中立阵营 -->
+        <div class="stagemode-nav-group">
+          <div class="stagemode-nav-group-title">
+            <span class="stagemode-nav-group-icon">🎭</span>
+            <span>中立阵营</span>
+          </div>
+          <a href="javascript:void(0)" class="stagemode-nav-link" data-fish="mage" onclick="switchFishRole('mage')">
+            <span class="stagemode-nav-num">🧙</span>
+            <span class="stagemode-nav-text">法师D</span>
+            <span class="stagemode-nav-diff">NEW</span>
+          </a>
+          <a href="javascript:void(0)" class="stagemode-nav-link" data-fish="prankster" onclick="switchFishRole('prankster')">
+            <span class="stagemode-nav-num">🎭</span>
+            <span class="stagemode-nav-text">恶作剧D</span>
+          </a>
+          <a href="javascript:void(0)" class="stagemode-nav-link" data-fish="orca" onclick="switchFishRole('orca')">
+            <span class="stagemode-nav-num">🐋</span>
+            <span class="stagemode-nav-text">虎鲸</span>
+          </a>
+        </div>
+
+        <!-- 角色图鉴 - 坏鱼阵营 -->
+        <div class="stagemode-nav-group">
+          <div class="stagemode-nav-group-title">
+            <span class="stagemode-nav-group-icon">😈</span>
+            <span>坏鱼阵营</span>
+          </div>
+          <a href="javascript:void(0)" class="stagemode-nav-link" data-fish="evil" onclick="switchFishRole('evil')">
+            <span class="stagemode-nav-num">😈</span>
+            <span class="stagemode-nav-text">邪恶D</span>
+          </a>
+          <a href="javascript:void(0)" class="stagemode-nav-link" data-fish="martyr" onclick="switchFishRole('martyr')">
+            <span class="stagemode-nav-num">💀</span>
+            <span class="stagemode-nav-text">殉道D</span>
+            <span class="stagemode-nav-diff">NEW</span>
+          </a>
+        </div>
+
+        <!-- 其他 -->
+        <div class="stagemode-nav-group">
+          <div class="stagemode-nav-group-title">
+            <span class="stagemode-nav-group-icon">📜</span>
+            <span>其他</span>
+          </div>
+          <a href="javascript:void(0)" class="stagemode-nav-link" data-action="rules" onclick="openRulesModal()">
+            <span class="stagemode-nav-num">📖</span>
+            <span class="stagemode-nav-text">游戏规则</span>
+          </a>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="stagemode-main stagemode-home-main">
+      <!-- 视图1：模式选择（默认 active） -->
+      <section class="home-view active" id="home-view-modes">
+        <header class="home-hero">
+          <h1>SleepTown 鱼塘推理</h1>
+          <p class="home-subtitle">第2章"殉道士"篇章 · 10 种角色 · 自由/关卡双模式</p>
+        </header>
+        <div class="home-mode-buttons">
+          <button class="home-mode-btn primary" onclick="showFreeModeSetup()">
+            <span class="home-mode-name">自由模式</span>
+            <span class="home-mode-arrow">→</span>
+          </button>
+          <button class="home-mode-btn primary" onclick="showStageMode()">
+            <span class="home-mode-name">关卡模式</span>
+            <span class="home-mode-arrow">→</span>
+          </button>
+          <button class="home-mode-btn quick" onclick="quickStart()">
+            <span class="home-mode-name">快速开始（10只鱼）</span>
+            <span class="home-mode-arrow">→</span>
+          </button>
+        </div>
+        <p class="home-tip">点击左侧侧边栏的角色名字可查看详细介绍</p>
+      </section>
+
+      <!-- 视图2：鱼角色详情（默认隐藏） -->
+      <section class="home-view" id="home-view-fish">
+        <div class="fish-detail-card">
+          <header class="fish-detail-header" id="fish-detail-header"></header>
+          <div class="fish-detail-body" id="fish-detail-body"></div>
+        </div>
+        <button class="back-to-modes-btn" onclick="backToModes()">← 返回模式选择</button>
+      </section>
+    </main>
+  </div>
+
+  <!-- 游戏规则 modal 弹窗 -->
+  <div id="rules-modal" class="rules-modal" style="display:none">
+    <div class="rules-modal-overlay" onclick="closeRulesModal()"></div>
+    <div class="rules-modal-content">
+      <button class="rules-modal-close" onclick="closeRulesModal()" aria-label="关闭">×</button>
+      <h2 class="rules-modal-title">游戏规则 v2.2.2.0</h2>
+
+      <div class="rules-section-setup">
+        <h4>⚠️ 重要：伪装机制 (v2.1.1.2更新)</h4>
+        <p><strong>所有坏鱼阵营角色被翻开时，都会完美伪装：</strong></p>
+        <ul>
+          <li><strong>邪恶D</strong> 和 <strong>殉道D</strong> 都会伪装</li>
+          <li><strong>只伪装成当前游戏中存在的角色</strong>（更智能的伪装）</li>
+          <li>显示的角色名称与真角色完全相同</li>
+          <li>触发的效果也与真角色一致</li>
+          <li><strong>没有任何标记可以区分真假</strong></li>
+          <li>只有在游戏结束时才会揭示真相</li>
+        </ul>
+        <p class="warning-text">⚠️ 这意味着你看到的任何信息都可能是假的！多问几个人交叉验证！</p>
       </div>
 
-      <div class="quick-start-section">
-        <h3>快速开始</h3>
-        <p class="quick-start-desc">使用默认配置立即开始一局标准游戏</p>
-        <button onclick="quickStart()" class="quick-start-btn">快速开始（10只鱼）</button>
+      <div class="rules-section-setup">
+        <h4>☀️ 白天 - 问询机制</h4>
+        <ol>
+          <li>你有 <strong>3 次问询机会</strong></li>
+          <li>点击任意鱼进行"问询"</li>
+          <li>该鱼的身份会被揭示并触发对应效果</li>
+          <li>可以随时选择<strong>结束问询</strong>进入流放阶段</li>
+          <li>问询次数用完后可进入流放模式或跳过流放</li>
+        </ol>
       </div>
 
-      <div class="rules-preview">
-        <h3 onclick="toggleRules()">📜 游戏规则 v2.2.2.0</h3>
-        
-        <div class="rules-content-setup" id="rules-content-setup">
-          <div class="rules-section-setup">
-            <h4>🎭 角色介绍（10种角色）</h4>
+      <div class="rules-section-setup">
+        <h4>⚖️ 流放阶段</h4>
+        <ol>
+          <li>在流放模式中选择一只可疑的鱼进行流放</li>
+          <li>被流放的鱼会揭示真实身份并淘汰</li>
+          <li>也可以选择<strong>跳过流放</strong>（本轮不淘汰任何鱼）</li>
+        </ol>
+      </div>
 
-            <div class="role-card-setup good-role">
-              <strong>🐟 摆烂D（豪鱼阵营）</strong><br>
-              普通的好鱼，翻开后无事发生。
-            </div>
+      <div class="rules-section-setup">
+        <h4>🌙 夜晚阶段</h4>
+        <ol>
+          <li>坏鱼杀死一只豪鱼</li>
+          <li>虎鲸额外杀死一条随机的鱼</li>
+          <li>第二天公布受害者</li>
+        </ol>
+      </div>
 
-            <div class="role-card-setup detective-role">
-              <strong>🔍 侦探D（豪鱼阵营）</strong><br>
-              告诉你一条<strong>真实坏鱼</strong>的编号。
-            </div>
-
-            <div class="role-card-setup judge-role">
-              <strong>⚖️ 法官D（豪鱼阵营）</strong><br>
-              宣判一只<strong>非豪鱼</strong>的编号。
-            </div>
-
-            <div class="role-card-setup gossip-role">
-              <strong>📰 八卦鱼（豪鱼阵营）</strong><br>
-              检查相邻号码，有非好鱼回复<strong>"有瓜吃！"</strong>，没有则<strong>"并没有瓜..."</strong>
-            </div>
-
-            <div class="role-card-setup sleepwalker-role">
-              <strong>💤 梦游D（豪鱼阵营）<span class="new-badge">NEW</span></strong><br>
-              翻开后提供<strong>3个号码</strong>，其中一只是坏鱼或中立！
-            </div>
-
-            <div class="role-card-setup mage-role">
-              <strong>🧙 法师D（中立阵营）<span class="new-badge">NEW</span></strong><br>
-              每晚令一只鱼的特性<strong>失效</strong>！问询时告知昨晚影响了谁。
-            </div>
-
-            <div class="role-card-setup evil-role">
-              <strong>😈 邪恶D（坏鱼阵营）</strong><br>
-              每晚会杀死一只豪鱼。被翻开时会<strong>完美伪装</strong>成其他角色。
-            </div>
-
-            <div class="role-card-setup martyr-role">
-              <strong>💀 殉道D（坏鱼阵营）<span class="new-badge">NEW</span></strong><br>
-              <strong>死亡后</strong>会立即杀死一只好鱼作为报复！同样会伪装。
-            </div>
-
-            <div class="role-card-setup neutral-role">
-              <strong>🎭 恶作剧D（中立阵营）</strong><br>
-              翻开会<strong>减少一次</strong>问询机会！（v2.1.1.1修改）
-            </div>
-
-            <div class="role-card-setup orca-role">
-              <strong>🐋 虎鲸（中立阵营）</strong><br>
-              <strong>每夜晚</strong>都会随机杀死一条其他的鱼（不分阵营）！
-            </div>
-          </div>
-
-          <div class="rules-section-setup">
-            <h4>⚠️ 重要：伪装机制 (v2.1.1.2更新)</h4>
-            <p><strong>所有坏鱼阵营角色被翻开时，都会完美伪装：</strong></p>
-            <ul>
-              <li><strong>邪恶D</strong> 和 <strong>殉道D</strong> 都会伪装</li>
-              <li><strong>只伪装成当前游戏中存在的角色</strong>（更智能的伪装）</li>
-              <li>显示的角色名称与真角色完全相同</li>
-              <li>触发的效果也与真角色一致</li>
-              <li><strong>没有任何标记可以区分真假</strong></li>
-              <li>只有在游戏结束时才会揭示真相</li>
-            </ul>
-            <p class="warning-text">⚠️ 这意味着你看到的任何信息都可能是假的！多问几个人交叉验证！</p>
-          </div>
-
-          <div class="rules-section-setup">
-            <h4>☀️ 白天 - 问询机制</h4>
-            <ol>
-              <li>你有 <strong>3 次问询机会</strong></li>
-              <li>点击任意鱼进行"问询"</li>
-              <li>该鱼的身份会被揭示并触发对应效果</li>
-              <li>可以随时选择<strong>结束问询</strong>进入流放阶段</li>
-              <li>问询次数用完后可进入流放模式或跳过流放</li>
-            </ol>
-          </div>
-
-          <div class="rules-section-setup">
-            <h4>⚖️ 流放阶段</h4>
-            <ol>
-              <li>在流放模式中选择一只可疑的鱼进行流放</li>
-              <li>被流放的鱼会揭示真实身份并淘汰</li>
-              <li>也可以选择<strong>跳过流放</strong>（本轮不淘汰任何鱼）</li>
-            </ol>
-          </div>
-
-          <div class="rules-section-setup">
-            <h4>🌙 夜晚阶段</h4>
-            <ol>
-              <li>坏鱼杀死一只豪鱼</li>
-              <li>虎鲸额外杀死一条随机的鱼</li>
-              <li>第二天公布受害者</li>
-            </ol>
-          </div>
-
-          <div class="rules-section-setup">
-            <h4>🏆 胜利条件</h4>
-            <div class="win-condition-setup">
-              <strong>✅ 豪鱼胜利</strong>: 所有坏鱼都被淘汰<br>
-            </div>
-            <div class="lose-condition-setup">
-              <strong>❌ 失败条件</strong>:<br>
-              • 所有豪鱼都被淘汰（死亡/流放）<br>
-              • 或：豪鱼 + 中立阵营 ≤ 坏鱼阵营数量<br>
-            </div>
-          </div>
+      <div class="rules-section-setup">
+        <h4>🏆 胜利条件</h4>
+        <div class="win-condition-setup">
+          <strong>✅ 豪鱼胜利</strong>: 所有坏鱼都被淘汰<br>
         </div>
-
-        <button onclick="toggleRules()" class="toggle-rules-btn" id="toggle-rules-btn">
-          收起规则 ▲
-        </button>
+        <div class="lose-condition-setup">
+          <strong>❌ 失败条件</strong>:<br>
+          • 所有豪鱼都被淘汰（死亡/流放）<br>
+          • 或：豪鱼 + 中立阵营 ≤ 坏鱼阵营数量<br>
+        </div>
       </div>
     </div>
   </div>
@@ -930,7 +985,118 @@ function backToModeSelection() {
   document.getElementById('freemode-setup').style.display = 'none';
   document.getElementById('stagemode-setup').style.display = 'none';
   document.getElementById('game-main').style.display = 'none';
-  document.getElementById('mode-selection').style.display = 'flex';
+  document.getElementById('mode-selection').style.display = 'grid';
+  // 返回首页时重置视图到模式选择，清除鱼详情 active
+  backToModes();
+}
+
+// ==================== 首页 sidebar 鱼图鉴 (v5.9) ====================
+const FISH_ROLES = {
+  slacker:    { name: '摆烂D',   faction: '豪鱼阵营', factionClass: 'good',  icon: '🐟', badge: '',    desc: '普通的好鱼，翻开后无事发生。' },
+  detective:  { name: '侦探D',   faction: '豪鱼阵营', factionClass: 'good',  icon: '🔍', badge: '',    desc: '告诉你一条<strong>真实坏鱼</strong>的编号。' },
+  judge:      { name: '法官D',   faction: '豪鱼阵营', factionClass: 'good',  icon: '⚖️', badge: '',    desc: '宣判一只<strong>非豪鱼</strong>的编号。' },
+  gossip:     { name: '八卦鱼',   faction: '豪鱼阵营', factionClass: 'good',  icon: '📰', badge: '',    desc: '检查相邻号码，有非好鱼回复<strong>"有瓜吃！"</strong>，没有则<strong>"并没有瓜..."</strong>' },
+  sleepwalker:{ name: '梦游D',   faction: '豪鱼阵营', factionClass: 'good',  icon: '💤', badge: 'NEW', desc: '翻开后提供<strong>3个号码</strong>，其中一只是坏鱼或中立！' },
+  mage:       { name: '法师D',   faction: '中立阵营', factionClass: 'neutral', icon: '🧙', badge: 'NEW', desc: '每晚令一只鱼的特性<strong>失效</strong>！问询时告知昨晚影响了谁。' },
+  prankster:  { name: '恶作剧D', faction: '中立阵营', factionClass: 'neutral', icon: '🎭', badge: '',    desc: '翻开会<strong>减少一次</strong>问询机会！（v2.1.1.1修改）' },
+  orca:       { name: '虎鲸',     faction: '中立阵营', factionClass: 'neutral', icon: '🐋', badge: '',    desc: '<strong>每夜晚</strong>都会随机杀死一条其他的鱼（不分阵营）！' },
+  evil:       { name: '邪恶D',   faction: '坏鱼阵营', factionClass: 'evil',  icon: '😈', badge: '',    desc: '每晚会杀死一只豪鱼。被翻开时会<strong>完美伪装</strong>成其他角色。' },
+  martyr:     { name: '殉道D',   faction: '坏鱼阵营', factionClass: 'evil',  icon: '💀', badge: 'NEW', desc: '<strong>死亡后</strong>会立即杀死一只好鱼作为报复！同样会伪装。' },
+};
+
+function switchFishRole(roleId) {
+  const role = FISH_ROLES[roleId];
+  if (!role) return;
+  // 视图切换：隐藏模式按钮视图，显示鱼详情视图
+  document.getElementById('home-view-modes').classList.remove('active');
+  document.getElementById('home-view-fish').classList.add('active');
+  // 渲染鱼详情
+  document.getElementById('fish-detail-header').innerHTML = `
+    <span class="fish-detail-icon">${role.icon}</span>
+    <span class="fish-detail-name">${role.name}</span>
+    ${role.badge ? `<span class="new-badge">${role.badge}</span>` : ''}
+    <span class="fish-faction-badge faction-${role.factionClass}">${role.faction}</span>
+  `;
+  document.getElementById('fish-detail-body').innerHTML = `<p class="fish-detail-desc">${role.desc}</p>`;
+  // 更新 sidebar active
+  document.querySelectorAll('#stagemode-sidebar-home .stagemode-nav-link').forEach(l => l.classList.remove('active'));
+  const link = document.querySelector(`#stagemode-sidebar-home [data-fish="${roleId}"]`);
+  if (link) link.classList.add('active');
+  // 移动端关闭 sidebar
+  if (window.matchMedia('(max-width: 1024px)').matches) {
+    closeStagemodeSidebarHome();
+  }
+}
+
+function backToModes() {
+  document.getElementById('home-view-fish').classList.remove('active');
+  document.getElementById('home-view-modes').classList.add('active');
+  // 重置 sidebar active 到默认（自由模式）
+  document.querySelectorAll('#stagemode-sidebar-home .stagemode-nav-link').forEach(l => l.classList.remove('active'));
+  const defaultLink = document.querySelector('#stagemode-sidebar-home [data-mode="freemode"]');
+  if (defaultLink) defaultLink.classList.add('active');
+}
+
+function openRulesModal() {
+  document.getElementById('rules-modal').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+  // 移动端关闭 sidebar
+  if (window.matchMedia('(max-width: 1024px)').matches) {
+    closeStagemodeSidebarHome();
+  }
+}
+
+// ==================== 首页 sidebar 抽屉 (v5.9) ====================
+function openStagemodeSidebarHome() {
+  const sidebar = document.getElementById('stagemode-sidebar-home');
+  const homePage = document.getElementById('mode-selection');
+  if (!sidebar || !homePage) return;
+  const overlay = homePage.querySelector('.stagemode-overlay');
+  const toggle = homePage.querySelector('.stagemode-menu-toggle');
+  sidebar.classList.add('open');
+  if (overlay) overlay.classList.add('active');
+  if (toggle) toggle.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeStagemodeSidebarHome() {
+  const sidebar = document.getElementById('stagemode-sidebar-home');
+  const homePage = document.getElementById('mode-selection');
+  if (!sidebar || !homePage) return;
+  const overlay = homePage.querySelector('.stagemode-overlay');
+  const toggle = homePage.querySelector('.stagemode-menu-toggle');
+  sidebar.classList.remove('open');
+  if (overlay) overlay.classList.remove('active');
+  if (toggle) toggle.classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+// 首页抽屉事件绑定
+(function initStagemodeDrawerHome() {
+  document.addEventListener('DOMContentLoaded', function() {
+    const homePage = document.getElementById('mode-selection');
+    if (!homePage) return;
+    const toggle = homePage.querySelector('.stagemode-menu-toggle');
+    const overlay = homePage.querySelector('.stagemode-overlay');
+    if (toggle) toggle.addEventListener('click', function() {
+      const sidebar = document.getElementById('stagemode-sidebar-home');
+      if (sidebar && sidebar.classList.contains('open')) closeStagemodeSidebarHome();
+      else openStagemodeSidebarHome();
+    });
+    if (overlay) overlay.addEventListener('click', closeStagemodeSidebarHome);
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        const sidebar = document.getElementById('stagemode-sidebar-home');
+        if (sidebar && sidebar.classList.contains('open')) closeStagemodeSidebarHome();
+      }
+    });
+  });
+})();
+
+function closeRulesModal() {
+  document.getElementById('rules-modal').style.display = 'none';
+  document.body.style.overflow = '';
 }
 
 function goBackToSetup() {
@@ -1997,310 +2163,314 @@ function resetGame() {
   min-height: calc(100vh - 200px);
 }
 
-/* ==================== 模式选择界面样式 ==================== */
-.mode-selection {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: calc(100vh - 200px);
-}
-
-.selection-container {
-  background: var(--color-bg, #fff);
-  border-radius: 24px;
-  padding: 3rem;
-  max-width: 900px;
-  width: 100%;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
-  text-align: center;
-}
-
-[data-theme="dark"] .selection-container { background: #1e1e1e; }
-
-.selection-container h1 {
-  font-family: 'Playfair Display', Georgia, serif;
-  font-size: 1.9rem;
-  font-weight: 700;
-  margin: 0 0 0.8rem 0;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.game-intro { 
-  font-size: 1.05rem; 
-  color: #666; 
-  line-height: 1.6; 
-  margin-bottom: 2.5rem; 
-}
-
-.mode-cards {
+/* ==================== 首页 sidebar + 模式按钮样式 (v5.9) ==================== */
+/* 首页容器复用 .stagemode-page 的 grid 布局，但用 .stagemode-home 修饰 */
+.stagemode-home {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 2rem;
-  margin: 2.5rem 0;
+  grid-template-columns: var(--stagemode-sidebar-width, 300px) 1fr;
+  min-height: 100vh;
+  background: var(--stagemode-bg, #fafafa);
 }
 
-.mode-card {
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-  border-radius: 20px;
-  padding: 2rem;
-  text-align: left;
-  transition: all 0.3s ease;
-  border: 3px solid transparent;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-}
-
-[data-theme="dark"] .mode-card { 
-  background: linear-gradient(135deg, #2a2a2a 0%, #1e1e1e 100%); 
-}
-
-.mode-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 12px 28px rgba(102,126,234,0.25);
-  border-color: #667eea;
-}
-
-.freemode-card:hover {
-  border-color: #27ae60;
-  box-shadow: 0 12px 28px rgba(39,174,96,0.25);
-}
-
-.stagemode-card:hover {
-  border-color: #f39c12;
-  box-shadow: 0 12px 28px rgba(243,156,18,0.25);
-}
-
-.mode-card h2 {
-  font-family: 'Playfair Display', Georgia, serif;
-  font-size: 1.3rem;
-  font-weight: 700;
-  margin: 0 0 0.5rem 0;
-  color: var(--color-text, #333);
-}
-
-[data-theme="dark"] .mode-card h2 { color: #fff; }
-
-.mode-description {
-  font-size: 1rem;
-  color: #666;
-  line-height: 1.6;
-  margin-bottom: 1.2rem;
-}
-
-[data-theme="dark"] .mode-description { color: #ccc; }
-
-.mode-features {
-  list-style: none;
-  padding: 0;
-  margin: 1.2rem 0 1.5rem 0;
-}
-
-.mode-features li {
-  padding: 0.5rem 0;
-  font-size: 0.95rem;
-  color: #555;
-  border-bottom: 1px solid rgba(0,0,0,0.05);
-}
-
-[data-theme="dark"] .mode-features li { 
-  color: #aaa; 
-  border-bottom-color: rgba(255,255,255,0.05);
-}
-
-.mode-features li:last-child {
-  border-bottom: none;
-}
-
-.mode-btn {
+.stagemode-home-main {
+  max-width: var(--stagemode-main-max, 1100px);
   width: 100%;
-  padding: 9px 18px;
-  font-size: 0.92rem;
-  font-weight: 600;
-  border: none;
-  border-radius: 9px;
-  cursor: pointer;
-  transition: all 0.3s;
-  margin-top: 0.8rem;
+  min-width: 0;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 4rem;
 }
 
-.freemode-btn {
-  background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
-  color: #fff;
+/* sidebar 版本信息 */
+.stagemode-version {
+  font-size: 0.7rem;
+  color: var(--stagemode-text-muted, #999);
+  margin: 0.3rem 0 0;
+  letter-spacing: 0.05em;
 }
 
-.freemode-btn:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(39,174,96,0.4);
+/* ========== 视图切换 ========== */
+.home-view {
+  display: none;
+  animation: stagemodeFadeIn 0.35s ease-out;
+}
+.home-view.active {
+  display: block;
+}
+@keyframes stagemodeFadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-.stagemode-btn {
-  background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
-  color: #fff;
-  cursor: pointer;
+/* ========== 模式选择视图 ========== */
+.home-hero {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--stagemode-border, #e8e8e8);
 }
-
-.stagemode-btn:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(243,156,18,0.4);
-}
-
-.quick-start-section {
-  margin: 2.5rem 0;
-  padding: 1.5rem;
-  background: linear-gradient(135deg, #667eea11 0%, #764ba211 100%);
-  border-radius: 16px;
-  border: 2px dashed #667eea33;
-}
-
-.quick-start-section h3 {
+.home-hero h1 {
   font-family: 'Playfair Display', Georgia, serif;
-  margin: 0 0 0.5rem 0;
-  font-size: 1.1rem;
+  font-size: clamp(1.8rem, 3.5vw, 2.2rem);
   font-weight: 700;
-  color: var(--color-text, #333);
+  color: var(--stagemode-text, #2d2d2d);
+  margin: 0 0 0.5rem;
 }
-
-[data-theme="dark"] .quick-start-section h3 { color: #fff; }
-
-.quick-start-desc {
+.home-subtitle {
   font-size: 0.95rem;
-  color: #666;
-  margin-bottom: 1rem;
+  color: var(--stagemode-text-secondary, #666);
+  margin: 0;
 }
 
-[data-theme="dark"] .quick-start-desc { color: #ccc; }
-
-.quick-start-btn {
-  padding: 9px 22px;
-  font-size: 0.92rem;
+.home-mode-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  max-width: 320px;
+  margin: 2rem auto;
+}
+.home-mode-btn {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.9rem 1.2rem;
+  background: var(--stagemode-surface, #fff);
+  border: 1px solid var(--stagemode-border, #e8e8e8);
+  border-radius: 10px;
+  font-size: 1rem;
   font-weight: 600;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: var(--stagemode-text, #2d2d2d);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+.home-mode-btn:hover {
+  border-color: var(--stagemode-gold, #f39c12);
+  background: rgba(243,156,18,0.06);
+  transform: translateX(2px);
+}
+.home-mode-btn.primary {
+  border-left: 3px solid var(--stagemode-gold, #f39c12);
+}
+.home-mode-btn.quick {
+  background: linear-gradient(135deg, var(--stagemode-gold, #f39c12), var(--stagemode-gold-dark, #d35400));
   color: #fff;
   border: none;
-  border-radius: 9px;
+}
+.home-mode-btn.quick:hover {
+  opacity: 0.92;
+  background: linear-gradient(135deg, var(--stagemode-gold, #f39c12), var(--stagemode-gold-dark, #d35400));
+}
+.home-mode-arrow {
+  font-weight: 400;
+  opacity: 0.7;
+}
+.home-tip {
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--stagemode-text-muted, #999);
+  margin-top: 1.5rem;
+}
+
+/* ========== 鱼角色详情视图 ========== */
+.fish-detail-card {
+  background: var(--stagemode-surface, #fff);
+  border: 1px solid var(--stagemode-border, #e8e8e8);
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+.fish-detail-header {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+  padding-bottom: 1rem;
+  margin-bottom: 1.2rem;
+  border-bottom: 1px solid var(--stagemode-border, #e8e8e8);
+}
+.fish-detail-icon {
+  font-size: 2rem;
+}
+.fish-detail-name {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--stagemode-text, #2d2d2d);
+}
+.fish-faction-badge {
+  display: inline-block;
+  padding: 0.25rem 0.7rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+.fish-faction-badge.faction-good    { background: #d5f5e3; color: #1e8449; }
+.fish-faction-badge.faction-neutral { background: #f5eef8; color: #7d3c98; }
+.fish-faction-badge.faction-evil    { background: #fadbd8; color: #c0392b; }
+[data-theme="dark"] .fish-faction-badge.faction-good    { background: rgba(39,174,96,0.18); color: #58d68d; }
+[data-theme="dark"] .fish-faction-badge.faction-neutral { background: rgba(155,89,182,0.18); color: #bb8fce; }
+[data-theme="dark"] .fish-faction-badge.faction-evil    { background: rgba(231,76,60,0.18); color: #f1948a; }
+
+.fish-detail-body {
+  font-size: 1rem;
+  line-height: 1.8;
+  color: var(--stagemode-text, #2d2d2d);
+}
+.fish-detail-desc {
+  margin: 0;
+}
+
+.new-badge {
+  display: inline-block;
+  padding: 0.1rem 0.4rem;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  background: linear-gradient(135deg, #f39c12, #e67e22);
+  color: #fff;
+  border-radius: 4px;
+  margin-left: 0.3rem;
+  vertical-align: middle;
+}
+
+.back-to-modes-btn {
+  display: inline-block;
+  margin-top: 1.5rem;
+  padding: 0.5rem 1rem;
+  background: transparent;
+  border: 1px solid var(--stagemode-border, #e8e8e8);
+  border-radius: 6px;
+  color: var(--stagemode-text-secondary, #666);
+  font-size: 0.9rem;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+.back-to-modes-btn:hover {
+  border-color: var(--stagemode-gold, #f39c12);
+  color: var(--stagemode-gold, #f39c12);
 }
 
-.quick-start-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(102,126,234,0.4);
+/* ========== 游戏规则 modal 弹窗 ========== */
+.rules-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+.rules-modal-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(2px);
+}
+.rules-modal-content {
+  position: relative;
+  background: var(--stagemode-surface, #fff);
+  border-radius: 12px;
+  padding: 2rem 2.5rem;
+  max-width: 680px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+.rules-modal-close {
+  position: absolute;
+  top: 0.8rem;
+  right: 1rem;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  font-size: 1.6rem;
+  line-height: 1;
+  color: var(--stagemode-text-muted, #999);
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.rules-modal-close:hover {
+  color: var(--stagemode-text, #2d2d2d);
+}
+.rules-modal-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--stagemode-text, #2d2d2d);
+  margin: 0 0 1.5rem;
+  padding-right: 2rem;
 }
 
-.rules-preview { 
-  margin-top: 2rem; 
-  padding: 1.5rem; 
-  background: #f8f9fa; 
-  border-radius: 12px; 
-  text-align: left;
+/* rules-section-setup 保留原样式（用于 modal 内规则章节） */
+.rules-section-setup {
+  margin: 1rem 0;
+  padding: 1rem;
+  background: var(--stagemode-bg, #f8f9fa);
+  border-radius: 10px;
+  border-left: 4px solid var(--stagemode-gold, #f39c12);
 }
-[data-theme="dark"] .rules-preview { background: #2a2a2a; }
-.rules-preview > h3 { 
-  margin: 0 0 1rem 0; 
-  color: var(--color-text, #333); 
-  font-size: 1.1rem; 
-  cursor: pointer; 
+[data-theme="dark"] .rules-section-setup {
+  background: rgba(255,255,255,0.03);
+  border-left-color: var(--stagemode-gold, #f39c12);
 }
-[data-theme="dark"] .rules-preview > h3 { color: #fff; }
-
-.rules-content-setup { display: block; }
-
-.rules-section-setup { 
-  margin: 1rem 0; 
-  padding: 1rem; 
-  background: #fff; 
-  border-radius: 10px; 
-  border-left: 4px solid #667eea; 
+.rules-section-setup h4 {
+  margin: 0 0 0.8rem 0;
+  font-size: 1rem;
+  color: var(--stagemode-text, #333);
 }
-[data-theme="dark"] .rules-section-setup { 
-  background: #1e1e1e; 
-  border-left-color: #764ba2; 
+[data-theme="dark"] .rules-section-setup h4 { color: var(--stagemode-text, #fff); }
+.rules-section-setup p,
+.rules-section-setup li {
+  margin: 0.5rem 0;
+  color: var(--stagemode-text-secondary, #555);
+  line-height: 1.6;
+  font-size: 0.9rem;
 }
-.rules-section-setup h4 { 
-  margin: 0 0 0.8rem 0; 
-  font-size: 1rem; 
-  color: var(--color-text, #333); 
-}
-[data-theme="dark"] .rules-section-setup h4 { color: #fff; }
-.rules-section-setup p, 
-.rules-section-setup li { 
-  margin: 0.5rem 0; 
-  color: #555; 
-  line-height: 1.6; 
-  font-size: 0.9rem; 
-}
-[data-theme="dark"] .rules-section-setup p, 
-[data-theme="dark"] .rules-section-setup li { color: #ccc; }
-.rules-section-setup ol, 
-.rules-section-setup ul { 
-  padding-left: 1.5rem; 
-  margin: 0.5rem 0; 
+[data-theme="dark"] .rules-section-setup p,
+[data-theme="dark"] .rules-section-setup li { color: var(--stagemode-text-secondary, #ccc); }
+.rules-section-setup ol,
+.rules-section-setup ul {
+  padding-left: 1.5rem;
+  margin: 0.5rem 0;
 }
 .rules-section-setup li { margin: 0.4rem 0; }
 
-.role-card-setup {
-  padding: 0.8rem; 
-  border-radius: 8px; 
-  margin: 0.6rem 0; 
-  border-left: 4px solid;
-  font-size: 0.88rem; 
-  line-height: 1.5;
-}
-.role-card-setup strong { display: block; margin-bottom: 0.2rem; }
-.role-card-setup.good-role { background: #d5f5e3; border-color: #27ae60; color: #1e8449; }
-.role-card-setup.detective-role { background: #e8daef; border-color: #9b59b6; color: #7d3c98; }
-.role-card-setup.judge-role { background: #d6eaf8; border-color: #3498db; color: #2874a6; }
-.role-card-setup.gossip-role { background: #fef9e7; border-color: #f39c12; color: #b7950b; }
-.role-card-setup.evil-role { background: #fadbd8; border-color: #e74c3c; color: #c0392b; }
-.role-card-setup.neutral-role { background: #f5eef8; border-color: #9b59b6; color: #7d3c98; }
-.role-card-setup.orca-role { background: #e8f8f5; border-color: #1abc9c; color: #148f77; }
-
-.warning-text { 
-  color: #e74c3c; 
-  font-weight: 600; 
-  font-style: italic; 
-  font-size: 0.85rem; 
+.warning-text {
+  color: #e74c3c;
+  font-weight: 600;
+  font-style: italic;
+  font-size: 0.85rem;
 }
 
-.win-condition-setup, 
+.win-condition-setup,
 .lose-condition-setup {
-  padding: 0.8rem; 
-  border-radius: 8px; 
-  margin: 0.6rem 0; 
-  font-size: 0.9rem; 
+  padding: 0.8rem;
+  border-radius: 8px;
+  margin: 0.6rem 0;
+  font-size: 0.9rem;
   line-height: 1.6;
 }
-.win-condition-setup { 
-  background: #d5f5e3; 
-  border-left: 4px solid #27ae60; 
-  color: #1e8449; 
+.win-condition-setup {
+  background: #d5f5e3;
+  border-left: 4px solid #27ae60;
+  color: #1e8449;
 }
-.lose-condition-setup { 
-  background: #fadbd8; 
-  border-left: 4px solid #e74c3c; 
-  color: #c0392b; 
+.lose-condition-setup {
+  background: #fadbd8;
+  border-left: 4px solid #e74c3c;
+  color: #c0392b;
 }
-
-.toggle-rules-btn {
-  width: 100%; 
-  padding: 10px; 
-  margin-top: 1rem; 
-  font-size: 0.95rem; 
-  font-weight: 600;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
-  color: #fff;
-  border: none; 
-  border-radius: 8px; 
-  cursor: pointer; 
-  transition: all 0.3s;
+[data-theme="dark"] .win-condition-setup {
+  background: rgba(39,174,96,0.15);
+  color: #58d68d;
 }
-.toggle-rules-btn:hover { 
-  opacity: 0.9; 
-  transform: translateY(-1px); 
+[data-theme="dark"] .lose-condition-setup {
+  background: rgba(231,76,60,0.15);
+  color: #f1948a;
 }
 
 /* ==================== 自由模式配置界面样式 ==================== */

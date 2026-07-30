@@ -1335,6 +1335,10 @@ Hugo 的 partial 查找是精确匹配文件名，找不到 `extend_head.html` �
   - hover 时 `transform: translateY(-1px)` 微浮起反馈
 - ✅ **JS 同步按钮可用状态**：新增 `updateSendBtn()` 函数，发送中→disabled；否则依 input 内容 trim 后是否非空决定；初始按钮 `disabled` 属性 + input 监听器调用 `updateSendBtn()`，发送完成（`.finally`）也调用 `updateSendBtn()` 避免空 input 时按钮变白
 
+**视觉微调（同日追加 2 - 对齐修复 + 隐藏 footer）**:
+- ✅ **发送按钮与输入框对齐**：`.lx-chat-input-row` 改 `align-items: center`（原 flex-end 导致按钮偏下）；输入框 padding 从 `0.6rem` 调到 `0.5rem` + 显式 `line-height: 1.4`，使单行高度 ≈ 38px 与按钮高度精确匹配
+- ✅ **隐藏 lixin 页面 footer 黑块**：`content/lixin/index.md` front matter 新增 `hideFooter: true`，利用 PaperMod 原生参数隐藏 `<footer class="footer">`（© 2026 DeepSleep Blog · Powered by Hugo & PaperMod）。`extend_footer.html`（全局 JS）在 `hideFooter` 判断块外，故 LLM/主题切换/字体调节等 JS 不受影响
+
 **新 HTML 结构**:
 ```
 .lx-page (grid: 300px 1fr)

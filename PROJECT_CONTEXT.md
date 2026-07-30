@@ -81,6 +81,8 @@
   - 发送按钮改圆形 ↑ 箭头：默认灰色 → 可发送时白色（暗色模式 #e8e8e8）
   - JS updateSendBtn() 同步按钮可用状态（空 input / 发送中 → disabled 灰色）
   - 修复 extend_head.html 文件名拼写错误（v5.2 起累积的 head CSS 全部失效，Aa 按钮显示为 "Aa80%90%100%110%120%"）
+  - 发送按钮与输入框对齐（align-items:center + 输入框单行高度≈38px 匹配按钮）
+  - 隐藏 lixin 页面 footer 黑块（hideFooter: true，保留全局 JS）
   - 点击切换按钮时以按钮为圆心圆形扩散变色
   - 双向自适应：亮→暗黑幕合拢 / 暗→亮光明绽放
   - 600ms cubic-bezier 缓动

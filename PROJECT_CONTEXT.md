@@ -75,6 +75,12 @@
 - [x] 主题切换圆形扩散动画 (View Transitions API) ⭐ v5.6
 - [x] 字体大小调节 (5 档 80%-120%，localStorage 持久化) ⭐ v5.7
 - [x] lixin 页面 sidebar 改造 + LLM 对话主页化 (v5.5 sidebar 统一完成) ⭐ v5.8
+  - 双层 Tab → learn 风格 sidebar（校内 10 项 + 校外 2 项导航组）
+  - LLM 对话从悬浮弹窗改为主内容区默认全屏 flex 视图
+  - 对话视图去边框融入主界面（移除 border/shadow/radius，背景 transparent）
+  - 发送按钮改圆形 ↑ 箭头：默认灰色 → 可发送时白色（暗色模式 #e8e8e8）
+  - JS updateSendBtn() 同步按钮可用状态（空 input / 发送中 → disabled 灰色）
+  - 修复 extend_head.html 文件名拼写错误（v5.2 起累积的 head CSS 全部失效，Aa 按钮显示为 "Aa80%90%100%110%120%"）
   - 点击切换按钮时以按钮为圆心圆形扩散变色
   - 双向自适应：亮→暗黑幕合拢 / 暗→亮光明绽放
   - 600ms cubic-bezier 缓动
@@ -272,7 +278,7 @@ git config --global https.proxy http://127.0.0.1:65532
 | **v5.5** | 2026-07-30 | 文章/资源/SleepTown 关卡页统一改造为 learn 风格 sidebar + 移动端抽屉 |
 | **v5.6** | 2026-07-30 | 主题切换圆形扩散动画 (View Transitions API) + 娱乐中心/SleepTown 模式选择页视觉统一（Playfair Display 标题、删表情、紧凑按钮） |
 | **v5.7** | 2026-07-31 | 字体大小调节功能（Aa 按钮 + 5 档弹窗 + localStorage 持久化，CSS 变量 --font-scale 控制 rem 缩放） |
-| **v5.8** | 2026-07-31 | lixin 页面 sidebar 改造（双层 Tab → learn 风格 sidebar）+ LLM 对话主页化（悬浮弹窗 → 主内容区默认全屏视图） |
+| **v5.8** | 2026-07-31 | lixin 页面 sidebar 改造（双层 Tab → learn 风格 sidebar）+ LLM 对话主页化（悬浮弹窗 → 主内容区默认全屏视图）+ 对话视图去边框融入主界面 + 发送按钮改圆形↑箭头（灰→白状态切换）+ 修复 extend_head.html 文件名拼写错误（v5.2 起累积 head CSS 全部失效） |
 
 ---
 

@@ -22,13 +22,23 @@ async function api(path, options = {}) {
   const token = getToken();
   const headers = { 'Content-Type': 'application/json', ...options.headers };
   if (token) headers['Authorization'] = `Bearer ${token}`;
+  // 必须带超时：API 部署在 Vercel，国内手机/校园网可能不可达，
+  // 无超时会让 fetch 永久挂起，用户看到永久"加载中"且无法得知是网络问题
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 15000);
   try {
-    const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
+    const res = await fetch(`${API_BASE}${path}`, { ...options, headers, signal: controller.signal });
+    clearTimeout(timeoutId);
     const data = await res.json();
     if (!res.ok && data.error) throw new Error(data.error);
     return data;
   } catch (e) {
-    if (e.message.includes('未登录') || e.message.includes('过期') || 
+    clearTimeout(timeoutId);
+    // 网络超时/不可达：给用户明确反馈，而不是让 loading 永久转圈
+    if (e.name === 'AbortError') {
+      throw new Error('网络请求超时，API 可能不可达（Vercel 域名在国内手机/校园网下常被屏蔽），请切换网络或稍后重试');
+    }
+    if (e.message.includes('未登录') || e.message.includes('过期') ||
         e.message.includes('用户不存在') || e.message.includes('不存在')) {
       clearToken(); clearUser();
     }

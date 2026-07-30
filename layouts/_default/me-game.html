@@ -1,0 +1,164 @@
+{{ define "main" }}
+<div class="me-game-page">
+  <section class="me-section me-hero" id="me-hero" data-animate>
+    <!-- Hero 内容（Task 3 填充） -->
+  </section>
+
+  <section class="me-section me-timeline" id="me-timeline" data-animate>
+    <!-- Timeline 内容（Task 3 填充） -->
+  </section>
+
+  <section class="me-section me-skills" id="me-skills" data-animate>
+    <!-- Skills 内容（Task 4 填充） -->
+  </section>
+
+  <section class="me-section me-works" id="me-works" data-animate>
+    <!-- Works 内容（Task 4 填充） -->
+  </section>
+
+  <section class="me-section me-contact" id="me-contact" data-animate>
+    <!-- Contact 内容（Task 4 填充） -->
+  </section>
+</div>
+
+<style>
+/* === CSS 变量（必须在 :root，遵循项目硬约束）=== */
+:root {
+  --me-gold: #D4AF37;
+  --me-gold-light: #F4E5B2;
+  --me-gold-dark: #B8960C;
+  --me-bg: #fafafa;
+  --me-surface: #ffffff;
+  --me-text: #2d2d2d;
+  --me-text-secondary: #666666;
+  --me-text-muted: #999999;
+  --me-border: #e8e8e8;
+  --me-radius: 12px;
+  --me-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  --me-main-max: 1100px;
+  --me-transition: 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-theme="dark"] {
+  --me-bg: #1a1a1a;
+  --me-surface: #242424;
+  --me-text: #e0e0e0;
+  --me-text-secondary: #aaaaaa;
+  --me-text-muted: #777777;
+  --me-border: #333333;
+  --me-shadow: 0 2px 12px rgba(0,0,0,0.3);
+}
+
+/* === 突破 PaperMod 768px 限制 === */
+.main:has(.me-game-page) {
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* === 页面容器 === */
+.me-game-page {
+  min-width: 0;
+  max-width: var(--me-main-max);
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: var(--me-text);
+  background: var(--me-bg);
+}
+
+/* === Section 通用 === */
+.me-section {
+  padding: 4rem 0;
+  border-top: 1px solid var(--me-border);
+}
+
+.me-section:first-child {
+  border-top: none;
+}
+
+.me-section-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem 0;
+  color: var(--me-text);
+  position: relative;
+  display: inline-block;
+}
+
+.me-section-title::after {
+  content: '';
+  display: block;
+  width: 48px;
+  height: 3px;
+  background: var(--me-gold);
+  margin-top: 0.5rem;
+  border-radius: 2px;
+}
+
+.me-section-num {
+  font-family: 'SF Mono', Consolas, monospace;
+  font-size: 0.8rem;
+  color: var(--me-text-muted);
+  letter-spacing: 0.1em;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+/* === 滚动入场动画初始态（prefers-reduced-motion 降级）=== */
+[data-animate] {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity var(--me-transition), transform var(--me-transition);
+}
+
+[data-animate].in-view {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-animate] {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
+/* === 占位文本样式 === */
+.me-placeholder {
+  font-style: italic;
+  color: var(--me-text-muted);
+}
+
+/* === 打字机光标 === */
+.me-cursor {
+  display: inline-block;
+  width: 2px;
+  background: var(--me-gold);
+  margin-left: 2px;
+  animation: me-blink 1s step-end infinite;
+  vertical-align: middle;
+}
+
+@keyframes me-blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+.me-cursor.done {
+  animation: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .me-cursor { display: none; }
+}
+</style>
+
+<script>
+// 打字机 + 滚动动画 JS（Task 5/6 填充）
+</script>
+{{ end }}

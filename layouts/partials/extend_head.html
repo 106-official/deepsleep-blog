@@ -25,6 +25,19 @@
     color: var(--primary) !important;
   }
 
+  /* ============================================
+     移动端 sidebar 汉堡按钮让位 (v5.8)
+     修复移动端汉堡按钮(fixed; left:14px; width:42px; z-index:200)
+     挡住 PaperMod logo 的问题
+     ============================================ */
+  @media (max-width: 1024px) {
+    /* 有 sidebar 汉堡按钮的页面(lixin/learn/posts/resources/sleeptown)，
+       给 header-nav 加 padding-left 让 logo 往右移避开汉堡按钮区域 */
+    body:has(.lx-menu-toggle, .learn-menu-toggle, .posts-menu-toggle, .resources-menu-toggle, .stagemode-menu-toggle) .header-nav {
+      padding-left: 60px;
+    }
+  }
+
   /* 个人资料页面通用表单样式 */
   .c-form-input {
     width: 100%;

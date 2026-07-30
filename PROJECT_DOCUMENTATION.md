@@ -1354,6 +1354,21 @@ Hugo 的 partial 查找是精确匹配文件名，找不到 `extend_head.html` �
   - **修复**：`extend_head.html` 新增 `[data-theme="dark"] body { background: var(--theme) !important; color: var(--primary) !important; }`，选择器优先级 (0,1,1) > `body` (0,0,1)，覆盖 custom.css 硬编码值；复用 PaperMod 的 `--theme`（暗色 rgb(29,30,32)）和 `--primary`（暗色 rgb(218,218,219)）变量自动切换
   - **验证**：浏览器实测 lixin 页面暗色模式下 body 背景 = rgb(29,30,32) 深色 ✓，菜单文字 = rgb(218,218,219) 浅色 ✓
 
+**视觉微调（同日追加 5 - 移动端 sidebar 汉堡按钮让位）**:
+- ✅ **问题**：移动端（≤1024px）5 个 sidebar 页面（lixin/learn/posts/resources/sleeptown）的汉堡按钮 `position: fixed; top:14px; left:14px; z-index:200; width:42px` 挡住了 PaperMod 顶部 logo（"DeepSleep Blog"），导致首页按钮被遮挡无法点击
+- ✅ **根因**：所有 sidebar 模板的汉堡按钮都用 fixed 定位在左上角（占左侧 14+42=56px），而 PaperMod 的 `.header-nav > .logo` 也在左上角（padding-left:24px），两者坐标重叠
+- ✅ **修复**：`extend_head.html` 新增全局 CSS，移动端时用 `:has()` 选择器匹配有汉堡按钮的页面，给 `.header-nav` 加 `padding-left: 60px` 让 logo 往右移避开汉堡按钮区域
+  ```css
+  @media (max-width: 1024px) {
+    body:has(.lx-menu-toggle, .learn-menu-toggle, .posts-menu-toggle, .resources-menu-toggle, .stagemode-menu-toggle) .header-nav {
+      padding-left: 60px;
+    }
+  }
+  ```
+  - `:has()` 选择器兼容性（2026 年）：Chrome 105+、Safari 15.4+、Firefox 121+ 广泛支持
+  - 只在有汉堡按钮的 sidebar 页面生效，首页/社区/娱乐等无 sidebar 页面不受影响
+- ✅ **验证**：浏览器实测移动端 lixin 页面 logo.left=60 ≥ menuToggle.right=54，无重叠 ✓；首页 paddingLeft=14px（默认值）不受影响 ✓
+
 **视觉微调（同日追加 5 - footer 全宽 + 主题感知背景修复）**:
 - 🐛 **问题**：`© 2026 DeepSleep Blog · Powered by Hugo & PaperMod` 页脚模块渲染异常，两个症状：
   1. **白天模式仍然是黑色**：页脚背景在 light/dark 模式下都是黑色

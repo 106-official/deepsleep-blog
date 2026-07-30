@@ -85,6 +85,7 @@
   - 隐藏 lixin 页面 footer 黑块（hideFooter: true，保留全局 JS）
   - 删除独立"👤 个人"按钮，改为原生 menu 项（hugo.toml 配置 weight=60 置于最右），删除 extend_footer.html 的 initGlobalProfile JS + extend_head.html 的 .global-profile-btn CSS；导航菜单顺序：文章→资源→学习→我→社区→娱乐→个人
   - 修复暗色模式导航栏白色问题：custom.css body 硬编码白色渐变 + 深色文字无暗色覆盖，普通页面（非 .list）暗色模式下仍白色；extend_head.html 新增 [data-theme="dark"] body 覆盖，复用 PaperMod --theme/--primary 变量
+  - 修复移动端 sidebar 汉堡按钮挡住 logo：5 个 sidebar 页面（lixin/learn/posts/resources/sleeptown）汉堡按钮 fixed 在 left:14px 挡住 PaperMod logo；extend_head.html 新增 @media (max-width:1024px) body:has(...) .header-nav { padding-left:60px } 全局让位
   - 点击切换按钮时以按钮为圆心圆形扩散变色
   - 双向自适应：亮→暗黑幕合拢 / 暗→亮光明绽放
   - 600ms cubic-bezier 缓动

@@ -1,7 +1,7 @@
 # DeepSleep Blog - 项目技术文档
 
 > **最后更新**: 2026-07-30
-> **版本**: v5.6
+> **版本**: v5.7
 > **状态**: ✅ 生产就绪 | 评论系统正常运行 (Neon PostgreSQL) | 💬 社区系统已上线 | 👤 全局个人中心 | 📝 文章板块整合 (learn 风格 sidebar) | 🌗 主题切换圆形扩散动画 | 🧹 停用项目资料已清理
 
 ---
@@ -47,6 +47,7 @@
 - 📚 归档与搜索页面
 - 📱 响应式设计 + 暗色/亮色主题切换
 - 🌗 **主题切换圆形扩散动画**（View Transitions API，以按钮为圆心双向扩散）✅ v5.6 新增
+- 🔤 **字体大小调节**（Aa 按钮 + 5 档弹窗 80%-120% + localStorage 持久化）✅ v5.7 新增
 - ⚡ 零 CDN 依赖（Waline 前端资源完全本地化）
 
 ---
@@ -139,8 +140,8 @@
 | **文章列表页 sidebar** | **learn 同款设计** (v5.5) | **CSS 变量/Playfair Display 字体/移动端抽屉复用，视觉一致性** |
 | **资源列表页 sidebar** | **learn 同款设计** (v5.5) | **资源卡片网格 + 标签 + 快速导航，视觉一致** |
 | **SleepTown 关卡页 sidebar** | **learn 同款设计** (v5.5 / SleepTown v2.2.2.0) | **左章节列表 + 右关卡详情卡片，10 关扩展** |
-| **主题切换动画** | **View Transitions API + clip-path 圆形扩散** (v5.6) | **以按钮为圆心双向自适应扩散，不破坏原生降级路径** |
-
+| **主题切换动画** | **View Transitions API + clip-path 圆形扩散** (v5.6) | **以按钮为圆心双向自适应扩散，不破坏原生降级路径** ⭐ |
+| **字体大小调节** | **CSS 变量 --font-scale + rem 缩放** (v5.7) | **Aa 按钮弹窗 5 档 80%-120%，localStorage 持久化，body 用 1rem !important 覆盖 custom.css 的 16px** ⭐ 新增 |
 ### 🎨 Sidebar 设计模式（learn 风格，v5.5 统一）
 
 DeepSleep 博客的 4 个板块复用同一套 learn 风格 sidebar 设计模式，保证视觉与交互一致性：
@@ -1162,6 +1163,34 @@ flowchart TD
 
 ## 📝 更新日志
 
+### v5.7 (2026-07-31) - 字体大小调节功能
+
+**新增功能**:
+- ✅ **字体大小调节按钮**：header `.logo-switches` 中 `#theme-toggle` 之后注入"Aa"按钮
+- ✅ **5 档弹窗**：点击弹出小面板，含 80%/90%/100%/110%/120% 五档
+- ✅ **localStorage 持久化**：键名 `pref-font-scale`，刷新后保持
+- ✅ **首屏防闪烁**：IIFE 顶部立即 `applyScale(saved)`，不等 DOMContentLoaded
+- ✅ **重复注入防护**：`if (document.querySelector('.font-toggle-wrap')) return`（社区页历史 Bug 防御）
+- ✅ **关闭逻辑**：点击档位后自动关闭 + 点击外部关闭 + ESC 关闭
+
+**技术实现**:
+- **CSS 变量 `--font-scale`**（定义在 `:root`，符合项目硬约束）：`html { font-size: calc(100% * var(--font-scale, 1)) }`
+- **关键覆盖**：`body { font-size: 1rem !important }` 覆盖 `static/css/custom.css:42` 的 `body { font-size: 16px }`（px 硬编码会导致正文不跟随缩放）
+- **1rem 自动跟随**：1rem = html 的 font-size（已含 --font-scale），无需重复乘 scale
+- **布局稳定性**：sidebar 宽度用 px（`--learn-sidebar-width: 300px`）、header 高度用 px，不受 font-size 影响 —— 只缩放文字内容，不破坏布局骨架
+- **弹窗样式**：背景用 `var(--theme)`、边框用 `var(--border)` 自动随 `[data-theme]` 切换；active 高亮用金色 `#D4AF37`
+- **与主题切换动画隔离**：字体按钮是独立元素，不触发 `#theme-toggle` 的 View Transitions 监听器；两个 localStorage 键（`pref-theme` vs `pref-font-scale`）互不冲突
+
+**Files Modified**:
+| 文件 | 变更 |
+|------|------|
+| `layouts/partials/extended_head.html` | 追加 CSS：`--font-scale` 变量、html/body font-size、`.font-toggle`/`.font-popup`/`.font-scale-btn` 样式 |
+| `layouts/partials/extend_footer.html` | 追加 JS：`initFontToggle()` IIFE（按钮注入 + 持久化 + 5 档弹窗 + 关闭逻辑） |
+| `PROJECT_CONTEXT.md` | 版本号 v5.6→v5.7、功能清单、版本演进表、技术决策表 |
+| `PROJECT_DOCUMENTATION.md` | 版本号、功能特性、技术决策表、更新日志 v5.7 条目 |
+
+---
+
 ### v5.6 (2026-07-30) - 主题切换圆形扩散动画
 
 **新增功能**:
@@ -1305,4 +1334,4 @@ flowchart TD
 
 ---
 
-*文档结束 | 最后更新: 2026-07-30 | 版本: v5.6 | 状态: ✅ 生产就绪*
+*文档结束 | 最后更新: 2026-07-31 | 版本: v5.7 | 状态: ✅ 生产就绪*

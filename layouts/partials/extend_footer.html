@@ -91,3 +91,119 @@
   }, true); // 捕获阶段
 })();
 </script>
+
+<!-- 字体大小调节 v5.7 -->
+<script>
+(function() {
+  var STORAGE_KEY = 'pref-font-scale';
+  var SCALES = [
+    { value: 0.8,  label: '80%'  },
+    { value: 0.9,  label: '90%'  },
+    { value: 1.0,  label: '100%' },
+    { value: 1.1,  label: '110%' },
+    { value: 1.2,  label: '120%' }
+  ];
+
+  // 应用缩放（在注入按钮前先设置 CSS 变量，避免首屏闪烁）
+  function applyScale(value) {
+    document.documentElement.style.setProperty('--font-scale', value);
+  }
+
+  // 初始化时恢复持久化值
+  var saved = parseFloat(localStorage.getItem(STORAGE_KEY));
+  if (!isNaN(saved)) {
+    applyScale(saved);
+  }
+
+  function initFontToggle() {
+    var logoSwitches = document.querySelector('.logo-switches');
+    if (!logoSwitches) return;
+
+    // 重复注入防护（社区页历史 Bug 防御）
+    if (document.querySelector('.font-toggle-wrap')) return;
+
+    // ---- 1. 创建容器 + "Aa" 按钮 ----
+    var wrap = document.createElement('div');
+    wrap.className = 'font-toggle-wrap';
+
+    var btn = document.createElement('button');
+    btn.className = 'font-toggle';
+    btn.type = 'button';
+    btn.setAttribute('aria-label', '调节字体大小');
+    btn.setAttribute('title', '字体大小');
+    btn.textContent = 'Aa';
+
+    // ---- 2. 创建弹窗 ----
+    var popup = document.createElement('div');
+    popup.className = 'font-popup';
+    popup.setAttribute('role', 'menu');
+
+    var currentScale = isNaN(saved) ? 1.0 : saved;
+
+    SCALES.forEach(function(s) {
+      var item = document.createElement('button');
+      item.type = 'button';
+      item.className = 'font-scale-btn';
+      item.textContent = s.label;
+      item.setAttribute('data-scale', s.value);
+      item.setAttribute('role', 'menuitemradio');
+      if (Math.abs(s.value - currentScale) < 0.001) {
+        item.classList.add('active');
+        item.setAttribute('aria-checked', 'true');
+      }
+      item.addEventListener('click', function(e) {
+        e.stopPropagation();
+        applyScale(s.value);
+        localStorage.setItem(STORAGE_KEY, String(s.value));
+        // 更新 active 高亮
+        popup.querySelectorAll('.font-scale-btn').forEach(function(el) {
+          el.classList.remove('active');
+          el.removeAttribute('aria-checked');
+        });
+        item.classList.add('active');
+        item.setAttribute('aria-checked', 'true');
+        // 选中后自动关闭
+        closePopup();
+      });
+      popup.appendChild(item);
+    });
+
+    // ---- 3. 组装并注入到 .logo-switches（#theme-toggle 之后）----
+    wrap.appendChild(btn);
+    wrap.appendChild(popup);
+    logoSwitches.appendChild(wrap);
+
+    // ---- 4. 按钮点击切换弹窗 ----
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      popup.classList.toggle('open');
+    });
+
+    // ---- 5. 关闭逻辑 ----
+    function closePopup() {
+      popup.classList.remove('open');
+    }
+
+    // 点击外部关闭
+    document.addEventListener('click', function(e) {
+      if (!wrap.contains(e.target)) {
+        closePopup();
+      }
+    });
+
+    // ESC 关闭
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closePopup();
+      }
+    });
+  }
+
+  // 页面加载完成后初始化（与 initGlobalProfile 同模式）
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initFontToggle);
+  } else {
+    initFontToggle();
+  }
+})();
+</script>

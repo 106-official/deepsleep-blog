@@ -153,4 +153,114 @@
       animation: none !important;
     }
   }
+
+  /* ==================== 字体大小调节 v5.7 ==================== */
+  :root {
+    --font-scale: 1; /* JS 读取 localStorage 后通过 setProperty 覆盖 */
+  }
+
+  /* 缩放 rem 基准（1rem = 16px * --font-scale） */
+  html {
+    font-size: calc(100% * var(--font-scale, 1));
+  }
+
+  /* 关键：覆盖 custom.css:42 的 body { font-size: 16px }，让正文跟随 html 缩放 */
+  body {
+    font-size: 1rem !important;
+  }
+
+  /* 字体调节按钮容器（包裹按钮+弹窗，提供定位上下文） */
+  .font-toggle-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    min-height: inherit;
+  }
+
+  /* "Aa" 按钮：复用 theme-toggle 的无边框/继承字体语言 */
+  .font-toggle {
+    padding: 0 0.4rem;
+    font-family: var(--font-serif, 'Playfair Display', serif);
+    font-size: 1.05rem;
+    font-weight: 600;
+    line-height: 1;
+    color: var(--primary);
+    cursor: pointer;
+    background: 0 0;
+    border: 0;
+    display: inline-flex;
+    align-items: center;
+    transition: opacity 0.2s;
+  }
+
+  .font-toggle:hover {
+    opacity: 0.6;
+  }
+
+  /* 弹窗：绝对定位在按钮下方居中 */
+  .font-popup {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%) translateY(-4px);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 96px;
+    padding: 6px;
+    background: var(--theme, #fff);
+    border: 1px solid var(--border, #e0e0e0);
+    border-radius: var(--radius, 8px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s;
+  }
+
+  .font-popup.open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* 弹窗小箭头 */
+  .font-popup::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: 50%;
+    transform: translateX(-50%) rotate(45deg);
+    width: 8px;
+    height: 8px;
+    background: var(--theme, #fff);
+    border-top: 1px solid var(--border, #e0e0e0);
+    border-left: 1px solid var(--border, #e0e0e0);
+  }
+
+  /* 档位按钮 */
+  .font-popup .font-scale-btn {
+    padding: 6px 10px;
+    font-size: 0.85rem;
+    font-family: var(--font-sans, sans-serif);
+    color: var(--primary);
+    background: 0 0;
+    border: 0;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: center;
+    transition: background 0.15s, color 0.15s;
+    white-space: nowrap;
+  }
+
+  .font-popup .font-scale-btn:hover {
+    background: var(--code-bg, #f5f5f5);
+  }
+
+  /* 选中档位高亮：金色背景 + 黑字 */
+  .font-popup .font-scale-btn.active {
+    background: #D4AF37;
+    color: #000;
+    font-weight: 600;
+  }
 </style>

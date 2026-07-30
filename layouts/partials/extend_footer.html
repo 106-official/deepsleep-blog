@@ -2,35 +2,6 @@
 
 <script src="{{ "js/community.js" | relURL }}"></script>
 
-<script>
-(function() {
-  function initGlobalProfile() {
-    const menu = document.getElementById('menu');
-    if (!menu) return;
-
-    // 创建并添加"个人"按钮到导航栏
-    const profileBtn = document.createElement('button');
-    profileBtn.className = 'global-profile-btn';
-    profileBtn.innerHTML = '👤 个人';
-
-    // 点击跳转到个人资料页面（而非弹出Modal）
-    profileBtn.onclick = function() {
-      window.location.href = '/profile/';
-    };
-
-    // 添加到菜单后面
-    menu.parentNode.insertBefore(profileBtn, menu.nextSibling);
-  }
-
-  // 页面加载完成后初始化
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initGlobalProfile);
-  } else {
-    initGlobalProfile();
-  }
-})();
-</script>
-
 <!-- 主题切换圆形扩散动画 (View Transitions API) v5.6 -->
 <script>
 (function() {

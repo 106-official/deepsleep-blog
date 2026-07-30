@@ -83,6 +83,7 @@
   - 修复 extend_head.html 文件名拼写错误（v5.2 起累积的 head CSS 全部失效，Aa 按钮显示为 "Aa80%90%100%110%120%"）
   - 发送按钮与输入框对齐（align-items:center + 输入框单行高度≈38px 匹配按钮）
   - 隐藏 lixin 页面 footer 黑块（hideFooter: true，保留全局 JS）
+  - 删除独立"👤 个人"按钮，改为原生 menu 项（hugo.toml 配置 weight=32），删除 extend_footer.html 的 initGlobalProfile JS + extend_head.html 的 .global-profile-btn CSS；导航菜单顺序：文章→资源→学习→我→个人→社区→娱乐
   - 点击切换按钮时以按钮为圆心圆形扩散变色
   - 双向自适应：亮→暗黑幕合拢 / 暗→亮光明绽放
   - 600ms cubic-bezier 缓动

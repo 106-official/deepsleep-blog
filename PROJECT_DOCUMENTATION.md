@@ -37,7 +37,7 @@
 - 📝 文章发布与管理（Markdown 格式）
 - 💬 Waline 评论系统（Neon PostgreSQL + Vercel Serverless）✅
 - 💬 **社区论坛系统**（用户注册/登录 + 发帖）✅ v5.1 新增
-- 👤 **全局个人中心**（导航栏个人按钮 + Modal 弹窗）✅ v5.2 新增
+- 👤 **全局个人中心**（导航栏"个人"菜单项 → /profile/ 独立页面）✅ v5.2 新增 · v5.8 改为原生 menu 项
 - 📝 **文章板块整合**（社区帖子与博客文章混合展示，learn 风格 sidebar）✅ v5.2 / v5.5 改造
 - 🖼️ **作者信息显示**（帖子/文章卡片显示头像+名称）✅ v5.2 新增
 - 🔍 全文搜索（Fuse.js）
@@ -61,7 +61,7 @@
 ┌─────────────────────────────────────────────────────┐
 │                    用户浏览器                         │
 │  ┌─────────────────────────────────────────────┐   │
-│  │ 导航栏: [菜单项...] [👤 个人按钮] (全局)     │   │
+│  │ 导航栏: [文章][资源][学习][我][个人][社区][娱乐] [🌗][Aa]  │   │
 │  └─────────────────────────────────────────────┘   │
 └──────────────────┬──────────────────────────────────┘
                    │ HTTPS
@@ -1338,6 +1338,13 @@ Hugo 的 partial 查找是精确匹配文件名，找不到 `extend_head.html` �
 **视觉微调（同日追加 2 - 对齐修复 + 隐藏 footer）**:
 - ✅ **发送按钮与输入框对齐**：`.lx-chat-input-row` 改 `align-items: center`（原 flex-end 导致按钮偏下）；输入框 padding 从 `0.6rem` 调到 `0.5rem` + 显式 `line-height: 1.4`，使单行高度 ≈ 38px 与按钮高度精确匹配
 - ✅ **隐藏 lixin 页面 footer 黑块**：`content/lixin/index.md` front matter 新增 `hideFooter: true`，利用 PaperMod 原生参数隐藏 `<footer class="footer">`（© 2026 DeepSleep Blog · Powered by Hugo & PaperMod）。`extend_footer.html`（全局 JS）在 `hideFooter` 判断块外，故 LLM/主题切换/字体调节等 JS 不受影响
+
+**视觉微调（同日追加 3 - 个人按钮并入导航菜单）**:
+- ✅ **删除独立"👤 个人"按钮**：原 `extend_footer.html` 的 `initGlobalProfile()` JS 动态注入 `.global-profile-btn` 到 `#menu` 之后的方案废弃（v5.2 临时方案）；同时清理 `extend_head.html` 中对应的 `.global-profile-btn` CSS（约 23 行）
+- ✅ **"个人"作为原生 menu 项**：`hugo.toml` 新增 `[[menu.main]] identifier="profile" name="个人" url="/profile/" weight=32`，放在"我"(30) 之后、"社区"(40) 之前
+- ✅ **导航菜单最终顺序**：文章(10) → 资源(20) → 学习(25) → 我(30) → 个人(32) → 社区(40) → 娱乐(50)
+- ✅ **去掉表情**：原按钮 `innerHTML = '👤 个人'`，原生 menu 项 `name = "个人"` 无表情
+- **收益**：减少一次 JS DOM 注入；导航项样式由 PaperMod 原生 `.nav` 统一管理（active 高亮、移动端折叠等自动生效）；与其他 menu 项视觉一致
 
 **新 HTML 结构**:
 ```

@@ -123,6 +123,12 @@ theme = ["PaperMod"]
   weight = 30
 
 [[menu.main]]
+  identifier = "profile"
+  name = "个人"
+  url = "/profile/"
+  weight = 32
+
+[[menu.main]]
   identifier = "community"
   name = "社区"
   url = "/community/"

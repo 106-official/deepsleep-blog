@@ -1,21 +1,89 @@
 {{ define "main" }}
-<div class="posts-page-layout">
-  <!-- 左侧主内容区 -->
-  <main class="posts-main-content">
-    <header class="page-header">
-      <h1 class="page-title">📝 文章与动态</h1>
-      <p class="page-description">博客文章 · 社区讨论 · 技术分享</p>
+<div class="posts-page">
+  <button class="posts-menu-toggle" aria-label="打开目录">
+    <span class="posts-menu-toggle-bar"></span>
+    <span class="posts-menu-toggle-bar"></span>
+    <span class="posts-menu-toggle-bar"></span>
+  </button>
+  <div class="posts-overlay" aria-hidden="true"></div>
+
+  <aside class="posts-sidebar" id="posts-sidebar">
+    <div class="posts-sidebar-header">
+      <a href="/posts/" class="posts-logo">
+        <span class="posts-logo-icon">📝</span>
+        <span>文章与动态</span>
+      </a>
+    </div>
+    <nav class="posts-nav">
+      {{ $postsPages := where .Site.RegularPages "Section" "posts" }}
+      <div class="posts-nav-group">
+        <a href="/posts/" class="posts-nav-group-title current">
+          <span class="posts-nav-group-icon">📚</span>
+          <span>所有文章</span>
+        </a>
+        {{ range $postsPages.ByDate.Reverse }}
+        <a href="{{ .Permalink }}" class="posts-nav-link">
+          <span class="posts-nav-num">{{ .Date.Format "01-02" }}</span>
+          <span class="posts-nav-text">{{ .Title }}</span>
+        </a>
+        {{ end }}
+      </div>
+
+      <div class="posts-nav-group">
+        <a href="/tags/" class="posts-nav-group-title">
+          <span class="posts-nav-group-icon">🏷️</span>
+          <span>标签</span>
+        </a>
+        {{ range $name, $taxonomy := site.Taxonomies.tags }}
+        <a href="{{ $taxonomy.Page.Permalink }}" class="posts-nav-link">
+          <span class="posts-nav-num">#</span>
+          <span class="posts-nav-text">{{ $name }}</span>
+        </a>
+        {{ end }}
+      </div>
+
+      <div class="posts-nav-group">
+        <div class="posts-nav-group-title">
+          <span class="posts-nav-group-icon">⚡</span>
+          <span>快速导航</span>
+        </div>
+        <a href="/community/" class="posts-nav-link">
+          <span class="posts-nav-num">💬</span>
+          <span class="posts-nav-text">社区讨论</span>
+        </a>
+        <a href="/resources/" class="posts-nav-link">
+          <span class="posts-nav-num">📦</span>
+          <span class="posts-nav-text">资源分享</span>
+        </a>
+        <a href="/learn/" class="posts-nav-link">
+          <span class="posts-nav-num">📚</span>
+          <span class="posts-nav-text">学习路径</span>
+        </a>
+        <a href="/play/" class="posts-nav-link">
+          <span class="posts-nav-num">🎮</span>
+          <span class="posts-nav-text">娱乐</span>
+        </a>
+      </div>
+    </nav>
+  </aside>
+
+  <main class="posts-main">
+    {{ partial "breadcrumbs.html" . }}
+
+    <header class="posts-header">
+      <h1 class="posts-title">📝 文章与动态</h1>
+      <p class="posts-desc">博客文章 · 社区讨论 · 技术分享</p>
     </header>
 
-    <!-- 搜索栏 - 位于顶部 -->
+    <!-- 搜索栏 -->
     <section class="search-section">
       <form action="/search/" method="get" class="search-form-inline">
         <div class="search-input-wrapper">
           <span class="search-icon">🔍</span>
-          <input 
-            type="text" 
-            name="q" 
-            placeholder="搜索文章标题、标签、内容..." 
+          <input
+            type="text"
+            name="q"
+            placeholder="搜索文章标题、标签、内容..."
             class="search-input"
             autocomplete="off"
             id="posts-search"
@@ -26,7 +94,7 @@
     </section>
 
     <!-- 社区帖子区域 -->
-    <section class="community-posts-section">
+    <section class="posts-section">
       <div class="section-header">
         <h2>💬 社区最新动态</h2>
         <a href="/community/" class="view-all-link">查看全部 →</a>
@@ -37,7 +105,7 @@
     </section>
 
     <!-- 博客文章区域 -->
-    <section class="blog-posts-section">
+    <section class="posts-section">
       <div class="section-header">
         <h2>📚 博客文章</h2>
       </div>
@@ -49,20 +117,20 @@
             {{- if .Params.cover -}}
             <div class="post-cover" style="background-image: url('{{ .Params.cover | absURL }}')"></div>
             {{- end -}}
-            
+
             <div class="post-content-wrapper">
               <div class="post-meta-top">
-                <img class="author-avatar-small" 
-                     src="{{ .Params.authorAvatar | default "/images/default-avatar.png" | absURL }}" 
+                <img class="author-avatar-small"
+                     src="{{ .Params.authorAvatar | default "/images/default-avatar.png" | absURL }}"
                      alt=""
                      onerror="this.src='data:image/svg+xml,{{ `<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 80 80%22><circle cx=%2240%22 cy=%2240%22 r=%2240%22 fill=%22%23ddd%22/><text x=%2240%22 y=%2252%22 text-anchor=%22middle%22 fill=%22%23999%22 font-size=%2230%22>${substr .Site.Title 0 1}</text></svg>` }}'">
                 <span class="author-name-small">{{ .Params.author | default .Site.Title }}</span>
                 <span class="post-date">{{ .Date.Format "2006-01-02" }}</span>
               </div>
-              
+
               <h3 class="post-title">{{ .Title }}</h3>
               <p class="post-excerpt">{{ .Summary | truncate 120 }}</p>
-              
+
               <div class="post-footer">
                 <span class="read-more">阅读全文 →</span>
               </div>
@@ -73,667 +141,573 @@
       </div>
     </section>
   </main>
-
-  <!-- 右侧边栏：归档 + 标签 + 快速链接 -->
-  <aside class="posts-sidebar">
-    <!-- 归档模块 -->
-    <div class="sidebar-widget archive-widget">
-      <h3 class="widget-title">
-        <span class="widget-icon">📅</span>
-        文章归档
-      </h3>
-      
-      <div class="archive-list">
-        {{- $posts := where site.RegularPages "Section" "posts" -}}
-        {{- range $posts.GroupByDate "2006" "January" | first 12 -}}
-        {{- $dateStr := .Key -}}
-        {{- $year := substr 0 4 $dateStr -}}
-        {{- $month := substr 5 2 $dateStr -}}
-        {{- $monthNames := slice "" "01月" "02月" "03月" "04月" "05月" "06月" "07月" "08月" "09月" "10月" "11月" "12月" -}}
-        {{- $monthNum := int $month -}}
-        {{- if and (ge $monthNum 1) (le $monthNum 12) -}}
-        {{- $displayName := printf "%s年%s" $year (index $monthNames $monthNum) -}}
-        <a href="/archives/{{ $dateStr }}/" class="archive-item">
-          <span class="archive-date">{{ $displayName }}</span>
-          <span class="archive-count">{{ len .Pages }}篇</span>
-        </a>
-        {{- end -}}
-        {{- end -}}
-        
-        <a href="/archives/" class="archive-more-link">
-          查看完整归档 →
-        </a>
-      </div>
-    </div>
-
-    <!-- 热门标签 -->
-    <div class="sidebar-widget tags-widget">
-      <h3 class="widget-title">
-        <span class="widget-icon">🏷️</span>
-        热门标签
-      </h3>
-      
-      <div class="tags-cloud">
-        {{- $counter := 0 -}}
-        {{- range $name, $taxonomy := site.Taxonomies.tags -}}
-        {{- if lt $counter 15 -}}
-        <a href="{{ $taxonomy.Page.Permalink }}" class="tag-item" style="font-size: {{ add 0.85 (mul (len $taxonomy.Pages) 0.1) }}rem">
-          #{{ $name }}
-        </a>
-        {{- end -}}
-        {{- $counter = add $counter 1 -}}
-        {{- end -}}
-        <a href="/tags/" class="tag-more">更多...</a>
-      </div>
-    </div>
-
-    <!-- 快速链接 -->
-    <div class="sidebar-widget links-widget">
-      <h3 class="widget-title">
-        <span class="widget-icon">⚡</span>
-        快速导航
-      </h3>
-      
-      <nav class="quick-links">
-        <a href="/play/sleeptown/" class="quick-link featured">
-          🎮 SleepTown 游戏
-        </a>
-        <a href="/resources/" class="quick-link">
-          📦 资源分享
-        </a>
-        <a href="/community/" class="quick-link">
-          💬 社区讨论
-        </a>
-        <a href="/profile/" class="quick-link">
-          👤 个人中心
-        </a>
-      </nav>
-    </div>
-  </aside>
 </div>
 
 <style>
-  /* 页面整体布局 - 优化空间利用 */
-  .posts-page-layout {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 280px;
-    gap: 1.5rem;
-    max-width: 1600px;
-    margin: 0 auto;
-    padding: 2rem 3%;
-    min-height: calc(100vh - 200px);
-    width: 100%;
-    box-sizing: border-box;
-  }
+:root {
+  --posts-gold: #D4AF37;
+  --posts-gold-light: #F4E5B2;
+  --posts-gold-dark: #B8960C;
+  --posts-bg: #fafafa;
+  --posts-surface: #ffffff;
+  --posts-text: #2d2d2d;
+  --posts-text-secondary: #666666;
+  --posts-text-muted: #999999;
+  --posts-border: #e8e8e8;
+  --posts-sidebar-bg: #f7f7f7;
+  --posts-sidebar-border: #e0e0e0;
+  --posts-radius: 12px;
+  --posts-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  --posts-transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --posts-sidebar-width: 300px;
+  --posts-main-max: 1440px;
+}
 
-  /* 主内容区 - 充分利用空间 */
-  .posts-main-content {
-    min-width: 0; /* 防止grid溢出 */
-    max-width: 100%;
-  }
+/* 让 posts 页面突破 PaperMod .main 的 768px max-width 约束 */
+.main:has(.posts-page) {
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
 
-  /* 页面标题 */
-  .page-header {
-    text-align: center;
-    margin-bottom: 2rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 2px solid var(--color-primary, #D4AF37);
-  }
+[data-theme="dark"] {
+  --posts-bg: #1a1a1a;
+  --posts-surface: #242424;
+  --posts-text: #e0e0e0;
+  --posts-text-secondary: #aaa;
+  --posts-text-muted: #777;
+  --posts-border: #333;
+  --posts-sidebar-bg: #1f1f1f;
+  --posts-sidebar-border: #2a2a2a;
+  --posts-shadow: 0 2px 12px rgba(0,0,0,0.3);
+}
 
-  .page-title {
-    font-size: 2.5rem;
-    color: var(--color-text, #2d2d2d);
-    margin-bottom: 0.5rem;
-  }
+.posts-page {
+  display: grid;
+  grid-template-columns: var(--posts-sidebar-width) 1fr;
+  min-height: 100vh;
+  background: var(--posts-bg);
+  color: var(--posts-text);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
 
-  .page-description {
-    font-size: 1.1rem;
-    color: #666;
-    margin: 0;
-  }
+/* ========== Mobile Toggle ========== */
+.posts-menu-toggle {
+  display: none;
+  position: fixed;
+  top: 14px;
+  left: 14px;
+  z-index: 200;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border: none;
+  background: var(--posts-surface);
+  border-radius: 8px;
+  box-shadow: var(--posts-shadow);
+  cursor: pointer;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+}
+.posts-menu-toggle-bar {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: var(--posts-text);
+  border-radius: 2px;
+  transition: transform var(--posts-transition), opacity var(--posts-transition);
+}
+.posts-menu-toggle.active .posts-menu-toggle-bar:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+.posts-menu-toggle.active .posts-menu-toggle-bar:nth-child(2) { opacity: 0; }
+.posts-menu-toggle.active .posts-menu-toggle-bar:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
 
-  /* ========== 搜索栏样式 ========== */
-  .search-section {
-    background: linear-gradient(135deg, rgba(212,175,55,0.08) 0%, rgba(212,175,55,0.02) 100%);
-    border-radius: 16px;
-    padding: 1.8rem;
-    margin-bottom: 2.5rem;
-    border: 2px solid rgba(212,175,55,0.15);
-    box-shadow: 0 4px 20px rgba(212,175,55,0.08);
-  }
+.posts-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 150;
+  opacity: 0;
+  transition: opacity var(--posts-transition);
+}
+.posts-overlay.active {
+  display: block;
+  opacity: 1;
+}
 
-  .search-form-inline {
-    display: flex;
-    gap: 0.8rem;
-    align-items: center;
-  }
+/* ========== Sidebar ========== */
+.posts-sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  background: var(--posts-sidebar-bg);
+  border-right: 1px solid var(--posts-sidebar-border);
+  padding: 1.5rem 0;
+  scrollbar-width: thin;
+  scrollbar-color: var(--posts-border) transparent;
+}
+.posts-sidebar::-webkit-scrollbar { width: 6px; }
+.posts-sidebar::-webkit-scrollbar-thumb { background: var(--posts-border); border-radius: 3px; }
 
-  .search-input-wrapper {
-    flex: 1;
-    position: relative;
-    display: flex;
-    align-items: center;
-  }
+.posts-sidebar-header {
+  padding: 0 1.2rem 1.2rem;
+  border-bottom: 1px solid var(--posts-sidebar-border);
+  margin-bottom: 1rem;
+}
+.posts-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--posts-text);
+  text-decoration: none;
+  letter-spacing: 0.02em;
+}
+.posts-logo:hover { color: var(--posts-gold-dark); }
+.posts-logo-icon { font-size: 1.3rem; }
 
-  .search-icon {
-    position: absolute;
-    left: 1.2rem;
-    font-size: 1.2rem;
-    z-index: 1;
-    pointer-events: none;
-  }
+.posts-nav { padding: 0 0.5rem; }
 
-  .search-input {
-    width: 100%;
-    padding: 1rem 1.2rem 1rem 3rem;
-    border: 2px solid #e0e0e0;
-    border-radius: 12px;
-    font-size: 1rem;
-    background: #fff;
-    color: #333;
-    transition: all 0.3s ease;
-  }
+.posts-nav-group { margin-bottom: 1.5rem; }
+.posts-nav-group-title {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.7rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--posts-text-muted);
+  text-decoration: none;
+  border-radius: 6px;
+  margin-bottom: 0.3rem;
+  transition: color var(--posts-transition), background var(--posts-transition);
+}
+.posts-nav-group-title:hover { color: var(--posts-gold-dark); background: rgba(212,175,55,0.06); }
+.posts-nav-group-title.current { color: var(--posts-gold-dark); background: rgba(212,175,55,0.08); }
+.posts-nav-group-icon { font-size: 1rem; }
 
-  [data-theme="dark"] .search-input {
-    background: #2a2a2a;
-    border-color: #444;
-    color: #fff;
-  }
+.posts-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.55rem 0.7rem;
+  font-size: 0.88rem;
+  color: var(--posts-text-secondary);
+  text-decoration: none;
+  border-radius: 6px;
+  border-left: 3px solid transparent;
+  transition: all var(--posts-transition);
+  line-height: 1.35;
+}
+.posts-nav-link:hover {
+  color: var(--posts-text);
+  background: rgba(212,175,55,0.06);
+  border-left-color: var(--posts-gold-light);
+}
+.posts-nav-num {
+  flex-shrink: 0;
+  font-family: 'SF Mono', Consolas, monospace;
+  font-size: 0.72rem;
+  color: var(--posts-text-muted);
+  font-weight: 600;
+}
+.posts-nav-text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 
-  .search-input:focus {
-    outline: none;
-    border-color: var(--color-primary, #D4AF37);
-    box-shadow: 0 0 0 4px rgba(212,175,55,0.1), 0 6px 24px rgba(212,175,55,0.15);
-    transform: translateY(-1px);
-  }
+/* ========== Main Content ========== */
+.posts-main {
+  max-width: var(--posts-main-max);
+  padding: 2.5rem 1.5rem 4rem;
+  width: 100%;
+  min-width: 0;
+  margin: 0 auto;
+}
 
-  .search-submit-btn {
-    padding: 1rem 2rem;
-    background: linear-gradient(135deg, var(--color-primary, #D4AF37) 0%, #B8941F 100%);
-    color: #fff;
-    border: none;
-    border-radius: 12px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    white-space: nowrap;
-  }
+.posts-header { margin-bottom: 1.5rem; }
 
-  .search-submit-btn:hover {
-    transform: translateY(-2px) scale(1.02);
-    box-shadow: 0 6px 18px rgba(212,175,55,0.35);
-  }
+.posts-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(1.8rem, 3.5vw, 2.4rem);
+  font-weight: 700;
+  color: var(--posts-text);
+  margin: 0 0 0.6rem;
+  line-height: 1.25;
+}
+.posts-desc {
+  color: var(--posts-text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin: 0;
+  padding-left: 0.8rem;
+  border-left: 3px solid var(--posts-gold-light);
+}
 
-  /* ========== 区域头部样式 ========== */
-  .section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-    padding-bottom: 0.75rem;
-    border-bottom: 1px solid #eee;
-  }
+/* ========== Breadcrumb override ========== */
+.posts-main .breadcrumbs { margin-bottom: 1rem; padding: 0; }
 
-  .section-header h2 {
-    font-size: 1.5rem;
-    color: var(--color-text, #2d2d2d);
-    margin: 0;
-  }
+/* ========== 搜索栏样式（保留） ========== */
+.search-section {
+  background: linear-gradient(135deg, rgba(212,175,55,0.08) 0%, rgba(212,175,55,0.02) 100%);
+  border-radius: 16px;
+  padding: 1.8rem;
+  margin-bottom: 2.5rem;
+  border: 2px solid rgba(212,175,55,0.15);
+  box-shadow: 0 4px 20px rgba(212,175,55,0.08);
+}
 
-  .view-all-link {
-    font-size: 0.9rem;
-    color: var(--color-primary, #D4AF37);
-    text-decoration: none;
-    font-weight: 500;
-    transition: all 0.3s;
-  }
+.search-form-inline {
+  display: flex;
+  gap: 0.8rem;
+  align-items: center;
+}
 
-  .view-all-link:hover {
-    text-decoration: underline;
-    transform: translateX(3px);
-    display: inline-block;
-  }
+.search-input-wrapper {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
 
-  /* ========== 文章网格 - 优化空间利用 ========== */
-  .posts-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 2.5rem;
-  }
+.search-icon {
+  position: absolute;
+  left: 1.2rem;
+  font-size: 1.2rem;
+  z-index: 1;
+  pointer-events: none;
+}
 
-  .post-card {
-    background: var(--color-bg, #fff);
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-    transition: all 0.3s ease;
-    border-left: 3px solid transparent;
-  }
+.search-input {
+  width: 100%;
+  padding: 1rem 1.2rem 1rem 3rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  font-size: 1rem;
+  background: #fff;
+  color: #333;
+  transition: all 0.3s ease;
+}
 
-  .post-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-    border-left-color: var(--color-primary, #D4AF37);
-  }
+[data-theme="dark"] .search-input {
+  background: #2a2a2a;
+  border-color: #444;
+  color: #fff;
+}
 
-  .post-card.featured {
-    grid-column: span 2;
-  }
+.search-input:focus {
+  outline: none;
+  border-color: var(--posts-gold);
+  box-shadow: 0 0 0 4px rgba(212,175,55,0.1), 0 6px 24px rgba(212,175,55,0.15);
+  transform: translateY(-1px);
+}
 
-  .post-card-link {
-    text-decoration: none;
-    color: inherit;
-    display: block;
-  }
+.search-submit-btn {
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, var(--posts-gold) 0%, #B8941F 100%);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
 
-  .post-cover {
-    width: 100%;
-    height: 200px;
-    background-size: cover;
-    background-position: center;
-    background-color: #f0f0f0;
-  }
+.search-submit-btn:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 6px 18px rgba(212,175,55,0.35);
+}
 
-  .post-content-wrapper {
-    padding: 1.25rem;
-  }
+/* ========== 区域头部样式 ========== */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #eee;
+}
 
-  /* 作者信息 */
-  .post-meta-top {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 0.75rem;
-    font-size: 0.85rem;
-  }
+[data-theme="dark"] .section-header { border-bottom-color: #333; }
 
-  .author-avatar-small {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    object-fit: cover;
-    background: #e0e0e0;
-    flex-shrink: 0;
-  }
+.section-header h2 {
+  font-size: 1.5rem;
+  color: var(--posts-text);
+  margin: 0;
+  font-family: 'Playfair Display', Georgia, serif;
+}
 
-  .author-name-small {
-    font-weight: 600;
-    color: var(--color-text, #2d2d2d);
-    flex: 1;
-  }
+.view-all-link {
+  font-size: 0.9rem;
+  color: var(--posts-gold-dark);
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s;
+}
 
-  .post-date {
-    color: #999;
-    font-size: 0.8rem;
-  }
+.view-all-link:hover {
+  text-decoration: underline;
+  transform: translateX(3px);
+  display: inline-block;
+}
 
-  .post-title {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--color-text, #1a1a1a);
-    margin: 0 0 0.6rem 0;
-    line-height: 1.4;
-  }
+/* ========== 文章网格 ========== */
+.posts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
 
-  .post-excerpt {
-    color: #555;
-    font-size: 0.95rem;
-    line-height: 1.6;
-    margin-bottom: 1rem;
-  }
+.post-card {
+  background: var(--posts-surface);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  transition: all 0.3s ease;
+  border-left: 3px solid transparent;
+}
 
-  .post-footer {
-    display: flex;
-    justify-content: flex-end;
-  }
+.post-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  border-left-color: var(--posts-gold);
+}
 
-  .read-more {
-    color: var(--color-primary, #D4AF37);
-    font-size: 0.9rem;
-    font-weight: 500;
-  }
+.post-card.featured { grid-column: span 2; }
 
-  /* ========== 右侧边栏样式 ========== */
+.post-card-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.post-cover {
+  width: 100%;
+  height: 200px;
+  background-size: cover;
+  background-position: center;
+  background-color: #f0f0f0;
+}
+
+.post-content-wrapper { padding: 1.25rem; }
+
+.post-meta-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 0.75rem;
+  font-size: 0.85rem;
+}
+
+.author-avatar-small {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #e0e0e0;
+  flex-shrink: 0;
+}
+
+.author-name-small {
+  font-weight: 600;
+  color: var(--posts-text);
+  flex: 1;
+}
+
+.post-date {
+  color: #999;
+  font-size: 0.8rem;
+}
+
+.post-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--posts-text);
+  margin: 0 0 0.6rem 0;
+  line-height: 1.4;
+}
+
+.post-excerpt {
+  color: var(--posts-text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.post-footer { display: flex; justify-content: flex-end; }
+
+.read-more {
+  color: var(--posts-gold-dark);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* 社区帖子特殊样式 */
+.community-post-card {
+  background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%);
+  border-left-color: var(--posts-gold);
+}
+
+[data-theme="dark"] .community-post-card {
+  background: linear-gradient(135deg, #252525 0%, #1e1e1e 100%);
+}
+
+.community-post-badge {
+  display: inline-block;
+  background: rgba(212,175,55,0.15);
+  color: #b8941f;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.community-post-stats {
+  display: flex;
+  gap: 12px;
+  margin-top: 0.75rem;
+  font-size: 0.8rem;
+  color: #999;
+}
+
+.community-post-stats span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.loading {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 3rem;
+  color: #999;
+  font-size: 1rem;
+}
+
+/* ========== 暗色模式适配 ========== */
+[data-theme="dark"] .post-card {
+  background: #1e1e1e;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+}
+
+[data-theme="dark"] .post-title,
+[data-theme="dark"] .section-header h2 {
+  color: #e0e0e0;
+}
+
+[data-theme="dark"] .post-excerpt { color: #bbb; }
+
+[data-theme="dark"] .author-name-small { color: #e0e0e0; }
+
+[data-theme="dark"] .search-section {
+  background: linear-gradient(135deg, rgba(212,175,55,0.04) 0%, rgba(212,175,55,0.01) 100%);
+  border-color: rgba(212,175,55,0.1);
+}
+
+/* ========== Responsive ========== */
+@media (max-width: 1024px) {
+  .posts-menu-toggle { display: flex; }
   .posts-sidebar {
-    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 160;
+    width: var(--posts-sidebar-width);
+    max-width: 85vw;
+    transform: translateX(-100%);
+    transition: transform var(--posts-transition);
+    box-shadow: 4px 0 24px rgba(0,0,0,0.15);
+  }
+  .posts-sidebar.open { transform: translateX(0); }
+  .posts-page { grid-template-columns: 1fr; }
+  .posts-main { padding: 4.5rem 1rem 3rem; }
+}
+
+@media (max-width: 768px) {
+  .posts-grid { grid-template-columns: 1fr; }
+  .post-card.featured { grid-column: span 1; }
+  .search-form-inline { flex-direction: column; }
+  .search-submit-btn { width: 100%; }
+  .section-header {
     flex-direction: column;
-    gap: 1.5rem;
-  }
-
-  .sidebar-widget {
-    background: var(--color-bg, #fff);
-    border-radius: 14px;
-    padding: 1.5rem;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-    border: 1px solid #f0f0f0;
-    transition: all 0.3s;
-  }
-
-  [data-theme="dark"] .sidebar-widget {
-    background: #1e1e1e;
-    border-color: #333;
-  }
-
-  .widget-title {
-    font-size: 1.1rem;
-    font-weight: 700;
-    margin: 0 0 1rem 0;
-    color: var(--color-text, #333);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding-bottom: 0.7rem;
-    border-bottom: 2px solid var(--color-primary, #D4AF37);
-  }
-
-  [data-theme="dark"] .widget-title {
-    color: #fff;
-  }
-
-  .widget-icon {
-    font-size: 1.3rem;
-  }
-
-  /* 归档列表 */
-  .archive-list {
-    display: flex;
-    flex-direction: column;
+    align-items: flex-start;
     gap: 0.5rem;
   }
+}
 
-  .archive-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.65rem 0.9rem;
-    background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%);
-    border-radius: 8px;
-    text-decoration: none;
-    color: var(--color-text, #333);
-    font-size: 0.88rem;
-    transition: all 0.3s;
-    border-left: 3px solid transparent;
-  }
-
-  [data-theme="dark"] .archive-item {
-    background: linear-gradient(135deg, #2a2a2a 0%, #1e1e1e 100%);
-    color: #ccc;
-  }
-
-  .archive-item:hover {
-    background: linear-gradient(135deg, rgba(212,175,55,0.12) 0%, rgba(212,175,55,0.04) 100%);
-    border-left-color: var(--color-primary, #D4AF37);
-    transform: translateX(5px);
-  }
-
-  .archive-date {
-    font-weight: 500;
-  }
-
-  .archive-count {
-    font-size: 0.82rem;
-    color: #888;
-    background: rgba(212,175,55,0.12);
-    padding: 0.15rem 0.55rem;
-    border-radius: 10px;
-    font-weight: 600;
-  }
-
-  .archive-more-link {
-    display: block;
-    text-align: center;
-    padding: 0.7rem;
-    margin-top: 0.5rem;
-    color: var(--color-primary, #D4AF37);
-    text-decoration: none;
-    font-size: 0.9rem;
-    font-weight: 600;
-    border-radius: 8px;
-    transition: all 0.3s;
-  }
-
-  .archive-more-link:hover {
-    background: rgba(212,175,55,0.08);
-  }
-
-  /* 标签云 */
-  .tags-cloud {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    line-height: 1.8;
-  }
-
-  .tag-item {
-    color: var(--color-text, #666);
-    text-decoration: none;
-    transition: all 0.3s;
-    padding: 0.25rem 0.5rem;
-    border-radius: 6px;
-  }
-
-  [data-theme="dark"] .tag-item {
-    color: #aaa;
-  }
-
-  .tag-item:hover {
-    color: var(--color-primary, #D4AF37);
-    background: rgba(212,175,55,0.1);
-    transform: scale(1.08);
-  }
-
-  .tag-more {
-    color: #888;
-    font-size: 0.85rem;
-    text-decoration: none;
-    padding: 0.25rem 0.5rem;
-  }
-
-  .tag-more:hover {
-    color: var(--color-primary, #D4AF37);
-  }
-
-  /* 快速链接 */
-  .quick-links {
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-  }
-
-  .quick-link {
-    display: block;
-    padding: 0.75rem 1rem;
-    background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%);
-    border-radius: 8px;
-    text-decoration: none;
-    color: var(--color-text, #333);
-    font-weight: 500;
-    font-size: 0.92rem;
-    transition: all 0.3s;
-    border-left: 3px solid transparent;
-  }
-
-  [data-theme="dark"] .quick-link {
-    background: linear-gradient(135deg, #2a2a2a 0%, #1e1e1e 100%);
-    color: #ccc;
-  }
-
-  .quick-link:hover {
-    border-left-color: var(--color-primary, #D4AF37);
-    background: linear-gradient(135deg, rgba(212,175,55,0.08) 0%, rgba(212,175,55,0.02) 100%);
-    transform: translateX(3px);
-  }
-
-  .quick-link.featured {
-    background: linear-gradient(135deg, rgba(212,175,55,0.12) 0%, rgba(212,175,55,0.04) 100%);
-    border-left-color: var(--color-primary, #D4AF37);
-    font-weight: 600;
-  }
-
-  /* 社区帖子特殊样式 */
-  .community-post-card {
-    background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%);
-    border-left-color: #D4AF37;
-  }
-
-  .community-post-badge {
-    display: inline-block;
-    background: rgba(212,175,55,0.15);
-    color: #b8941f;
-    padding: 3px 10px;
-    border-radius: 12px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-  }
-
-  .community-post-stats {
-    display: flex;
-    gap: 12px;
-    margin-top: 0.75rem;
-    font-size: 0.8rem;
-    color: #999;
-  }
-
-  .community-post-stats span {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
-
-  /* 加载状态 */
-  .loading {
-    grid-column: 1 / -1;
-    text-align: center;
-    padding: 3rem;
-    color: #999;
-    font-size: 1rem;
-  }
-
-  /* ========== 暗色模式适配 ========== */
-  [data-theme="dark"] .post-card {
-    background: #1e1e1e;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.3);
-  }
-
-  [data-theme="dark"] .community-post-card {
-    background: linear-gradient(135deg, #252525 0%, #1e1e1e 100%);
-  }
-
-  [data-theme="dark"] .section-header {
-    border-bottom-color: #333;
-  }
-
-  [data-theme="dark"] .post-title,
-  [data-theme="dark"] .section-header h2 {
-    color: #e0e0e0;
-  }
-
-  [data-theme="dark"] .post-excerpt {
-    color: #bbb;
-  }
-
-  [data-theme="dark"] .author-name-small {
-    color: #e0e0e0;
-  }
-
-  [data-theme="dark"] .search-section {
-    background: linear-gradient(135deg, rgba(212,175,55,0.04) 0%, rgba(212,175,55,0.01) 100%);
-    border-color: rgba(212,175,55,0.1);
-  }
-
-  /* ========== 响应式设计 - 优化各屏幕尺寸 ========== */
-  
-  /* 大屏幕优化 (1400px+) - 充分利用宽屏 */
-  @media (min-width: 1600px) {
-    .posts-page-layout {
-      grid-template-columns: minmax(0, 1.2fr) 320px;
-      gap: 2rem;
-      padding: 2.5rem 4%;
-      max-width: 1800px;
-    }
-    
-    .posts-grid {
-      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    }
-  }
-  
-  /* 中等屏幕 (1024px - 1399px) */
-  @media (max-width: 1024px) and (min-width: 769px) {
-    .posts-page-layout {
-      grid-template-columns: 1fr 260px;
-      gap: 1.5rem;
-      padding: 2rem 2%;
-    }
-    
-    .posts-sidebar {
-      order: unset; /* 保持右侧 */
-    }
-  }
-
-  /* 平板和小屏 (< 1024px) */
-  @media (max-width: 1024px) {
-    .posts-page-layout {
-      grid-template-columns: 1fr;
-      gap: 1.2rem;
-      padding: 1.8rem 3%;
-    }
-    
-    .posts-sidebar {
-      order: -1; /* 移到上方 */
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 1rem;
-    }
-    
-    .search-section {
-      grid-column: 1 / -1;
-    }
-  }
-
-  /* 移动端 (< 768px) */
-  @media (max-width: 768px) {
-    .posts-page-layout {
-      padding: 1.5rem 4%;
-      gap: 1rem;
-    }
-    
-    .posts-grid {
-      grid-template-columns: 1fr;
-    }
-    
-    .post-card.featured {
-      grid-column: span 1;
-    }
-    
-    .search-form-inline {
-      flex-direction: column;
-    }
-    
-    .search-submit-btn {
-      width: 100%;
-    }
-    
-    .section-header {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 0.5rem;
-    }
-    
-    .posts-sidebar {
-      display: flex;
-      flex-direction: column;
-    }
-  }
+@media (max-width: 640px) {
+  .posts-main { padding: 4rem 0.8rem 2.5rem; }
+  .posts-title { font-size: 1.5rem; }
+}
 </style>
 
 <script>
 (function() {
+  'use strict';
+  var toggle = document.querySelector('.posts-menu-toggle');
+  var sidebar = document.getElementById('posts-sidebar');
+  var overlay = document.querySelector('.posts-overlay');
+
+  function openSidebar() {
+    if (!sidebar) return;
+    sidebar.classList.add('open');
+    overlay.classList.add('active');
+    toggle.classList.add('active');
+    toggle.setAttribute('aria-label', '关闭目录');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeSidebar() {
+    if (!sidebar) return;
+    sidebar.classList.remove('open');
+    overlay.classList.remove('active');
+    toggle.classList.remove('active');
+    toggle.setAttribute('aria-label', '打开目录');
+    document.body.style.overflow = '';
+  }
+
+  if (toggle) {
+    toggle.addEventListener('click', function() {
+      if (sidebar.classList.contains('open')) closeSidebar();
+      else openSidebar();
+    });
+  }
+  if (overlay) overlay.addEventListener('click', closeSidebar);
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && sidebar && sidebar.classList.contains('open')) {
+      closeSidebar();
+    }
+  });
+
+  // Mobile: close sidebar after clicking a nav link
+  if (sidebar) {
+    sidebar.addEventListener('click', function(e) {
+      var link = e.target.closest('.posts-nav-link, .posts-nav-group-title, .posts-logo');
+      if (link && window.matchMedia('(max-width: 1024px)').matches) {
+        setTimeout(closeSidebar, 100);
+      }
+    });
+  }
+})();
+
+// ========== 社区帖子加载逻辑（保留）==========
+(function() {
   const API_BASE = 'https://community-deepsleep.vercel.app/api';
-  
-  // 搜索功能增强
+
   const searchInput = document.getElementById('posts-search');
   if (searchInput) {
     searchInput.addEventListener('keypress', function(e) {
@@ -743,15 +717,18 @@
       }
     });
   }
-  
+
   async function loadCommunityPosts() {
     const container = document.getElementById('community-posts-list');
     if (!container) return;
-    
+
     try {
-      const response = await fetch(`${API_BASE}/posts?limit=6`);
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000);
+      const response = await fetch(`${API_BASE}/posts?limit=6`, { signal: controller.signal });
+      clearTimeout(timeoutId);
       const data = await response.json();
-      
+
       if (!data.posts || data.posts.length === 0) {
         container.innerHTML = `
           <div style="grid-column:1/-1;text-align:center;padding:2rem;color:#999">
@@ -760,37 +737,38 @@
           </div>`;
         return;
       }
-      
+
       container.innerHTML = data.posts.map(post => createPostCard(post)).join('');
-      
+
     } catch (error) {
       console.error('加载社区帖子失败:', error);
+      const isTimeout = error && error.name === 'AbortError';
       container.innerHTML = `
         <div style="grid-column:1/-1;text-align:center;padding:2rem;color:#999">
-          <p>社区帖子加载失败</p>
+          <p>${isTimeout ? '社区加载超时（15s）' : '社区帖子加载失败'}</p>
         </div>`;
     }
   }
-  
+
   function createPostCard(post) {
     const avatar = post.authorAvatar || getDefaultAvatar(post.authorName);
     const timeAgo = formatTimeAgo(post.createdAt);
-    
+
     return `
       <article class="post-card community-post-card">
         <a href="/community/" class="post-card-link">
           <div class="post-content-wrapper">
             <span class="community-post-badge">💬 社区动态</span>
-            
+
             <div class="post-meta-top">
               <img class="author-avatar-small" src="${escapeHtml(avatar)}" alt="" onerror="this.src='${getDefaultAvatar('')}'">
               <span class="author-name-small">${escapeHtml(post.authorName)}</span>
               <span class="post-date">${timeAgo}</span>
             </div>
-            
+
             <h3 class="post-title">${escapeHtml(post.title)}</h3>
             <p class="post-excerpt">${escapeHtml(post.contentFull.substring(0, 150))}${post.contentFull.length > 150 ? '...' : ''}</p>
-            
+
             <div class="community-post-stats">
               <span>👁 ${post.viewCount || 0}</span>
               <span>❤️ ${post.likeCount || 0}</span>
@@ -800,19 +778,19 @@
         </a>
       </article>`;
   }
-  
+
   function getDefaultAvatar(name) {
     const initial = (name || '?').charAt(0).toUpperCase();
     return `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80"><circle cx="40" cy="40" r="40" fill="#ddd"/><text x="40" y="52" text-anchor="middle" fill="#999" font-size="30" font-family="sans-serif">${initial}</text></svg>`)}`;
   }
-  
+
   function escapeHtml(str) {
     if (!str) return '';
     const div = document.createElement('div');
     div.textContent = str;
     return div.innerHTML.replace(/\n/g, '<br>');
   }
-  
+
   function formatTimeAgo(iso) {
     if (!iso) return '';
     const d = new Date(iso);
@@ -824,8 +802,7 @@
     if (diff < 604800000) return `${Math.floor(diff / 86400000)}天前`;
     return d.toLocaleDateString('zh-CN');
   }
-  
-  // 页面加载后获取帖子
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', loadCommunityPosts);
   } else {

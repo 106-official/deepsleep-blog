@@ -1,8 +1,8 @@
 # DeepSleep Blog - 项目技术文档
 
 > **最后更新**: 2026-07-30
-> **版本**: v5.4
-> **状态**: ✅ 生产就绪 | 评论系统正常运行 (Neon PostgreSQL) | 💬 社区系统已上线 | 👤 全局个人中心 | 📝 文章板块整合 | 🧹 停用项目资料已清理
+> **版本**: v5.5
+> **状态**: ✅ 生产就绪 | 评论系统正常运行 (Neon PostgreSQL) | 💬 社区系统已上线 | 👤 全局个人中心 | 📝 文章板块整合 (learn 风格 sidebar) | 🧹 停用项目资料已清理
 
 ---
 
@@ -38,7 +38,7 @@
 - 💬 Waline 评论系统（Neon PostgreSQL + Vercel Serverless）✅
 - 💬 **社区论坛系统**（用户注册/登录 + 发帖）✅ v5.1 新增
 - 👤 **全局个人中心**（导航栏个人按钮 + Modal 弹窗）✅ v5.2 新增
-- 📝 **文章板块整合**（社区帖子与博客文章混合展示）✅ v5.2 新增
+- 📝 **文章板块整合**（社区帖子与博客文章混合展示，learn 风格 sidebar）✅ v5.2 / v5.5 改造
 - 🖼️ **作者信息显示**（帖子/文章卡片显示头像+名称）✅ v5.2 新增
 - 🔍 全文搜索（Fuse.js）
 - 🏷️ 标签与分类系统
@@ -135,6 +135,7 @@
 | **CORS 配置** | **代码级响应头** (v5.2) | **vercel.json Headers 对 Serverless Functions 不生效** |
 | **全局个人中心** | **Modal 弹窗 + 全局注入** (v5.2) | **所有页面可访问，无需重复实现** |
 | **文章板块整合** | **API 动态加载 + Hugo 静态混合** (v5.2) | **社区帖子与博客文章统一展示，提升用户体验** |
+| **文章列表页 sidebar** | **learn 同款设计** (v5.5) | **CSS 变量/Playfair Display 字体/移动端抽屉复用，视觉一致性** |
 
 ---
 
@@ -150,7 +151,7 @@ blog-static/
 │   │   ├── hello-world.md
 │   │   └── welcome.md
 │   ├── about.md                     # 关于页面
-│   ├── me.md                        # 个人技能展示页
+│   ├── me.md                        # 关于我
 │   ├── community.md                 # 社区论坛页 (layout: community)
 │   ├── archives.md                  # 归档页面 (layout: archives)
 │   ├── search.md                    # 搜索页面 (layout: search)
@@ -163,7 +164,7 @@ blog-static/
 │   │   └── extended_head.html       # ⭐ 全局样式（个人按钮 + 弹窗样式）v5.2 更新
 │   └── _default/
 │       ├── community.html           # 社区布局模板
-│       └── posts.html              # ⭐ 文章列表布局模板 v5.2 新增
+│       └── posts.html              # ⭐ 文章列表模板 (learn 风格 sidebar) v5.5 改造
 ├── static/
 │   ├── css/
 │   │   ├── custom.css               # 自定义样式
@@ -1107,6 +1108,28 @@ flowchart TD
 
 ## 📝 更新日志
 
+### v5.5 (2026-07-30) - 文章列表页 learn 风格改造
+
+**UI 改造**:
+- ✅ 文章列表页 (`/posts/`) 改造为 learn 风格「左固定 sidebar + 右主内容」grid 布局
+- ✅ Sidebar 含三组导航：所有文章（按时间倒序）/ 标签 / 快速导航
+- ✅ 复用 learn 视觉语言：金色 CSS 变量、Playfair Display 字体、nav-link 样式
+- ✅ 移动端（≤1024px）抽屉化 sidebar：汉堡按钮 + 遮罩 + ESC 关闭 + 点击链接后关闭
+- ✅ 保留现有搜索栏、社区帖子卡片加载、博客文章卡片网格逻辑
+
+**技术决策**:
+- CSS 变量定义在 `:root`（移动端 sidebar `position: fixed` 后脱离父子树，需提升到根）
+- `.main:has(.posts-page)` 突破 PaperMod `.main` 768px max-width 约束（同 learn）
+- 社区帖子 fetch 加 15s AbortController 超时保护（防止网络故障永久挂起）
+- 暗色模式用 `[data-theme="dark"]` 覆盖 `--posts-*` 变量
+
+**Files Modified**:
+| 文件 | 变更 |
+|------|------|
+| `layouts/_default/posts.html` | 重写为 learn 风格布局 |
+| `PROJECT_CONTEXT.md` | 版本号 v5.4→v5.5、文件索引、技术决策表 |
+| `PROJECT_DOCUMENTATION.md` | 版本号、目录结构、更新日志、技术决策表 |
+
 ### v5.4 (2026-07-30) - 项目清理与文档统一
 
 - ✅ 统一 DeepSleep 当前文档版本为 v5.4
@@ -1183,4 +1206,4 @@ flowchart TD
 
 ---
 
-*文档结束 | 最后更新: 2026-07-30 | 版本: v5.4 | 状态: ✅ 生产就绪*
+*文档结束 | 最后更新: 2026-07-30 | 版本: v5.5 | 状态: ✅ 生产就绪*

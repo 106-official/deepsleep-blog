@@ -748,8 +748,96 @@
     });
   }
 
-  // IntersectionObserver 在 Task 6 实现，此处先暴露函数
-  window.__meRunSectionTypewriters = runSectionTypewriters;
+  // === IntersectionObserver：观察 [data-animate] 与 section ===
+  function initObserver() {
+    if (!hasIO || reduceMotion) {
+      // 降级：所有元素直接显示，打字机直接显示全文
+      document.querySelectorAll('[data-animate]').forEach(function (el) {
+        el.classList.add('in-view');
+      });
+      return;
+    }
+
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          var el = entry.target;
+          el.classList.add('in-view');
+
+          // 若是 section，延迟启动打字机（等骨架淡入 ~600ms）
+          if (el.classList.contains('me-section')) {
+            setTimeout(function () {
+              window.__meRunSectionTypewriters(el);
+            }, 600);
+          }
+
+          // 若是技能项，启动数字滚动
+          var pctEl = el.querySelector && el.querySelector('.me-skill-pct');
+          if (pctEl) {
+            runCountUp(pctEl);
+          }
+
+          observer.unobserve(el); // 只触发一次
+        }
+      });
+    }, { threshold: 0.15 });
+
+    document.querySelectorAll('[data-animate]').forEach(function (el) {
+      observer.observe(el);
+    });
+  }
+
+  // === 数字滚动：0 → target，1.5s ===
+  function runCountUp(el) {
+    if (el.dataset.counted === '1') return;
+    el.dataset.counted = '1';
+    var target = parseInt(el.getAttribute('data-count-to') || '0', 10);
+    if (reduceMotion) {
+      el.textContent = target + '%';
+      return;
+    }
+    var duration = 1500;
+    var start = null;
+    function step(ts) {
+      if (!start) start = ts;
+      var progress = Math.min((ts - start) / duration, 1);
+      var eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+      var val = Math.round(eased * target);
+      el.textContent = val + '%';
+      if (progress < 1) {
+        requestAnimationFrame(step);
+      } else {
+        el.textContent = target + '%';
+      }
+    }
+    requestAnimationFrame(step);
+  }
+
+  // === Hero 滚动提示：滚动超过 100px 淡出 ===
+  function initScrollHint() {
+    var hint = document.querySelector('.me-hero-scroll-hint');
+    if (!hint) return;
+    function onScroll() {
+      if (window.scrollY > 100) {
+        hint.classList.add('hidden');
+      } else {
+        hint.classList.remove('hidden');
+      }
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  }
+
+  // === DOMContentLoaded 启动 ===
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () {
+      initObserver();
+      initScrollHint();
+    });
+  } else {
+    initObserver();
+    initScrollHint();
+  }
 })();
 </script>
 {{ end }}

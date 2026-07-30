@@ -1324,6 +1324,17 @@ Hugo 的 partial 查找是精确匹配文件名，找不到 `extend_head.html` �
 - ✅ **使用说明保留**：放在内容视图底部（避雷指南内容下方）
 - ✅ **移动端抽屉**：≤1024px 汉堡按钮 + 遮罩 + ESC 关闭 + 选中后自动关闭
 
+**视觉微调（同日追加 - 对话视图去边框 + 圆形↑箭头按钮）**:
+- ✅ **删除对话视图边框**：`.lx-view-chat.active` 移除 `border`/`box-shadow`/`border-radius`/`overflow:hidden`，背景改 `transparent`，让 LLM 对话区直接融入 lixin 主界面（不再是一个独立卡片）
+- ✅ **header/suggest/messages/input-row 全部去独立背景**：背景统一 `transparent`，仅靠分隔线 `border-bottom/border-top` 划分区块，视觉上与主界面融为一体
+- ✅ **发送按钮改为圆形 ↑ 箭头**：
+  - HTML：文字"发送"改为 SVG ↑ 箭头图标（`<svg class="lx-send-icon">`）
+  - 形状：`width:38px; height:38px; border-radius:50%`（圆形单图标按钮）
+  - **默认（disabled / 空输入）**：`background: var(--lx-text-muted)` 灰色 + `color: rgba(255,255,255,0.7)` 灰白色箭头 + `opacity:0.55`
+  - **可发送状态（`:not(:disabled)`）**：`background:#ffffff` 白色 + `color: var(--lx-text)` 深色箭头 + 轻阴影；暗色模式下背景 `#e8e8e8`、箭头 `#1a1a1a`
+  - hover 时 `transform: translateY(-1px)` 微浮起反馈
+- ✅ **JS 同步按钮可用状态**：新增 `updateSendBtn()` 函数，发送中→disabled；否则依 input 内容 trim 后是否非空决定；初始按钮 `disabled` 属性 + input 监听器调用 `updateSendBtn()`，发送完成（`.finally`）也调用 `updateSendBtn()` 避免空 input 时按钮变白
+
 **新 HTML 结构**:
 ```
 .lx-page (grid: 300px 1fr)

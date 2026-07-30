@@ -80,7 +80,12 @@
       </div>
       <div class="lx-chat-input-row">
         <textarea class="lx-chat-input" id="lx-chat-input" placeholder="输入你的问题…" rows="1"></textarea>
-        <button class="lx-chat-send" id="lx-chat-send" aria-label="发送">发送</button>
+        <button class="lx-chat-send" id="lx-chat-send" aria-label="发送" disabled>
+          <svg class="lx-send-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="19" x2="12" y2="5"></line>
+            <polyline points="5 12 12 5 19 12"></polyline>
+          </svg>
+        </button>
       </div>
     </section>
 
@@ -320,16 +325,13 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ========== LLM 对话视图（全屏 flex） ========== */
+/* ========== LLM 对话视图（全屏 flex，融入主界面） ========== */
 .lx-view-chat.active {
   display: flex;
   flex-direction: column;
   height: calc(100vh - 3rem);
-  background: var(--lx-card);
-  border: 1px solid var(--lx-border);
-  border-radius: var(--lx-radius);
-  box-shadow: var(--lx-shadow);
-  overflow: hidden;
+  background: transparent;
+  overflow: visible;
 }
 
 .lx-chat-header {
@@ -337,9 +339,11 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.9rem 1.1rem;
-  background: linear-gradient(135deg, var(--lx-gold), var(--lx-gold-dark));
-  color: #fff;
+  padding: 0.4rem 0.2rem 0.8rem;
+  background: transparent;
+  color: var(--lx-text);
+  border-bottom: 1px solid var(--lx-border);
+  margin-bottom: 0.4rem;
 }
 
 .lx-chat-title {
@@ -359,8 +363,8 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0.4rem;
-  padding: 0.7rem 1rem;
-  background: var(--lx-bg);
+  padding: 0.6rem 0.2rem;
+  background: transparent;
   border-bottom: 1px solid var(--lx-border);
 }
 
@@ -384,11 +388,11 @@
   flex: 1 1 0;
   min-height: 0;
   overflow-y: auto;
-  padding: 1rem;
+  padding: 0.8rem 0.2rem;
   display: flex;
   flex-direction: column;
   gap: 0.7rem;
-  background: var(--lx-bg);
+  background: transparent;
 }
 
 .lx-msg {
@@ -457,48 +461,74 @@
 .lx-chat-input-row {
   flex-shrink: 0;
   display: flex;
+  align-items: flex-end;
   gap: 0.5rem;
-  padding: 0.7rem;
-  background: var(--lx-card);
+  padding: 0.6rem 0.2rem 0.2rem;
+  background: transparent;
   border-top: 1px solid var(--lx-border);
 }
 
 .lx-chat-input {
   flex: 1;
   padding: 0.6rem 0.8rem;
-  background: var(--lx-bg);
+  background: var(--lx-card);
   color: var(--lx-text);
   border: 1px solid var(--lx-border);
-  border-radius: 10px;
+  border-radius: 14px;
   font-size: 0.9rem;
   font-family: inherit;
   resize: none;
   max-height: 100px;
   outline: none;
+  transition: border-color var(--lx-transition);
 }
 
 .lx-chat-input:focus {
   border-color: var(--lx-gold);
 }
 
+/* 圆形 ↑ 箭头发送按钮：
+   - 默认（disabled / 无输入）：灰色背景 + 灰白色箭头
+   - 可发送（input 有内容）：白色背景 + 深色箭头 */
 .lx-chat-send {
-  padding: 0.6rem 1.1rem;
-  background: linear-gradient(135deg, var(--lx-gold), var(--lx-gold-dark));
-  color: #fff;
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--lx-text-muted);
+  color: rgba(255, 255, 255, 0.7);
   border: none;
-  border-radius: 10px;
-  font-weight: 600;
+  border-radius: 50%;
   cursor: pointer;
-  transition: all var(--lx-transition);
+  transition: background var(--lx-transition), color var(--lx-transition), transform var(--lx-transition);
 }
 
-.lx-chat-send:hover {
-  opacity: 0.9;
+.lx-chat-send:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+/* 可发送状态（input 有内容且未在发送中）：白色背景 + 深色箭头 */
+.lx-chat-send:not(:disabled) {
+  background: #ffffff;
+  color: var(--lx-text);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] .lx-chat-send:not(:disabled) {
+  background: #e8e8e8;
+  color: #1a1a1a;
 }
 
 .lx-chat-send:disabled {
-  opacity: 0.5;
   cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.lx-send-icon {
+  display: block;
 }
 
 /* ========== 内容视图 ========== */
@@ -1198,8 +1228,17 @@
       }
     }).finally(function() {
       sending = false;
-      sendBtn.disabled = false;
+      updateSendBtn();
     });
+  }
+
+  // 同步发送按钮状态：发送中 → disabled；否则依 input 是否有内容
+  function updateSendBtn() {
+    if (sending) {
+      sendBtn.disabled = true;
+      return;
+    }
+    sendBtn.disabled = !input.value.trim();
   }
 
   // 发送按钮
@@ -1211,11 +1250,14 @@
       send(input.value);
     }
   });
-  // 自适应高度
+  // 自适应高度 + 同步按钮可用状态
   input.addEventListener('input', function() {
     input.style.height = 'auto';
     input.style.height = Math.min(input.scrollHeight, 100) + 'px';
+    updateSendBtn();
   });
+  // 初始化按钮状态（初始 input 为空 → disabled）
+  updateSendBtn();
 
   // 推荐问题 chips
   suggest.addEventListener('click', function(e) {

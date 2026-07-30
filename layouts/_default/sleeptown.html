@@ -308,269 +308,102 @@
     </div>
   </div>
 
-  <!-- 关卡模式选择界面 -->
-  <div id="stagemode-setup" class="game-setup" style="display:none">
-    <div class="setup-container">
-      <h1>🏆 SleepTown 关卡模式</h1>
-      <p class="game-intro">挑战精心设计的关卡，测试你的推理能力！</p>
+  <!-- 关卡模式选择界面 - learn 风格 sidebar 布局 -->
+  <div id="stagemode-setup" class="stagemode-page" style="display:none">
+    <button class="stagemode-menu-toggle" aria-label="打开关卡列表">
+      <span class="stagemode-toggle-bar"></span>
+      <span class="stagemode-toggle-bar"></span>
+      <span class="stagemode-toggle-bar"></span>
+    </button>
+    <div class="stagemode-overlay" aria-hidden="true"></div>
 
-      <!-- 返回按钮 -->
-      <button onclick="backToModeSelection()" class="back-to-selection-btn">← 返回模式选择</button>
-
-      <!-- 关卡列表 - 章节折叠式设计 -->
-      <div class="stage-list">
-
-        <!-- 第1章：基础教学 -->
-        <div class="chapter-container">
-          <div class="chapter-header" onclick="toggleChapter('chapter-1')">
-            <span class="chapter-title">📖 第1章 基础教学</span>
-            <span class="chapter-count">8个关卡</span>
-            <span class="chapter-arrow" id="arrow-chapter-1">▼</span>
-          </div>
-          <div class="chapter-content" id="chapter-1">
-
-            <!-- 关卡1-1 -->
-            <div class="stage-item" onclick="toggleStageDetail('stage-1-1')">
-              <div class="stage-item-header">
-                <span class="stage-item-number">1-1</span>
-                <span class="stage-item-name">🔍 侦探的试炼</span>
-                <span class="stage-item-difficulty">⭐ 入门</span>
-              </div>
-              <div class="stage-detail-panel" id="stage-1-1">
-                <p class="stage-detail-desc">
-                  5只侦探D vs 1只邪恶D<br>
-                  侦探D被翻开后会提示一只坏鱼的身份，<strong>但是会被坏鱼伪装！</strong><br>
-                  多问几名侦探可以减少错误的概率^-^
-                </p>
-                <div class="stage-detail-stats">
-                  <span>🐟 6条鱼</span>
-                  <span>❓ 未知身份</span>
-                  <span>⚠️ 有伪装</span>
-                </div>
-                <button class="start-stage-btn" onclick="event.stopPropagation(); startStageGame('1-1')">开始挑战 →</button>
-              </div>
-            </div>
-
-            <!-- 关卡1-2 -->
-            <div class="stage-item" onclick="toggleStageDetail('stage-1-2')">
-              <div class="stage-item-header">
-                <span class="stage-item-number">1-2</span>
-                <span class="stage-item-name">🎭 恶作剧的干扰</span>
-                <span class="stage-item-difficulty">⭐ 简单</span>
-              </div>
-              <div class="stage-detail-panel" id="stage-1-2">
-                <p class="stage-detail-desc">
-                  4只侦探D vs 1只恶作剧D vs 1只邪恶D<br>
-                  <strong>恶作剧D：中立阵营，翻开会减少一次问询机会！</strong><br>
-                  需要在问询机会和获取信息之间做出权衡。
-                </p>
-                <div class="stage-detail-stats">
-                  <span>🐟 6条鱼</span>
-                  <span>❓ 2种坏鱼</span>
-                  <span>⚠️ 问询干扰</span>
-                </div>
-                <button class="start-stage-btn" onclick="event.stopPropagation(); startStageGame('1-2')">开始挑战 →</button>
-              </div>
-            </div>
-
-            <!-- 关卡1-3 -->
-            <div class="stage-item" onclick="toggleStageDetail('stage-1-3')">
-              <div class="stage-item-header">
-                <span class="stage-item-number">1-3</span>
-                <span class="stage-item-name">😴 开摆！</span>
-                <span class="stage-item-difficulty">⭐ 简单</span>
-              </div>
-              <div class="stage-detail-panel" id="stage-1-3">
-                <p class="stage-detail-desc">
-                  2只侦探D vs 2只摆烂D vs 1只恶作剧D vs 1只邪恶D<br>
-                  <strong>摆烂D：豪鱼，但是因为太懒了并不能为你的推理提供任何帮助。</strong><br>
-                  当大量摆烂D出现时，会给推理造成很大的困扰。<br>
-                  如果信息不足以确认坏鱼，可以选择<strong>跳过流放</strong>来避免误伤好鱼^-^
-                </p>
-                <div class="stage-detail-stats">
-                  <span>🐟 6条鱼</span>
-                  <span>❓ 2种坏鱼</span>
-                  <span>⚠️ 信息不足</span>
-                </div>
-                <button class="start-stage-btn" onclick="event.stopPropagation(); startStageGame('1-3')">开始挑战 →</button>
-              </div>
-            </div>
-
-            <!-- 关卡1-4 -->
-            <div class="stage-item" onclick="toggleStageDetail('stage-1-4')">
-              <div class="stage-item-header">
-                <span class="stage-item-number">1-4</span>
-                <span class="stage-item-name">🎉 聚会</span>
-                <span class="stage-item-difficulty">⭐⭐ 中等</span>
-              </div>
-              <div class="stage-detail-panel" id="stage-1-4">
-                <p class="stage-detail-desc">
-                  4只侦探D vs 2只摆烂D vs 1只恶作剧D vs 2只邪恶D<br>
-                  <strong>有时一局游戏会出现更多的坏鱼，但是每晚仍然只能杀死一只鱼，</strong><br>
-                  需要依靠有效信息将它们一一找出来。
-                </p>
-                <div class="stage-detail-stats">
-                  <span>🐟 9条鱼</span>
-                  <span>❓ 双邪恶D</span>
-                  <span>⚠️ 高难度推理</span>
-                </div>
-                <button class="start-stage-btn" onclick="event.stopPropagation(); startStageGame('1-4')">开始挑战 →</button>
-              </div>
-            </div>
-
-            <!-- 关卡1-5 -->
-            <div class="stage-item" onclick="toggleStageDetail('stage-1-5')">
-              <div class="stage-item-header">
-                <span class="stage-item-number">1-5</span>
-                <span class="stage-item-name">⚖️ 法官裁定</span>
-                <span class="stage-item-difficulty">⭐ 简单</span>
-              </div>
-              <div class="stage-detail-panel" id="stage-1-5">
-                <p class="stage-detail-desc">
-                  1只法官D vs 2只侦探D vs 1只摆烂D vs 1只恶作剧D vs 1只邪恶D<br>
-                  <strong>法官D：公布一个非好鱼身份的编号，如果你相信法官的判罚，就可以大胆流放。</strong><br>
-                  结合法官的宣判和侦探的信息，快速锁定目标！
-                </p>
-                <div class="stage-detail-stats">
-                  <span>🐟 6条鱼</span>
-                  <span>⚖️ 法官助力</span>
-                  <span>🔍 信息交叉</span>
-                </div>
-                <button class="start-stage-btn" onclick="event.stopPropagation(); startStageGame('1-5')">开始挑战 →</button>
-              </div>
-            </div>
-
-            <!-- 关卡1-6 -->
-            <div class="stage-item" onclick="toggleStageDetail('stage-1-6')">
-              <div class="stage-item-header">
-                <span class="stage-item-number">1-6</span>
-                <span class="stage-item-name">💤 好梦</span>
-                <span class="stage-item-difficulty">⭐ 简单</span>
-              </div>
-              <div class="stage-detail-panel" id="stage-1-6">
-                <p class="stage-detail-desc">
-                  5只梦游D vs 1只邪恶D<br>
-                  <strong>梦游D：会随机梦到三个编号，三个编号中会有一只非好鱼身份。</strong><br>
-                  合理利用梦游D的推断可以帮助你缩小范围，<br>
-                  或者通过交叉推断确认高频出现的编号鱼^-^
-                </p>
-                <div class="stage-detail-stats">
-                  <span>🐟 6条鱼</span>
-                  <span>💤 全梦游阵容</span>
-                  <span>❓ 4次问询</span>
-                </div>
-                <button class="start-stage-btn" onclick="event.stopPropagation(); startStageGame('1-6')">开始挑战 →</button>
-              </div>
-            </div>
-
-            <!-- 关卡1-7 -->
-            <div class="stage-item" onclick="toggleStageDetail('stage-1-7')">
-              <div class="stage-item-header">
-                <span class="stage-item-number">1-7</span>
-                <span class="stage-item-name">📰 小道消息</span>
-                <span class="stage-item-difficulty">⭐ 简单</span>
-              </div>
-              <div class="stage-detail-panel" id="stage-1-7">
-                <p class="stage-detail-desc">
-                  5只八卦D vs 1只邪恶D<br>
-                  <strong>八卦D：对自己相邻编号的鱼很感兴趣。</strong><br>
-                  如果相邻编号有非好鱼角色，八卦D会回复<strong>"有瓜吃！"</strong><br>
-                  相反则失望地说<strong>"并没有瓜..."</strong>
-                </p>
-                <div class="stage-detail-stats">
-                  <span>🐟 6条鱼</span>
-                  <span>📰 全八卦阵容</span>
-                  <span>🔍 相邻检测</span>
-                </div>
-                <button class="start-stage-btn" onclick="event.stopPropagation(); startStageGame('1-7')">开始挑战 →</button>
-              </div>
-            </div>
-
-            <!-- 关卡1-8 -->
-            <div class="stage-item" onclick="toggleStageDetail('stage-1-8')">
-              <div class="stage-item-header">
-                <span class="stage-item-number">1-8</span>
-                <span class="stage-item-name">🔪 屠夫</span>
-                <span class="stage-item-difficulty">⭐⭐ 中等</span>
-              </div>
-              <div class="stage-detail-panel" id="stage-1-8">
-                <p class="stage-detail-desc">
-                  12条鱼的大混战！<br>
-                  <strong>虎鲸：不速之客的到来似乎影响到了原本的生态——它会无差别的攻击所有鱼！</strong><br>
-                  包含：摆烂、侦探、法官、梦游、八卦、恶作剧、邪恶、虎鲸<br>
-                  多种角色交织，每夜都可能发生意外！
-                </p>
-                <div class="stage-detail-stats">
-                  <span>🐟 12条鱼</span>
-                  <span>🐋 虎鲸登场</span>
-                  <span>⚠️ 混战模式</span>
-                </div>
-                <button class="start-stage-btn" onclick="event.stopPropagation(); startStageGame('1-8')">开始挑战 →</button>
-              </div>
-            </div>
-
-          </div>
-        </div>
-
-        <!-- 第2章：殉道士 -->
-        <div class="chapter-container">
-          <div class="chapter-header" onclick="toggleChapter('chapter-2')">
-            <span class="chapter-title">💀 第2章 殉道士</span>
-            <span class="chapter-count">2个关卡</span>
-            <span class="chapter-arrow" id="arrow-chapter-2">▼</span>
-          </div>
-          <div class="chapter-content" id="chapter-2">
-
-            <!-- 关卡2-1 -->
-            <div class="stage-item" onclick="toggleStageDetail('stage-2-1')">
-              <div class="stage-item-header">
-                <span class="stage-item-number">2-1</span>
-                <span class="stage-item-name">💀 殉道士</span>
-                <span class="stage-item-difficulty">⭐ 简单</span>
-              </div>
-              <div class="stage-detail-panel" id="stage-2-1">
-                <p class="stage-detail-desc">
-                  6只侦探D vs 1只邪恶D vs 1只殉道D<br>
-                  <strong>殉道D：更具威胁性的坏鱼，被流放后会淘汰一只好鱼！</strong><br>
-                  虽然只有1个邪恶D，但流放错误会付出双倍代价！<br>
-                  充分利用6个侦探D的信息，精准定位目标！
-                </p>
-                <div class="stage-detail-stats">
-                  <span>🐟 8条鱼</span>
-                  <span>🔍 全侦探阵容</span>
-                  <span>💀 殉道威胁</span>
-                </div>
-                <button class="start-stage-btn" onclick="event.stopPropagation(); startStageGame('2-1')">开始挑战 →</button>
-              </div>
-            </div>
-
-            <!-- 关卡2-2 -->
-            <div class="stage-item" onclick="toggleStageDetail('stage-2-2')">
-              <div class="stage-item-header">
-                <span class="stage-item-number">2-2</span>
-                <span class="stage-item-name">💀💀 殉道士2.0</span>
-                <span class="stage-item-difficulty">⭐⭐ 中等</span>
-              </div>
-              <div class="stage-detail-panel" id="stage-2-2">
-                <p class="stage-detail-desc">
-                  10条鱼的混战！包含：侦探、法官、虎鲸、摆烂、梦游、恶作剧、**双殉道D**<br>
-                  <strong>更具随机性的破坏，会很大程度上干扰玩家决策。</strong><br>
-                  ——其实盲砍一个也不是不可以？
-                </p>
-                <div class="stage-detail-stats">
-                  <span>🐟 10条鱼</span>
-                  <span>💀💀 双殉道D</span>
-                  <span>🐋 虎鲸乱入</span>
-                </div>
-                <button class="start-stage-btn" onclick="event.stopPropagation(); startStageGame('2-2')">开始挑战 →</button>
-              </div>
-            </div>
-
-          </div>
-        </div>
-
+    <aside class="stagemode-sidebar" id="stagemode-sidebar">
+      <div class="stagemode-sidebar-header">
+        <a href="/play/sleeptown/" class="stagemode-logo">
+          <span class="stagemode-logo-icon">🏆</span>
+          <span>关卡模式</span>
+        </a>
+        <button onclick="backToModeSelection()" class="stagemode-back-btn">← 返回模式选择</button>
       </div>
-    </div>
+      <nav class="stagemode-nav">
+        <div class="stagemode-nav-group">
+          <div class="stagemode-nav-group-title">
+            <span class="stagemode-nav-group-icon">📖</span>
+            <span>第1章 基础教学</span>
+            <span class="stagemode-nav-count">8</span>
+          </div>
+          <a href="javascript:void(0)" class="stagemode-nav-link" data-stage="1-1" onclick="selectStage('1-1')">
+            <span class="stagemode-nav-num">1-1</span>
+            <span class="stagemode-nav-text">🔍 侦探的试炼</span>
+            <span class="stagemode-nav-diff">⭐</span>
+          </a>
+          <a href="javascript:void(0)" class="stagemode-nav-link" data-stage="1-2" onclick="selectStage('1-2')">
+            <span class="stagemode-nav-num">1-2</span>
+            <span class="stagemode-nav-text">🎭 恶作剧的干扰</span>
+            <span class="stagemode-nav-diff">⭐</span>
+          </a>
+          <a href="javascript:void(0)" class="stagemode-nav-link" data-stage="1-3" onclick="selectStage('1-3')">
+            <span class="stagemode-nav-num">1-3</span>
+            <span class="stagemode-nav-text">😴 开摆！</span>
+            <span class="stagemode-nav-diff">⭐</span>
+          </a>
+          <a href="javascript:void(0)" class="stagemode-nav-link" data-stage="1-4" onclick="selectStage('1-4')">
+            <span class="stagemode-nav-num">1-4</span>
+            <span class="stagemode-nav-text">🎉 聚会</span>
+            <span class="stagemode-nav-diff">⭐⭐</span>
+          </a>
+          <a href="javascript:void(0)" class="stagemode-nav-link" data-stage="1-5" onclick="selectStage('1-5')">
+            <span class="stagemode-nav-num">1-5</span>
+            <span class="stagemode-nav-text">⚖️ 法官裁定</span>
+            <span class="stagemode-nav-diff">⭐</span>
+          </a>
+          <a href="javascript:void(0)" class="stagemode-nav-link" data-stage="1-6" onclick="selectStage('1-6')">
+            <span class="stagemode-nav-num">1-6</span>
+            <span class="stagemode-nav-text">💤 好梦</span>
+            <span class="stagemode-nav-diff">⭐</span>
+          </a>
+          <a href="javascript:void(0)" class="stagemode-nav-link" data-stage="1-7" onclick="selectStage('1-7')">
+            <span class="stagemode-nav-num">1-7</span>
+            <span class="stagemode-nav-text">📰 小道消息</span>
+            <span class="stagemode-nav-diff">⭐</span>
+          </a>
+          <a href="javascript:void(0)" class="stagemode-nav-link" data-stage="1-8" onclick="selectStage('1-8')">
+            <span class="stagemode-nav-num">1-8</span>
+            <span class="stagemode-nav-text">🔪 屠夫</span>
+            <span class="stagemode-nav-diff">⭐⭐</span>
+          </a>
+        </div>
+
+        <div class="stagemode-nav-group">
+          <div class="stagemode-nav-group-title">
+            <span class="stagemode-nav-group-icon">💀</span>
+            <span>第2章 殉道士</span>
+            <span class="stagemode-nav-count">2</span>
+          </div>
+          <a href="javascript:void(0)" class="stagemode-nav-link" data-stage="2-1" onclick="selectStage('2-1')">
+            <span class="stagemode-nav-num">2-1</span>
+            <span class="stagemode-nav-text">💀 殉道士</span>
+            <span class="stagemode-nav-diff">⭐</span>
+          </a>
+          <a href="javascript:void(0)" class="stagemode-nav-link" data-stage="2-2" onclick="selectStage('2-2')">
+            <span class="stagemode-nav-num">2-2</span>
+            <span class="stagemode-nav-text">💀💀 殉道士2.0</span>
+            <span class="stagemode-nav-diff">⭐⭐</span>
+          </a>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="stagemode-main">
+      <header class="stagemode-header">
+        <h1>🏆 SleepTown 关卡模式</h1>
+        <p class="stagemode-intro">挑战精心设计的关卡，测试你的推理能力！</p>
+      </header>
+
+      <div id="stagemode-detail" class="stagemode-detail">
+        <!-- selectStage() 动态渲染 -->
+      </div>
+    </main>
   </div>
 
   <!-- 游戏主界面 -->
@@ -742,8 +575,199 @@ function showFreeModeSetup() {
 
 function showStageMode() {
   document.getElementById('mode-selection').style.display = 'none';
-  document.getElementById('stagemode-setup').style.display = 'flex';
+  document.getElementById('stagemode-setup').style.display = 'grid';
+  // 默认选中第一关
+  if (!gameState.currentStage || !document.querySelector('.stagemode-nav-link.active')) {
+    selectStage('1-1');
+  }
 }
+
+// ==================== 关卡详情数据（UI 展示用）====================
+const stageDetails = {
+  '1-1': {
+    desc: '5只侦探D vs 1只邪恶D<br>侦探D被翻开后会提示一只坏鱼的身份，<strong>但是会被坏鱼伪装！</strong><br>多问几名侦探可以减少错误的概率^-^',
+    stats: [
+      { icon: '🐟', text: '6条鱼' },
+      { icon: '❓', text: '未知身份' },
+      { icon: '⚠️', text: '有伪装' }
+    ],
+    difficulty: '⭐ 入门',
+    highlight: '伪装基础教学'
+  },
+  '1-2': {
+    desc: '4只侦探D vs 1只恶作剧D vs 1只邪恶D<br><strong>恶作剧D：中立阵营，翻开会减少一次问询机会！</strong><br>需要在问询机会和获取信息之间做出权衡。',
+    stats: [
+      { icon: '🐟', text: '6条鱼' },
+      { icon: '❓', text: '2种坏鱼' },
+      { icon: '⚠️', text: '问询干扰' }
+    ],
+    difficulty: '⭐ 简单',
+    highlight: '问询干扰机制'
+  },
+  '1-3': {
+    desc: '2只侦探D vs 2只摆烂D vs 1只恶作剧D vs 1只邪恶D<br><strong>摆烂D：豪鱼，但是因为太懒了并不能为你的推理提供任何帮助。</strong><br>当大量摆烂D出现时，会给推理造成很大的困扰。<br>如果信息不足以确认坏鱼，可以选择<strong>跳过流放</strong>来避免误伤好鱼^-^',
+    stats: [
+      { icon: '🐟', text: '6条鱼' },
+      { icon: '❓', text: '2种坏鱼' },
+      { icon: '⚠️', text: '信息不足' }
+    ],
+    difficulty: '⭐ 简单',
+    highlight: '信息不足挑战'
+  },
+  '1-4': {
+    desc: '4只侦探D vs 2只摆烂D vs 1只恶作剧D vs 2只邪恶D<br><strong>有时一局游戏会出现更多的坏鱼，但是每晚仍然只能杀死一只鱼，</strong><br>需要依靠有效信息将它们一一找出来。',
+    stats: [
+      { icon: '🐟', text: '9条鱼' },
+      { icon: '❓', text: '双邪恶D' },
+      { icon: '⚠️', text: '高难度推理' }
+    ],
+    difficulty: '⭐⭐ 中等',
+    highlight: '多坏鱼配合'
+  },
+  '1-5': {
+    desc: '1只法官D vs 2只侦探D vs 1只摆烂D vs 1只恶作剧D vs 1只邪恶D<br><strong>法官D：公布一个非好鱼身份的编号，如果你相信法官的判罚，就可以大胆流放。</strong><br>结合法官的宣判和侦探的信息，快速锁定目标！',
+    stats: [
+      { icon: '🐟', text: '6条鱼' },
+      { icon: '⚖️', text: '法官助力' },
+      { icon: '🔍', text: '信息交叉' }
+    ],
+    difficulty: '⭐ 简单',
+    highlight: '法官宣判机制'
+  },
+  '1-6': {
+    desc: '5只梦游D vs 1只邪恶D<br><strong>梦游D：会随机梦到三个编号，三个编号中会有一只非好鱼身份。</strong><br>合理利用梦游D的推断可以帮助你缩小范围，<br>或者通过交叉推断确认高频出现的编号鱼^-^',
+    stats: [
+      { icon: '🐟', text: '6条鱼' },
+      { icon: '💤', text: '全梦游阵容' },
+      { icon: '❓', text: '4次问询' }
+    ],
+    difficulty: '⭐ 简单',
+    highlight: '梦游推断机制'
+  },
+  '1-7': {
+    desc: '5只八卦D vs 1只邪恶D<br><strong>八卦D：对自己相邻编号的鱼很感兴趣。</strong><br>如果相邻编号有非好鱼角色，八卦D会回复<strong>"有瓜吃！"</strong><br>相反则失望地说<strong>"并没有瓜..."</strong>',
+    stats: [
+      { icon: '🐟', text: '6条鱼' },
+      { icon: '📰', text: '全八卦阵容' },
+      { icon: '🔍', text: '相邻检测' }
+    ],
+    difficulty: '⭐ 简单',
+    highlight: '相邻检测机制'
+  },
+  '1-8': {
+    desc: '12条鱼的大混战！<br><strong>虎鲸：不速之客的到来似乎影响到了原本的生态——它会无差别的攻击所有鱼！</strong><br>包含：摆烂、侦探、法官、梦游、八卦、恶作剧、邪恶、虎鲸<br>多种角色交织，每夜都可能发生意外！',
+    stats: [
+      { icon: '🐟', text: '12条鱼' },
+      { icon: '🐋', text: '虎鲸登场' },
+      { icon: '⚠️', text: '混战模式' }
+    ],
+    difficulty: '⭐⭐ 中等',
+    highlight: '虎鲸混战'
+  },
+  '2-1': {
+    desc: '6只侦探D vs 1只邪恶D vs 1只殉道D<br><strong>殉道D：更具威胁性的坏鱼，被流放后会淘汰一只好鱼！</strong><br>虽然只有1个邪恶D，但流放错误会付出双倍代价！<br>充分利用6个侦探D的信息，精准定位目标！',
+    stats: [
+      { icon: '🐟', text: '8条鱼' },
+      { icon: '🔍', text: '全侦探阵容' },
+      { icon: '💀', text: '殉道威胁' }
+    ],
+    difficulty: '⭐ 简单',
+    highlight: '殉道D登场'
+  },
+  '2-2': {
+    desc: '10条鱼的混战！包含：侦探、法官、虎鲸、摆烂、梦游、恶作剧、<strong>双殉道D</strong><br><strong>更具随机性的破坏，会很大程度上干扰玩家决策。</strong><br>——其实盲砍一个也不是不可以？',
+    stats: [
+      { icon: '🐟', text: '10条鱼' },
+      { icon: '💀💀', text: '双殉道D' },
+      { icon: '🐋', text: '虎鲸乱入' }
+    ],
+    difficulty: '⭐⭐ 中等',
+    highlight: '双殉道混战'
+  }
+};
+
+// ==================== 关卡选择 + 抽屉逻辑 ====================
+function selectStage(stageId) {
+  const detail = stageDetails[stageId];
+  const config = stageConfigs[stageId];
+  if (!detail || !config) return;
+
+  // 更新 sidebar active 状态
+  document.querySelectorAll('.stagemode-nav-link').forEach(link => {
+    link.classList.toggle('active', link.dataset.stage === stageId);
+  });
+
+  // 渲染右侧详情
+  const detailEl = document.getElementById('stagemode-detail');
+  const statsHTML = detail.stats.map(s => `<span class="stagemode-stat"><span class="stagemode-stat-icon">${s.icon}</span>${s.text}</span>`).join('');
+
+  detailEl.innerHTML = `
+    <article class="stagemode-card">
+      <div class="stagemode-card-header">
+        <div class="stagemode-card-num">${stageId}</div>
+        <h2 class="stagemode-card-title">${config.name}</h2>
+        <span class="stagemode-card-difficulty">${detail.difficulty}</span>
+      </div>
+      <div class="stagemode-card-highlight">🎯 ${detail.highlight}</div>
+      <p class="stagemode-card-desc">${detail.desc}</p>
+      <div class="stagemode-card-stats">${statsHTML}</div>
+      <button class="stagemode-start-btn" onclick="startStageGame('${stageId}')">🎮 开始挑战 →</button>
+    </article>
+  `;
+
+  // 移动端：选中后自动关闭抽屉
+  if (window.matchMedia('(max-width: 1024px)').matches) {
+    closeStagemodeSidebar();
+  }
+
+  // 记录当前选中（不影响 gameState.currentStage，由 startStageGame 设置）
+  gameState.selectedStage = stageId;
+}
+
+function openStagemodeSidebar() {
+  const sidebar = document.getElementById('stagemode-sidebar');
+  const overlay = document.querySelector('.stagemode-overlay');
+  const toggle = document.querySelector('.stagemode-menu-toggle');
+  if (!sidebar) return;
+  sidebar.classList.add('open');
+  overlay.classList.add('active');
+  toggle.classList.add('active');
+  toggle.setAttribute('aria-label', '关闭关卡列表');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeStagemodeSidebar() {
+  const sidebar = document.getElementById('stagemode-sidebar');
+  const overlay = document.querySelector('.stagemode-overlay');
+  const toggle = document.querySelector('.stagemode-menu-toggle');
+  if (!sidebar) return;
+  sidebar.classList.remove('open');
+  overlay.classList.remove('active');
+  toggle.classList.remove('active');
+  toggle.setAttribute('aria-label', '打开关卡列表');
+  document.body.style.overflow = '';
+}
+
+// 抽屉事件绑定（页面加载后执行）
+(function initStagemodeDrawer() {
+  document.addEventListener('DOMContentLoaded', function() {
+    const toggle = document.querySelector('.stagemode-menu-toggle');
+    const overlay = document.querySelector('.stagemode-overlay');
+    if (toggle) toggle.addEventListener('click', function() {
+      const sidebar = document.getElementById('stagemode-sidebar');
+      if (sidebar && sidebar.classList.contains('open')) closeStagemodeSidebar();
+      else openStagemodeSidebar();
+    });
+    if (overlay) overlay.addEventListener('click', closeStagemodeSidebar);
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        const sidebar = document.getElementById('stagemode-sidebar');
+        if (sidebar && sidebar.classList.contains('open')) closeStagemodeSidebar();
+      }
+    });
+  });
+})();
 
 // 关卡配置数据
 const stageConfigs = {
@@ -909,34 +933,6 @@ function backToModeSelection() {
   document.getElementById('stagemode-setup').style.display = 'none';
   document.getElementById('game-main').style.display = 'none';
   document.getElementById('mode-selection').style.display = 'flex';
-}
-
-function toggleChapter(chapterId) {
-  const content = document.getElementById(chapterId);
-  const arrow = document.getElementById('arrow-' + chapterId);
-
-  if (content.style.display === 'none' || content.style.display === '') {
-    content.style.display = 'block';
-    arrow.textContent = '▲';
-    arrow.style.transform = 'rotate(0deg)';
-  } else {
-    content.style.display = 'none';
-    arrow.textContent = '▼';
-    arrow.style.transform = 'rotate(0deg)';
-  }
-}
-
-function toggleStageDetail(stageId) {
-  const detail = document.getElementById(stageId);
-  const stageItem = detail.parentElement;
-
-  if (detail.style.display === 'block') {
-    detail.style.display = 'none';
-    stageItem.classList.remove('expanded');
-  } else {
-    detail.style.display = 'block';
-    stageItem.classList.add('expanded');
-  }
 }
 
 function goBackToSetup() {
@@ -3480,5 +3476,425 @@ function resetGame() {
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   }
 }
+
+/* ==================== 关卡模式 sidebar 布局 (learn 风格) ==================== */
+:root {
+  --stagemode-gold: #f39c12;
+  --stagemode-gold-light: #ffe0b3;
+  --stagemode-gold-dark: #e67e22;
+  --stagemode-bg: #fafafa;
+  --stagemode-surface: #ffffff;
+  --stagemode-sidebar-bg: #f7f7f7;
+  --stagemode-sidebar-border: #e0e0e0;
+  --stagemode-text: #2d2d2d;
+  --stagemode-text-secondary: #666;
+  --stagemode-text-muted: #999;
+  --stagemode-border: #e8e8e8;
+  --stagemode-radius: 12px;
+  --stagemode-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  --stagemode-transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --stagemode-sidebar-width: 300px;
+  --stagemode-main-max: 1100px;
+}
+
+[data-theme="dark"] {
+  --stagemode-bg: #1a1a1a;
+  --stagemode-surface: #242424;
+  --stagemode-sidebar-bg: #1f1f1f;
+  --stagemode-sidebar-border: #2a2a2a;
+  --stagemode-text: #e0e0e0;
+  --stagemode-text-secondary: #aaa;
+  --stagemode-text-muted: #777;
+  --stagemode-border: #333;
+  --stagemode-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+/* 突破 PaperMod .main 768px max-width 约束 */
+.main:has(.stagemode-page) {
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.stagemode-page {
+  display: grid;
+  grid-template-columns: var(--stagemode-sidebar-width) 1fr;
+  min-height: calc(100vh - 100px);
+  background: var(--stagemode-bg);
+  color: var(--stagemode-text);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  position: relative;
+}
+
+/* ========== Mobile Toggle ========== */
+.stagemode-menu-toggle {
+  display: none;
+  position: fixed;
+  top: 14px;
+  left: 14px;
+  z-index: 200;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border: none;
+  background: var(--stagemode-surface);
+  border-radius: 8px;
+  box-shadow: var(--stagemode-shadow);
+  cursor: pointer;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+}
+.stagemode-toggle-bar {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: var(--stagemode-text);
+  border-radius: 2px;
+  transition: transform var(--stagemode-transition), opacity var(--stagemode-transition);
+}
+.stagemode-menu-toggle.active .stagemode-toggle-bar:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+.stagemode-menu-toggle.active .stagemode-toggle-bar:nth-child(2) { opacity: 0; }
+.stagemode-menu-toggle.active .stagemode-toggle-bar:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+.stagemode-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 150;
+  opacity: 0;
+  transition: opacity var(--stagemode-transition);
+}
+.stagemode-overlay.active {
+  display: block;
+  opacity: 1;
+}
+
+/* ========== Sidebar ========== */
+.stagemode-sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  background: var(--stagemode-sidebar-bg);
+  border-right: 1px solid var(--stagemode-sidebar-border);
+  padding: 1.5rem 0;
+  scrollbar-width: thin;
+  scrollbar-color: var(--stagemode-border) transparent;
+}
+.stagemode-sidebar::-webkit-scrollbar { width: 6px; }
+.stagemode-sidebar::-webkit-scrollbar-thumb { background: var(--stagemode-border); border-radius: 3px; }
+
+.stagemode-sidebar-header {
+  padding: 0 1.2rem 1.2rem;
+  border-bottom: 1px solid var(--stagemode-sidebar-border);
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+.stagemode-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--stagemode-text);
+  text-decoration: none;
+  letter-spacing: 0.02em;
+}
+.stagemode-logo:hover { color: var(--stagemode-gold-dark); }
+.stagemode-logo-icon { font-size: 1.3rem; }
+
+.stagemode-back-btn {
+  display: inline-block;
+  padding: 8px 14px;
+  font-size: 0.85rem;
+  background: transparent;
+  color: var(--stagemode-text-secondary);
+  border: 1px solid var(--stagemode-border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all var(--stagemode-transition);
+  text-align: center;
+  width: fit-content;
+}
+.stagemode-back-btn:hover {
+  color: var(--stagemode-gold-dark);
+  border-color: var(--stagemode-gold);
+  background: rgba(243,156,18,0.06);
+  transform: translateX(-3px);
+}
+
+.stagemode-nav { padding: 0 0.5rem; }
+
+.stagemode-nav-group { margin-bottom: 1.5rem; }
+.stagemode-nav-group-title {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.7rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--stagemode-text-muted);
+  margin-bottom: 0.3rem;
+  border-radius: 6px;
+}
+.stagemode-nav-group-icon { font-size: 1rem; }
+.stagemode-nav-count {
+  margin-left: auto;
+  font-size: 0.72rem;
+  padding: 2px 8px;
+  background: rgba(243,156,18,0.12);
+  color: var(--stagemode-gold-dark);
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+.stagemode-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 0.7rem;
+  font-size: 0.88rem;
+  color: var(--stagemode-text-secondary);
+  text-decoration: none;
+  border-radius: 6px;
+  border-left: 3px solid transparent;
+  transition: all var(--stagemode-transition);
+  line-height: 1.35;
+  cursor: pointer;
+}
+.stagemode-nav-link:hover {
+  color: var(--stagemode-text);
+  background: rgba(243,156,18,0.06);
+  border-left-color: var(--stagemode-gold-light);
+}
+.stagemode-nav-link.active {
+  color: var(--stagemode-gold-dark);
+  background: linear-gradient(90deg, rgba(243,156,18,0.12), transparent);
+  border-left-color: var(--stagemode-gold);
+  font-weight: 600;
+}
+.stagemode-nav-num {
+  flex-shrink: 0;
+  font-family: 'SF Mono', Consolas, monospace;
+  font-size: 0.72rem;
+  color: var(--stagemode-text-muted);
+  font-weight: 600;
+  min-width: 28px;
+}
+.stagemode-nav-link.active .stagemode-nav-num { color: var(--stagemode-gold); }
+.stagemode-nav-text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.stagemode-nav-diff {
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  color: var(--stagemode-gold);
+}
+
+/* ========== Main Content ========== */
+.stagemode-main {
+  max-width: var(--stagemode-main-max);
+  padding: 2.5rem 2rem 4rem;
+  width: 100%;
+  min-width: 0;
+  margin: 0 auto;
+}
+
+.stagemode-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1.2rem;
+  border-bottom: 2px solid var(--stagemode-border);
+}
+.stagemode-header h1 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(1.8rem, 3.5vw, 2.4rem);
+  font-weight: 700;
+  margin: 0 0 0.6rem;
+  background: linear-gradient(135deg, var(--stagemode-gold) 0%, var(--stagemode-gold-dark) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.stagemode-intro {
+  color: var(--stagemode-text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin: 0;
+  padding-left: 0.8rem;
+  border-left: 3px solid var(--stagemode-gold-light);
+}
+
+/* ========== 关卡详情卡片 ========== */
+.stagemode-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.stagemode-card {
+  background: var(--stagemode-surface);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: var(--stagemode-shadow);
+  border: 1px solid var(--stagemode-border);
+  transition: all var(--stagemode-transition);
+  animation: stagemodeFadeIn 0.4s ease;
+}
+
+@keyframes stagemodeFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.stagemode-card-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px dashed var(--stagemode-border);
+  flex-wrap: wrap;
+}
+.stagemode-card-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 48px;
+  height: 36px;
+  padding: 0 10px;
+  font-family: 'SF Mono', Consolas, monospace;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, var(--stagemode-gold) 0%, var(--stagemode-gold-dark) 100%);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(243,156,18,0.3);
+}
+.stagemode-card-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--stagemode-text);
+  margin: 0;
+  flex: 1;
+  min-width: 200px;
+}
+.stagemode-card-difficulty {
+  padding: 4px 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: rgba(243,156,18,0.12);
+  color: var(--stagemode-gold-dark);
+  border-radius: 12px;
+}
+
+.stagemode-card-highlight {
+  display: inline-block;
+  margin-bottom: 1rem;
+  padding: 6px 14px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  background: linear-gradient(135deg, rgba(243,156,18,0.1) 0%, rgba(230,126,34,0.1) 100%);
+  color: var(--stagemode-gold-dark);
+  border-radius: 8px;
+  border-left: 3px solid var(--stagemode-gold);
+}
+
+.stagemode-card-desc {
+  font-size: 1rem;
+  line-height: 1.8;
+  color: var(--stagemode-text-secondary);
+  margin: 0 0 1.5rem;
+  padding: 1rem 1.2rem;
+  background: var(--stagemode-bg);
+  border-radius: 10px;
+  border-left: 4px solid var(--stagemode-gold-light);
+}
+.stagemode-card-desc strong { color: var(--stagemode-text); }
+
+.stagemode-card-stats {
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+.stagemode-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 8px 14px;
+  background: rgba(243,156,18,0.08);
+  border: 1px solid rgba(243,156,18,0.2);
+  border-radius: 10px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--stagemode-text);
+}
+.stagemode-stat-icon { font-size: 1.1rem; }
+
+.stagemode-start-btn {
+  display: block;
+  width: 100%;
+  padding: 1rem 1.5rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, var(--stagemode-gold) 0%, var(--stagemode-gold-dark) 100%);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all var(--stagemode-transition);
+  box-shadow: 0 4px 14px rgba(243,156,18,0.3);
+}
+.stagemode-start-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(243,156,18,0.4);
+}
+.stagemode-start-btn:active {
+  transform: translateY(0);
+}
+
+/* ========== Responsive ========== */
+@media (max-width: 1024px) {
+  .stagemode-menu-toggle { display: flex; }
+  .stagemode-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 160;
+    width: var(--stagemode-sidebar-width);
+    max-width: 85vw;
+    transform: translateX(-100%);
+    transition: transform var(--stagemode-transition);
+    box-shadow: 4px 0 24px rgba(0,0,0,0.15);
+  }
+  .stagemode-sidebar.open { transform: translateX(0); }
+  .stagemode-page { grid-template-columns: 1fr; }
+  .stagemode-main { padding: 4.5rem 1rem 3rem; }
+}
+
+@media (max-width: 640px) {
+  .stagemode-main { padding: 4rem 0.8rem 2.5rem; }
+  .stagemode-card { padding: 1.5rem 1.2rem; }
+  .stagemode-card-header { gap: 0.6rem; }
+  .stagemode-card-title { font-size: 1.3rem; min-width: 100%; }
+  .stagemode-card-difficulty { font-size: 0.78rem; }
+  .stagemode-start-btn { font-size: 1rem; padding: 0.9rem; }
+}
+
+[data-theme="dark"] .stagemode-card-desc { background: #1a1a1a; }
+[data-theme="dark"] .stagemode-stat { background: rgba(243,156,18,0.06); border-color: rgba(243,156,18,0.15); }
 </style>
 {{ end }}

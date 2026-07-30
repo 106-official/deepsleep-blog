@@ -71,7 +71,7 @@
     {{ partial "breadcrumbs.html" . }}
 
     <header class="posts-header">
-      <h1 class="posts-title">📝 文章与动态</h1>
+      <h1 class="posts-title">文章与动态</h1>
       <p class="posts-desc">博客文章 · 社区讨论 · 技术分享</p>
     </header>
 
@@ -79,7 +79,6 @@
     <section class="search-section">
       <form action="/search/" method="get" class="search-form-inline">
         <div class="search-input-wrapper">
-          <span class="search-icon">🔍</span>
           <input
             type="text"
             name="q"
@@ -380,17 +379,9 @@
   align-items: center;
 }
 
-.search-icon {
-  position: absolute;
-  left: 1.2rem;
-  font-size: 1.2rem;
-  z-index: 1;
-  pointer-events: none;
-}
-
 .search-input {
   width: 100%;
-  padding: 1rem 1.2rem 1rem 3rem;
+  padding: 1rem 1.2rem;
   border: 2px solid #e0e0e0;
   border-radius: 12px;
   font-size: 1rem;

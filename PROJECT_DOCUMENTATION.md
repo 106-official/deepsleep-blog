@@ -42,7 +42,7 @@
 - 🖼️ **作者信息显示**（帖子/文章卡片显示头像+名称）✅ v5.2 新增
 - 🔍 全文搜索（Fuse.js）
 - 🏷️ 标签与分类系统
-- 📦 资源分享板块（独立分区）
+- 📦 资源分享板块（独立分区，learn 风格 sidebar）✅ v5.5 改造
 - 👤 关于我
 - 📚 归档与搜索页面
 - 📱 响应式设计 + 暗色/亮色主题切换
@@ -155,7 +155,7 @@ blog-static/
 │   ├── community.md                 # 社区论坛页 (layout: community)
 │   ├── archives.md                  # 归档页面 (layout: archives)
 │   ├── search.md                    # 搜索页面 (layout: search)
-│   └── resources/                   # 资源分享板块
+│   └── resources/                   # 资源分享板块 (layout: resources) v5.5
 │       └── _index.md                # 板块首页
 ├── layouts/
 │   ├── partials/
@@ -164,7 +164,8 @@ blog-static/
 │   │   └── extended_head.html       # ⭐ 全局样式（个人按钮 + 弹窗样式）v5.2 更新
 │   └── _default/
 │       ├── community.html           # 社区布局模板
-│       └── posts.html              # ⭐ 文章列表模板 (learn 风格 sidebar) v5.5 改造
+│       ├── posts.html              # ⭐ 文章列表模板 (learn 风格 sidebar) v5.5 改造
+│       └── resources.html           # ⭐ 资源列表模板 (learn 风格 sidebar) v5.5 新增
 ├── static/
 │   ├── css/
 │   │   ├── custom.css               # 自定义样式
@@ -1116,17 +1117,23 @@ flowchart TD
 - ✅ 复用 learn 视觉语言：金色 CSS 变量、Playfair Display 字体、nav-link 样式
 - ✅ 移动端（≤1024px）抽屉化 sidebar：汉堡按钮 + 遮罩 + ESC 关闭 + 点击链接后关闭
 - ✅ 保留现有搜索栏、社区帖子卡片加载、博客文章卡片网格逻辑
+- ✅ **资源分享页 (`/resources/`) 改造为 learn 风格 sidebar 布局**（同 posts 设计语言）
+- ✅ 资源卡片网格：日期/类型/标题/摘要/标签/查看详情
+- ✅ **文章页 UI 微调**：移除主标题「📝」表情、移除搜索框放大镜图标（简化视觉）
 
 **技术决策**:
 - CSS 变量定义在 `:root`（移动端 sidebar `position: fixed` 后脱离父子树，需提升到根）
-- `.main:has(.posts-page)` 突破 PaperMod `.main` 768px max-width 约束（同 learn）
+- `.main:has(.posts-page)` / `.main:has(.resources-page)` 突破 PaperMod `.main` 768px max-width 约束（同 learn）
 - 社区帖子 fetch 加 15s AbortController 超时保护（防止网络故障永久挂起）
-- 暗色模式用 `[data-theme="dark"]` 覆盖 `--posts-*` 变量
+- 暗色模式用 `[data-theme="dark"]` 覆盖 `--posts-*` / `--resources-*` 变量
+- 资源页 `_index.md` 声明 `layout: resources` 触发自定义模板
 
 **Files Modified**:
 | 文件 | 变更 |
 |------|------|
-| `layouts/_default/posts.html` | 重写为 learn 风格布局 |
+| `layouts/_default/posts.html` | 重写为 learn 风格布局；移除标题表情与搜索图标 |
+| `layouts/_default/resources.html` | 新建：learn 风格资源列表模板 |
+| `content/resources/_index.md` | 添加 `layout: resources` 声明 |
 | `PROJECT_CONTEXT.md` | 版本号 v5.4→v5.5、文件索引、技术决策表 |
 | `PROJECT_DOCUMENTATION.md` | 版本号、目录结构、更新日志、技术决策表 |
 
@@ -1150,7 +1157,7 @@ flowchart TD
 - ✅ **个人资料** — 头像、昵称、简介编辑
 - ✅ **帖子系统** — 发布/列表/分页/分类筛选（日常交流/技术分享/资源分享/问题求助）
 - ✅ **夜间模式** — 社区组件完整适配暗色主题
-- ✅ **资源板块** — 4 篇资源帖（Adobe 全家桶、Stata19 MP、Amos 29、Stata OLS 遍历）
+- ✅ **资源板块** — 5 篇资源帖（Adobe 全家桶、Stata19 MP、Amos 29、Stata OLS 遍历、Wireshark）
 - ✅ **关于我** (`/me/`) — 个人介绍页
 - ✅ **归档/搜索页面** — 修复为空问题
 

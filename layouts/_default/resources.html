@@ -1,0 +1,542 @@
+{{ define "main" }}
+<div class="resources-page">
+  <button class="resources-menu-toggle" aria-label="打开资源列表">
+    <span class="resources-toggle-bar"></span>
+    <span class="resources-toggle-bar"></span>
+    <span class="resources-toggle-bar"></span>
+  </button>
+  <div class="resources-overlay" aria-hidden="true"></div>
+
+  <aside class="resources-sidebar" id="resources-sidebar">
+    <div class="resources-sidebar-header">
+      <a href="/resources/" class="resources-logo">
+        <span class="resources-logo-icon">📦</span>
+        <span>资源分享</span>
+      </a>
+    </div>
+    <nav class="resources-nav">
+      <div class="resources-nav-group">
+        <div class="resources-nav-group-title current">
+          <span class="resources-nav-group-icon">📚</span>
+          <span>所有资源</span>
+          <span class="resources-nav-count">{{ len (where .Site.RegularPages "Section" "resources") }}</span>
+        </div>
+        {{ range where .Site.RegularPages "Section" "resources" }}
+        <a href="{{ .Permalink }}" class="resources-nav-link">
+          <span class="resources-nav-num">{{ .Date.Format "01-02" }}</span>
+          <span class="resources-nav-text">{{ .Title }}</span>
+        </a>
+        {{ end }}
+      </div>
+
+      <div class="resources-nav-group">
+        <a href="/tags/" class="resources-nav-group-title">
+          <span class="resources-nav-group-icon">🏷️</span>
+          <span>标签</span>
+        </a>
+        {{ range $name, $taxonomy := site.Taxonomies.tags }}
+        <a href="{{ $taxonomy.Page.Permalink }}" class="resources-nav-link">
+          <span class="resources-nav-num">#</span>
+          <span class="resources-nav-text">{{ $name }}</span>
+        </a>
+        {{ end }}
+      </div>
+
+      <div class="resources-nav-group">
+        <div class="resources-nav-group-title">
+          <span class="resources-nav-group-icon">⚡</span>
+          <span>快速导航</span>
+        </div>
+        <a href="/posts/" class="resources-nav-link">
+          <span class="resources-nav-num">📝</span>
+          <span class="resources-nav-text">文章与动态</span>
+        </a>
+        <a href="/community/" class="resources-nav-link">
+          <span class="resources-nav-num">💬</span>
+          <span class="resources-nav-text">社区讨论</span>
+        </a>
+        <a href="/learn/" class="resources-nav-link">
+          <span class="resources-nav-num">📚</span>
+          <span class="resources-nav-text">学习路径</span>
+        </a>
+        <a href="/play/" class="resources-nav-link">
+          <span class="resources-nav-num">🎮</span>
+          <span class="resources-nav-text">娱乐</span>
+        </a>
+      </div>
+    </nav>
+  </aside>
+
+  <main class="resources-main">
+    {{ partial "breadcrumbs.html" . }}
+
+    <header class="resources-header">
+      <h1 class="resources-title">资源分享</h1>
+      <p class="resources-desc">精选资源 · 工具 · 教程 · 开源项目</p>
+    </header>
+
+    <section class="resources-section">
+      <div class="section-header">
+        <h2>📚 全部资源</h2>
+      </div>
+      <div class="resources-grid">
+        {{- $pages := where .Site.RegularPages "Section" "resources" -}}
+        {{- range $pages -}}
+        <article class="resource-card">
+          <a href="{{ .Permalink }}" class="resource-card-link">
+            <div class="resource-card-header">
+              <span class="resource-card-date">{{ .Date.Format "2006-01-02" }}</span>
+              <span class="resource-card-type">📦 资源</span>
+            </div>
+
+            <h3 class="resource-card-title">{{ .Title }}</h3>
+            <p class="resource-card-excerpt">{{ .Summary | plainify | htmlUnescape | truncate 100 }}</p>
+
+            {{- with .Params.tags -}}
+            <div class="resource-card-tags">
+              {{- range first 3 . -}}
+              <span class="resource-card-tag">{{ . }}</span>
+              {{- end -}}
+            </div>
+            {{- end -}}
+
+            <div class="resource-card-footer">
+              <span class="resource-card-read">查看详情 →</span>
+            </div>
+          </a>
+        </article>
+        {{- end -}}
+      </div>
+    </section>
+  </main>
+</div>
+
+<style>
+:root {
+  --resources-gold: #D4AF37;
+  --resources-gold-light: #F4E5B2;
+  --resources-gold-dark: #B8960C;
+  --resources-bg: #fafafa;
+  --resources-surface: #ffffff;
+  --resources-text: #2d2d2d;
+  --resources-text-secondary: #666666;
+  --resources-text-muted: #999999;
+  --resources-border: #e8e8e8;
+  --resources-sidebar-bg: #f7f7f7;
+  --resources-sidebar-border: #e0e0e0;
+  --resources-radius: 12px;
+  --resources-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  --resources-transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --resources-sidebar-width: 300px;
+  --resources-main-max: 1440px;
+}
+
+.main:has(.resources-page) {
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+[data-theme="dark"] {
+  --resources-bg: #1a1a1a;
+  --resources-surface: #242424;
+  --resources-text: #e0e0e0;
+  --resources-text-secondary: #aaa;
+  --resources-text-muted: #777;
+  --resources-border: #333;
+  --resources-sidebar-bg: #1f1f1f;
+  --resources-sidebar-border: #2a2a2a;
+  --resources-shadow: 0 2px 12px rgba(0,0,0,0.3);
+}
+
+.resources-page {
+  display: grid;
+  grid-template-columns: var(--resources-sidebar-width) 1fr;
+  min-height: 100vh;
+  background: var(--resources-bg);
+  color: var(--resources-text);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* ========== Mobile Toggle ========== */
+.resources-menu-toggle {
+  display: none;
+  position: fixed;
+  top: 14px;
+  left: 14px;
+  z-index: 200;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border: none;
+  background: var(--resources-surface);
+  border-radius: 8px;
+  box-shadow: var(--resources-shadow);
+  cursor: pointer;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+}
+.resources-toggle-bar {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: var(--resources-text);
+  border-radius: 2px;
+  transition: transform var(--resources-transition), opacity var(--resources-transition);
+}
+.resources-menu-toggle.active .resources-toggle-bar:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+.resources-menu-toggle.active .resources-toggle-bar:nth-child(2) { opacity: 0; }
+.resources-menu-toggle.active .resources-toggle-bar:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+.resources-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 150;
+  opacity: 0;
+  transition: opacity var(--resources-transition);
+}
+.resources-overlay.active {
+  display: block;
+  opacity: 1;
+}
+
+/* ========== Sidebar ========== */
+.resources-sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  background: var(--resources-sidebar-bg);
+  border-right: 1px solid var(--resources-sidebar-border);
+  padding: 1.5rem 0;
+  scrollbar-width: thin;
+  scrollbar-color: var(--resources-border) transparent;
+}
+.resources-sidebar::-webkit-scrollbar { width: 6px; }
+.resources-sidebar::-webkit-scrollbar-thumb { background: var(--resources-border); border-radius: 3px; }
+
+.resources-sidebar-header {
+  padding: 0 1.2rem 1.2rem;
+  border-bottom: 1px solid var(--resources-sidebar-border);
+  margin-bottom: 1rem;
+}
+.resources-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--resources-text);
+  text-decoration: none;
+  letter-spacing: 0.02em;
+}
+.resources-logo:hover { color: var(--resources-gold-dark); }
+.resources-logo-icon { font-size: 1.3rem; }
+
+.resources-nav { padding: 0 0.5rem; }
+
+.resources-nav-group { margin-bottom: 1.5rem; }
+.resources-nav-group-title {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.7rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--resources-text-muted);
+  text-decoration: none;
+  border-radius: 6px;
+  margin-bottom: 0.3rem;
+  transition: color var(--resources-transition), background var(--resources-transition);
+}
+.resources-nav-group-title:hover { color: var(--resources-gold-dark); background: rgba(212,175,55,0.06); }
+.resources-nav-group-title.current { color: var(--resources-gold-dark); background: rgba(212,175,55,0.08); }
+.resources-nav-group-icon { font-size: 1rem; }
+.resources-nav-count {
+  margin-left: auto;
+  font-size: 0.72rem;
+  padding: 2px 8px;
+  background: rgba(212,175,55,0.12);
+  color: var(--resources-gold-dark);
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+.resources-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.55rem 0.7rem;
+  font-size: 0.88rem;
+  color: var(--resources-text-secondary);
+  text-decoration: none;
+  border-radius: 6px;
+  border-left: 3px solid transparent;
+  transition: all var(--resources-transition);
+  line-height: 1.35;
+}
+.resources-nav-link:hover {
+  color: var(--resources-text);
+  background: rgba(212,175,55,0.06);
+  border-left-color: var(--resources-gold-light);
+}
+.resources-nav-num {
+  flex-shrink: 0;
+  font-family: 'SF Mono', Consolas, monospace;
+  font-size: 0.72rem;
+  color: var(--resources-text-muted);
+  font-weight: 600;
+}
+.resources-nav-text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ========== Main Content ========== */
+.resources-main {
+  max-width: var(--resources-main-max);
+  padding: 2.5rem 1.5rem 4rem;
+  width: 100%;
+  min-width: 0;
+  margin: 0 auto;
+}
+
+.resources-header { margin-bottom: 1.5rem; }
+
+.resources-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(1.8rem, 3.5vw, 2.4rem);
+  font-weight: 700;
+  color: var(--resources-text);
+  margin: 0 0 0.6rem;
+  line-height: 1.25;
+}
+.resources-desc {
+  color: var(--resources-text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin: 0;
+  padding-left: 0.8rem;
+  border-left: 3px solid var(--resources-gold-light);
+}
+
+.resources-main .breadcrumbs { margin-bottom: 1rem; padding: 0; }
+
+/* ========== Section Header ========== */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--resources-border);
+}
+
+.section-header h2 {
+  font-size: 1.5rem;
+  color: var(--resources-text);
+  margin: 0;
+  font-family: 'Playfair Display', Georgia, serif;
+}
+
+/* ========== 资源卡片网格 ========== */
+.resources-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.resource-card {
+  background: var(--resources-surface);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--resources-shadow);
+  transition: all var(--resources-transition);
+  border-left: 3px solid transparent;
+}
+
+.resource-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  border-left-color: var(--resources-gold);
+}
+
+.resource-card-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  height: 100%;
+}
+
+.resource-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8rem 1.25rem;
+  border-bottom: 1px solid var(--resources-border);
+  font-size: 0.8rem;
+}
+
+.resource-card-date {
+  color: var(--resources-text-muted);
+  font-family: 'SF Mono', Consolas, monospace;
+}
+
+.resource-card-type {
+  color: var(--resources-gold-dark);
+  font-weight: 600;
+  font-size: 0.78rem;
+}
+
+.resource-card-link h3,
+.resource-card-link p,
+.resource-card-link .resource-card-footer {
+  padding: 0 1.25rem;
+}
+
+.resource-card-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--resources-text);
+  margin: 0.8rem 0 0.6rem 0;
+  line-height: 1.4;
+  padding-top: 0;
+}
+
+.resource-card-excerpt {
+  color: var(--resources-text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin: 0 0 0.8rem 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.resource-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 0 1.25rem;
+  margin-bottom: 0.8rem;
+}
+
+.resource-card-tag {
+  display: inline-block;
+  padding: 3px 10px;
+  background: rgba(212,175,55,0.1);
+  color: var(--resources-gold-dark);
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.resource-card-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 1.25rem 1.25rem !important;
+}
+
+.resource-card-read {
+  color: var(--resources-gold-dark);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* ========== 暗色模式 ========== */
+[data-theme="dark"] .resource-card {
+  background: #1e1e1e;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+}
+
+[data-theme="dark"] .resource-card-title { color: #e0e0e0; }
+
+[data-theme="dark"] .resource-card-excerpt { color: #bbb; }
+
+/* ========== Responsive ========== */
+@media (max-width: 1024px) {
+  .resources-menu-toggle { display: flex; }
+  .resources-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 160;
+    width: var(--resources-sidebar-width);
+    max-width: 85vw;
+    transform: translateX(-100%);
+    transition: transform var(--resources-transition);
+    box-shadow: 4px 0 24px rgba(0,0,0,0.15);
+  }
+  .resources-sidebar.open { transform: translateX(0); }
+  .resources-page { grid-template-columns: 1fr; }
+  .resources-main { padding: 4.5rem 1rem 3rem; }
+}
+
+@media (max-width: 640px) {
+  .resources-main { padding: 4rem 0.8rem 2.5rem; }
+  .resources-grid { grid-template-columns: 1fr; }
+  .resources-title { font-size: 1.5rem; }
+  .section-header h2 { font-size: 1.2rem; }
+}
+</style>
+
+<script>
+(function() {
+  'use strict';
+  var toggle = document.querySelector('.resources-menu-toggle');
+  var sidebar = document.getElementById('resources-sidebar');
+  var overlay = document.querySelector('.resources-overlay');
+
+  function openSidebar() {
+    if (!sidebar) return;
+    sidebar.classList.add('open');
+    overlay.classList.add('active');
+    toggle.classList.add('active');
+    toggle.setAttribute('aria-label', '关闭资源列表');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeSidebar() {
+    if (!sidebar) return;
+    sidebar.classList.remove('open');
+    overlay.classList.remove('active');
+    toggle.classList.remove('active');
+    toggle.setAttribute('aria-label', '打开资源列表');
+    document.body.style.overflow = '';
+  }
+
+  if (toggle) {
+    toggle.addEventListener('click', function() {
+      if (sidebar.classList.contains('open')) closeSidebar();
+      else openSidebar();
+    });
+  }
+  if (overlay) overlay.addEventListener('click', closeSidebar);
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && sidebar && sidebar.classList.contains('open')) {
+      closeSidebar();
+    }
+  });
+
+  if (sidebar) {
+    sidebar.addEventListener('click', function(e) {
+      var link = e.target.closest('.resources-nav-link, .resources-nav-group-title, .resources-logo');
+      if (link && window.matchMedia('(max-width: 1024px)').matches) {
+        setTimeout(closeSidebar, 100);
+      }
+    });
+  }
+})();
+</script>
+{{ end }}

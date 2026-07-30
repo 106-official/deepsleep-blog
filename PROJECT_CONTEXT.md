@@ -1,7 +1,7 @@
 # DeepSleep Blog 项目上下文 - 快速上手指南
 
 > **生成时间**: 2026-07-30
-> **当前版本**: v5.7
+> **当前版本**: v5.8
 > **最后更新**: 2026-07-30
 
 ---
@@ -44,7 +44,7 @@
 
 ---
 
-## 🎯 当前核心功能清单 (v5.7)
+## 🎯 当前核心功能清单 (v5.8)
 
 ### 已实现功能
 
@@ -74,6 +74,7 @@
   - 未登录显示友好提示并引导登录
 - [x] 主题切换圆形扩散动画 (View Transitions API) ⭐ v5.6
 - [x] 字体大小调节 (5 档 80%-120%，localStorage 持久化) ⭐ v5.7
+- [x] lixin 页面 sidebar 改造 + LLM 对话主页化 (v5.5 sidebar 统一完成) ⭐ v5.8
   - 点击切换按钮时以按钮为圆心圆形扩散变色
   - 双向自适应：亮→暗黑幕合拢 / 暗→亮光明绽放
   - 600ms cubic-bezier 缓动
@@ -271,6 +272,7 @@ git config --global https.proxy http://127.0.0.1:65532
 | **v5.5** | 2026-07-30 | 文章/资源/SleepTown 关卡页统一改造为 learn 风格 sidebar + 移动端抽屉 |
 | **v5.6** | 2026-07-30 | 主题切换圆形扩散动画 (View Transitions API) + 娱乐中心/SleepTown 模式选择页视觉统一（Playfair Display 标题、删表情、紧凑按钮） |
 | **v5.7** | 2026-07-31 | 字体大小调节功能（Aa 按钮 + 5 档弹窗 + localStorage 持久化，CSS 变量 --font-scale 控制 rem 缩放） |
+| **v5.8** | 2026-07-31 | lixin 页面 sidebar 改造（双层 Tab → learn 风格 sidebar）+ LLM 对话主页化（悬浮弹窗 → 主内容区默认全屏视图） |
 
 ---
 

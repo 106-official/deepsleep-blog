@@ -1,7 +1,7 @@
 # DeepSleep Blog - 项目技术文档
 
 > **最后更新**: 2026-07-30
-> **版本**: v5.7
+> **版本**: v5.8
 > **状态**: ✅ 生产就绪 | 评论系统正常运行 (Neon PostgreSQL) | 💬 社区系统已上线 | 👤 全局个人中心 | 📝 文章板块整合 (learn 风格 sidebar) | 🌗 主题切换圆形扩散动画 | 🧹 停用项目资料已清理
 
 ---
@@ -48,6 +48,7 @@
 - 📱 响应式设计 + 暗色/亮色主题切换
 - 🌗 **主题切换圆形扩散动画**（View Transitions API，以按钮为圆心双向扩散）✅ v5.6 新增
 - 🔤 **字体大小调节**（Aa 按钮 + 5 档弹窗 80%-120% + localStorage 持久化）✅ v5.7 新增
+- 🏫 **lixin sidebar 改造 + LLM 对话主页化**（双层 Tab → learn 风格 sidebar，悬浮弹窗 → 主内容区默认全屏对话视图）✅ v5.8 新增
 - ⚡ 零 CDN 依赖（Waline 前端资源完全本地化）
 
 ---
@@ -141,7 +142,8 @@
 | **资源列表页 sidebar** | **learn 同款设计** (v5.5) | **资源卡片网格 + 标签 + 快速导航，视觉一致** |
 | **SleepTown 关卡页 sidebar** | **learn 同款设计** (v5.5 / SleepTown v2.2.2.0) | **左章节列表 + 右关卡详情卡片，10 关扩展** |
 | **主题切换动画** | **View Transitions API + clip-path 圆形扩散** (v5.6) | **以按钮为圆心双向自适应扩散，不破坏原生降级路径** ⭐ |
-| **字体大小调节** | **CSS 变量 --font-scale + rem 缩放** (v5.7) | **Aa 按钮弹窗 5 档 80%-120%，localStorage 持久化，body 用 1rem !important 覆盖 custom.css 的 16px** ⭐ 新增 |
+| **字体大小调节** | **CSS 变量 --font-scale + rem 缩放** (v5.7) | **Aa 按钮弹窗 5 档 80%-120%，localStorage 持久化，body 用 1rem !important 覆盖 custom.css 的 16px** ⭐ |
+| **lixin sidebar 改造** | **双层 Tab → learn 风格 sidebar + LLM 对话主页化** (v5.8) | **悬浮弹窗 → 主内容区默认全屏 flex 视图，sidebar 含精简 Hero + 导航组（立信问答/校内 10 项/校外 2 项），视图切换不丢失对话状态** ⭐ 新增 |
 ### 🎨 Sidebar 设计模式（learn 风格，v5.5 统一）
 
 DeepSleep 博客的 4 个板块复用同一套 learn 风格 sidebar 设计模式，保证视觉与交互一致性：
@@ -1162,6 +1164,42 @@ flowchart TD
 ---
 
 ## 📝 更新日志
+
+### v5.8 (2026-07-31) - lixin 页面 sidebar 改造 + LLM 对话主页化
+
+**改造背景**:
+- lixin 是 v5.5 sidebar 统一后唯一还用双层 Tab 布局的板块
+- LLM 对话原为悬浮按钮+弹窗，用户希望变成主页界面直接对话
+
+**改造内容**:
+- ✅ **双层 Tab → learn 风格 sidebar**：校内/校外 Tab 改成 sidebar 导航组（校内 10 项 + 校外 2 项）
+- ✅ **Hero 区精简后移到 sidebar 顶部**：黑底+金光+校名+分割线+校训（删除英文名节省 300px 宽度）
+- ✅ **LLM 对话主页化**：悬浮弹窗 → 主内容区默认全屏 flex 视图
+  - `.lx-view-chat.active` 用 `display:flex; flex-direction:column; height:calc(100vh - 3rem)`
+  - messages `flex:1; min-height:0; overflow-y:auto` 实现内部滚动
+  - header/suggest/input 固定，input 固定底部
+- ✅ **双视图切换**：sidebar 有"💬 立信问答"导航项（默认 active）；点击避雷指南项切换到内容视图
+- ✅ **视图切换不丢失对话状态**：两个视图始终在 DOM 中，仅靠 `.active` 切 `display`；messages 不重建，历史消息完整保留
+- ✅ **使用说明保留**：放在内容视图底部（避雷指南内容下方）
+- ✅ **移动端抽屉**：≤1024px 汉堡按钮 + 遮罩 + ESC 关闭 + 选中后自动关闭
+
+**技术实现**:
+- **删除**：`.lx-hero`（移入 sidebar）、`.lx-topbar`/`.lx-tab-top`（双层 Tab）、`.lx-subtabs`、`.lx-chat-fab`（悬浮按钮）、`.lx-chat-close`（关闭按钮）、`.lx-section` 包裹层
+- **保留**：`#lx-context`、所有 `.lx-subcontent` 排版样式、`.lx-notice` 使用说明、LLM 逻辑（API_URL/send/SSE/renderMarkdown/AbortController/loading 计时器）
+- **LLM 逻辑改造**：删除 `openWindow()`/`closeWindow()` 和 fab/closeBtn 事件绑定；DOM ID（`lx-chat-messages`/`lx-chat-input`/`lx-chat-send`/`lx-chat-suggest`）不变，`send()`/`appendMsg()`/`renderMarkdown()` 函数体不改
+- **CSS 变量**：新增 `--lx-sidebar-width: 300px`/`--lx-main-max: 1440px`/`--lx-sidebar-bg`/`--lx-sidebar-border`，定义在 `:root`
+- **PaperMod 突破**：`.main:has(.lx-page)` 突破 768px
+
+**Files Modified**:
+| 文件 | 变更 |
+|------|------|
+| `layouts/_default/lixin.html` | 完全重写（1286 行 → sidebar 布局 + LLM 对话主页化） |
+| `PROJECT_CONTEXT.md` | 版本号 v5.7→v5.8、功能清单、版本演进表、技术决策表 |
+| `PROJECT_DOCUMENTATION.md` | 版本号、功能特性、技术决策表、更新日志 v5.8 条目 |
+
+**v5.5 sidebar 统一完成**：至此 learn/posts/resources/SleepTown/lixin 5 个板块全部统一为 learn 风格 sidebar 设计。
+
+---
 
 ### v5.7 (2026-07-31) - 字体大小调节功能
 

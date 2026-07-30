@@ -2,83 +2,117 @@
 {{ $pageResources := where .Resources "ResourceType" "page" }}
 {{ $campusPages := sort (where $pageResources ".Params.group" "campus") ".Params.weight" }}
 {{ $offcampusPages := sort (where $pageResources ".Params.group" "offcampus") ".Params.weight" }}
+{{ $lxAllPages := sort $pageResources ".Params.weight" }}
+
 <div class="lx-page">
-  <!-- ========== HERO ========== -->
-  <div class="lx-hero">
-    <div class="lx-hero-bg"></div>
-    <div class="lx-hero-content">
-      <h1 class="lx-hero-title">上海立信会计金融学院</h1>
-      <p class="lx-hero-en">Shanghai Lixin University of Accounting and Finance</p>
-      <div class="lx-hero-divider"></div>
-      <p class="lx-hero-motto">信以立志 · 信以守身 · 信以处事 · 信以待人</p>
-    </div>
-  </div>
+  <!-- 移动端汉堡按钮 -->
+  <button class="lx-menu-toggle" aria-label="打开导航">
+    <span class="lx-toggle-bar"></span>
+    <span class="lx-toggle-bar"></span>
+    <span class="lx-toggle-bar"></span>
+  </button>
+  <div class="lx-overlay" aria-hidden="true"></div>
 
-  <!-- ========== NOTICE ========== -->
-  <div class="lx-notice">
-    <div class="lx-notice-icon">📜</div>
-    <div class="lx-notice-body">
-      <div class="lx-notice-title">使用说明</div>
-      <p>本页面公开内容允许机构/个人账号复制、下载、分享。觉得复制太麻烦可以直接<a href="mailto:2651699459@QQ.com">问我要原文档</a>。</p>
-      <p>但<strong>请不要用作宣传商用</strong>，不要以此哄骗甚至圈新生的钱。愿立信变得更好 <span class="lx-notice-heart">^-^</span></p>
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="lx-sidebar" id="lx-sidebar">
+    <!-- 精简 Hero 作为 sidebar header -->
+    <div class="lx-sidebar-header">
+      <div class="lx-sidebar-hero-bg"></div>
+      <div class="lx-sidebar-hero">
+        <h1 class="lx-sidebar-title">上海立信会计金融学院</h1>
+        <div class="lx-sidebar-divider"></div>
+        <p class="lx-sidebar-motto">信以立志 · 信以守身 · 信以处事 · 信以待人</p>
+      </div>
     </div>
-    <div class="lx-notice-contact">
-      <div><span class="lx-notice-label">邮箱</span><a href="mailto:2651699459@QQ.com">2651699459@QQ.com</a></div>
-      <div><span class="lx-notice-label">微信</span>QwQQvQQmQQAQ</div>
-    </div>
-  </div>
 
-  <!-- ========== TOP TABS ========== -->
-  <div class="lx-topbar">
-    <div class="lx-topbar-inner">
-      <button class="lx-tab-top active" data-target="campus">
-        <span class="lx-tab-icon">🏫</span>
-        <span class="lx-tab-label">校内</span>
-      </button>
-      <button class="lx-tab-top" data-target="offcampus">
-        <span class="lx-tab-icon">💼</span>
-        <span class="lx-tab-label">校外</span>
-      </button>
-    </div>
-  </div>
+    <nav class="lx-nav">
+      <!-- 智能助手组：LLM 对话入口（默认 active） -->
+      <div class="lx-nav-group">
+        <div class="lx-nav-group-title"><span>智能助手</span></div>
+        <a class="lx-nav-link active" data-view="chat" role="button" tabindex="0">
+          <span class="lx-nav-text">💬 立信问答</span>
+        </a>
+      </div>
 
-  <div class="lx-container">
-    <!-- ========== CAMPUS ========== -->
-    <div class="lx-section active" id="lx-campus">
-      <div class="lx-subtabs">
+      <!-- 校内组 -->
+      <div class="lx-nav-group">
+        <div class="lx-nav-group-title"><span>🏫 校内</span></div>
         {{ range $i, $p := $campusPages }}
-        <button class="lx-subtab {{ if eq $i 0 }}active{{ end }}" data-parent="campus" data-idx="{{ $i }}">{{ $p.Title }}</button>
+        <a class="lx-nav-link" data-view="content" data-parent="campus" data-idx="{{ $i }}" role="button" tabindex="0">
+          <span class="lx-nav-num">{{ printf "%02d" $i }}</span>
+          <span class="lx-nav-text">{{ $p.Title }}</span>
+        </a>
         {{ end }}
       </div>
-      <div class="lx-subcontents">
-        {{ range $i, $p := $campusPages }}
-        <div class="lx-subcontent {{ if eq $i 0 }}active{{ end }}" data-parent="campus" data-idx="{{ $i }}">
-          {{ $p.Content }}
-        </div>
-        {{ end }}
-      </div>
-    </div>
 
-    <!-- ========== OFFCAMPUS ========== -->
-    <div class="lx-section" id="lx-offcampus">
-      <div class="lx-subtabs">
+      <!-- 校外组 -->
+      <div class="lx-nav-group">
+        <div class="lx-nav-group-title"><span>💼 校外</span></div>
         {{ range $i, $p := $offcampusPages }}
-        <button class="lx-subtab {{ if eq $i 0 }}active{{ end }}" data-parent="offcampus" data-idx="{{ $i }}">{{ $p.Title }}</button>
+        <a class="lx-nav-link" data-view="content" data-parent="offcampus" data-idx="{{ $i }}" role="button" tabindex="0">
+          <span class="lx-nav-num">{{ printf "%02d" $i }}</span>
+          <span class="lx-nav-text">{{ $p.Title }}</span>
+        </a>
         {{ end }}
       </div>
-      <div class="lx-subcontents">
-        {{ range $i, $p := $offcampusPages }}
-        <div class="lx-subcontent {{ if eq $i 0 }}active{{ end }}" data-parent="offcampus" data-idx="{{ $i }}">
-          {{ $p.Content }}
+    </nav>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <main class="lx-main">
+    <!-- 视图1：LLM 对话（默认 active，全屏 flex 列） -->
+    <section class="lx-view lx-view-chat active" id="lx-view-chat">
+      <div class="lx-chat-header">
+        <div class="lx-chat-title">
+          <span class="lx-chat-title-icon">💡</span>
+          <span>立信避雷助手</span>
         </div>
+      </div>
+      <div class="lx-chat-suggest" id="lx-chat-suggest">
+        <button class="lx-chip" data-q="宿舍怎么选？">宿舍怎么选？</button>
+        <button class="lx-chip" data-q="转专业难吗？">转专业难吗？</button>
+        <button class="lx-chip" data-q="军训要注意什么？">军训要注意什么？</button>
+      </div>
+      <div class="lx-chat-messages" id="lx-chat-messages">
+        <div class="lx-msg lx-msg-bot">
+          <div class="lx-msg-bubble">你好！我是立信避雷助手，基于本页全部避雷资料回答问题。试试上面的推荐问题，或直接提问~</div>
+        </div>
+      </div>
+      <div class="lx-chat-input-row">
+        <textarea class="lx-chat-input" id="lx-chat-input" placeholder="输入你的问题…" rows="1"></textarea>
+        <button class="lx-chat-send" id="lx-chat-send" aria-label="发送">发送</button>
+      </div>
+    </section>
+
+    <!-- 视图2：避雷指南内容（默认隐藏） -->
+    <section class="lx-view lx-view-content" id="lx-view-content">
+      <div class="lx-content-body">
+        {{ range $i, $p := $campusPages }}
+        <div class="lx-subcontent" data-parent="campus" data-idx="{{ $i }}">{{ $p.Content }}</div>
+        {{ end }}
+        {{ range $i, $p := $offcampusPages }}
+        <div class="lx-subcontent" data-parent="offcampus" data-idx="{{ $i }}">{{ $p.Content }}</div>
         {{ end }}
       </div>
-    </div>
-  </div>
+
+      <!-- 使用说明（保留原样） -->
+      <div class="lx-notice">
+        <div class="lx-notice-icon">📜</div>
+        <div class="lx-notice-body">
+          <div class="lx-notice-title">使用说明</div>
+          <p>本页面公开内容允许机构/个人账号复制、下载、分享。觉得复制太麻烦可以直接<a href="mailto:2651699459@QQ.com">问我要原文档</a>。</p>
+          <p>但<strong>请不要用作宣传商用</strong>，不要以此哄骗甚至圈新生的钱。愿立信变得更好 <span class="lx-notice-heart">^-^</span></p>
+        </div>
+        <div class="lx-notice-contact">
+          <div><span class="lx-notice-label">邮箱</span><a href="mailto:2651699459@QQ.com">2651699459@QQ.com</a></div>
+          <div><span class="lx-notice-label">微信</span>QwQQvQQmQQAQ</div>
+        </div>
+      </div>
+    </section>
+  </main>
 </div>
 
-{{/* ========== 隐藏的 LLM 上下文数据 ========== */}}
-{{ $lxAllPages := sort $pageResources ".Params.weight" }}
+<!-- 隐藏的 LLM 上下文数据 -->
 <script type="application/json" id="lx-context">
 {{ $sections := slice }}
 {{ range $lxAllPages }}
@@ -87,41 +121,11 @@
 {{ (dict "sections" $sections) | jsonify }}
 </script>
 
-{{/* ========== LLM 问答悬浮 UI ========== */}}
-<div class="lx-chat-fab" id="lx-chat-fab" role="button" tabindex="0" aria-label="打开立信问答助手">
-  <span class="lx-chat-fab-icon">💡</span>
-  <span class="lx-chat-fab-text">立信问答</span>
-</div>
-
-<div class="lx-chat-window" id="lx-chat-window" aria-hidden="true">
-  <div class="lx-chat-header">
-    <div class="lx-chat-title">
-      <span class="lx-chat-title-icon">💡</span>
-      <span>立信避雷助手</span>
-    </div>
-    <button class="lx-chat-close" id="lx-chat-close" aria-label="关闭">×</button>
-  </div>
-  <div class="lx-chat-suggest" id="lx-chat-suggest">
-    <button class="lx-chip" data-q="宿舍怎么选？">宿舍怎么选？</button>
-    <button class="lx-chip" data-q="转专业难吗？">转专业难吗？</button>
-    <button class="lx-chip" data-q="军训要注意什么？">军训要注意什么？</button>
-  </div>
-  <div class="lx-chat-messages" id="lx-chat-messages">
-    <div class="lx-msg lx-msg-bot">
-      <div class="lx-msg-bubble">你好！我是立信避雷助手，基于本页全部避雷资料回答问题。试试上面的推荐问题，或直接提问~</div>
-    </div>
-  </div>
-  <div class="lx-chat-input-row">
-    <textarea class="lx-chat-input" id="lx-chat-input" placeholder="输入你的问题…" rows="1"></textarea>
-    <button class="lx-chat-send" id="lx-chat-send" aria-label="发送">发送</button>
-  </div>
-</div>
-
 <style>
 /* ============================================
-   立信页面 - 全局样式
+   立信页面 - sidebar 布局 (v5.8)
    ============================================ */
-/* 变量定义在 :root 而非 .lx-page，确保 #lx-chat-window（兄弟节点）也能继承 */
+/* 变量定义在 :root 而非 .lx-page，确保兄弟节点也能继承 */
 :root {
   --lx-gold: #D4AF37;
   --lx-gold-light: #F4E5B2;
@@ -135,6 +139,11 @@
   --lx-radius: 16px;
   --lx-shadow: 0 4px 24px rgba(0,0,0,0.08);
   --lx-transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  /* sidebar 布局变量 */
+  --lx-sidebar-width: 300px;
+  --lx-main-max: 1440px;
+  --lx-sidebar-bg: #f7f7f7;
+  --lx-sidebar-border: #e0e0e0;
 }
 
 [data-theme="dark"] {
@@ -145,304 +154,355 @@
   --lx-text-muted: #777;
   --lx-border: #333;
   --lx-shadow: 0 4px 24px rgba(0,0,0,0.3);
+  --lx-sidebar-bg: #1f1f1f;
+  --lx-sidebar-border: #2a2a2a;
+}
+
+/* 突破 PaperMod 768px 限制 */
+.main:has(.lx-page) {
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 .lx-page {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  display: grid;
+  grid-template-columns: var(--lx-sidebar-width) 1fr;
   min-height: 100vh;
   background: var(--lx-bg);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-/* ========== HERO ========== */
-.lx-hero {
+/* ========== SIDEBAR ========== */
+.lx-sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  background: var(--lx-sidebar-bg);
+  border-right: 1px solid var(--lx-sidebar-border);
+  scrollbar-width: thin;
+}
+
+/* Sidebar Header - 精简 Hero */
+.lx-sidebar-header {
   position: relative;
-  padding: 5rem 2rem 4rem;
-  text-align: center;
-  overflow: hidden;
+  padding: 1.6rem 1.2rem 1.2rem;
+  margin-bottom: 1rem;
   background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);
+  border-bottom: 1px solid var(--lx-gold-dark);
+  overflow: hidden;
 }
 
-.lx-hero-bg {
+.lx-sidebar-hero-bg {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse at 20% 50%, rgba(212,175,55,0.12) 0%, transparent 60%),
-    radial-gradient(ellipse at 80% 50%, rgba(212,175,55,0.08) 0%, transparent 60%);
+    radial-gradient(ellipse at 30% 40%, rgba(212,175,55,0.14) 0%, transparent 60%),
+    radial-gradient(ellipse at 70% 60%, rgba(212,175,55,0.08) 0%, transparent 60%);
   pointer-events: none;
 }
 
-.lx-hero-content {
+.lx-sidebar-hero {
   position: relative;
   z-index: 1;
-  max-width: 800px;
-  margin: 0 auto;
+  text-align: center;
 }
 
-.lx-hero-title {
+.lx-sidebar-title {
   font-family: 'Playfair Display', Georgia, serif;
-  font-size: clamp(2rem, 5vw, 3.2rem);
+  font-size: 0.98rem;
   font-weight: 700;
-  color: #ffffff;
-  margin: 0 0 0.6rem;
-  letter-spacing: 0.05em;
+  color: #fff;
+  margin: 0 0 0.5rem;
+  letter-spacing: 0.03em;
+  line-height: 1.3;
 }
 
-.lx-hero-en {
-  font-size: clamp(0.85rem, 2vw, 1.05rem);
-  color: rgba(255,255,255,0.6);
-  margin: 0 0 1.5rem;
-  font-weight: 300;
-  letter-spacing: 0.08em;
-}
-
-.lx-hero-divider {
-  width: 80px;
-  height: 3px;
+.lx-sidebar-divider {
+  width: 40px;
+  height: 2px;
+  margin: 0 auto 0.5rem;
   background: linear-gradient(90deg, var(--lx-gold), var(--lx-gold-light));
-  margin: 0 auto 1.5rem;
   border-radius: 2px;
 }
 
-.lx-hero-motto {
-  font-size: clamp(0.95rem, 1.5vw, 1.1rem);
+.lx-sidebar-motto {
+  font-size: 0.62rem;
   color: var(--lx-gold);
+  letter-spacing: 0.08em;
   margin: 0;
-  font-weight: 500;
-  letter-spacing: 0.15em;
   opacity: 0.9;
-}
-
-/* ========== NOTICE ========== */
-.lx-notice {
-  display: flex;
-  align-items: flex-start;
-  gap: 1rem;
-  max-width: 900px;
-  margin: 1.5rem auto 0;
-  padding: 1.2rem 1.5rem;
-  background: var(--lx-card);
-  border: 1px solid var(--lx-gold-light);
-  border-radius: var(--lx-radius);
-  box-shadow: 0 2px 12px rgba(212,175,55,0.12);
   line-height: 1.6;
 }
 
-[data-theme="dark"] .lx-notice {
-  border-color: #555;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+/* Sidebar Nav */
+.lx-nav {
+  padding: 0 0.5rem 2rem;
 }
 
-.lx-notice-icon {
-  font-size: 1.8rem;
-  flex-shrink: 0;
-  line-height: 1;
+.lx-nav-group {
+  margin-bottom: 1.5rem;
 }
 
-.lx-notice-body {
-  flex: 1;
-  min-width: 0;
-}
-
-.lx-notice-title {
+.lx-nav-group-title {
+  padding: 0.4rem 0.7rem;
+  font-size: 0.72rem;
   font-weight: 700;
-  font-size: 1.05rem;
-  color: var(--lx-gold-dark);
-  margin-bottom: 0.4rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--lx-text-muted);
 }
 
-.lx-notice-body p {
-  margin: 0 0 0.3rem;
-  font-size: 0.92rem;
-  color: var(--lx-text-secondary);
-}
-
-.lx-notice-body p:last-child {
-  margin-bottom: 0;
-}
-
-.lx-notice-body a {
-  color: var(--lx-gold-dark);
-  text-decoration: none;
-  border-bottom: 1px solid var(--lx-gold-light);
-}
-
-.lx-notice-heart {
-  white-space: nowrap;
-}
-
-.lx-notice-contact {
-  flex-shrink: 0;
-  font-size: 0.88rem;
-  color: var(--lx-text-secondary);
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-  padding-left: 1rem;
-  border-left: 1px solid var(--lx-border);
-}
-
-.lx-notice-contact a {
-  color: var(--lx-text);
-  text-decoration: none;
-}
-
-.lx-notice-label {
-  display: inline-block;
-  width: 2.2em;
-  font-weight: 600;
-  color: var(--lx-gold-dark);
-  margin-right: 0.3rem;
-}
-
-@media (max-width: 640px) {
-  .lx-notice {
-    flex-wrap: wrap;
-    margin: 1rem 1rem 0;
-    padding: 1rem;
-  }
-
-  .lx-notice-contact {
-    width: 100%;
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 0.5rem 1.5rem;
-    padding-left: 0;
-    padding-top: 0.8rem;
-    border-left: none;
-    border-top: 1px solid var(--lx-border);
-  }
-}
-
-/* ========== TOP TAB BAR ========== */
-.lx-topbar {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  background: rgba(255,255,255,0.95);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--lx-border);
-  box-shadow: 0 2px 16px rgba(0,0,0,0.06);
-}
-
-[data-theme="dark"] .lx-topbar {
-  background: rgba(30,30,30,0.95);
-}
-
-.lx-topbar-inner {
-  max-width: 900px;
-  margin: 0 auto;
-  display: flex;
-  gap: 0;
-  padding: 0 1rem;
-}
-
-.lx-tab-top {
-  flex: 1;
-  max-width: 200px;
+.lx-nav-link {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 1rem 1.5rem;
-  border: none;
-  background: transparent;
-  color: var(--lx-text-muted);
-  font-size: 1.05rem;
-  font-weight: 500;
+  gap: 0.6rem;
+  padding: 0.55rem 0.7rem;
+  font-size: 0.88rem;
+  color: var(--lx-text-secondary);
+  text-decoration: none;
+  border-radius: 6px;
+  border-left: 3px solid transparent;
   cursor: pointer;
-  position: relative;
-  transition: color var(--lx-transition);
+  transition: all var(--lx-transition);
 }
 
-.lx-tab-top::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 3px;
-  background: var(--lx-gold);
-  border-radius: 3px 3px 0 0;
-  transition: width var(--lx-transition);
-}
-
-.lx-tab-top:hover {
+.lx-nav-link:hover {
   color: var(--lx-text);
+  background: rgba(212,175,55,0.06);
+  border-left-color: var(--lx-gold-light);
 }
 
-.lx-tab-top.active {
+.lx-nav-link.active {
+  color: var(--lx-gold-dark);
+  background: linear-gradient(90deg, rgba(212,175,55,0.12), transparent);
+  border-left-color: var(--lx-gold);
+  font-weight: 600;
+}
+
+.lx-nav-num {
+  font-size: 0.75rem;
+  color: var(--lx-text-muted);
+  font-variant-numeric: tabular-nums;
+  min-width: 1.4em;
+}
+
+.lx-nav-link.active .lx-nav-num {
   color: var(--lx-gold-dark);
 }
 
-.lx-tab-top.active::after {
-  width: 60%;
+[data-theme="dark"] .lx-nav-link.active {
+  color: var(--lx-gold-light);
 }
 
-.lx-tab-icon {
-  font-size: 1.2rem;
-}
-
-/* ========== CONTAINER ========== */
-.lx-container {
-  max-width: 900px;
+/* ========== MAIN ========== */
+.lx-main {
+  max-width: var(--lx-main-max);
+  width: 100%;
+  min-width: 0;
   margin: 0 auto;
-  padding: 2rem 1.5rem 4rem;
+  padding: 1.5rem;
 }
 
-/* ========== SECTIONS ========== */
-.lx-section {
+/* ========== 视图切换 ========== */
+.lx-view {
   display: none;
-  animation: lxFadeIn 0.4s ease-out;
+  animation: lxFadeIn 0.35s ease-out;
 }
 
-.lx-section.active {
+.lx-view.active {
   display: block;
 }
 
 @keyframes lxFadeIn {
-  from { opacity: 0; transform: translateY(16px); }
+  from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ========== SUB TABS ========== */
-.lx-subtabs {
+/* ========== LLM 对话视图（全屏 flex） ========== */
+.lx-view-chat.active {
   display: flex;
-  gap: 0.5rem;
-  margin-bottom: 2rem;
-  padding-bottom: 1rem;
-  border-bottom: 2px solid var(--lx-border);
-  flex-wrap: wrap;
+  flex-direction: column;
+  height: calc(100vh - 3rem);
+  background: var(--lx-card);
+  border: 1px solid var(--lx-border);
+  border-radius: var(--lx-radius);
+  box-shadow: var(--lx-shadow);
+  overflow: hidden;
 }
 
-.lx-subtab {
-  padding: 0.6rem 1.4rem;
-  border: 2px solid var(--lx-border);
-  border-radius: 100px;
-  background: transparent;
-  color: var(--lx-text-secondary);
-  font-size: 0.95rem;
-  font-weight: 500;
+.lx-chat-header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.9rem 1.1rem;
+  background: linear-gradient(135deg, var(--lx-gold), var(--lx-gold-dark));
+  color: #fff;
+}
+
+.lx-chat-title {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 600;
+  font-size: 0.98rem;
+}
+
+.lx-chat-title-icon {
+  font-size: 1.1rem;
+}
+
+.lx-chat-suggest {
+  flex-shrink: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  padding: 0.7rem 1rem;
+  background: var(--lx-bg);
+  border-bottom: 1px solid var(--lx-border);
+}
+
+.lx-chip {
+  padding: 0.4rem 0.8rem;
+  background: var(--lx-card);
+  color: var(--lx-gold-dark);
+  border: 1px solid var(--lx-gold-light);
+  border-radius: 999px;
+  font-size: 0.82rem;
   cursor: pointer;
   transition: all var(--lx-transition);
-  white-space: nowrap;
 }
 
-.lx-subtab:hover {
+.lx-chip:hover {
+  background: var(--lx-gold);
+  color: #fff;
+}
+
+.lx-chat-messages {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  background: var(--lx-bg);
+}
+
+.lx-msg {
+  display: flex;
+  max-width: 88%;
+}
+
+.lx-msg-user {
+  align-self: flex-end;
+  justify-content: flex-end;
+}
+
+.lx-msg-bot {
+  align-self: flex-start;
+}
+
+.lx-msg-bubble {
+  padding: 0.65rem 0.95rem;
+  border-radius: 14px;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.lx-msg-user .lx-msg-bubble {
+  background: linear-gradient(135deg, var(--lx-gold), var(--lx-gold-dark));
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+
+.lx-msg-bot .lx-msg-bubble {
+  background: var(--lx-card);
+  color: var(--lx-text);
+  border: 1px solid var(--lx-border);
+  border-bottom-left-radius: 4px;
+  /* bot 气泡用 <br> 控制换行，关闭 pre-wrap 避免双重换行 */
+  white-space: normal;
+}
+
+.lx-msg-bot.loading .lx-msg-bubble {
+  color: var(--lx-text-muted);
+  font-style: italic;
+}
+
+/* Markdown 子元素样式 */
+.lx-msg-bubble strong { font-weight: 700; }
+.lx-msg-bubble code {
+  background: rgba(0,0,0,0.06);
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.88em;
+}
+.lx-msg-bubble ul {
+  margin: 0.4em 0;
+  padding-left: 1.3em;
+}
+.lx-msg-bubble li {
+  margin: 0.15em 0;
+}
+[data-theme="dark"] .lx-msg-bubble code {
+  background: rgba(255,255,255,0.1);
+}
+
+.lx-chat-input-row {
+  flex-shrink: 0;
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.7rem;
+  background: var(--lx-card);
+  border-top: 1px solid var(--lx-border);
+}
+
+.lx-chat-input {
+  flex: 1;
+  padding: 0.6rem 0.8rem;
+  background: var(--lx-bg);
+  color: var(--lx-text);
+  border: 1px solid var(--lx-border);
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  resize: none;
+  max-height: 100px;
+  outline: none;
+}
+
+.lx-chat-input:focus {
   border-color: var(--lx-gold);
-  color: var(--lx-gold-dark);
 }
 
-.lx-subtab.active {
-  background: linear-gradient(135deg, var(--lx-gold), var(--lx-gold-light));
-  border-color: transparent;
-  color: #000;
+.lx-chat-send {
+  padding: 0.6rem 1.1rem;
+  background: linear-gradient(135deg, var(--lx-gold), var(--lx-gold-dark));
+  color: #fff;
+  border: none;
+  border-radius: 10px;
   font-weight: 600;
-  box-shadow: 0 4px 12px rgba(212,175,55,0.25);
+  cursor: pointer;
+  transition: all var(--lx-transition);
 }
 
-/* ========== SUB CONTENT ========== */
-.lx-subcontents {
+.lx-chat-send:hover {
+  opacity: 0.9;
+}
+
+.lx-chat-send:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ========== 内容视图 ========== */
+.lx-content-body {
   background: var(--lx-card);
   border-radius: var(--lx-radius);
   padding: 2.5rem;
@@ -450,6 +510,7 @@
   border: 1px solid var(--lx-border);
   line-height: 1.9;
   color: var(--lx-text);
+  margin-bottom: 1.5rem;
 }
 
 .lx-subcontent {
@@ -461,7 +522,7 @@
   display: block;
 }
 
-/* 子内容内部的标题样式 */
+/* 子内容排版样式（保留原样） */
 .lx-subcontent h1 {
   font-family: 'Playfair Display', Georgia, serif;
   font-size: 2rem;
@@ -583,7 +644,7 @@
   color: #abb2bf;
 }
 
-/* ========== TABLE ========== */
+/* 表格样式 */
 .lx-subcontent table {
   width: 100%;
   border-collapse: collapse;
@@ -628,414 +689,304 @@
   color: #ccc;
 }
 
-/* ========== CAMPUS CARDS ========== */
-.lx-campus-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
-  margin: 2rem 0;
+/* ========== 使用说明 ========== */
+.lx-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.2rem 1.5rem;
+  background: var(--lx-card);
+  border: 1px solid var(--lx-gold-light);
+  border-radius: var(--lx-radius);
+  box-shadow: 0 2px 12px rgba(212,175,55,0.12);
+  line-height: 1.6;
 }
 
-.lx-campus-card {
+[data-theme="dark"] .lx-notice {
+  border-color: #555;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+}
+
+.lx-notice-icon {
+  font-size: 1.8rem;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.lx-notice-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.lx-notice-title {
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--lx-gold-dark);
+  margin-bottom: 0.4rem;
+}
+
+.lx-notice-body p {
+  margin: 0 0 0.3rem;
+  font-size: 0.92rem;
+  color: var(--lx-text-secondary);
+}
+
+.lx-notice-body p:last-child {
+  margin-bottom: 0;
+}
+
+.lx-notice-body a {
+  color: var(--lx-gold-dark);
+  text-decoration: none;
+  border-bottom: 1px solid var(--lx-gold-light);
+}
+
+.lx-notice-heart {
+  white-space: nowrap;
+}
+
+.lx-notice-contact {
+  flex-shrink: 0;
+  font-size: 0.88rem;
+  color: var(--lx-text-secondary);
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 0.8rem;
-  padding: 2.5rem 1.5rem;
-  background: linear-gradient(135deg, #fafafa, #f0f0f0);
-  border: 2px solid var(--lx-border);
-  border-radius: var(--lx-radius);
-  text-decoration: none;
-  transition: all var(--lx-transition);
-  position: relative;
-  overflow: hidden;
+  gap: 0.3rem;
+  padding-left: 1rem;
+  border-left: 1px solid var(--lx-border);
 }
 
-.lx-campus-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(212,175,55,0.08), transparent);
-  opacity: 0;
-  transition: opacity var(--lx-transition);
-}
-
-.lx-campus-card:hover {
-  border-color: var(--lx-gold);
-  transform: translateY(-6px);
-  box-shadow: 0 12px 32px rgba(212,175,55,0.2);
-}
-
-.lx-campus-card:hover::before {
-  opacity: 1;
-}
-
-.lx-campus-icon {
-  font-size: 2.8rem;
-  position: relative;
-  z-index: 1;
-}
-
-.lx-campus-card h2 {
-  font-family: 'Playfair Display', Georgia, serif;
-  font-size: 1.4rem;
+.lx-notice-contact a {
   color: var(--lx-text);
-  margin: 0;
-  position: relative;
-  z-index: 1;
+  text-decoration: none;
 }
 
-.lx-campus-desc {
-  font-size: 0.9rem;
-  color: var(--lx-text-muted);
-  margin: 0;
-  position: relative;
-  z-index: 1;
-  text-align: center;
-}
-
-.lx-campus-btn {
+.lx-notice-label {
   display: inline-block;
-  padding: 0.5rem 1.5rem;
-  background: linear-gradient(135deg, var(--lx-gold), var(--lx-gold-light));
-  color: #000;
-  border-radius: 100px;
-  font-size: 0.9rem;
+  width: 2.2em;
   font-weight: 600;
-  position: relative;
-  z-index: 1;
-  transition: transform var(--lx-transition);
+  color: var(--lx-gold-dark);
+  margin-right: 0.3rem;
 }
 
-.lx-campus-card:hover .lx-campus-btn {
-  transform: scale(1.05);
+/* ========== 移动端汉堡按钮 ========== */
+.lx-menu-toggle {
+  display: none;
+  position: fixed;
+  top: 14px;
+  left: 14px;
+  z-index: 200;
+  width: 40px;
+  height: 40px;
+  background: var(--lx-card);
+  border: 1px solid var(--lx-border);
+  border-radius: 8px;
+  cursor: pointer;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
-[data-theme="dark"] .lx-campus-card {
-  background: linear-gradient(135deg, #2a2a2a, #222);
+.lx-toggle-bar {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: var(--lx-text);
+  border-radius: 1px;
+  transition: all var(--lx-transition);
 }
 
-@media (max-width: 600px) {
-  .lx-campus-grid {
+.lx-menu-toggle.active .lx-toggle-bar:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
+}
+.lx-menu-toggle.active .lx-toggle-bar:nth-child(2) {
+  opacity: 0;
+}
+.lx-menu-toggle.active .lx-toggle-bar:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg);
+}
+
+.lx-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 150;
+}
+
+.lx-overlay.active {
+  display: block;
+}
+
+/* ========== 移动端响应式 (≤1024px) ========== */
+@media (max-width: 1024px) {
+  .lx-menu-toggle {
+    display: flex;
+  }
+
+  .lx-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 160;
+    width: var(--lx-sidebar-width);
+    max-width: 85vw;
+    transform: translateX(-100%);
+    transition: transform var(--lx-transition);
+    box-shadow: 4px 0 24px rgba(0,0,0,0.15);
+  }
+
+  .lx-sidebar.open {
+    transform: translateX(0);
+  }
+
+  .lx-page {
     grid-template-columns: 1fr;
   }
+
+  .lx-main {
+    padding: 4.5rem 1rem 1rem;
+  }
+
+  .lx-view-chat.active {
+    height: calc(100vh - 5.5rem);
+  }
 }
 
-/* ========== RESPONSIVE ========== */
-@media (max-width: 768px) {
-  .lx-hero {
-    padding: 3.5rem 1.5rem 3rem;
+@media (max-width: 640px) {
+  .lx-notice {
+    flex-wrap: wrap;
+    padding: 1rem;
   }
 
-  .lx-topbar-inner {
-    padding: 0;
+  .lx-notice-contact {
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+    padding-left: 0;
+    padding-top: 0.8rem;
+    border-left: none;
+    border-top: 1px solid var(--lx-border);
   }
 
-  .lx-tab-top {
-    font-size: 0.95rem;
-    padding: 0.85rem 1rem;
-  }
-
-  .lx-container {
-    padding: 1.5rem 1rem 3rem;
-  }
-
-  .lx-subcontents {
+  .lx-content-body {
     padding: 1.5rem;
-  }
-
-  .lx-subtabs {
-    gap: 0.4rem;
-  }
-
-  .lx-subtab {
-    padding: 0.5rem 1rem;
-    font-size: 0.9rem;
   }
 
   .lx-subcontent h1 {
     font-size: 1.6rem;
   }
 }
-
-/* ========== CHAT FAB & WINDOW ========== */
-.lx-chat-fab {
-  position: fixed;
-  right: 24px;
-  bottom: 24px;
-  z-index: 9999;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.9rem 1.4rem;
-  background: linear-gradient(135deg, var(--lx-gold), var(--lx-gold-dark)) !important;
-  color: #fff !important;
-  border: none;
-  border-radius: 999px;
-  box-shadow: 0 6px 24px rgba(212,175,55,0.4);
-  font-size: 0.95rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all var(--lx-transition);
-}
-.lx-chat-fab:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(212,175,55,0.55);
-}
-.lx-chat-fab-icon { font-size: 1.2rem; }
-
-.lx-chat-window {
-  position: fixed;
-  right: 24px;
-  bottom: 90px;
-  z-index: 10000;
-  width: 380px;
-  max-width: calc(100vw - 32px);
-  height: 560px;
-  max-height: calc(100vh - 120px);
-  background: var(--lx-card) !important;
-  border: 1px solid var(--lx-border);
-  border-radius: 18px;
-  box-shadow: 0 12px 48px rgba(0,0,0,0.18);
-  display: none;
-  flex-direction: column;
-  overflow: hidden;
-}
-.lx-chat-window.open { display: flex; }
-
-.lx-chat-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.9rem 1.1rem;
-  background: linear-gradient(135deg, var(--lx-gold), var(--lx-gold-dark)) !important;
-  color: #fff !important;
-}
-.lx-chat-title {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  font-weight: 600;
-  font-size: 0.98rem;
-}
-.lx-chat-title-icon { font-size: 1.1rem; }
-.lx-chat-close {
-  background: transparent;
-  border: none;
-  color: #fff !important;
-  font-size: 1.6rem;
-  line-height: 1;
-  cursor: pointer;
-  padding: 0 0.3rem;
-  opacity: 0.85;
-}
-.lx-chat-close:hover { opacity: 1; }
-
-.lx-chat-suggest {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-  padding: 0.7rem 1rem;
-  background: var(--lx-bg) !important;
-  border-bottom: 1px solid var(--lx-border);
-}
-.lx-chip {
-  padding: 0.4rem 0.8rem;
-  background: var(--lx-card) !important;
-  color: var(--lx-gold-dark) !important;
-  border: 1px solid var(--lx-gold-light) !important;
-  border-radius: 999px;
-  font-size: 0.82rem;
-  cursor: pointer;
-  transition: all var(--lx-transition);
-}
-.lx-chip:hover {
-  background: var(--lx-gold) !important;
-  color: #fff !important;
-}
-
-.lx-chat-messages {
-  flex: 1;
-  overflow-y: auto;
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.7rem;
-  background: var(--lx-bg) !important;
-}
-.lx-msg {
-  display: flex;
-  max-width: 88%;
-}
-.lx-msg-user {
-  align-self: flex-end;
-  justify-content: flex-end;
-}
-.lx-msg-bot { align-self: flex-start; }
-.lx-msg-bubble {
-  padding: 0.65rem 0.95rem;
-  border-radius: 14px;
-  font-size: 0.9rem;
-  line-height: 1.55;
-  white-space: pre-wrap;
-  word-break: break-word;
-}
-.lx-msg-user .lx-msg-bubble {
-  background: linear-gradient(135deg, var(--lx-gold), var(--lx-gold-dark)) !important;
-  color: #fff !important;
-  border-bottom-right-radius: 4px;
-}
-.lx-msg-bot .lx-msg-bubble {
-  background: var(--lx-card) !important;
-  color: var(--lx-text) !important;
-  border: 1px solid var(--lx-border);
-  border-bottom-left-radius: 4px;
-  /* bot 气泡用 <br> 控制换行，关闭 pre-wrap 避免双重换行 */
-  white-space: normal !important;
-}
-.lx-msg-bot.loading .lx-msg-bubble {
-  color: var(--lx-text-muted) !important;
-  font-style: italic;
-}
-/* Markdown 子元素样式 */
-.lx-msg-bubble strong { font-weight: 700; }
-.lx-msg-bubble code {
-  background: rgba(0,0,0,0.06);
-  padding: 0.1em 0.35em;
-  border-radius: 4px;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: 0.88em;
-}
-.lx-msg-bubble ul {
-  margin: 0.4em 0;
-  padding-left: 1.3em;
-}
-.lx-msg-bubble li {
-  margin: 0.15em 0;
-}
-[data-theme="dark"] .lx-msg-bubble code {
-  background: rgba(255,255,255,0.1);
-}
-
-.lx-chat-input-row {
-  display: flex;
-  gap: 0.5rem;
-  padding: 0.7rem;
-  background: var(--lx-card) !important;
-  border-top: 1px solid var(--lx-border);
-}
-.lx-chat-input {
-  flex: 1;
-  padding: 0.6rem 0.8rem;
-  background: var(--lx-bg) !important;
-  color: var(--lx-text) !important;
-  border: 1px solid var(--lx-border) !important;
-  border-radius: 10px;
-  font-size: 0.9rem;
-  font-family: inherit;
-  resize: none;
-  max-height: 100px;
-  outline: none;
-}
-.lx-chat-input:focus {
-  border-color: var(--lx-gold) !important;
-}
-.lx-chat-send {
-  padding: 0.6rem 1.1rem;
-  background: linear-gradient(135deg, var(--lx-gold), var(--lx-gold-dark)) !important;
-  color: #fff !important;
-  border: none;
-  border-radius: 10px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all var(--lx-transition);
-}
-.lx-chat-send:hover { opacity: 0.9; }
-.lx-chat-send:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-@media (max-width: 480px) {
-  .lx-chat-window {
-    right: 0;
-    bottom: 0;
-    width: 100vw;
-    max-width: 100vw;
-    height: 100vh;
-    max-height: 100vh;
-    border-radius: 0;
-    border: none;
-  }
-  .lx-chat-fab {
-    right: 16px;
-    bottom: 16px;
-  }
-}
 </style>
 
+<!-- Script 1: Sidebar 抽屉 + 视图切换 -->
 <script>
 (function() {
   'use strict';
 
-  const topTabs = document.querySelectorAll('.lx-tab-top');
-  const sections = {
-    campus: document.getElementById('lx-campus'),
-    offcampus: document.getElementById('lx-offcampus')
-  };
+  var toggle = document.querySelector('.lx-menu-toggle');
+  var sidebar = document.getElementById('lx-sidebar');
+  var overlay = document.querySelector('.lx-overlay');
+  var navLinks = document.querySelectorAll('.lx-nav-link');
+  var chatView = document.getElementById('lx-view-chat');
+  var contentView = document.getElementById('lx-view-content');
+  var subcontents = document.querySelectorAll('.lx-subcontent');
 
-  // Top tab switching
-  topTabs.forEach(function(tab) {
-    tab.addEventListener('click', function() {
-      const target = this.dataset.target;
-      // Deactivate all top tabs
-      topTabs.forEach(function(t) { t.classList.remove('active'); });
-      this.classList.add('active');
-      // Toggle sections
-      Object.keys(sections).forEach(function(key) {
-        sections[key].classList.toggle('active', key === target);
-      });
-    });
+  // === 抽屉开关 ===
+  function openSidebar() {
+    sidebar.classList.add('open');
+    overlay.classList.add('active');
+    toggle.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeSidebar() {
+    sidebar.classList.remove('open');
+    overlay.classList.remove('active');
+    toggle.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  toggle.addEventListener('click', function() {
+    if (sidebar.classList.contains('open')) {
+      closeSidebar();
+    } else {
+      openSidebar();
+    }
   });
 
-  // Sub tab switching
-  document.querySelectorAll('.lx-subtab').forEach(function(tab) {
-    tab.addEventListener('click', function() {
-      const parent = this.dataset.parent;
-      const idx = this.dataset.idx;
-      const siblings = document.querySelectorAll('.lx-subtab[data-parent="' + parent + '"]');
-      const contents = document.querySelectorAll('.lx-subcontent[data-parent="' + parent + '"]');
+  overlay.addEventListener('click', closeSidebar);
 
-      siblings.forEach(function(s) { s.classList.remove('active'); });
-      this.classList.add('active');
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && sidebar.classList.contains('open')) {
+      closeSidebar();
+    }
+  });
 
-      contents.forEach(function(c) {
-        c.classList.toggle('active', c.dataset.idx === idx);
+  // === 视图切换 ===
+  function switchView(link) {
+    var view = link.dataset.view;
+    // 管理 active 高亮
+    navLinks.forEach(function(l) { l.classList.remove('active'); });
+    link.classList.add('active');
+
+    if (view === 'chat') {
+      // 显示对话视图，隐藏内容视图（messages DOM 不动 → 状态保留）
+      chatView.classList.add('active');
+      contentView.classList.remove('active');
+    } else {
+      // 显示内容视图，隐藏对话视图
+      chatView.classList.remove('active');
+      contentView.classList.add('active');
+      // 按 data-parent + data-idx 切换 subcontent
+      var parent = link.dataset.parent;
+      var idx = link.dataset.idx;
+      subcontents.forEach(function(c) {
+        c.classList.toggle('active', c.dataset.parent === parent && c.dataset.idx === idx);
       });
+    }
+  }
+
+  navLinks.forEach(function(link) {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      switchView(link);
+      // 移动端选中后自动关闭抽屉
+      if (window.matchMedia('(max-width: 1024px)').matches) {
+        setTimeout(closeSidebar, 100);
+      }
+    });
+    // 键盘可访问
+    link.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        link.click();
+      }
     });
   });
 })();
 </script>
 
+<!-- Script 2: LLM 对话逻辑 -->
 <script>
 (function() {
   'use strict';
 
-  const API_URL = 'https://1437998910-bf08hbldh2.ap-shanghai.tencentscf.com';
-  const fab = document.getElementById('lx-chat-fab');
-  const win = document.getElementById('lx-chat-window');
-  const closeBtn = document.getElementById('lx-chat-close');
-  const suggest = document.getElementById('lx-chat-suggest');
-  const messages = document.getElementById('lx-chat-messages');
-  const input = document.getElementById('lx-chat-input');
-  const sendBtn = document.getElementById('lx-chat-send');
+  var API_URL = 'https://1437998910-bf08hbldh2.ap-shanghai.tencentscf.com';
+  var suggest = document.getElementById('lx-chat-suggest');
+  var messages = document.getElementById('lx-chat-messages');
+  var input = document.getElementById('lx-chat-input');
+  var sendBtn = document.getElementById('lx-chat-send');
 
   // 读取注入的 context（Hugo jsonify 输出可能被包成字符串，需两次 parse）
-  let contextData = null;
+  var contextData = null;
   try {
-    const ctxEl = document.getElementById('lx-context');
+    var ctxEl = document.getElementById('lx-context');
     if (ctxEl) {
-      const raw = ctxEl.textContent.trim();
+      var raw = ctxEl.textContent.trim();
       contextData = JSON.parse(raw);
       if (typeof contextData === 'string') {
         contextData = JSON.parse(contextData);
@@ -1044,22 +995,6 @@
   } catch (e) {
     console.error('[lx-chat] context parse failed', e);
   }
-
-  function openWindow() {
-    win.classList.add('open');
-    win.setAttribute('aria-hidden', 'false');
-    setTimeout(() => input.focus(), 100);
-  }
-  function closeWindow() {
-    win.classList.remove('open');
-    win.setAttribute('aria-hidden', 'true');
-  }
-
-  fab.addEventListener('click', openWindow);
-  fab.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openWindow(); }
-  });
-  closeBtn.addEventListener('click', closeWindow);
 
   function scrollToBottom() {
     messages.scrollTop = messages.scrollHeight;
@@ -1071,7 +1006,7 @@
   function renderMarkdown(text) {
     if (!text) return '';
     // 1. 转义 HTML 防 XSS
-    let s = text
+    var s = text
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;');
@@ -1086,11 +1021,12 @@
     s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
 
     // 5. 列表：连续 * 或 - 开头的行包裹为 <ul><li>
-    const lines = s.split('\n');
-    const out = [];
-    let inList = false;
-    for (const line of lines) {
-      const m = line.match(/^\s*[\*\-]\s+(.*)$/);
+    var lines = s.split('\n');
+    var out = [];
+    var inList = false;
+    for (var i = 0; i < lines.length; i++) {
+      var line = lines[i];
+      var m = line.match(/^\s*[\*\-]\s+(.*)$/);
       if (m) {
         if (!inList) { out.push('<ul>'); inList = true; }
         out.push('<li>' + m[1] + '</li>');
@@ -1101,7 +1037,7 @@
     }
     if (inList) out.push('</ul>');
 
-    // 6. 列表标签紧贴，其他换行转 <br>，只清理列表标签紧贴的 <br>（保留段落间换行）
+    // 6. 列表标签紧贴，其他换行转 <br>，只清理列表标签紧贴的 <br>
     s = out.join('\n')
       .replace(/<\/li>\n<li>/g, '</li><li>')
       .replace(/<ul>\n<li>/g, '<ul><li>')
@@ -1115,9 +1051,9 @@
   }
 
   function appendMsg(role, text) {
-    const msg = document.createElement('div');
+    var msg = document.createElement('div');
     msg.className = 'lx-msg lx-msg-' + role;
-    const bubble = document.createElement('div');
+    var bubble = document.createElement('div');
     bubble.className = 'lx-msg-bubble';
     // bot 回答渲染 Markdown，user 输入纯文本（安全）
     if (role === 'bot') {
@@ -1132,19 +1068,19 @@
   }
 
   function appendLoadingMsg() {
-    const msg = document.createElement('div');
+    var msg = document.createElement('div');
     msg.className = 'lx-msg lx-msg-bot loading';
-    const bubble = document.createElement('div');
+    var bubble = document.createElement('div');
     bubble.className = 'lx-msg-bubble';
     bubble.textContent = '正在思考…';
     msg.appendChild(bubble);
     messages.appendChild(msg);
     scrollToBottom();
-    return { msg, bubble };
+    return { msg: msg, bubble: bubble };
   }
 
-  let sending = false;
-  async function send(question) {
+  var sending = false;
+  function send(question) {
     if (sending || !question.trim()) return;
     if (!contextData) {
       appendMsg('bot', '上下文加载失败，请刷新页面后重试。');
@@ -1157,13 +1093,13 @@
     input.style.height = 'auto';
 
     appendMsg('user', question);
-    const loading = appendLoadingMsg();
-    const loadingBubble = loading.bubble;
-    const loadingMsg = loading.msg;
+    var loading = appendLoadingMsg();
+    var loadingBubble = loading.bubble;
+    var loadingMsg = loading.msg;
 
-    // loading 计时器：显示已等待秒数，让用户知道在进展
-    let waitSeconds = 0;
-    const waitTimer = setInterval(() => {
+    // loading 计时器：显示已等待秒数
+    var waitSeconds = 0;
+    var waitTimer = setInterval(function() {
       waitSeconds++;
       if (loadingMsg.classList.contains('loading')) {
         loadingBubble.textContent = '正在思考… (' + waitSeconds + 's)';
@@ -1172,17 +1108,16 @@
       }
     }, 1000);
 
-    // 30 秒超时：防止冷启动/慢网下 fetch 无限挂起
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 30000);
+    // 30 秒超时
+    var controller = new AbortController();
+    var timeoutId = setTimeout(function() { controller.abort(); }, 30000);
 
-    try {
-      const resp = await fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ question, context: contextData }),
-        signal: controller.signal,
-      });
+    fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question: question, context: contextData }),
+      signal: controller.signal
+    }).then(function(resp) {
       clearTimeout(timeoutId);
 
       if (resp.status === 429) {
@@ -1209,43 +1144,49 @@
       loadingMsg.classList.remove('loading');
       loadingBubble.textContent = '';
 
-      const reader = resp.body.getReader();
-      const decoder = new TextDecoder();
-      let buffer = '';
-      let answerText = '';
+      var reader = resp.body.getReader();
+      var decoder = new TextDecoder();
+      var buffer = '';
+      var answerText = '';
 
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split('\n');
-        buffer = lines.pop();
-        for (const line of lines) {
-          const trimmed = line.trim();
-          if (!trimmed.startsWith('data:')) continue;
-          const payload = trimmed.slice(5).trim();
-          if (!payload) continue;
-          try {
-            const obj = JSON.parse(payload);
-            if (obj.delta) {
-              answerText += obj.delta;
-              loadingBubble.innerHTML = renderMarkdown(answerText);
-              scrollToBottom();
+      function readChunk() {
+        return reader.read().then(function(result) {
+          if (result.done) {
+            if (!answerText) {
+              loadingBubble.textContent = '（未收到回复，请重试）';
             }
-            if (obj.done) {
-              // 流结束
-            }
-            if (obj.error) {
-              answerText += (answerText ? '\n' : '') + '[流式中断]';
-              loadingBubble.innerHTML = renderMarkdown(answerText);
-            }
-          } catch (e) {}
-        }
+            return;
+          }
+          buffer += decoder.decode(result.value, { stream: true });
+          var lines = buffer.split('\n');
+          buffer = lines.pop();
+          for (var i = 0; i < lines.length; i++) {
+            var trimmed = lines[i].trim();
+            if (!trimmed.startsWith('data:')) continue;
+            var payload = trimmed.slice(5).trim();
+            if (!payload) continue;
+            try {
+              var obj = JSON.parse(payload);
+              if (obj.delta) {
+                answerText += obj.delta;
+                loadingBubble.innerHTML = renderMarkdown(answerText);
+                scrollToBottom();
+              }
+              if (obj.done) {
+                // 流结束
+              }
+              if (obj.error) {
+                answerText += (answerText ? '\n' : '') + '[流式中断]';
+                loadingBubble.innerHTML = renderMarkdown(answerText);
+              }
+            } catch (e) {}
+          }
+          return readChunk();
+        });
       }
-      if (!answerText) {
-        loadingBubble.textContent = '（未收到回复，请重试）';
-      }
-    } catch (e) {
+
+      return readChunk();
+    }).catch(function(e) {
       clearTimeout(timeoutId);
       clearInterval(waitTimer);
       console.error('[lx-chat] send error', e);
@@ -1255,30 +1196,30 @@
       } else {
         loadingBubble.textContent = '网络异常，请检查连接后重试。';
       }
-    } finally {
+    }).finally(function() {
       sending = false;
       sendBtn.disabled = false;
-    }
+    });
   }
 
   // 发送按钮
-  sendBtn.addEventListener('click', () => send(input.value));
+  sendBtn.addEventListener('click', function() { send(input.value); });
   // 回车发送 / Shift+回车换行
-  input.addEventListener('keydown', (e) => {
+  input.addEventListener('keydown', function(e) {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       send(input.value);
     }
   });
   // 自适应高度
-  input.addEventListener('input', () => {
+  input.addEventListener('input', function() {
     input.style.height = 'auto';
     input.style.height = Math.min(input.scrollHeight, 100) + 'px';
   });
 
   // 推荐问题 chips
-  suggest.addEventListener('click', (e) => {
-    const chip = e.target.closest('.lx-chip');
+  suggest.addEventListener('click', function(e) {
+    var chip = e.target.closest('.lx-chip');
     if (chip) send(chip.dataset.q);
   });
 })();

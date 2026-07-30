@@ -1,8 +1,9 @@
 # 🌙 DeepSleep Blog - Hugo 静态博客
 
 > **完全免费 · 无需信用卡 · 无休眠问题**  
-> **域名**: https://deepsleep.fun  
+> **域名**: https://deepsleep.fun
 > **技术栈**: Hugo + GitHub Pages + PaperMod 主题
+> **DeepSleep 项目版本**: v5.4
 
 ## ✨ 特点
 
@@ -456,8 +457,9 @@ GitHub Pages 和 Cloudflare Pages 默认启用压缩传输。
 
 ---
 
-**最后更新**: 2026-05-29  
-**当前版本**: Hugo v0.139.0 + PaperMod v7.x  
+**最后更新**: 2026-07-30
+**DeepSleep 项目版本**: v5.4
+**工具版本**: Hugo v0.139.0 + PaperMod v7.x
 **部署状态**: ✅ Production Ready  
 
 🎉 **享受创作的乐趣吧！**

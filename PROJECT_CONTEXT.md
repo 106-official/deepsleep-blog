@@ -108,6 +108,8 @@ blog-static/
 │       ├── community.html             # 社区布局模板 (纯 HTML, 无 Markdown)
 │       ├── posts.html                # ⭐ 文章列表模板 (learn 风格 sidebar) v5.5
 │       ├── resources.html            # ⭐ 资源列表模板 (learn 风格 sidebar) v5.5 新增
+│       ├── play.html                  # 娱乐中心模板 (Playfair Display 标题 + 紧凑卡片) v5.6
+│       ├── sleeptown.html            # ⭐ SleepTown 游戏模板 (含关卡模式 sidebar) v2.2.2.0
 │       └── profile.html              # ⭐ 个人资料页面模板 (独立页面) v5.2.1 新增
 └── static/
     ├── css/
@@ -266,7 +268,7 @@ git config --global https.proxy http://127.0.0.1:65532
 | **v5.3** | 2026-07-07 | 修复 JavaScript 重复加载问题 |
 | **v5.4** | 2026-07-30 | 清理停用项目资料并统一 DeepSleep 文档版本 |
 | **v5.5** | 2026-07-30 | 文章/资源/SleepTown 关卡页统一改造为 learn 风格 sidebar + 移动端抽屉 |
-| **v5.6** | 2026-07-30 | 主题切换圆形扩散动画 (View Transitions API) |
+| **v5.6** | 2026-07-30 | 主题切换圆形扩散动画 (View Transitions API) + 娱乐中心/SleepTown 模式选择页视觉统一（Playfair Display 标题、删表情、紧凑按钮） |
 
 ---
 

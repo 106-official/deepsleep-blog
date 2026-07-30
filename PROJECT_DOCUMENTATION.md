@@ -216,7 +216,9 @@ blog-static/
 │   └── _default/
 │       ├── community.html           # 社区布局模板
 │       ├── posts.html              # ⭐ 文章列表模板 (learn 风格 sidebar) v5.5 改造
-│       └── resources.html           # ⭐ 资源列表模板 (learn 风格 sidebar) v5.5 新增
+│       ├── resources.html           # ⭐ 资源列表模板 (learn 风格 sidebar) v5.5 新增
+│       ├── play.html                # 娱乐中心模板 (Playfair Display 标题 + 紧凑卡片) v5.6
+│       └── sleeptown.html          # ⭐ SleepTown 游戏模板 (含关卡模式 sidebar) v2.2.2.0
 ├── static/
 │   ├── css/
 │   │   ├── custom.css               # 自定义样式
@@ -1182,6 +1184,12 @@ flowchart TD
 | `layouts/partials/extended_head.html` | 追加 `::view-transition-*` CSS（禁用默认 cross-fade、设置层级、reduced-motion 降级） |
 | `PROJECT_CONTEXT.md` | 版本号 v5.5→v5.6、功能清单新增、版本演进表、技术决策表 |
 | `PROJECT_DOCUMENTATION.md` | 版本号、功能特性、技术决策表、新增动画说明章节、更新日志 |
+
+**视觉一致性微调（同日追加）**:
+- 娱乐中心 `/play/` (`play.html`)：删除标题/卡片表情（🎮/🐟/🎲）、标题改用 Playfair Display、卡片 padding/字号/radius 全面收紧
+- SleepTown 模式选择页 (`sleeptown.html`)：删除 `🐟`/`🎮`/`🏆`/`⚡`/`🚀` 表情、两个主标题 + 模式卡片 h2 + 快速开始 h3 改用 Playfair Display、`.mode-btn`/`.quick-start-btn` padding 14px→9px / font-size 1.1rem→0.92rem / radius 12px→9px、删除 `.mode-icon` CSS 规则
+- **目标**：与文章/资源/学习路径/SleepTown 关卡页的视觉语言统一（Playfair Display 标题 + 紧凑按钮 + 无多余表情）
+- 关卡页内的角色介绍、规则、配置等 h3 标题表情（🐟/🎭/🏆 等）属游戏内容保留不动
 
 **浏览器兼容性**：Chrome/Edge 111+、Safari 18+、Opera 99+ 原生支持；Firefox 暂不支持，自动降级为瞬间切换无动画。
 

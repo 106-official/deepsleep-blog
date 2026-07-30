@@ -696,6 +696,60 @@
 </style>
 
 <script>
-// 打字机 + 滚动动画 JS（Task 5/6 填充）
+(function () {
+  'use strict';
+
+  // === 降级检测：prefers-reduced-motion 或不支持 IntersectionObserver ===
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var hasIO = 'IntersectionObserver' in window;
+
+  // === 打字机：把 [data-typewriter] 的文本存入 data-text，清空可见内容 ===
+  var typewriters = Array.prototype.slice.call(document.querySelectorAll('[data-typewriter]'));
+  typewriters.forEach(function (el) {
+    var text = el.textContent.trim();
+    el.setAttribute('data-text', text);
+    // 若降级，直接保留全文，不启动打字机
+    if (reduceMotion || !hasIO) {
+      el.classList.add('me-typewriter-done');
+      return;
+    }
+    el.textContent = '';
+    var cursor = document.createElement('span');
+    cursor.className = 'me-cursor';
+    el.appendChild(cursor);
+  });
+
+  // === 打字机启动函数：逐字 append 到目标元素 ===
+  function runTypewriter(el) {
+    if (el.dataset.started === '1') return;
+    el.dataset.started = '1';
+    var text = el.getAttribute('data-text') || '';
+    var cursor = el.querySelector('.me-cursor');
+    var i = 0;
+    var speed = 30; // ms/字
+    var timer = setInterval(function () {
+      if (i < text.length) {
+        el.insertBefore(document.createTextNode(text.charAt(i)), cursor);
+        i++;
+      } else {
+        clearInterval(timer);
+        if (cursor) cursor.classList.add('done');
+        el.classList.add('me-typewriter-done');
+      }
+    }, speed);
+  }
+
+  // === 串行队列：同 section 内多个 [data-typewriter] 按顺序打字 ===
+  function runSectionTypewriters(section) {
+    var items = Array.prototype.slice.call(section.querySelectorAll('[data-typewriter]'));
+    items.forEach(function (el) {
+      if (el.dataset.started === '1') return;
+      runTypewriter(el);
+    });
+  }
+
+  // IntersectionObserver 在 Task 6 实现，此处先暴露函数
+  window.__meRunSectionTypewriters = runSectionTypewriters;
+})();
 </script>
 {{ end }}

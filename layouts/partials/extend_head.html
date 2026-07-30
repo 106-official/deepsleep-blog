@@ -13,6 +13,18 @@
     --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   }
 
+  /* ============================================
+     暗色模式覆盖（v5.8）
+     修复 custom.css 中硬编码白色渐变背景 + 深色文字
+     在非 .list 页面（如 /lixin/、/me/ 等）暗色模式下仍为白色的问题
+     ============================================ */
+  [data-theme="dark"] body {
+    /* 覆盖 custom.css:40 的 linear-gradient(135deg, #fafafa, #f0f0f0) */
+    background: var(--theme) !important;
+    /* 覆盖 custom.css:39 的 color: var(--color-text-primary) = #2d2d2d */
+    color: var(--primary) !important;
+  }
+
   /* 个人资料页面通用表单样式 */
   .c-form-input {
     width: 100%;

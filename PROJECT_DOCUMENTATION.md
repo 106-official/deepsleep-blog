@@ -1341,10 +1341,18 @@ Hugo 的 partial 查找是精确匹配文件名，找不到 `extend_head.html` �
 
 **视觉微调（同日追加 3 - 个人按钮并入导航菜单）**:
 - ✅ **删除独立"👤 个人"按钮**：原 `extend_footer.html` 的 `initGlobalProfile()` JS 动态注入 `.global-profile-btn` 到 `#menu` 之后的方案废弃（v5.2 临时方案）；同时清理 `extend_head.html` 中对应的 `.global-profile-btn` CSS（约 23 行）
-- ✅ **"个人"作为原生 menu 项**：`hugo.toml` 新增 `[[menu.main]] identifier="profile" name="个人" url="/profile/" weight=32`，放在"我"(30) 之后、"社区"(40) 之前
-- ✅ **导航菜单最终顺序**：文章(10) → 资源(20) → 学习(25) → 我(30) → 个人(32) → 社区(40) → 娱乐(50)
+- ✅ **"个人"作为原生 menu 项**：`hugo.toml` 新增 `[[menu.main]] identifier="profile" name="个人" url="/profile/" weight=60`，放在最末位（娱乐 50 之后）
+- ✅ **导航菜单最终顺序**：文章(10) → 资源(20) → 学习(25) → 我(30) → 社区(40) → 娱乐(50) → **个人(60)**
 - ✅ **去掉表情**：原按钮 `innerHTML = '👤 个人'`，原生 menu 项 `name = "个人"` 无表情
 - **收益**：减少一次 JS DOM 注入；导航项样式由 PaperMod 原生 `.nav` 统一管理（active 高亮、移动端折叠等自动生效）；与其他 menu 项视觉一致
+
+**视觉微调（同日追加 4 - 个人菜单置右 + 暗色模式导航白色修复）**:
+- ✅ **个人菜单挪到最右**：`hugo.toml` profile `weight` 32 → 60，放在娱乐(50) 之后成为最后一个菜单项
+- ✅ **修复暗色模式导航栏白色问题**：根因是 `static/css/custom.css:40` 硬编码 `body { background: linear-gradient(135deg, #fafafa 0%, #f0f0f0 100%); }` 白色渐变背景 + `color: var(--color-text-primary)` (#2d2d2d 深色文字)，且**没有任何 `[data-theme="dark"]` 覆盖**
+  - **首页（`<body class="list">`）**：PaperMod 的 `.list { background: var(--theme); }` 优先级 (0,1,0) > `body` (0,0,1)，能正常覆盖白色渐变 ✓
+  - **普通页面（`<body id="top">` 无 .list，如 /lixin/、/me/）**：PaperMod `.list` 选择器不匹配，custom.css 白色渐变**在暗色模式下仍然生效** → 整页（含导航栏区域）背景白色 + 文字深色 ✗
+  - **修复**：`extend_head.html` 新增 `[data-theme="dark"] body { background: var(--theme) !important; color: var(--primary) !important; }`，选择器优先级 (0,1,1) > `body` (0,0,1)，覆盖 custom.css 硬编码值；复用 PaperMod 的 `--theme`（暗色 rgb(29,30,32)）和 `--primary`（暗色 rgb(218,218,219)）变量自动切换
+  - **验证**：浏览器实测 lixin 页面暗色模式下 body 背景 = rgb(29,30,32) 深色 ✓，菜单文字 = rgb(218,218,219) 浅色 ✓
 
 **新 HTML 结构**:
 ```

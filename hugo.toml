@@ -111,6 +111,12 @@ theme = ["PaperMod"]
   weight = 20
 
 [[menu.main]]
+  identifier = "learn"
+  name = "学习"
+  url = "/learn/"
+  weight = 25
+
+[[menu.main]]
   identifier = "me"
   name = "我"
   url = "/me/"

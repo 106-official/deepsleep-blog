@@ -93,7 +93,7 @@ blog-static/
 │   ├── community.md                   # 社区页声明 (layout: community)
 │   ├── archives.md                    # 归档页
 │   ├── search.md                      # 搜索页
-│   └── me.md                          # 个人技能页
+│   └── me.md                          # 关于我
 ├── layouts/
 │   ├── partials/
 │   │   ├── comments.html              # Waline 评论组件

@@ -136,6 +136,29 @@
 | **全局个人中心** | **Modal 弹窗 + 全局注入** (v5.2) | **所有页面可访问，无需重复实现** |
 | **文章板块整合** | **API 动态加载 + Hugo 静态混合** (v5.2) | **社区帖子与博客文章统一展示，提升用户体验** |
 | **文章列表页 sidebar** | **learn 同款设计** (v5.5) | **CSS 变量/Playfair Display 字体/移动端抽屉复用，视觉一致性** |
+| **资源列表页 sidebar** | **learn 同款设计** (v5.5) | **资源卡片网格 + 标签 + 快速导航，视觉一致** |
+| **SleepTown 关卡页 sidebar** | **learn 同款设计** (v5.5 / SleepTown v2.2.2.0) | **左章节列表 + 右关卡详情卡片，10 关扩展** |
+
+### 🎨 Sidebar 设计模式（learn 风格，v5.5 统一）
+
+DeepSleep 博客的 4 个板块复用同一套 learn 风格 sidebar 设计模式，保证视觉与交互一致性：
+
+| 板块 | 模板文件 | CSS 前缀 | 主题色 | Sidebar 内容 |
+|------|---------|---------|--------|-------------|
+| 学习路径 | `layouts/_default/learn.html` | `learn-` | 金色 `#D4AF37` | 章节列表（按 cert+weight） |
+| 文章与动态 | `layouts/_default/posts.html` | `posts-` | 金色 `#D4AF37` | 所有文章 + 标签 + 快速导航 |
+| 资源分享 | `layouts/_default/resources.html` | `resources-` | 金色 `#D4AF37` | 所有资源 + 标签 + 快速导航 |
+| SleepTown 关卡 | `layouts/_default/sleeptown.html` | `stagemode-` | 橙金 `#f39c12` | 章节关卡列表（2 章 10 关） |
+
+**统一设计规范**：
+- **布局**：`display: grid; grid-template-columns: <sidebar-width> 1fr`，sidebar 宽度 300px，主内容 max-width 1100-1440px
+- **字体**：标题用 `Playfair Display, Georgia, serif`；正文用 `Inter, -apple-system, sans-serif`；编号用 `SF Mono, Consolas, monospace`
+- **CSS 变量**：定义在 `:root`（非板块根元素），因移动端 sidebar `position: fixed` 后脱离父子树
+- **突破 PaperMod 约束**：`.main:has(.<prefix>-page) { max-width: 100% !important; }` 突破 768px 限制
+- **移动端抽屉**（≤1024px）：汉堡按钮 + 遮罩 + ESC 关闭 + 点击链接后关闭 + `transform: translateX(-100%)` 滑入
+- **暗色模式**：`[data-theme="dark"]` 覆盖 `--<prefix>-*` 变量（不嵌套板块根元素）
+- **active 高亮**：`linear-gradient(90deg, rgba(gold,0.12), transparent)` + 左边框主题色
+- **grid item 防 overflow**：主内容区加 `min-width: 0`
 
 ---
 
@@ -1119,14 +1142,18 @@ flowchart TD
 - ✅ 保留现有搜索栏、社区帖子卡片加载、博客文章卡片网格逻辑
 - ✅ **资源分享页 (`/resources/`) 改造为 learn 风格 sidebar 布局**（同 posts 设计语言）
 - ✅ 资源卡片网格：日期/类型/标题/摘要/标签/查看详情
+- ✅ **SleepTown 关卡模式 (`/play/sleeptown/`) 改造为 learn 风格 sidebar 布局**（SleepTown v2.2.2.0）
+- ✅ SleepTown 关卡扩展至 10 关（第1章 8 关 + 第2章 2 关），右主内容动态渲染选中关卡详情卡片
 - ✅ **文章页 UI 微调**：移除主标题「📝」表情、移除搜索框放大镜图标（简化视觉）
 
 **技术决策**:
 - CSS 变量定义在 `:root`（移动端 sidebar `position: fixed` 后脱离父子树，需提升到根）
-- `.main:has(.posts-page)` / `.main:has(.resources-page)` 突破 PaperMod `.main` 768px max-width 约束（同 learn）
+- `.main:has(.posts-page)` / `.main:has(.resources-page)` / `.main:has(.stagemode-page)` 突破 PaperMod `.main` 768px max-width 约束（同 learn）
 - 社区帖子 fetch 加 15s AbortController 超时保护（防止网络故障永久挂起）
-- 暗色模式用 `[data-theme="dark"]` 覆盖 `--posts-*` / `--resources-*` 变量
+- 暗色模式用 `[data-theme="dark"]` 覆盖 `--posts-*` / `--resources-*` / `--stagemode-*` 变量
 - 资源页 `_index.md` 声明 `layout: resources` 触发自定义模板
+- SleepTown 关卡模式新增 `stageDetails` 数据对象（UI 展示用）与 `stageConfigs`（游戏逻辑用）分离
+- SleepTown `selectStage()` 动态渲染右主内容，`showStageMode()` 默认选中 1-1 关
 
 **Files Modified**:
 | 文件 | 变更 |
@@ -1134,6 +1161,8 @@ flowchart TD
 | `layouts/_default/posts.html` | 重写为 learn 风格布局；移除标题表情与搜索图标 |
 | `layouts/_default/resources.html` | 新建：learn 风格资源列表模板 |
 | `content/resources/_index.md` | 添加 `layout: resources` 声明 |
+| `layouts/_default/sleeptown.html` | 关卡模式改造为 learn 风格 sidebar 布局（SleepTown v2.2.2.0） |
+| `docs/SleepTown-项目文档.md` | SleepTown 文档同步至 v2.2.2.0 |
 | `PROJECT_CONTEXT.md` | 版本号 v5.4→v5.5、文件索引、技术决策表 |
 | `PROJECT_DOCUMENTATION.md` | 版本号、目录结构、更新日志、技术决策表 |
 

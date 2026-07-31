@@ -10,7 +10,6 @@
   <aside class="learn-sidebar" id="learn-sidebar">
     <div class="learn-sidebar-header">
       <a href="/learn/" class="learn-logo">
-        <span class="learn-logo-icon">📚</span>
         <span>学习路径</span>
       </a>
     </div>
@@ -20,38 +19,20 @@
       {{- if $cpa -}}
       <div class="learn-nav-group learn-nav-cert">
         <a href="{{ $cpa.Permalink }}" class="learn-nav-group-title {{ if eq .CurrentSection.RelPermalink "/learn/cpa/" }}current{{ end }}">
-          <span class="learn-nav-group-icon">📊</span>
           <span>CPA · 注册会计师</span>
         </a>
-        {{- /* 顶层普通页（01-overview, 08-comprehensive） */ -}}
+        {{- /* 顶层普通页 + 科目子节（扁平化，与 ACCA 一致） */ -}}
         {{- range $cpa.RegularPages.ByParam "weight" -}}
         <a href="{{ .Permalink }}" class="learn-nav-link {{ if eq $.Permalink .Permalink }}active{{ end }}">
           <span class="learn-nav-num">{{ printf "%02d" .Params.weight }}</span>
           <span class="learn-nav-text">{{ .Title }}</span>
         </a>
         {{- end -}}
-        {{- /* 科目子节（折叠式） */ -}}
         {{- range $cpa.Sections.ByParam "weight" -}}
-        {{- $isCurrentSubject := eq $.CurrentSection.RelPermalink .RelPermalink -}}
-        <details class="learn-nav-subject"{{ if $isCurrentSubject }} open{{ end }}>
-          <summary class="learn-nav-subject-title {{ if $isCurrentSubject }}current{{ end }}">
-            <span class="learn-nav-subject-icon">{{ .Params.icon | default "📖" }}</span>
-            <span class="learn-nav-subject-text">{{ .Title }}</span>
-            <span class="learn-nav-count">{{ len .Pages }}</span>
-          </summary>
-          <div class="learn-nav-chapters">
-            <a href="{{ .Permalink }}" class="learn-nav-link learn-nav-overview {{ if eq $.Permalink .Permalink }}active{{ end }}">
-              <span class="learn-nav-num">→</span>
-              <span class="learn-nav-text">科目概览</span>
-            </a>
-            {{- range .Pages.ByParam "weight" -}}
-            <a href="{{ .Permalink }}" class="learn-nav-link {{ if eq $.Permalink .Permalink }}active{{ end }}">
-              <span class="learn-nav-num">{{ printf "%02d" .Params.weight }}</span>
-              <span class="learn-nav-text">{{ .Title }}</span>
-            </a>
-            {{- end -}}
-          </div>
-        </details>
+        <a href="{{ .Permalink }}" class="learn-nav-link {{ if eq $.Permalink .Permalink }}active{{ end }}">
+          <span class="learn-nav-num">{{ printf "%02d" .Params.weight }}</span>
+          <span class="learn-nav-text">{{ .Title }}</span>
+        </a>
         {{- end -}}
       </div>
       {{- end -}}
@@ -61,7 +42,6 @@
       {{- if $acca -}}
       <div class="learn-nav-group learn-nav-cert">
         <a href="{{ $acca.Permalink }}" class="learn-nav-group-title {{ if eq .CurrentSection.RelPermalink "/learn/acca/" }}current{{ end }}">
-          <span class="learn-nav-group-icon">🌍</span>
           <span>ACCA · 特许公认会计师</span>
         </a>
         {{- range $acca.RegularPages.ByParam "weight" -}}
@@ -264,6 +244,7 @@
   gap: 0.6rem;
   padding: 0.55rem 0.7rem;
   font-size: 0.88rem;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   color: var(--learn-text-secondary);
   text-decoration: none;
   border-radius: 6px;
@@ -303,7 +284,8 @@
   align-items: center;
   gap: 0.45rem;
   padding: 0.5rem 0.7rem;
-  font-size: 0.86rem;
+  font-size: 0.88rem;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   font-weight: 600;
   color: var(--learn-text);
   cursor: pointer;
@@ -370,7 +352,7 @@
 }
 .learn-nav-chapters .learn-nav-link {
   padding-left: 0.9rem;
-  font-size: 0.83rem;
+  font-size: 0.86rem;
   font-weight: 400;
 }
 .learn-nav-chapters .learn-nav-link.active {
@@ -461,8 +443,13 @@
   gap: 0.4rem;
 }
 .learn-toc .toc > summary::before {
-  content: '📑';
-  font-size: 1rem;
+  content: '目录';
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--learn-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-right: 0.3rem;
 }
 .learn-toc .toc > summary::-webkit-details-marker { display: none; }
 .learn-toc .toc .inner {

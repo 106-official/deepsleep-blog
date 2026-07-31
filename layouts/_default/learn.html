@@ -30,7 +30,6 @@
           <summary class="learn-nav-subject-title {{ if $isCurrentSubject }}current{{ end }}">
             <span class="learn-nav-num">{{ printf "%02d" .Params.weight }}</span>
             <span class="learn-nav-subject-text">{{ .Title }}</span>
-            <span class="learn-nav-count">{{ len .Pages }}</span>
           </summary>
           <div class="learn-nav-chapters">
             <a href="{{ .Permalink }}" class="learn-nav-link learn-nav-overview {{ if eq $.Permalink .Permalink }}active{{ end }}">

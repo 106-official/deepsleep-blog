@@ -178,3 +178,106 @@
   }
 })();
 </script>
+
+<script>
+(function () {
+  // ============ KaTeX 数学公式渲染（动态按需加载）============
+  // 仅当页面存在含 LaTeX 公式的正文容器(.md-content)时才加载 KaTeX，
+  // 避免娱乐/首页等无关页面白白下载 ~300KB 脚本。
+  var targets = document.querySelectorAll('.md-content');
+  if (!targets.length) return;
+
+  var hasMath = false;
+  for (var i = 0; i < targets.length; i++) {
+    var t = targets[i].textContent;
+    if (/\$\$|\\\[|\\\(|\$[^$]/.test(t)) { hasMath = true; break; }
+  }
+  if (!hasMath) return;
+
+  // CDN 源（jsdelivr 主 + bootcdn 国内备用，失败自动切换）
+  var CDNS = [
+    {
+      css: 'https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css',
+      js: 'https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js',
+      render: 'https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js'
+    },
+    {
+      css: 'https://cdn.bootcdn.net/ajax/libs/KaTeX/0.16.11/katex.min.css',
+      js: 'https://cdn.bootcdn.net/ajax/libs/KaTeX/0.16.11/katex.min.js',
+      render: 'https://cdn.bootcdn.net/ajax/libs/KaTeX/0.16.11/contrib/auto-render.min.js'
+    }
+  ];
+
+  function loadScript(src, onload, onerror) {
+    var s = document.createElement('script');
+    s.src = src;
+    s.onload = onload;
+    s.onerror = onerror;
+    document.head.appendChild(s);
+  }
+
+  // 公式中的 % 在 LaTeX 里是注释符，会把 % 后的内容全部吞掉（如 4% 只显示 4）。
+  // 渲染前遍历文本节点，把 $...$/$$...$$ 片段内的 % 转义为 \%。
+  function escapePercentInMath(node) {
+    var text = node.nodeValue;
+    if (text.indexOf('%') === -1 && text.indexOf('$') === -1) return;
+    var out = '';
+    var i = 0, len = text.length;
+    while (i < len) {
+      if (text[i] === '$') {
+        if (text[i + 1] === '$') {
+          var end = text.indexOf('$$', i + 2);
+          if (end !== -1) {
+            out += '$$' + text.slice(i + 2, end).replace(/%/g, '\\%') + '$$';
+            i = end + 2;
+            continue;
+          }
+        } else {
+          var end2 = text.indexOf('$', i + 1);
+          if (end2 !== -1) {
+            out += '$' + text.slice(i + 1, end2).replace(/%/g, '\\%') + '$';
+            i = end2 + 1;
+            continue;
+          }
+        }
+      }
+      out += text[i];
+      i++;
+    }
+    if (out !== text) node.nodeValue = out;
+  }
+
+  function renderWithKaTeX() {
+    if (!window.renderMathInElement || !window.katex) return;
+    var opts = {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '\\[', right: '\\]', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false }
+      ],
+      throwOnError: false,
+      errorColor: '#cc0000',
+      strict: false
+    };
+    targets.forEach(function (el) {
+      // 先转义公式内的 %，再交给 auto-render 渲染
+      var walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+      var nodes = [];
+      while (walker.nextNode()) nodes.push(walker.currentNode);
+      nodes.forEach(escapePercentInMath);
+      renderMathInElement(el, opts);
+    });
+  }
+
+  function tryLoad(level) {
+    if (level >= CDNS.length) return;
+    var cdn = CDNS[level];
+    loadScript(cdn.js, function () {
+      loadScript(cdn.render, renderWithKaTeX, function () { tryLoad(level + 1); });
+    }, function () { tryLoad(level + 1); });
+  }
+
+  tryLoad(0);
+})();
+</script>

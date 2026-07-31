@@ -1,8 +1,8 @@
 # DeepSleep Blog - 项目技术文档
 
-> **最后更新**: 2026-07-31
-> **版本**: v5.9
-> **状态**: ✅ 生产就绪 | 评论系统正常运行 (Neon PostgreSQL) | 💬 社区系统已上线 | 👤 全局个人中心 | 📝 文章板块整合 (learn 风格 sidebar) | 🌗 主题切换圆形扩散动画 | 🐟 SleepTown 首页 sidebar 改造 | 🎮 交互式自我介绍 (/play/me/)
+> **最后更新**: 2026-08-01
+> **版本**: v5.10
+> **状态**: ✅ 生产就绪 | 评论系统正常运行 (Neon PostgreSQL) | 💬 社区系统已上线 | 👤 全局个人中心 | 📝 文章板块整合 (learn 风格 sidebar) | 🌗 主题切换圆形扩散动画 | 🐟 SleepTown 首页 sidebar 改造 | 🎮 交互式自我介绍 (/play/me/) | 🃏 CardArena 卡牌对战 (/play/cardarena/)
 
 ---
 
@@ -52,6 +52,7 @@
 - 🐟 **SleepTown 首页 sidebar 改造**（花哨彩色卡片 → learn 风格 sidebar + 简洁模式按钮 + 10 种鱼角色图鉴 + 规则 modal 弹窗）✅ v5.9 新增
 - ⚡ 零 CDN 依赖（Waline 前端资源完全本地化）
 - 🎮 **交互式自我介绍**（`/play/me/` 滚动叙事 + 数据可视化 + 打字机流式）✅ v5.9 新增
+- 🃏 **CardArena 卡牌对战**（`/play/cardarena/` 8 角色选 6 + 独立卡组 + 6 关键词 + 基础 AI，模块化 JS 架构 data/engine/ai/ui 四文件）✅ v5.10 新增
 
 ---
 
@@ -147,6 +148,7 @@
 | **字体大小调节** | **CSS 变量 --font-scale + rem 缩放** (v5.7) | **Aa 按钮弹窗 5 档 80%-120%，localStorage 持久化，body 用 1rem !important 覆盖 custom.css 的 16px** ⭐ |
 | **lixin sidebar 改造** | **双层 Tab → learn 风格 sidebar + LLM 对话主页化** (v5.8) | **悬浮弹窗 → 主内容区默认全屏 flex 视图，sidebar 含精简 Hero + 导航组（立信问答/校内 10 项/校外 2 项），视图切换不丢失对话状态** ⭐ 新增 |
 | **SleepTown 首页 sidebar 改造** | **花哨彩色卡片 → learn 风格 sidebar + 鱼图鉴** (v5.9) | **原 mode-cards 双卡片 + 表情过多 → sidebar 导航 + 3 个简洁垂直按钮 + 10 种鱼角色图鉴（按阵营分组）+ 规则 modal 弹窗** ⭐ 新增 |
+| **CardArena 模块化架构** | **data/engine/ai/ui 四文件拆分** (v5.10) | **纯前端回合制卡牌游戏，engine 为纯状态机不碰 DOM，ui 全权负责渲染与交互，ai 复用 engine `_internal` 只读接口，data 集中配置可自定义角色卡牌（区别于 SleepTown 单文件模板）** ⭐ 新增 |
 ### 🎨 Sidebar 设计模式（learn 风格，v5.5 统一）
 
 DeepSleep 博客的 5 个板块复用同一套 learn 风格 sidebar 设计模式，保证视觉与交互一致性：
@@ -215,6 +217,9 @@ blog-static/
 │   ├── search.md                    # 搜索页面 (layout: search)
 │   └── resources/                   # 资源分享板块 (layout: resources) v5.5
 │       └── _index.md                # 板块首页
+│   └── play/                        # 游戏板块
+│       ├── me.md                    # 交互式自我介绍页声明 (layout: me-game) v5.9
+│       └── cardarena.md             # CardArena 页声明 (layout: cardarena) v5.10 新增
 ├── layouts/
 │   ├── partials/
 │   │   ├── comments.html            # Waline 评论组件
@@ -226,15 +231,21 @@ blog-static/
 │       ├── resources.html           # ⭐ 资源列表模板 (learn 风格 sidebar) v5.5 新增
 │       ├── play.html                # 娱乐中心模板 (Playfair Display 标题 + 紧凑卡片) v5.6
 │       ├── me-game.html            # ⭐ 交互式自我介绍模板 (5 section + 打字机流式) v5.9 新增
+│       ├── cardarena.html          # ⭐ CardArena 游戏模板 (固定加载顺序 data→engine→ai→ui) v5.10 新增
 │       └── sleeptown.html          # ⭐ SleepTown 游戏模板 (含关卡模式 sidebar) v2.2.2.0
 ├── static/
 │   ├── css/
 │   │   ├── custom.css               # 自定义样式
 │   │   ├── waline.css               # Waline 样式 (22KB)
-│   │   └── community.css            # 社区样式 (含夜间模式 + 个人按钮)
+│   │   ├── community.css            # 社区样式 (含夜间模式 + 个人按钮)
+│   │   └── cardarena.css            # CardArena 样式 (极简几何风, --cardarena-* 在 :root) v5.10 新增
 │   ├── js/
 │   │   ├── waline.umd.min.js        # Waline JS (256KB, 必须完整)
-│   │   └── community.js             # ⭐ 社区交互逻辑 + 全局个人中心函数 v5.2 更新
+│   │   ├── community.js             # ⭐ 社区交互逻辑 + 全局个人中心函数 v5.2 更新
+│   │   ├── cardarena-data.js       # CardArena 数据层 (GAME_CONFIG/ROLE_POOL/CARDS) v5.10 新增
+│   │   ├── cardarena-engine.js     # CardArena 引擎 (纯状态机, window.CardArena API) v5.10 新增
+│   │   ├── cardarena-ai.js         # CardArena AI (贪心三阶段: 出牌/攻击/换人) v5.10 新增
+│   │   └── cardarena-ui.js         # CardArena UI (DOM 渲染 + 事件委托 + 选目标高亮) v5.10 新增
 │   └── CNAME                        # 自定义域名
 ├── themes/PaperMod/                 # 主题 (Git 子模块)
 ├── hugo.toml                        # Hugo 主配置 (已移除论坛菜单)
@@ -1311,6 +1322,59 @@ Hugo 的 partial 查找是精确匹配文件名，找不到 `extend_head.html` �
 
 ## 📝 更新日志
 
+### v5.10 (2026-08-01) - CardArena 多角色轮换卡牌对战
+
+**新增功能**:
+- ✅ **CardArena 卡牌对战** (`/play/cardarena/`)：双方各选 6 个角色轮流出战（玩家从 8 角色池选 6，AI 随机 6），一方 6 角色全灭判负
+- ✅ 每角色独立专属卡组（6 张，含 1-2 张专属特殊卡）+ 独立法力（上限 5，首回合 3，回合结束回复 2，主动换人回满）
+- ✅ 随从战场（上限 4）+ 6 关键词（嘲讽/冲锋/亡语/圣盾/剧毒/风怒）
+- ✅ 主动换人消耗整个回合；被动换人（角色阵亡）后当回合可继续行动
+- ✅ 手牌上限 5，起手 3 张每回合抽 1
+- ✅ 基础贪心 AI（出牌 → 攻击 → 换人三阶段）
+- ✅ 娱乐中心入口：`/play/` 新增 CardArena 游戏卡片
+
+**架构（模块化，区别于 SleepTown 单文件模板）**:
+| 文件 | 职责 |
+|------|------|
+| `static/js/cardarena-data.js` | 数据驱动层（GAME_CONFIG/ROLE_POOL/CARDS），用户可自行修改 |
+| `static/js/cardarena-engine.js` | 纯状态机引擎（回合/出牌/战斗/关键词/换人/胜负），不碰 DOM |
+| `static/js/cardarena-ai.js` | AI 三阶段贪心决策 |
+| `static/js/cardarena-ui.js` | DOM 渲染与交互（事件委托 + 选目标高亮） |
+| `static/css/cardarena.css` | 极简几何风样式，`--cardarena-*` 定义在 `:root` |
+| `layouts/_default/cardarena.html` | 页面模板（固定加载顺序 data→engine→ai→ui） |
+| `content/play/cardarena.md` | 内容声明（front matter 声明 layout: cardarena） |
+
+**数据流**: ui 点击 → engine API（playCard/selectAttacker/chooseTarget/swapRole/endTurn）→ engine 更新状态 → emit update/log/phase/gameover 事件 → ui 重渲染
+
+**关键设计**:
+- 视觉硬约束：无 emoji、无粗体、无卡片式按钮、冷色系几何风
+- `.main:has(.cardarena-page)` 突破 PaperMod 768px 约束
+- 法术/被动/亡语统一 effect.kind 枚举（damage/heal/draw/buff/summon/board_clear）
+- 随从带 `side` 引用，死亡结算/亡语按所属方触发
+- AI 直接操作 side 状态对象，复用 engine `_internal` 接口
+
+**已知 Bug 修复记录**:
+- ✅ 出牌双重触发：手牌独立监听与事件委托重复绑定 → 统一改为事件委托处理（`data-hand-index`）
+- ✅ 玩家候场条缺失：`renderAll` 遗漏 `buildRosterBar(player)` → 补齐玩家角色条渲染
+
+**Files Modified**:
+| 文件 | 变更 |
+|------|------|
+| `static/js/cardarena-data.js` | 新增：数据层 |
+| `static/js/cardarena-engine.js` | 新增：引擎 |
+| `static/js/cardarena-ai.js` | 新增：AI |
+| `static/js/cardarena-ui.js` | 新增：UI |
+| `static/css/cardarena.css` | 新增：样式 |
+| `layouts/_default/cardarena.html` | 新增：页面模板 |
+| `content/play/cardarena.md` | 新增：内容声明 |
+| `layouts/_default/play.html` | 修改：games-grid 新增入口卡片 |
+| `PROJECT_CONTEXT.md` | 版本号 v5.9→v5.10、功能清单、文件索引、版本演进表 |
+| `PROJECT_DOCUMENTATION.md` | 版本号、功能特性、目录结构、技术决策表、更新日志 v5.10 条目 |
+
+**设计文档**：`docs/superpowers/specs/2026-08-01-cardarena-design.md`
+
+---
+
 ### v5.9 (2026-07-31) - 交互式自我介绍页面
 
 **新增功能**:
@@ -1743,4 +1807,4 @@ Hugo 的 partial 查找是精确匹配文件名，找不到 `extend_head.html` �
 
 ---
 
-*文档结束 | 最后更新: 2026-07-31 | 版本: v5.7 | 状态: ✅ 生产就绪*
+*文档结束 | 最后更新: 2026-08-01 | 版本: v5.10 | 状态: ✅ 生产就绪*

@@ -1,0 +1,38 @@
+{{ define "main" }}
+<div class="cardarena-page">
+  <header class="ca-page-header">
+    <h1>CardArena</h1>
+    <p class="ca-page-sub">多角色轮换卡牌对战 · 选择 6 名角色出战，击败对方全部角色</p>
+  </header>
+  <div id="cardarena-app"></div>
+</div>
+<link rel="stylesheet" href="/css/cardarena.css">
+<script src="/js/cardarena-data.js"></script>
+<script src="/js/cardarena-engine.js"></script>
+<script src="/js/cardarena-ai.js"></script>
+<script src="/js/cardarena-ui.js"></script>
+<style>
+  .main:has(.cardarena-page) {
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  .ca-page-header {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 16px 16px 0;
+  }
+  .ca-page-header h1 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-weight: 500;
+    font-size: 1.8rem;
+    margin: 0 0 4px;
+    color: var(--cardarena-primary, #2c5282);
+  }
+  .ca-page-sub {
+    margin: 0;
+    color: var(--cardarena-muted, #718096);
+    font-size: 0.9rem;
+  }
+</style>
+{{ end }}

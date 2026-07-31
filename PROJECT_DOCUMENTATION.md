@@ -1358,6 +1358,8 @@ Hugo 的 partial 查找是精确匹配文件名，找不到 `extend_head.html` �
 - ✅ 玩家候场条缺失：`renderAll` 遗漏 `buildRosterBar(player)` → 补齐玩家角色条渲染
 - ✅ 无法攻击敌方角色：UI 传入的 `{kind:'hero', side:'enemy'}`（side 为字符串）与 `{kind:'minion', uid}`（缺 side）未被 combat 解析为真实 side 对象，`dealDamage` 访问 `target.side.roster` 抛 TypeError → 新增 `resolveSide()` 统一解析字符串/缺失 side，并在 combat 中为英雄攻击者补 side 引用（已浏览器实测：敌方英雄高亮 → 点击 → 血量 20→18，无报错）
 - ✅ 随从不反击/毒杀失效：`summonMinion` 创建的随从对象缺少 `kind: 'minion'` 标记，combat 反击/毒杀分支依赖 kind 判断而静默跳过 → 随从对象补充 `kind: 'minion'`
+- ✅ 己方治疗/增益卡不生效：`getValidTargets` 在 pendingSpell 时一律用 `state.enemy` 查找目标，`ally_*` 目标列表为空且 UI 硬编码高亮敌方 → 引擎按 `eff.target` 前缀（enemy_*/ally_*）选择目标方，UI 按目标 `side` 高亮对应方、点击时用元素 `data-side` 构造目标（浏览器实测：治疗术高亮己方英雄、点击后血量 10→13）
+- ✅ 胜利/失败结算不弹出（卡死）：击杀敌方最后一人时 `emit('gameover')` 已渲染结算 overlay，随后 `combat` 尾部 `emit('update')` 触发 `renderAll` 清空 `app.innerHTML` 把 overlay 抹掉 → `renderAll` 开头对 `phase === 'gameover'` 直接 return，保留结算界面（浏览器实测：6 连斩后"胜利"弹窗稳定保留）
 
 **Files Modified**:
 | 文件 | 变更 |

@@ -104,6 +104,8 @@
   function renderAll() {
     var s = window.CardArena.getState();
     if (!s) return;
+    // 对局已结束：结算弹窗已由 showGameOver 渲染，跳过重建以免清掉 overlay
+    if (s.phase === 'gameover') return;
     app.innerHTML = '';
     var layout = el('div', 'ca-layout');
     layout.appendChild(buildRosterBar(s.enemy, 'enemy'));
@@ -265,14 +267,15 @@
     var valid = window.CardArena.getValidTargets();
     if (valid.length === 0) return;
     app.classList.add('ca-targeting');
-    // 高亮合法目标（敌方区）
+    // 高亮合法目标（按目标所属方：治疗/增益高亮己方，伤害/攻击高亮敌方）
     valid.forEach(function (t) {
+      var sideStr = t.side || 'enemy';
       if (t.kind === 'hero') {
-        var heroEl = app.querySelector('.ca-hero-enemy');
+        var heroEl = app.querySelector('.ca-hero-' + sideStr);
         if (heroEl) heroEl.classList.add('targetable');
       } else {
         var cell = app.querySelector('.ca-minion[data-uid="' + t.uid + '"]');
-        if (cell && cell.dataset.side === 'enemy') cell.classList.add('targetable');
+        if (cell && cell.dataset.side === sideStr) cell.classList.add('targetable');
       }
     });
   }
@@ -286,11 +289,13 @@
       if (app.classList.contains('ca-targeting')) {
         app.classList.remove('ca-targeting');
         if (node && node.classList.contains('targetable')) {
+          // 按被点击元素的 data-side 判断目标所属方（治疗选己方 / 攻击选敌方）
+          var sideStr = node.dataset.side || 'enemy';
           var target = null;
           if (node.dataset.uid) {
-            target = { kind: 'minion', uid: node.dataset.uid };
+            target = { kind: 'minion', side: sideStr, uid: node.dataset.uid };
           } else {
-            target = { kind: 'hero', side: 'enemy' };
+            target = { kind: 'hero', side: sideStr };
           }
           window.CardArena.chooseTarget(target);
         } else {

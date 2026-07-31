@@ -441,15 +441,17 @@
     getValidTargets: function () {
       if (state.pendingSpell) {
         var eff = state.pendingSpell.effect;
-        var enemy = state.enemy;
-        var targets = findTarget(enemy, eff.target);
+        // ally_* 目标为己方，enemy_* 目标为敌方（治疗/增益卡选己方，伤害卡选敌方）
+        var targetSide = eff.target.indexOf('enemy') === 0 ? state.enemy : state.player;
+        var sideStr = targetSide === state.player ? 'player' : 'enemy';
+        var targets = findTarget(targetSide, eff.target);
         return targets.map(function (t) {
-          return t.kind === 'hero' ? { kind: 'hero', side: 'enemy' } : { kind: 'minion', uid: t.uid };
+          return t.kind === 'hero' ? { kind: 'hero', side: sideStr } : { kind: 'minion', side: sideStr, uid: t.uid };
         });
       }
       if (state.pendingAttack) {
         return validAttackTargets(state.player).map(function (t) {
-          return t.kind === 'hero' ? { kind: 'hero', side: 'enemy' } : { kind: 'minion', uid: t.uid };
+          return t.kind === 'hero' ? { kind: 'hero', side: 'enemy' } : { kind: 'minion', side: 'enemy', uid: t.uid };
         });
       }
       return [];

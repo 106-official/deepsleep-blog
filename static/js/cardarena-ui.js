@@ -147,7 +147,11 @@
     var role = side.roster[side.activeIndex];
     var hero = el('div', 'ca-hero ca-hero-' + sideName);
     hero.dataset.side = sideName;
-    if (sideName === 'player') hero.classList.add('attacker-selectable');
+    if (sideName === 'player') {
+      hero.classList.add('attacker-selectable');
+      // 本回合已攻击或攻击力为 0 时置为不可攻击态（对齐随从的 disabled 表现）
+      if (side.roleAttacked || role.attack === 0) hero.classList.add('disabled');
+    }
     var name = el('div', 'ca-hero-name', role.name);
     var stats = el('div', 'ca-hero-stats', role.health + ' / ' + role.maxHealth + ' 生命 · ' + role.attack + ' 攻击');
     var mana = el('div', 'ca-hero-mana', sideName === 'player' ? '法力 ' + side.mana + ' / ' + side.maxMana : '');

@@ -249,12 +249,18 @@
   font-size: 0.7rem;
   color: var(--cardarena-muted);
 }
-.ca-minion.disabled {
+.ca-minion.disabled,
+.ca-hero.disabled {
   opacity: 0.55;
+}
+.ca-minion.disabled:hover,
+.ca-hero.disabled:hover {
+  outline: none;
+  cursor: default;
 }
 
 /* ===== 可攻击/可选中状态 ===== */
-.attacker-selectable {
+.attacker-selectable:not(.disabled) {
   cursor: crosshair;
 }
 .attacker-selectable:hover {

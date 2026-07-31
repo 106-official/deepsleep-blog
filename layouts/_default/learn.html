@@ -21,18 +21,35 @@
         <a href="{{ $cpa.Permalink }}" class="learn-nav-group-title {{ if eq .CurrentSection.RelPermalink "/learn/cpa/" }}current{{ end }}">
           <span>CPA · 注册会计师</span>
         </a>
-        {{- /* 顶层普通页 + 科目子节（扁平化，与 ACCA 一致） */ -}}
-        {{- range $cpa.RegularPages.ByParam "weight" -}}
+        {{- /* 顶层普通页 + 科目子节合并，按 weight 统一排序 */ -}}
+        {{- $cpaAll := union $cpa.RegularPages $cpa.Sections -}}
+        {{- range $cpaAll.ByParam "weight" -}}
+        {{- if .IsSection -}}
+        {{- $isCurrentSubject := eq $.CurrentSection.RelPermalink .RelPermalink -}}
+        <details class="learn-nav-subject"{{ if $isCurrentSubject }} open{{ end }}>
+          <summary class="learn-nav-subject-title {{ if $isCurrentSubject }}current{{ end }}">
+            <span class="learn-nav-num">{{ printf "%02d" .Params.weight }}</span>
+            <span class="learn-nav-subject-text">{{ .Title }}</span>
+            <span class="learn-nav-count">{{ len .Pages }}</span>
+          </summary>
+          <div class="learn-nav-chapters">
+            <a href="{{ .Permalink }}" class="learn-nav-link learn-nav-overview {{ if eq $.Permalink .Permalink }}active{{ end }}">
+              <span class="learn-nav-text">科目概览</span>
+            </a>
+            {{- range .Pages.ByParam "weight" -}}
+            <a href="{{ .Permalink }}" class="learn-nav-link {{ if eq $.Permalink .Permalink }}active{{ end }}">
+              <span class="learn-nav-num">{{ printf "%02d" .Params.weight }}</span>
+              <span class="learn-nav-text">{{ .Title }}</span>
+            </a>
+            {{- end -}}
+          </div>
+        </details>
+        {{- else -}}
         <a href="{{ .Permalink }}" class="learn-nav-link {{ if eq $.Permalink .Permalink }}active{{ end }}">
           <span class="learn-nav-num">{{ printf "%02d" .Params.weight }}</span>
           <span class="learn-nav-text">{{ .Title }}</span>
         </a>
         {{- end -}}
-        {{- range $cpa.Sections.ByParam "weight" -}}
-        <a href="{{ .Permalink }}" class="learn-nav-link {{ if eq $.Permalink .Permalink }}active{{ end }}">
-          <span class="learn-nav-num">{{ printf "%02d" .Params.weight }}</span>
-          <span class="learn-nav-text">{{ .Title }}</span>
-        </a>
         {{- end -}}
       </div>
       {{- end -}}
@@ -286,8 +303,8 @@
   padding: 0.5rem 0.7rem;
   font-size: 0.88rem;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  font-weight: 600;
-  color: var(--learn-text);
+  font-weight: 400;
+  color: var(--learn-text-secondary);
   cursor: pointer;
   list-style: none;
   user-select: none;

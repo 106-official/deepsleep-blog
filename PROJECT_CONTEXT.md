@@ -1,7 +1,7 @@
 # DeepSleep Blog 项目上下文 - 快速上手指南
 
 > **生成时间**: 2026-07-30
-> **当前版本**: v5.10
+> **当前版本**: v5.9
 > **最后更新**: 2026-07-31
 
 ---
@@ -44,7 +44,7 @@
 
 ---
 
-## 🎯 当前核心功能清单 (v5.10)
+## 🎯 当前核心功能清单 (v5.9)
 
 ### 已实现功能
 
@@ -57,7 +57,7 @@
 - [x] 资源分享板块 (/resources/) — learn 风格 sidebar ⭐ v5.5
 - [x] 关于我 (/me/)
 - [x] 关于页面 (/about/)
-- [x] 交互式自我介绍 (/play/me/) — 滚动叙事 + 数据可视化 + 打字机流式 ⭐ v5.10
+- [x] 交互式自我介绍 (/play/me/) — 滚动叙事 + 数据可视化 + 打字机流式 ⭐ v5.9
 
 #### 💬 交互功能
 - [x] Waline 评论系统 (Neon PostgreSQL)
@@ -130,7 +130,7 @@ blog-static/
 │       ├── posts.html                # ⭐ 文章列表模板 (learn 风格 sidebar) v5.5
 │       ├── resources.html            # ⭐ 资源列表模板 (learn 风格 sidebar) v5.5 新增
 │       ├── play.html                  # 娱乐中心模板 (Playfair Display 标题 + 紧凑卡片) v5.6
-│       ├── me-game.html            # ⭐ 交互式自我介绍模板 (5 section + 打字机流式) v5.10 新增
+│       ├── me-game.html            # ⭐ 交互式自我介绍模板 (5 section + 打字机流式) v5.9 新增
 │       ├── sleeptown.html            # ⭐ SleepTown 游戏模板 (含关卡模式 sidebar) v2.2.2.0
 │       └── profile.html              # ⭐ 个人资料页面模板 (独立页面) v5.2.1 新增
 └── static/
@@ -294,7 +294,7 @@ git config --global https.proxy http://127.0.0.1:65532
 | **v5.7** | 2026-07-31 | 字体大小调节功能（Aa 按钮 + 5 档弹窗 + localStorage 持久化，CSS 变量 --font-scale 控制 rem 缩放） |
 | **v5.8** | 2026-07-31 | lixin 页面 sidebar 改造（双层 Tab → learn 风格 sidebar）+ LLM 对话主页化（悬浮弹窗 → 主内容区默认全屏视图）+ 对话视图去边框融入主界面 + 发送按钮改圆形↑箭头（灰→白状态切换）+ 修复 extend_head.html 文件名拼写错误（v5.2 起累积 head CSS 全部失效）+ footer 全宽+主题感知背景修复（覆盖 PaperMod 768px 限制消除两侧留白，白天模式黑底→浅色渐变，链接颜色随主题切换）+ 个人按钮并入导航菜单（删除 JS 注入，改 hugo.toml 原生 menu weight=60 置右）+ 修复暗色模式导航栏白色（custom.css body 硬编码白色渐变无暗色覆盖，extend_head.html 新增 [data-theme="dark"] body 覆盖）+ 修复移动端 sidebar 汉堡按钮挡住 logo（body:has(...) .header-nav padding-left:60px 让位） |
 | **v5.9** | 2026-07-31 | SleepTown 首页 sidebar 改造（花哨彩色 mode-cards → learn 风格 sidebar + 简洁垂直模式按钮 + 10 种鱼角色图鉴按阵营分组 + 游戏规则移到 modal 弹窗）+ 删除原 305 行花哨 CSS（.mode-cards/.mode-card/.freemode-btn/.stagemode-btn/.quick-start-section/.rules-preview/.role-card-setup/.toggle-rules-btn 等）+ 关卡模式界面优化（同日追加，不升版本）：删 sidebar 关卡名表情/分组图标、⭐ 难度星改文字、关卡卡片去 🎯/🎮、橙金按钮 #f39c12 → 深海蓝 #2c5282 |
-| **v5.10** | 2026-07-31 | 交互式自我介绍 (/play/me/) — 滚动叙事 + 数据可视化 + 前端打字机模拟 SSE 流式（5 section：Hero/时间轴/技能/作品/联系），纯占位框架，复用金色设计语言 |
+| **v5.9** | 2026-07-31 | 交互式自我介绍 (/play/me/) — 滚动叙事 + 数据可视化 + 前端打字机模拟 SSE 流式（5 section：Hero/时间轴/技能/作品/联系），纯占位框架，复用金色设计语言 |
 
 ---
 
@@ -387,7 +387,7 @@ A: 系统会自动清除无效的 Token 和用户数据，并显示"⚠️ 账�
 | 个人资料页 | 独立页面 (v5.2.1) | 完整信息展示 + 图片上传 + 更好的错误处理 ⭐ 新增 |
 | 图片上传方式 | Base64 编码存储 | 无需额外文件存储服务，简化架构 ⭐ 新增 |
 | 错误处理策略 | 多层防御机制 | API层拦截 + 页面层友好提示 + 自动清理脏数据 ⭐ 新增 |
-| **交互式自我介绍** | **方案 A 轻量交互式简历 + 前端打字机模拟 SSE（v5.10）** | **复用项目金色设计语言、零第三方依赖、IntersectionObserver 滚动动画、预写文本逐字显示模拟流式、纯占位框架后续可升级** ⭐ 新增 |
+| **交互式自我介绍** | **方案 A 轻量交互式简历 + 前端打字机模拟 SSE（v5.9）** | **复用项目金色设计语言、零第三方依赖、IntersectionObserver 滚动动画、预写文本逐字显示模拟流式、纯占位框架后续可升级** ⭐ 新增 |
 
 ---
 

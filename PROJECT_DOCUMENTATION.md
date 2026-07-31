@@ -1,7 +1,7 @@
 # DeepSleep Blog - 项目技术文档
 
 > **最后更新**: 2026-07-31
-> **版本**: v5.10
+> **版本**: v5.9
 > **状态**: ✅ 生产就绪 | 评论系统正常运行 (Neon PostgreSQL) | 💬 社区系统已上线 | 👤 全局个人中心 | 📝 文章板块整合 (learn 风格 sidebar) | 🌗 主题切换圆形扩散动画 | 🐟 SleepTown 首页 sidebar 改造 | 🎮 交互式自我介绍 (/play/me/)
 
 ---
@@ -51,7 +51,7 @@
 - 🏫 **lixin sidebar 改造 + LLM 对话主页化**（双层 Tab → learn 风格 sidebar，悬浮弹窗 → 主内容区默认全屏对话视图）✅ v5.8 新增
 - 🐟 **SleepTown 首页 sidebar 改造**（花哨彩色卡片 → learn 风格 sidebar + 简洁模式按钮 + 10 种鱼角色图鉴 + 规则 modal 弹窗）✅ v5.9 新增
 - ⚡ 零 CDN 依赖（Waline 前端资源完全本地化）
-- 🎮 **交互式自我介绍**（`/play/me/` 滚动叙事 + 数据可视化 + 打字机流式）✅ v5.10 新增
+- 🎮 **交互式自我介绍**（`/play/me/` 滚动叙事 + 数据可视化 + 打字机流式）✅ v5.9 新增
 
 ---
 
@@ -225,7 +225,7 @@ blog-static/
 │       ├── posts.html              # ⭐ 文章列表模板 (learn 风格 sidebar) v5.5 改造
 │       ├── resources.html           # ⭐ 资源列表模板 (learn 风格 sidebar) v5.5 新增
 │       ├── play.html                # 娱乐中心模板 (Playfair Display 标题 + 紧凑卡片) v5.6
-│       ├── me-game.html            # ⭐ 交互式自我介绍模板 (5 section + 打字机流式) v5.10 新增
+│       ├── me-game.html            # ⭐ 交互式自我介绍模板 (5 section + 打字机流式) v5.9 新增
 │       └── sleeptown.html          # ⭐ SleepTown 游戏模板 (含关卡模式 sidebar) v2.2.2.0
 ├── static/
 │   ├── css/
@@ -1311,7 +1311,7 @@ Hugo 的 partial 查找是精确匹配文件名，找不到 `extend_head.html` �
 
 ## 📝 更新日志
 
-### v5.10 (2026-07-31) - 交互式自我介绍页面
+### v5.9 (2026-07-31) - 交互式自我介绍页面
 
 **新增功能**:
 - ✅ **交互式自我介绍** (`/play/me/`)：滚动叙事 + 数据可视化，5 个 section
@@ -1340,77 +1340,14 @@ Hugo 的 partial 查找是精确匹配文件名，找不到 `extend_head.html` �
 | `content/play/me.md` | 新增：front matter 声明 layout: me-game |
 | `layouts/_default/me-game.html` | 新增：自包含模板（5 section HTML + CSS + JS） |
 | `layouts/_default/play.html` | 修改：.games-grid 新增「关于我」卡片 |
-| `PROJECT_CONTEXT.md` | 版本号 v5.9→v5.10、功能清单、版本演进表、技术决策表 |
-| `PROJECT_DOCUMENTATION.md` | 版本号、功能特性、目录结构、更新日志 v5.10 条目 |
+| `PROJECT_CONTEXT.md` | 版本号 v5.8→v5.9、功能清单、版本演进表、技术决策表 |
+| `PROJECT_DOCUMENTATION.md` | 版本号、功能特性、目录结构、更新日志 v5.9 条目 |
 
 **设计文档**：`docs/superpowers/specs/2026-07-31-play-me-interactive-intro-design.md`
 
 **双入口并存**：旧 `/me/`（content/me.md）保留不动，菜单「我」仍指 `/me/`；`/play/me/` 仅从娱乐中心进入。
 
 ---
-
-### v5.8 (2026-07-31) - lixin 页面 sidebar 改造 + LLM 对话主页化
-
-**改造背景**:
-- lixin 是 v5.5 sidebar 统一后唯一还用双层 Tab 布局的板块
-- LLM 对话原为悬浮按钮+弹窗，用户希望变成主页界面直接对话
-
-**改造内容**:
-- ✅ **双层 Tab → learn 风格 sidebar**：校内/校外 Tab 改成 sidebar 导航组（校内 10 项 + 校外 2 项）
-- ✅ **Hero 区精简后移到 sidebar 顶部**：黑底+金光+校名+分割线+校训（删除英文名节省 300px 宽度）
-- ✅ **LLM 对话主页化**：悬浮弹窗 → 主内容区默认全屏 flex 视图
-  - `.lx-view-chat.active` 用 `display:flex; flex-direction:column; height:calc(100vh - 3rem)`
-  - messages `flex:1; min-height:0; overflow-y:auto` 实现内部滚动
-  - header/suggest/input 固定，input 固定底部
-- ✅ **双视图切换**：sidebar 有"💬 立信问答"导航项（默认 active）；点击避雷指南项切换到内容视图
-- ✅ **视图切换不丢失对话状态**：两个视图始终在 DOM 中，仅靠 `.active` 切 `display`；messages 不重建，历史消息完整保留
-- ✅ **使用说明保留**：放在内容视图底部（避雷指南内容下方）
-- ✅ **移动端抽屉**：≤1024px 汉堡按钮 + 遮罩 + ESC 关闭 + 选中后自动关闭
-
-**视觉微调（同日追加 - 对话视图去边框 + 圆形↑箭头按钮）**:
-- ✅ **删除对话视图边框**：`.lx-view-chat.active` 移除 `border`/`box-shadow`/`border-radius`/`overflow:hidden`，背景改 `transparent`，让 LLM 对话区直接融入 lixin 主界面（不再是一个独立卡片）
-- ✅ **header/suggest/messages/input-row 全部去独立背景**：背景统一 `transparent`，仅靠分隔线 `border-bottom/border-top` 划分区块，视觉上与主界面融为一体
-- ✅ **发送按钮改为圆形 ↑ 箭头**：
-  - HTML：文字"发送"改为 SVG ↑ 箭头图标（`<svg class="lx-send-icon">`）
-  - 形状：`width:38px; height:38px; border-radius:50%`（圆形单图标按钮）
-  - **默认（disabled / 空输入）**：`background: var(--lx-text-muted)` 灰色 + `color: rgba(255,255,255,0.7)` 灰白色箭头 + `opacity:0.55`
-  - **可发送状态（`:not(:disabled)`）**：`background:#ffffff` 白色 + `color: var(--lx-text)` 深色箭头 + 轻阴影；暗色模式下背景 `#e8e8e8`、箭头 `#1a1a1a`
-  - hover 时 `transform: translateY(-1px)` 微浮起反馈
-- ✅ **JS 同步按钮可用状态**：新增 `updateSendBtn()` 函数，发送中→disabled；否则依 input 内容 trim 后是否非空决定；初始按钮 `disabled` 属性 + input 监听器调用 `updateSendBtn()`，发送完成（`.finally`）也调用 `updateSendBtn()` 避免空 input 时按钮变白
-
-**视觉微调（同日追加 2 - 对齐修复 + 隐藏 footer）**:
-- ✅ **发送按钮与输入框对齐**：`.lx-chat-input-row` 改 `align-items: center`（原 flex-end 导致按钮偏下）；输入框 padding 从 `0.6rem` 调到 `0.5rem` + 显式 `line-height: 1.4`，使单行高度 ≈ 38px 与按钮高度精确匹配
-- ✅ **隐藏 lixin 页面 footer 黑块**：`content/lixin/index.md` front matter 新增 `hideFooter: true`，利用 PaperMod 原生参数隐藏 `<footer class="footer">`（© 2026 DeepSleep Blog · Powered by Hugo & PaperMod）。`extend_footer.html`（全局 JS）在 `hideFooter` 判断块外，故 LLM/主题切换/字体调节等 JS 不受影响
-
-**视觉微调（同日追加 3 - 个人按钮并入导航菜单）**:
-- ✅ **删除独立"👤 个人"按钮**：原 `extend_footer.html` 的 `initGlobalProfile()` JS 动态注入 `.global-profile-btn` 到 `#menu` 之后的方案废弃（v5.2 临时方案）；同时清理 `extend_head.html` 中对应的 `.global-profile-btn` CSS（约 23 行）
-- ✅ **"个人"作为原生 menu 项**：`hugo.toml` 新增 `[[menu.main]] identifier="profile" name="个人" url="/profile/" weight=60`，放在最末位（娱乐 50 之后）
-- ✅ **导航菜单最终顺序**：文章(10) → 资源(20) → 学习(25) → 我(30) → 社区(40) → 娱乐(50) → **个人(60)**
-- ✅ **去掉表情**：原按钮 `innerHTML = '👤 个人'`，原生 menu 项 `name = "个人"` 无表情
-- **收益**：减少一次 JS DOM 注入；导航项样式由 PaperMod 原生 `.nav` 统一管理（active 高亮、移动端折叠等自动生效）；与其他 menu 项视觉一致
-
-**视觉微调（同日追加 4 - 个人菜单置右 + 暗色模式导航白色修复）**:
-- ✅ **个人菜单挪到最右**：`hugo.toml` profile `weight` 32 → 60，放在娱乐(50) 之后成为最后一个菜单项
-- ✅ **修复暗色模式导航栏白色问题**：根因是 `static/css/custom.css:40` 硬编码 `body { background: linear-gradient(135deg, #fafafa 0%, #f0f0f0 100%); }` 白色渐变背景 + `color: var(--color-text-primary)` (#2d2d2d 深色文字)，且**没有任何 `[data-theme="dark"]` 覆盖**
-  - **首页（`<body class="list">`）**：PaperMod 的 `.list { background: var(--theme); }` 优先级 (0,1,0) > `body` (0,0,1)，能正常覆盖白色渐变 ✓
-  - **普通页面（`<body id="top">` 无 .list，如 /lixin/、/me/）**：PaperMod `.list` 选择器不匹配，custom.css 白色渐变**在暗色模式下仍然生效** → 整页（含导航栏区域）背景白色 + 文字深色 ✗
-  - **修复**：`extend_head.html` 新增 `[data-theme="dark"] body { background: var(--theme) !important; color: var(--primary) !important; }`，选择器优先级 (0,1,1) > `body` (0,0,1)，覆盖 custom.css 硬编码值；复用 PaperMod 的 `--theme`（暗色 rgb(29,30,32)）和 `--primary`（暗色 rgb(218,218,219)）变量自动切换
-  - **验证**：浏览器实测 lixin 页面暗色模式下 body 背景 = rgb(29,30,32) 深色 ✓，菜单文字 = rgb(218,218,219) 浅色 ✓
-
-**视觉微调（同日追加 5 - 移动端 sidebar 汉堡按钮让位）**:
-- ✅ **问题**：移动端（≤1024px）5 个 sidebar 页面（lixin/learn/posts/resources/sleeptown）的汉堡按钮 `position: fixed; top:14px; left:14px; z-index:200; width:42px` 挡住了 PaperMod 顶部 logo（"DeepSleep Blog"），导致首页按钮被遮挡无法点击
-- ✅ **根因**：所有 sidebar 模板的汉堡按钮都用 fixed 定位在左上角（占左侧 14+42=56px），而 PaperMod 的 `.header-nav > .logo` 也在左上角（padding-left:24px），两者坐标重叠
-- ✅ **修复**：`extend_head.html` 新增全局 CSS，移动端时用 `:has()` 选择器匹配有汉堡按钮的页面，给 `.header-nav` 加 `padding-left: 60px` 让 logo 往右移避开汉堡按钮区域
-  ```css
-  @media (max-width: 1024px) {
-    body:has(.lx-menu-toggle, .learn-menu-toggle, .posts-menu-toggle, .resources-menu-toggle, .stagemode-menu-toggle) .header-nav {
-      padding-left: 60px;
-    }
-  }
-  ```
-  - `:has()` 选择器兼容性（2026 年）：Chrome 105+、Safari 15.4+、Firefox 121+ 广泛支持
-  - 只在有汉堡按钮的 sidebar 页面生效，首页/社区/娱乐等无 sidebar 页面不受影响
-- ✅ **验证**：浏览器实测移动端 lixin 页面 logo.left=60 ≥ menuToggle.right=54，无重叠 ✓；首页 paddingLeft=14px（默认值）不受影响 ✓
 
 ### v5.9 (2026-07-31) - SleepTown 首页 sidebar 改造 + 鱼图鉴
 **改造动机**：原 SleepTown 首页 mode-cards 双卡片设计"花销过多"（彩色渐变卡片 + 大量表情图标 + 4 项 features 列表 + 独立快速开始区 + 折叠规则区含 10 种鱼角色介绍），视觉与博客其他 sidebar 板块（learn/posts/resources）不一致。
@@ -1571,6 +1508,69 @@ Hugo 的 partial 查找是精确匹配文件名，找不到 `extend_head.html` �
 - 💡 **教训**：PaperMod 主题的扩展点文件名是 `extend_head.html` / `extend_footer.html`（动词原形），不是 `extended_head.html` / `extended_footer.html`（过去分词）；项目里 `extend_footer.html` 一直正确，但 `extended_head.html` 从 v5.2 起就拼错了
 
 ---
+
+### v5.8 (2026-07-31) - lixin 页面 sidebar 改造 + LLM 对话主页化
+
+**改造背景**:
+- lixin 是 v5.5 sidebar 统一后唯一还用双层 Tab 布局的板块
+- LLM 对话原为悬浮按钮+弹窗，用户希望变成主页界面直接对话
+
+**改造内容**:
+- ✅ **双层 Tab → learn 风格 sidebar**：校内/校外 Tab 改成 sidebar 导航组（校内 10 项 + 校外 2 项）
+- ✅ **Hero 区精简后移到 sidebar 顶部**：黑底+金光+校名+分割线+校训（删除英文名节省 300px 宽度）
+- ✅ **LLM 对话主页化**：悬浮弹窗 → 主内容区默认全屏 flex 视图
+  - `.lx-view-chat.active` 用 `display:flex; flex-direction:column; height:calc(100vh - 3rem)`
+  - messages `flex:1; min-height:0; overflow-y:auto` 实现内部滚动
+  - header/suggest/input 固定，input 固定底部
+- ✅ **双视图切换**：sidebar 有"💬 立信问答"导航项（默认 active）；点击避雷指南项切换到内容视图
+- ✅ **视图切换不丢失对话状态**：两个视图始终在 DOM 中，仅靠 `.active` 切 `display`；messages 不重建，历史消息完整保留
+- ✅ **使用说明保留**：放在内容视图底部（避雷指南内容下方）
+- ✅ **移动端抽屉**：≤1024px 汉堡按钮 + 遮罩 + ESC 关闭 + 选中后自动关闭
+
+**视觉微调（同日追加 - 对话视图去边框 + 圆形↑箭头按钮）**:
+- ✅ **删除对话视图边框**：`.lx-view-chat.active` 移除 `border`/`box-shadow`/`border-radius`/`overflow:hidden`，背景改 `transparent`，让 LLM 对话区直接融入 lixin 主界面（不再是一个独立卡片）
+- ✅ **header/suggest/messages/input-row 全部去独立背景**：背景统一 `transparent`，仅靠分隔线 `border-bottom/border-top` 划分区块，视觉上与主界面融为一体
+- ✅ **发送按钮改为圆形 ↑ 箭头**：
+  - HTML：文字"发送"改为 SVG ↑ 箭头图标（`<svg class="lx-send-icon">`）
+  - 形状：`width:38px; height:38px; border-radius:50%`（圆形单图标按钮）
+  - **默认（disabled / 空输入）**：`background: var(--lx-text-muted)` 灰色 + `color: rgba(255,255,255,0.7)` 灰白色箭头 + `opacity:0.55`
+  - **可发送状态（`:not(:disabled)`）**：`background:#ffffff` 白色 + `color: var(--lx-text)` 深色箭头 + 轻阴影；暗色模式下背景 `#e8e8e8`、箭头 `#1a1a1a`
+  - hover 时 `transform: translateY(-1px)` 微浮起反馈
+- ✅ **JS 同步按钮可用状态**：新增 `updateSendBtn()` 函数，发送中→disabled；否则依 input 内容 trim 后是否非空决定；初始按钮 `disabled` 属性 + input 监听器调用 `updateSendBtn()`，发送完成（`.finally`）也调用 `updateSendBtn()` 避免空 input 时按钮变白
+
+**视觉微调（同日追加 2 - 对齐修复 + 隐藏 footer）**:
+- ✅ **发送按钮与输入框对齐**：`.lx-chat-input-row` 改 `align-items: center`（原 flex-end 导致按钮偏下）；输入框 padding 从 `0.6rem` 调到 `0.5rem` + 显式 `line-height: 1.4`，使单行高度 ≈ 38px 与按钮高度精确匹配
+- ✅ **隐藏 lixin 页面 footer 黑块**：`content/lixin/index.md` front matter 新增 `hideFooter: true`，利用 PaperMod 原生参数隐藏 `<footer class="footer">`（© 2026 DeepSleep Blog · Powered by Hugo & PaperMod）。`extend_footer.html`（全局 JS）在 `hideFooter` 判断块外，故 LLM/主题切换/字体调节等 JS 不受影响
+
+**视觉微调（同日追加 3 - 个人按钮并入导航菜单）**:
+- ✅ **删除独立"👤 个人"按钮**：原 `extend_footer.html` 的 `initGlobalProfile()` JS 动态注入 `.global-profile-btn` 到 `#menu` 之后的方案废弃（v5.2 临时方案）；同时清理 `extend_head.html` 中对应的 `.global-profile-btn` CSS（约 23 行）
+- ✅ **"个人"作为原生 menu 项**：`hugo.toml` 新增 `[[menu.main]] identifier="profile" name="个人" url="/profile/" weight=60`，放在最末位（娱乐 50 之后）
+- ✅ **导航菜单最终顺序**：文章(10) → 资源(20) → 学习(25) → 我(30) → 社区(40) → 娱乐(50) → **个人(60)**
+- ✅ **去掉表情**：原按钮 `innerHTML = '👤 个人'`，原生 menu 项 `name = "个人"` 无表情
+- **收益**：减少一次 JS DOM 注入；导航项样式由 PaperMod 原生 `.nav` 统一管理（active 高亮、移动端折叠等自动生效）；与其他 menu 项视觉一致
+
+**视觉微调（同日追加 4 - 个人菜单置右 + 暗色模式导航白色修复）**:
+- ✅ **个人菜单挪到最右**：`hugo.toml` profile `weight` 32 → 60，放在娱乐(50) 之后成为最后一个菜单项
+- ✅ **修复暗色模式导航栏白色问题**：根因是 `static/css/custom.css:40` 硬编码 `body { background: linear-gradient(135deg, #fafafa 0%, #f0f0f0 100%); }` 白色渐变背景 + `color: var(--color-text-primary)` (#2d2d2d 深色文字)，且**没有任何 `[data-theme="dark"]` 覆盖**
+  - **首页（`<body class="list">`）**：PaperMod 的 `.list { background: var(--theme); }` 优先级 (0,1,0) > `body` (0,0,1)，能正常覆盖白色渐变 ✓
+  - **普通页面（`<body id="top">` 无 .list，如 /lixin/、/me/）**：PaperMod `.list` 选择器不匹配，custom.css 白色渐变**在暗色模式下仍然生效** → 整页（含导航栏区域）背景白色 + 文字深色 ✗
+  - **修复**：`extend_head.html` 新增 `[data-theme="dark"] body { background: var(--theme) !important; color: var(--primary) !important; }`，选择器优先级 (0,1,1) > `body` (0,0,1)，覆盖 custom.css 硬编码值；复用 PaperMod 的 `--theme`（暗色 rgb(29,30,32)）和 `--primary`（暗色 rgb(218,218,219)）变量自动切换
+  - **验证**：浏览器实测 lixin 页面暗色模式下 body 背景 = rgb(29,30,32) 深色 ✓，菜单文字 = rgb(218,218,219) 浅色 ✓
+
+**视觉微调（同日追加 5 - 移动端 sidebar 汉堡按钮让位）**:
+- ✅ **问题**：移动端（≤1024px）5 个 sidebar 页面（lixin/learn/posts/resources/sleeptown）的汉堡按钮 `position: fixed; top:14px; left:14px; z-index:200; width:42px` 挡住了 PaperMod 顶部 logo（"DeepSleep Blog"），导致首页按钮被遮挡无法点击
+- ✅ **根因**：所有 sidebar 模板的汉堡按钮都用 fixed 定位在左上角（占左侧 14+42=56px），而 PaperMod 的 `.header-nav > .logo` 也在左上角（padding-left:24px），两者坐标重叠
+- ✅ **修复**：`extend_head.html` 新增全局 CSS，移动端时用 `:has()` 选择器匹配有汉堡按钮的页面，给 `.header-nav` 加 `padding-left: 60px` 让 logo 往右移避开汉堡按钮区域
+  ```css
+  @media (max-width: 1024px) {
+    body:has(.lx-menu-toggle, .learn-menu-toggle, .posts-menu-toggle, .resources-menu-toggle, .stagemode-menu-toggle) .header-nav {
+      padding-left: 60px;
+    }
+  }
+  ```
+  - `:has()` 选择器兼容性（2026 年）：Chrome 105+、Safari 15.4+、Firefox 121+ 广泛支持
+  - 只在有汉堡按钮的 sidebar 页面生效，首页/社区/娱乐等无 sidebar 页面不受影响
+- ✅ **验证**：浏览器实测移动端 lixin 页面 logo.left=60 ≥ menuToggle.right=54，无重叠 ✓；首页 paddingLeft=14px（默认值）不受影响 ✓
 
 ### v5.7 (2026-07-31) - 字体大小调节功能
 

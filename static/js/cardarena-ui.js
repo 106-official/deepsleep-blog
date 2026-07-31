@@ -110,6 +110,7 @@
     layout.appendChild(buildEnemyZone(s));
     layout.appendChild(buildLogPanel(s));
     layout.appendChild(buildPlayerZone(s));
+    layout.appendChild(buildRosterBar(s.player, 'player'));
     layout.appendChild(buildHandBar(s));
     layout.appendChild(buildActionBar(s));
     app.appendChild(layout);
@@ -233,10 +234,7 @@
         var kv = el('div', 'ca-card-kv', c.attack + ' / ' + c.health);
         cardEl.appendChild(kv);
       }
-      cardEl.addEventListener('click', function () {
-        if (cardEl.classList.contains('disabled')) return;
-        window.CardArena.playCard(i);
-      });
+      // 出牌点击由 bindAppEvents 的事件委托统一处理（避免双重触发）
       cards.appendChild(cardEl);
     });
     bar.appendChild(cards);

@@ -76,9 +76,6 @@
 
     <article class="learn-article">
       <header class="learn-header">
-        {{- if .Params.cert }}
-        <div class="learn-cert-badge learn-cert-badge-{{ lower .Params.cert }}">{{ .Params.cert }}</div>
-        {{- end }}
         <h1 class="learn-title">{{ .Title }}</h1>
         {{- if .Description }}
         <p class="learn-desc">{{ .Description }}</p>

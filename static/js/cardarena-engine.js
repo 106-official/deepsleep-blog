@@ -101,6 +101,12 @@
 
   function opposite(side) { return side === state.player ? state.enemy : state.player; }
 
+  // 将 side 引用统一解析为真实 side 对象（UI 传入的可能是 'enemy'/'player' 字符串）
+  function resolveSide(ref) {
+    if (typeof ref === 'string') return ref === 'enemy' ? state.enemy : state.player;
+    return ref;
+  }
+
   function hasKeyword(minion, kw) {
     return minion.keywords && minion.keywords.indexOf(kw) !== -1;
   }
@@ -117,6 +123,7 @@
     if (!def) return;
     side.board.push({
       uid: 'm' + Math.random().toString(36).slice(2, 8),
+      kind: 'minion',                    // 标记随从类型（combat 反击/毒杀等依赖 kind 判断）
       cardId: def.id, name: def.name,
       attack: def.attack, health: def.health, maxHealth: def.health,
       keywords: (def.keywords || []).slice(),
@@ -250,24 +257,32 @@
 
   // 随从/角色主动攻击：attacker 打 target，双方结算
   function combat(attackerSide, attacker, target) {
-    // 将 {kind:'minion', side, uid} 引用解析为实际随从对象
+    // 解析目标真实引用：UI 传入 {kind:'hero', side:'enemy'}（字符串）或 {kind:'minion', uid}（无 side）
     var realTarget = target;
     if (target.kind === 'minion' && !target.health) {
-      realTarget = target.side.board.find(function (m) { return m.uid === target.uid; }) || target;
+      var mSide = resolveSide(target.side) || opposite(attackerSide);
+      realTarget = mSide.board.find(function (m) { return m.uid === target.uid; }) || target;
+    } else if (target.kind === 'hero' && typeof target.side === 'string') {
+      realTarget = { kind: 'hero', side: resolveSide(target.side) };
     }
-    var aAtk = attacker.attack;
-    if (attacker.kind === 'minion') {
-      attacker.attacksLeft = (attacker.attacksLeft || 1) - 1;
-      if (attacker.attacksLeft <= 0) attacker.exhausted = true;
+    // 解析攻击者：英雄攻击者需补 side 引用（反击结算需要）
+    var realAttacker = attacker;
+    if (attacker.kind === 'hero' && !attacker.side) {
+      realAttacker = { kind: 'hero', side: attackerSide, attack: attacker.attack };
+    }
+    var aAtk = realAttacker.attack;
+    if (realAttacker.kind === 'minion') {
+      realAttacker.attacksLeft = (realAttacker.attacksLeft || 1) - 1;
+      if (realAttacker.attacksLeft <= 0) realAttacker.exhausted = true;
     } else {
       attackerSide.roleAttacked = true;
     }
-    addLog((attacker.kind === 'hero' ? activeRole(attackerSide).name : attacker.name)
+    addLog((realAttacker.kind === 'hero' ? activeRole(attackerSide).name : realAttacker.name)
       + ' 攻击 ' + (realTarget.kind === 'hero' ? activeRole(realTarget.side).name : realTarget.name));
 
     // 攻击者伤害目标
     dealDamage(attackerSide, realTarget, aAtk);
-    if (hasKeyword(attacker, 'poison') && realTarget.kind === 'minion' && realTarget.health > 0) {
+    if (hasKeyword(realAttacker, 'poison') && realTarget.kind === 'minion' && realTarget.health > 0) {
       realTarget.health = 0;
       addLog(realTarget.name + ' 被剧毒击杀');
       if (hasKeyword(realTarget, 'deathrattle')) applyEffect(realTarget.effect, realTarget.side, null);
@@ -275,15 +290,15 @@
     }
     // 目标反击（若目标是存活且可攻击的随从）
     if (realTarget.kind === 'minion' && realTarget.health > 0 && realTarget.attack > 0) {
-      dealDamage(realTarget.side, attacker, realTarget.attack);
-      if (hasKeyword(realTarget, 'poison') && attacker.kind === 'minion' && attacker.health > 0) {
-        attacker.health = 0;
-        addLog(attacker.name + ' 被剧毒反击击杀');
-        if (hasKeyword(attacker, 'deathrattle')) applyEffect(attacker.effect, attacker.side, null);
-        cleanupBoard(attacker.side);
+      dealDamage(realTarget.side, realAttacker, realTarget.attack);
+      if (hasKeyword(realTarget, 'poison') && realAttacker.kind === 'minion' && realAttacker.health > 0) {
+        realAttacker.health = 0;
+        addLog(realAttacker.name + ' 被剧毒反击击杀');
+        if (hasKeyword(realAttacker, 'deathrattle')) applyEffect(realAttacker.effect, realAttacker.side, null);
+        cleanupBoard(realAttacker.side);
       }
     }
-    if (attacker.kind === 'minion' && attacker.health <= 0) cleanupBoard(attacker.side);
+    if (realAttacker.kind === 'minion' && realAttacker.health <= 0) cleanupBoard(realAttacker.side);
     emit('update', null);
   }
 

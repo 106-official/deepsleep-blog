@@ -1356,6 +1356,8 @@ Hugo 的 partial 查找是精确匹配文件名，找不到 `extend_head.html` �
 **已知 Bug 修复记录**:
 - ✅ 出牌双重触发：手牌独立监听与事件委托重复绑定 → 统一改为事件委托处理（`data-hand-index`）
 - ✅ 玩家候场条缺失：`renderAll` 遗漏 `buildRosterBar(player)` → 补齐玩家角色条渲染
+- ✅ 无法攻击敌方角色：UI 传入的 `{kind:'hero', side:'enemy'}`（side 为字符串）与 `{kind:'minion', uid}`（缺 side）未被 combat 解析为真实 side 对象，`dealDamage` 访问 `target.side.roster` 抛 TypeError → 新增 `resolveSide()` 统一解析字符串/缺失 side，并在 combat 中为英雄攻击者补 side 引用（已浏览器实测：敌方英雄高亮 → 点击 → 血量 20→18，无报错）
+- ✅ 随从不反击/毒杀失效：`summonMinion` 创建的随从对象缺少 `kind: 'minion'` 标记，combat 反击/毒杀分支依赖 kind 判断而静默跳过 → 随从对象补充 `kind: 'minion'`
 
 **Files Modified**:
 | 文件 | 变更 |

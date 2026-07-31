@@ -1,0 +1,406 @@
+/* cardarena.css — CardArena 极简几何风 */
+:root {
+  --cardarena-bg: #f7fafc;
+  --cardarena-panel: #ffffff;
+  --cardarena-border: #cbd5e0;
+  --cardarena-text: #2d3748;
+  --cardarena-muted: #718096;
+  --cardarena-primary: #2c5282;
+  --cardarena-accent: #3182ce;
+  --cardarena-danger: #c53030;
+  --cardarena-success: #2f855a;
+  --cardarena-target: #38a169;
+}
+[data-theme="dark"] {
+  --cardarena-bg: #171923;
+  --cardarena-panel: #1a202c;
+  --cardarena-border: #2d3748;
+  --cardarena-text: #e2e8f0;
+  --cardarena-muted: #a0aec0;
+}
+
+#cardarena-app {
+  max-width: 920px;
+  margin: 0 auto;
+  font-family: Inter, -apple-system, sans-serif;
+  font-weight: 400;
+  color: var(--cardarena-text);
+  background: var(--cardarena-bg);
+  padding: 16px;
+  box-sizing: border-box;
+  user-select: none;
+}
+
+/* ===== 开始界面 ===== */
+.ca-setup-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 500;
+  font-size: 1.6rem;
+  margin: 0 0 4px;
+  color: var(--cardarena-primary);
+}
+.ca-setup-sub {
+  margin: 0 0 16px;
+  color: var(--cardarena-muted);
+  font-size: 0.9rem;
+}
+.ca-setup-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.ca-setup-role {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: var(--cardarena-panel);
+  border: 1px solid var(--cardarena-border);
+  border-radius: 6px;
+  padding: 12px;
+  cursor: pointer;
+  color: var(--cardarena-text);
+  font-family: inherit;
+  font-weight: 400;
+}
+.ca-setup-role:hover {
+  border-color: var(--cardarena-accent);
+}
+.ca-setup-role.selected {
+  border-color: var(--cardarena-primary);
+  background: #ebf8ff;
+}
+[data-theme="dark"] .ca-setup-role.selected {
+  background: #1a365d;
+}
+.ca-setup-role-name {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 500;
+  font-size: 1.1rem;
+  margin-bottom: 4px;
+}
+.ca-setup-role-stat {
+  font-size: 0.85rem;
+  color: var(--cardarena-muted);
+}
+.ca-setup-role-intro {
+  font-size: 0.85rem;
+  margin: 6px 0;
+  line-height: 1.4;
+}
+.ca-setup-role-passive {
+  font-size: 0.8rem;
+  color: var(--cardarena-muted);
+}
+.ca-setup-hint {
+  margin: 8px 0 0;
+  color: var(--cardarena-muted);
+  font-size: 0.85rem;
+}
+
+/* ===== 通用按钮（扁平，非卡片）===== */
+.ca-btn {
+  background: transparent;
+  border: 1px solid var(--cardarena-border);
+  border-radius: 4px;
+  padding: 6px 16px;
+  font-family: inherit;
+  font-weight: 400;
+  font-size: 0.9rem;
+  color: var(--cardarena-text);
+  cursor: pointer;
+}
+.ca-btn:hover:not(:disabled) {
+  border-color: var(--cardarena-accent);
+  color: var(--cardarena-accent);
+}
+.ca-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.ca-btn-primary {
+  border-color: var(--cardarena-primary);
+  color: var(--cardarena-primary);
+}
+.ca-btn-primary:hover:not(:disabled) {
+  background: var(--cardarena-primary);
+  color: #ffffff;
+}
+
+/* ===== 对局布局 ===== */
+.ca-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.ca-roster {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 8px;
+  border: 1px solid var(--cardarena-border);
+  border-radius: 6px;
+  background: var(--cardarena-panel);
+}
+.ca-roster-label {
+  font-size: 0.8rem;
+  color: var(--cardarena-muted);
+  width: 100%;
+}
+.ca-roster-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--cardarena-border);
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 0.8rem;
+}
+.ca-roster-chip.active {
+  border-color: var(--cardarena-primary);
+  color: var(--cardarena-primary);
+}
+.ca-roster-chip.dead {
+  opacity: 0.4;
+  text-decoration: line-through;
+}
+.ca-roster-chip.swappable {
+  cursor: pointer;
+}
+.ca-roster-chip.swappable:hover {
+  border-color: var(--cardarena-accent);
+  color: var(--cardarena-accent);
+}
+.ca-roster-chip-hp {
+  color: var(--cardarena-muted);
+}
+/* ===== 英雄（出战角色）===== */
+.ca-zone {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.ca-hero {
+  border: 1px solid var(--cardarena-border);
+  border-radius: 6px;
+  padding: 10px 12px;
+  background: var(--cardarena-panel);
+}
+.ca-hero-player {
+  border-color: var(--cardarena-primary);
+}
+.ca-hero-name {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 500;
+  font-size: 1.15rem;
+  margin-bottom: 2px;
+}
+.ca-hero-stats {
+  font-size: 0.85rem;
+  color: var(--cardarena-muted);
+}
+.ca-hero-mana {
+  font-size: 0.85rem;
+  color: var(--cardarena-accent);
+  margin-top: 2px;
+}
+.ca-hero-passive {
+  font-size: 0.8rem;
+  color: var(--cardarena-muted);
+  margin-top: 2px;
+}
+
+/* ===== 随从区 ===== */
+.ca-board {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  flex-wrap: wrap;
+  min-height: 64px;
+  padding: 8px;
+  border: 1px dashed var(--cardarena-border);
+  border-radius: 6px;
+}
+.ca-board-label {
+  width: 100%;
+  font-size: 0.75rem;
+  color: var(--cardarena-muted);
+}
+.ca-minion {
+  position: relative;
+  min-width: 72px;
+  padding: 8px;
+  border: 1px solid var(--cardarena-border);
+  border-radius: 6px;
+  background: var(--cardarena-panel);
+  text-align: center;
+  font-size: 0.8rem;
+}
+.ca-minion-name {
+  font-size: 0.85rem;
+  margin-bottom: 2px;
+}
+.ca-minion-kv {
+  font-size: 0.9rem;
+  color: var(--cardarena-primary);
+}
+.ca-minion-kw {
+  font-size: 0.7rem;
+  color: var(--cardarena-muted);
+}
+.ca-minion.disabled {
+  opacity: 0.55;
+}
+
+/* ===== 可攻击/可选中状态 ===== */
+.attacker-selectable {
+  cursor: crosshair;
+}
+.attacker-selectable:hover {
+  outline: 1px solid var(--cardarena-accent);
+}
+.targetable {
+  outline: 2px solid var(--cardarena-target);
+  cursor: crosshair;
+}
+
+/* ===== 日志 ===== */
+.ca-log {
+  border: 1px solid var(--cardarena-border);
+  border-radius: 6px;
+  padding: 8px;
+  background: var(--cardarena-panel);
+}
+.ca-log-label {
+  font-size: 0.75rem;
+  color: var(--cardarena-muted);
+  margin-bottom: 4px;
+}
+.ca-log-list {
+  max-height: 120px;
+  overflow-y: auto;
+}
+.ca-log-line {
+  font-size: 0.8rem;
+  color: var(--cardarena-muted);
+  line-height: 1.5;
+}
+
+/* ===== 手牌 ===== */
+.ca-hand {
+  border: 1px solid var(--cardarena-border);
+  border-radius: 6px;
+  padding: 8px;
+  background: var(--cardarena-panel);
+}
+.ca-hand-label {
+  font-size: 0.75rem;
+  color: var(--cardarena-muted);
+  margin-bottom: 6px;
+}
+.ca-hand-cards {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.ca-card {
+  position: relative;
+  width: 132px;
+  min-height: 96px;
+  padding: 8px 8px 6px;
+  border: 1px solid var(--cardarena-border);
+  border-radius: 6px;
+  background: var(--cardarena-panel);
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+.ca-card:hover:not(.disabled) {
+  border-color: var(--cardarena-accent);
+}
+.ca-card.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.ca-card-cost {
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  width: 22px;
+  height: 22px;
+  line-height: 22px;
+  text-align: center;
+  border-radius: 50%;
+  background: var(--cardarena-primary);
+  color: #ffffff;
+  font-size: 0.8rem;
+}
+.ca-card-name {
+  font-size: 0.9rem;
+  margin-bottom: 4px;
+  padding-right: 4px;
+}
+.ca-card-desc {
+  font-size: 0.75rem;
+  color: var(--cardarena-muted);
+  line-height: 1.4;
+}
+.ca-card-kv {
+  margin-top: 6px;
+  font-size: 0.85rem;
+  color: var(--cardarena-primary);
+}
+
+/* ===== 操作栏 ===== */
+.ca-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.ca-actions-info {
+  font-size: 0.85rem;
+  color: var(--cardarena-muted);
+}
+
+/* ===== 结算遮罩 ===== */
+.ca-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+.ca-overlay-box {
+  background: var(--cardarena-panel);
+  border-radius: 8px;
+  padding: 24px 32px;
+  text-align: center;
+}
+.ca-overlay-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 500;
+  font-size: 1.6rem;
+  margin: 0 0 8px;
+  color: var(--cardarena-primary);
+}
+.ca-overlay-sub {
+  margin: 0 0 16px;
+  color: var(--cardarena-muted);
+  font-size: 0.9rem;
+}
+
+/* ===== 移动端 ===== */
+@media (max-width: 640px) {
+  #cardarena-app {
+    padding: 10px;
+  }
+  .ca-card {
+    width: 104px;
+  }
+  .ca-minion {
+    min-width: 60px;
+  }
+}

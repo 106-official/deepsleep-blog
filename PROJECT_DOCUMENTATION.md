@@ -53,7 +53,7 @@
 - ⚡ 零 CDN 依赖（Waline 前端资源完全本地化）
 - 🎮 **交互式自我介绍**（`/play/me/` 滚动叙事 + 数据可视化 + 打字机流式）✅ v5.9 新增
 - 🃏 **CardArena 卡牌对战**（`/play/cardarena/` 8 角色选 6 + 独立卡组 + 6 关键词 + 基础 AI，模块化 JS 架构 data/engine/ai/ui 四文件）✅ v5.10 新增
-- 👑 **CardArena 苏丹宫廷风卡牌样式**（参考《苏丹的游戏》：黑金暗夜/浅金羊皮纸双主题随博客切换，四品级 × 八角星徽 + 四角卷草纹 + 圆形宝石费用 + 品级缎带）✅ v5.12 新增
+- 👑 **CardArena 苏丹宫廷风卡牌样式**（参考《苏丹的游戏》：黑金暗夜/浅金羊皮纸双主题随博客切换，四品级 × 八角星徽 + 四角卷草纹 + 圆形宝石费用 + 品级缎带；极繁主义装饰：放射光芒暗纹/双线角花/数值宝石框/英文品级缎带）✅ v5.12 新增
 - 📚 **CPA 阶段B 习题整合**（六科 92 章「## 7. 同步练习」整合《必刷550题》1500+ 题 + 09 历年真题板块 2013-2025 × 6 科 78 页全文真题）✅ v5.11 新增
 
 ---
@@ -1382,6 +1382,38 @@ Hugo 的 partial 查找是精确匹配文件名，找不到 `extend_head.html` �
 | `static/js/cardarena-ui.js` | 修改：renderSetup 新 DOM、roleTier() 品级映射、toggleRole 动画触发 |
 
 **验证**：`hugo --gc` 350 页无 error；浏览器实测明/暗双主题 8 角色卡元素齐全、翻转选卡动画流畅（帧采样 transform 连续变化、animationstart/end 双向触发）、计数 0-6/6 与按钮禁用联动正确、无溢出/重叠/JS 报错。
+
+### v5.12 补充（同日追加 2）- CardArena 极繁主义卡牌升级（去汉字 + 英文宫衔 + 丝滑翻转）
+
+**新增功能**（对应需求：①中央徽记无汉字 ②翻面无跳帧 ③顶部英文 ④极繁主义）:
+- ✅ **中央徽记去汉字化**：删除角色名首字徽记（守/仲/预…），改为**纯几何三层八角星组** — 外星 86px（mask 双正方形叠加）+ 内星 52px（旋转 22.5° 交叠）+ 中心宝石 14px（菱形高光渐变），徽记区 `innerText` 为空、零中文
+- ✅ **宫衔缎带英文化**：8 角色新增 `titleEn` 字段（ROYAL GUARD / GRAND JUDGE / COURT ASTROLOGER / NIGHT WARDEN / ARSENAL MASTER / DRILLMASTER / TOWER WARDEN / SPYMASTER），Playfair Display 大写 + 0.42em 宽字距 + 两侧菱形点缀；**手牌卡品级缎带同步英文化**（GOLD/SILVER/BRONZE/STONE）
+- ✅ **极繁主义装饰体系**（角色卡 + 手牌卡统一）：
+  - 放射光芒暗纹：`conic-gradient` 12 段交替金色射线（角色卡 5% 透明度、手牌卡 4%）
+  - 双层内框：1px 品级金线 + 6px 细线（inset box-shadow）
+  - 四角双线角花：20px 角饰 + `::before` 内嵌 8px 旋转菱形
+  - 顶饰金线：`ca-role-topline` 双线分段 + 中心实心菱形
+  - 数值宝石框：`ca-role-stat` 菱形边框 + 虚线内框（z-index:-1 靠父级 stacking context 隔离）
+  - 背面「ON DUTY」英文印版：八角星徽绝对定位 top:42% + 角色名 68% + 印版 78%
+  - 费用宝石放射星芒：conic-gradient 齿状底 + `::before` 外圈星芒环（mask 环形渐隐）
+- ✅ **翻面跳帧修复**：完全移除 `ca-role-flip-bounce` transform 动画（90°+1.06 放大回弹与 transition 双写 transform 导致跳帧），翻转仅由 `.ca-role-inner` transition（0.65s `cubic-bezier(0.22,1,0.36,1)`）驱动；闪光层动画保留在 `.ca-role-shine::after`（translateX 不与 transform 属性冲突）
+- ✅ **浅色主题缎带对比度修复**：亮色（如银 #cfd6e2）叠浅金纸对比度仅 1.01:1 → 浅色主题下 `color: var(--ca-tier-color)` + `text-shadow: none`（深银灰蓝 #808fa8，2.74:1）
+
+**技术变更**:
+- `cardarena.css`：新增 `.ca-role-topline/.ca-role-star-outer/.ca-role-star-inner/.ca-role-gem/.ca-role-stat-*` 系列；`.ca-role-back` 改绝对定位叠放；`.ca-card-cost::before` 星芒环；删除 flip-bounce keyframes；`.ca-role-band` 字体 Cinzel → Playfair Display（Google Fonts 未加载，改用全站已加载字体）
+- `cardarena-ui.js`：`renderSetup` 删除 `ca-role-initial` 首字徽记 → 三层星徽组；缎带改 `role.titleEn`；背面 `ON DUTY` 印版；手牌卡 tierNames 改英文；`.flipping` 类 remove→reflow→add 重放闪光
+- `cardarena-data.js`：ROLE_POOL 8 角色新增 `titleEn` 字段
+
+**Files Modified**:
+| 文件 | 变更 |
+|------|------|
+| `static/css/cardarena.css` | 修改：极繁装饰体系 + 翻转跳帧修复 + 字体替换 + 浅色缎带对比度 |
+| `static/js/cardarena-ui.js` | 修改：纯几何徽记 + 英文缎带 + ON DUTY + 英文品级 |
+| `static/js/cardarena-data.js` | 修改：8 角色新增 titleEn |
+| `PROJECT_CONTEXT.md` | 功能清单、文件索引、版本演进表 v5.12 条目补充 |
+| `PROJECT_DOCUMENTATION.md` | 功能特性、更新日志 v5.12 追加记录 |
+
+**验证**：`hugo --gc` 350 页无 error；浏览器四重验证（DOM/计算样式/逐帧采样/截图）— rAF 帧采样确认旋转角单调递减、每帧 8-10°、无跳帧闪烁；明/暗双主题角色卡（英文缎带/纯几何星徽/放射暗纹/宝石框）与手牌卡（星芒费用宝石/英文品级缎带）全部正常，无溢出、无 JS 报错。
 
 ---
 

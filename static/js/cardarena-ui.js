@@ -62,25 +62,36 @@
       ['tl', 'tr', 'bl', 'br'].forEach(function (pos) {
         front.appendChild(el('span', 'ca-card-corner ' + pos));
       });
-      front.appendChild(el('div', 'ca-role-band', role.title || ''));
+      // 顶饰金线（极繁装饰）
+      var topline = el('span', 'ca-role-topline');
+      topline.appendChild(el('b', null));
+      front.appendChild(topline);
+      // 品级缎带（英文宫衔）
+      front.appendChild(el('div', 'ca-role-band', role.titleEn || ''));
       var art = el('div', 'ca-role-art');
-      art.appendChild(el('span', 'ca-role-star'));
-      art.appendChild(el('span', 'ca-role-initial', role.name.charAt(0)));
+      // 纯几何徽记：外八角星 + 内八角星 + 中心宝石（无汉字）
+      art.appendChild(el('span', 'ca-role-star-outer'));
+      art.appendChild(el('span', 'ca-role-star-inner'));
+      art.appendChild(el('span', 'ca-role-gem'));
       front.appendChild(art);
       front.appendChild(el('div', 'ca-setup-role-name', role.name));
       front.appendChild(el('div', 'ca-setup-role-intro', role.intro));
       var stats = el('div', 'ca-role-stats');
-      stats.appendChild(el('span', null, '\u2764 ' + role.maxHealth));
-      stats.appendChild(el('span', null, '\u2694 ' + role.attack));
+      var hp = el('span', 'ca-role-stat ca-role-stat-hp', '\u2764 ' + role.maxHealth);
+      var atk = el('span', 'ca-role-stat ca-role-stat-atk', '\u2694 ' + role.attack);
+      stats.appendChild(hp);
+      stats.appendChild(atk);
       front.appendChild(stats);
       front.appendChild(el('div', 'ca-setup-role-passive', '被动: ' + (role.passive ? describePassive(role.passive) : '无')));
       inner.appendChild(front);
 
       // 背面（已出战印版）
       var back = el('span', 'ca-role-face ca-role-back');
-      back.appendChild(el('span', 'ca-role-back-star ca-role-star'));
+      back.appendChild(el('span', 'ca-role-back-star-outer ca-role-star-outer'));
+      back.appendChild(el('span', 'ca-role-back-star-inner ca-role-star-inner'));
+      back.appendChild(el('span', 'ca-role-back-gem ca-role-gem'));
       back.appendChild(el('div', 'ca-role-back-name', role.name));
-      back.appendChild(el('div', 'ca-role-back-mark', '\u5DF2\u51FA\u6218'));
+      back.appendChild(el('div', 'ca-role-back-mark', 'ON DUTY'));
       inner.appendChild(back);
 
       card.appendChild(inner);
@@ -301,7 +312,7 @@
         cardEl.appendChild(corner);
       });
       // 品级缎带
-      var tierNames = { gold: '黄金', silver: '白银', bronze: '青铜', stone: '岩石' };
+      var tierNames = { gold: 'GOLD', silver: 'SILVER', bronze: 'BRONZE', stone: 'STONE' };
       var band = el('div', 'ca-card-tier-band', tierNames[tier] || '');
       cardEl.appendChild(band);
       // 费用宝石（圆形）

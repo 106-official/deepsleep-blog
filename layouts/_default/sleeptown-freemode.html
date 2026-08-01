@@ -619,7 +619,51 @@ function getRoleEmoji(role) {
 }
 
 function getRoleAvatar(role) {
-  return getRoleEmoji(role);
+  // Noir 侦探档案风 SVG 徽记：圆形底（随 currentColor 柔化）+ 线稿鱼形 + 角色特征
+  const base = '<circle cx="24" cy="24" r="22.5" fill="currentColor" opacity="0.09"/>'
+    + '<g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">';
+  const fin = '</g>';
+  const fishBody = '<path d="M11 24 C11 16 17 12 24 12 C31 12 36 16 37 24 C36 32 31 36 24 36 C17 36 11 32 11 24 Z"/>'
+    + '<path d="M37 24 L45 17 L45 31 Z"/>'
+    + '<path d="M20 12 C22 6 27 6 29 11"/>'
+    + '<circle cx="19" cy="21" r="1.8" fill="currentColor" stroke="none"/>';
+  switch(role) {
+    case 'slacker':
+      return '<svg viewBox="0 0 48 48" class="role-svg">' + base + fishBody + fin + '</svg>';
+    case 'detective':
+      return '<svg viewBox="0 0 48 48" class="role-svg">' + base + fishBody
+        + '<circle cx="36" cy="12" r="5.5"/><path d="M40 16 L45 21"/>' + fin + '</svg>';
+    case 'judge':
+      return '<svg viewBox="0 0 48 48" class="role-svg">' + base + fishBody
+        + '<path d="M24 7 L24 13 M15 13 L33 13 M15 13 L12 19 M33 13 L36 19 M9 19 Q12 21.5 15 19 M33 19 Q36 21.5 39 19"/>' + fin + '</svg>';
+    case 'gossip':
+      return '<svg viewBox="0 0 48 48" class="role-svg">' + base + fishBody
+        + '<rect x="30" y="8" width="10" height="12" rx="1"/><path d="M32 12 L38 12 M32 15 L38 15 M32 18 L37 18"/>' + fin + '</svg>';
+    case 'sleepwalker':
+      return '<svg viewBox="0 0 48 48" class="role-svg">' + base + fishBody
+        + '<path d="M38 11 A5.5 5.5 0 1 0 34.5 17.5 A4.8 4.8 0 0 1 38 11"/><path d="M42 20 L36 20 L42 25 L36 25"/>' + fin + '</svg>';
+    case 'mage':
+      return '<svg viewBox="0 0 48 48" class="role-svg">' + base + fishBody
+        + '<path d="M38 4 L40 10 L46 12 L40 14 L38 20 L36 14 L30 12 L36 10 Z"/>' + fin + '</svg>';
+    case 'evil':
+      return '<svg viewBox="0 0 48 48" class="role-svg">' + base + fishBody
+        + '<path d="M19 13 C17 8 14 7 13 5 M29 13 C31 8 34 7 35 5"/><path d="M30 28 L34 32 M31 33 L36 31"/>' + fin + '</svg>';
+    case 'martyr':
+      return '<svg viewBox="0 0 48 48" class="role-svg">' + base + fishBody
+        + '<path d="M37 4 V12 M33 8 H41"/><path d="M28 28 L32 33 M29 34 L34 30"/>' + fin + '</svg>';
+    case 'trickster':
+      return '<svg viewBox="0 0 48 48" class="role-svg">' + base + fishBody
+        + '<path d="M28 9 A6.5 6.5 0 0 1 40.5 14"/><circle cx="31.5" cy="14.5" r="1.6" fill="currentColor" stroke="none"/><circle cx="37.5" cy="14.5" r="1.6" fill="currentColor" stroke="none"/>' + fin + '</svg>';
+    case 'orca':
+      return '<svg viewBox="0 0 48 48" class="role-svg">' + base
+        + '<g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'
+        + '<path d="M10 26 C10 19 17 14 25 14 C32 14 37 17 38 26 C37 33 32 36 25 36 C17 36 10 32 10 26 Z"/>'
+        + '<path d="M25 14 L28 5 L31 14"/>'
+        + '<circle cx="18" cy="22" r="1.8" fill="currentColor" stroke="none"/>'
+        + '<path d="M20 28 Q24 31 28 28" opacity="0.45"/>' + fin + '</svg>';
+    default:
+      return '<svg viewBox="0 0 48 48" class="role-svg">' + base + fishBody + fin + '</svg>';
+  }
 }
 
 function getRoleName(role) {
@@ -1465,6 +1509,111 @@ function goBackToSetup() {
   overflow-y: auto;
   box-shadow: 0 10px 40px rgba(0,0,0,0.3);
   animation: modalSlideIn 0.3s ease-out;
+}
+
+/* ===== Noir 最小适配（与主页 sleeptown.html 保持一致） ===== */
+.sleeptown-game {
+  background:
+    radial-gradient(1100px 420px at 78% -6%, var(--st-bg-glow, rgba(232,200,122,0.14)), transparent 62%),
+    linear-gradient(180deg, var(--st-bg, #0b1320), var(--st-bg2, #131f33));
+  border-radius: 14px;
+  padding: 1.5rem;
+}
+.setup-container {
+  background: linear-gradient(180deg, var(--st-surface, #16233a), var(--st-surface2, #1c2c47));
+  border: 1px solid var(--st-border, #2c3d5e);
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+  color: var(--st-ink, #d8c49a);
+}
+[data-theme="dark"] .setup-container {
+  background: linear-gradient(180deg, var(--st-surface, #16233a), var(--st-surface2, #1c2c47));
+}
+.setup-container h1, .setup-container h2, .setup-container h3,
+.config-section h3, .fish-count-config label, .option-row label {
+  color: var(--st-ink, #d8c49a);
+}
+.game-intro, .section-desc, .hint, .summary-content { color: var(--st-ink-soft, #97a7c4); }
+.config-section {
+  background: var(--st-bg, #0b1320);
+  border: 1px solid var(--st-border, #2c3d5e);
+  border-radius: 10px;
+}
+[data-theme="dark"] .config-section { background: var(--st-bg, #0b1320); }
+.role-checkbox-label, .faction-label {
+  background: var(--st-surface, #16233a);
+  border: 1px solid var(--st-border, #2c3d5e);
+  color: var(--st-ink, #d8c49a);
+  border-radius: 8px;
+}
+.role-checkbox-label:hover, .faction-label:hover { border-color: var(--st-lamp, #e8c87a); }
+.count-btn {
+  background: var(--st-surface, #16233a);
+  border-color: var(--st-lamp, #e8c87a);
+  color: var(--st-lamp, #e8c87a);
+}
+.count-btn:hover { background: var(--st-lamp, #e8c87a); color: var(--st-surface, #16233a); }
+.fish-count-input, .option-select, .summary-content {
+  background: var(--st-surface, #16233a);
+  border-color: var(--st-border-strong, #4a5f86);
+  color: var(--st-ink, #d8c49a);
+}
+.back-to-selection-btn, .back-btn-primary {
+  background: var(--st-surface, #16233a);
+  border: 1px solid var(--st-border-strong, #4a5f86);
+  color: var(--st-ink-soft, #97a7c4);
+}
+.back-to-selection-btn:hover, .back-btn-primary:hover { color: var(--st-ink, #d8c49a); }
+.start-btn, .try-freemode-btn {
+  background: linear-gradient(180deg, #d9b36a, #b08d4e);
+  border: 1px solid #8a6d3b;
+  border-bottom: 3px solid #7c5f2c;
+  color: #241a0c;
+  border-radius: 10px;
+}
+.fish-card {
+  background: linear-gradient(170deg, var(--st-surface, #16233a), var(--st-surface2, #1c2c47));
+  border: 1px solid var(--st-border, #2c3d5e);
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+  color: var(--st-ink, #d8c49a);
+}
+.fish-card.revealed { border-color: var(--st-lamp, #e8c87a); }
+.fish-number { color: var(--st-ink-faint, #5a7192); font-family: var(--st-typewriter, "Courier New", Courier, monospace); }
+.fish-role-name { color: var(--st-ink, #d8c49a); font-family: 'Playfair Display', Georgia, serif; }
+.fish-hint, .fish-status, .fish-real-role { color: var(--st-ink-faint, #5a7192); }
+.status-bar {
+  background: transparent;
+  border: 1px solid var(--st-border, #2c3d5e);
+  border-radius: 10px;
+}
+.status-item { background: var(--st-surface, #16233a); border: 1px solid var(--st-border, #2c3d5e); border-left: 3px solid var(--st-lamp, #e8c87a); border-radius: 6px; }
+.status-label { color: var(--st-ink-faint, #5a7192); font-family: var(--st-typewriter, "Courier New", Courier, monospace); }
+.status-value { color: var(--st-lamp-strong, #f5d78a); }
+.game-log {
+  background: rgba(0,0,0,0.35);
+  border: 1px solid var(--st-border, #2c3d5e);
+  border-left: 4px solid var(--st-lamp, #e8c87a);
+  border-radius: 10px;
+  font-family: var(--st-typewriter, "Courier New", Courier, monospace);
+  color: var(--st-ink-soft, #97a7c4);
+}
+.modal-content {
+  background: linear-gradient(180deg, var(--st-surface, #16233a), var(--st-surface2, #1c2c47));
+  border: 1px solid var(--st-border-strong, #4a5f86);
+  color: var(--st-ink, #d8c49a);
+}
+.action-btn {
+  border: 1px solid var(--st-border-strong, #4a5f86);
+  border-bottom: 3px solid var(--st-border-strong, #4a5f86);
+  background: linear-gradient(180deg, var(--st-surface, #16233a), var(--st-surface2, #1c2c47));
+  color: var(--st-ink, #d8c49a);
+  border-radius: 8px;
+}
+.log-system, .log-day, .log-night, .log-action, .log-success,
+.log-warning, .log-error, .log-clue, .log-neutral, .log-death,
+.log-trickster, .log-magic {
+  background: transparent;
 }
 </style>
 {{ end }}

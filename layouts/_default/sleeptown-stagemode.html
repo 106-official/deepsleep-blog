@@ -355,5 +355,83 @@ function tryFreeMode() {
     width: 100%;
   }
 }
+
+/* ===== Noir 最小适配（与主页 sleeptown.html 保持一致） ===== */
+.sleeptown-game.stagemode-coming-soon {
+  background:
+    radial-gradient(1100px 420px at 78% -6%, rgba(232,200,122,0.14), transparent 62%),
+    linear-gradient(180deg, var(--st-bg, #0b1320), var(--st-bg2, #131f33));
+  border-radius: 14px;
+  padding: 1.5rem;
+  margin: 1.5rem auto;
+}
+.coming-soon-container {
+  background: linear-gradient(180deg, var(--st-surface, #16233a), var(--st-surface2, #1c2c47));
+  border: 1px solid var(--st-border, #2c3d5e);
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+  color: var(--st-ink, #d8c49a);
+}
+[data-theme="dark"] .coming-soon-container {
+  background: linear-gradient(180deg, var(--st-surface, #16233a), var(--st-surface2, #1c2c47));
+}
+.coming-soon-container h1 {
+  background: linear-gradient(135deg, var(--st-lamp, #e8c87a), var(--st-lamp-strong, #f5d78a));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 0.08em;
+}
+.coming-soon-container h2 { color: var(--st-ink-faint, #5a7192); }
+.coming-soon-desc { color: var(--st-ink-soft, #97a7c4); }
+[data-theme="dark"] .coming-soon-desc { color: var(--st-ink-soft, #97a7c4); }
+.features-preview {
+  background: rgba(232,200,122,0.06);
+  border-color: rgba(232,200,122,0.25);
+}
+.features-preview h3 { color: var(--st-ink, #d8c49a); }
+[data-theme="dark"] .features-preview h3 { color: var(--st-ink, #d8c49a); }
+.feature-item {
+  background: var(--st-bg, #0b1320);
+  border: 1px solid var(--st-border, #2c3d5e);
+}
+[data-theme="dark"] .feature-item { background: var(--st-bg, #0b1320); }
+.feature-content strong { color: var(--st-ink, #d8c49a); }
+[data-theme="dark"] .feature-content strong { color: var(--st-ink, #d8c49a); }
+.feature-content p { color: var(--st-ink-soft, #97a7c4); }
+[data-theme="dark"] .feature-content p { color: var(--st-ink-soft, #97a7c4); }
+.progress-section {
+  background: var(--st-bg, #0b1320);
+  border: 1px solid var(--st-border, #2c3d5e);
+}
+[data-theme="dark"] .progress-section { background: var(--st-bg, #0b1320); }
+.progress-section h4 { color: var(--st-ink, #d8c49a); }
+[data-theme="dark"] .progress-section h4 { color: var(--st-ink, #d8c49a); }
+.progress-bar { background: var(--st-border, #2c3d5e); }
+[data-theme="dark"] .progress-bar { background: var(--st-border, #2c3d5e); }
+.progress-fill { background: linear-gradient(90deg, var(--st-lamp, #e8c87a), var(--st-lamp-strong, #f5d78a)); }
+.progress-text { color: var(--st-ink-soft, #97a7c4); }
+[data-theme="dark"] .progress-text { color: var(--st-ink-soft, #97a7c4); }
+.back-btn-primary {
+  background: linear-gradient(180deg, var(--st-surface, #16233a), var(--st-surface2, #1c2c47));
+  border: 1px solid var(--st-border-strong, #4a5f86);
+  border-bottom: 3px solid var(--st-border-strong, #4a5f86);
+  color: var(--st-ink, #d8c49a);
+}
+.back-btn-primary:hover { background: var(--st-surface2, #1c2c47); color: var(--st-ink, #d8c49a); }
+.try-freemode-btn {
+  background: linear-gradient(180deg, #d9b36a, #b08d4e);
+  border: 1px solid #8a6d3b;
+  border-bottom: 3px solid #7c5f2c;
+  color: #241a0c;
+}
+.notify-section {
+  background: rgba(232,200,122,0.08);
+  border-left-color: var(--st-lamp, #e8c87a);
+}
+.notify-section h4 { color: var(--st-ink, #d8c49a); }
+[data-theme="dark"] .notify-section h4 { color: var(--st-ink, #d8c49a); }
+.notify-section p { color: var(--st-ink-soft, #97a7c4); }
+[data-theme="dark"] .notify-section p { color: var(--st-ink-soft, #97a7c4); }
 </style>
 {{ end }}

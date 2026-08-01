@@ -820,6 +820,25 @@ function closeStagemodeSidebar() {
   });
 })();
 
+// Noir：sidebar 角色图鉴导航注入 SVG 徽记（替换 emoji 图标）
+(function initSidebarBadges() {
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.stagemode-nav-link[data-fish]').forEach(function(link) {
+      const role = link.getAttribute('data-fish') === 'prankster' ? 'trickster' : link.getAttribute('data-fish');
+      const num = link.querySelector('.stagemode-nav-num');
+      if (num) {
+        num.innerHTML = getRoleAvatar(role).replace('<svg ', '<svg style="width:18px;height:18px;vertical-align:-4px" ');
+        num.classList.add('nav-role-svg');
+      }
+    });
+    // sidebar 顶部 logo 图标 → 虎鲸徽记
+    const logoIcon = document.querySelector('.stagemode-logo-icon');
+    if (logoIcon) {
+      logoIcon.innerHTML = getRoleAvatar('orca').replace('<svg ', '<svg style="width:22px;height:22px;vertical-align:-5px" ');
+    }
+  });
+})();
+
 // 关卡配置数据
 const stageConfigs = {
   '1-1': {
@@ -1448,7 +1467,9 @@ function addLog(message, type = 'info') {
   const logDiv = document.getElementById('game-log');
   const logEntry = document.createElement('div');
   logEntry.className = `log-entry log-${type}`;
-  logEntry.innerHTML = message;
+  const now = new Date();
+  const ts = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+  logEntry.innerHTML = `<span class="log-time">[${ts}]</span> ${message}`;
   logDiv.insertBefore(logEntry, logDiv.firstChild);
   gameState.logs.push({ message, type, time: new Date() });
 }
@@ -1489,10 +1510,11 @@ function renderFishes() {
     if (!fish.alive) {
       fishCard.className = `fish-card dead`;
       fishCard.innerHTML = `
-        <div class="fish-avatar dead-avatar">💀</div>
+        <div class="fish-avatar dead-avatar">${getRoleAvatar(fish.role)}</div>
         <div class="fish-number">#${index + 1}</div>
-        <div class="fish-status">已死亡</div>
+        <div class="fish-status">已牺牲</div>
         <div class="fish-real-role">${getRoleEmoji(fish.role)} ${getRoleName(fish.role)}</div>
+        <span class="fish-stamp dead">OUT</span>
       `;
     } else if (fish.revealed) {
       const displayRole = fish.disguisedAs || fish.role;
@@ -1509,10 +1531,16 @@ function renderFishes() {
         }
       }
 
+      const isEvil = ['evil', 'martyr'].includes(fish.role) && !fish.disguisedAs;
+      const stamp = isEvil ? '<span class="fish-stamp evil">已定罪</span>'
+        : (gameState.phase === 'gameOver' ? '<span class="fish-stamp ok">已结案</span>' : '');
+
       fishCard.innerHTML = `
         <div class="fish-avatar revealed-avatar">${getRoleAvatar(displayRole)}</div>
         <div class="fish-number">#${index + 1}</div>
         <div class="fish-role-name">${getRoleName(displayRole)}</div>
+        ${stamp}
+        <div class="fish-faction-tag ${isEvil ? 'evil' : (fish.disguisedAs ? 'disguised' : 'good')}">${isEvil ? '危险' : (fish.disguisedAs ? '可疑' : '可信')}</div>
         ${badgeHTML}
         <div class="fish-hint">${gameState.gameMode === 'inquiry' && gameState.inquiriesLeft > 0 ? '再次问询' : ''}</div>
       `;
@@ -1527,9 +1555,10 @@ function renderFishes() {
     } else {
       fishCard.className = `fish-card`;
       fishCard.innerHTML = `
-        <div class="fish-avatar hidden-avatar">❓</div>
+        <div class="fish-avatar hidden-avatar">?</div>
         <div class="fish-number">#${index + 1}</div>
         <div class="fish-hint">${gameState.gameMode === 'inquiry' ? '点击问询' : '点击流放'}</div>
+        <span class="fish-stamp pending">待取证</span>
       `;
 
       if (gameState.gameMode === 'inquiry' && gameState.inquiriesLeft > 0) {
@@ -1561,7 +1590,51 @@ function getRoleEmoji(role) {
 }
 
 function getRoleAvatar(role) {
-  return getRoleEmoji(role);
+  // Noir 侦探档案风 SVG 徽记：圆形底（随 currentColor 柔化）+ 线稿鱼形 + 角色特征
+  const base = '<circle cx="24" cy="24" r="22.5" fill="currentColor" opacity="0.09"/>'
+    + '<g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">';
+  const fin = '</g>';
+  const fishBody = '<path d="M11 24 C11 16 17 12 24 12 C31 12 36 16 37 24 C36 32 31 36 24 36 C17 36 11 32 11 24 Z"/>'
+    + '<path d="M37 24 L45 17 L45 31 Z"/>'
+    + '<path d="M20 12 C22 6 27 6 29 11"/>'
+    + '<circle cx="19" cy="21" r="1.8" fill="currentColor" stroke="none"/>';
+  switch(role) {
+    case 'slacker': // 摆烂D：纯鱼
+      return '<svg viewBox="0 0 48 48" class="role-svg">' + base + fishBody + fin + '</svg>';
+    case 'detective': // 侦探D：鱼 + 放大镜
+      return '<svg viewBox="0 0 48 48" class="role-svg">' + base + fishBody
+        + '<circle cx="36" cy="12" r="5.5"/><path d="M40 16 L45 21"/>' + fin + '</svg>';
+    case 'judge': // 法官D：鱼 + 天平
+      return '<svg viewBox="0 0 48 48" class="role-svg">' + base + fishBody
+        + '<path d="M24 7 L24 13 M15 13 L33 13 M15 13 L12 19 M33 13 L36 19 M9 19 Q12 21.5 15 19 M33 19 Q36 21.5 39 19"/>' + fin + '</svg>';
+    case 'gossip': // 八卦鱼：鱼 + 报纸
+      return '<svg viewBox="0 0 48 48" class="role-svg">' + base + fishBody
+        + '<rect x="30" y="8" width="10" height="12" rx="1"/><path d="M32 12 L38 12 M32 15 L38 15 M32 18 L37 18"/>' + fin + '</svg>';
+    case 'sleepwalker': // 梦游D：鱼 + 月亮 + Z
+      return '<svg viewBox="0 0 48 48" class="role-svg">' + base + fishBody
+        + '<path d="M38 11 A5.5 5.5 0 1 0 34.5 17.5 A4.8 4.8 0 0 1 38 11"/><path d="M42 20 L36 20 L42 25 L36 25"/>' + fin + '</svg>';
+    case 'mage': // 法师D：鱼 + 星芒法杖
+      return '<svg viewBox="0 0 48 48" class="role-svg">' + base + fishBody
+        + '<path d="M38 4 L40 10 L46 12 L40 14 L38 20 L36 14 L30 12 L36 10 Z"/>' + fin + '</svg>';
+    case 'evil': // 邪恶D：鱼 + 尖角 + 裂痕
+      return '<svg viewBox="0 0 48 48" class="role-svg">' + base + fishBody
+        + '<path d="M19 13 C17 8 14 7 13 5 M29 13 C31 8 34 7 35 5"/><path d="M30 28 L34 32 M31 33 L36 31"/>' + fin + '</svg>';
+    case 'martyr': // 殉道D：鱼 + 十字裂痕
+      return '<svg viewBox="0 0 48 48" class="role-svg">' + base + fishBody
+        + '<path d="M37 4 V12 M33 8 H41"/><path d="M28 28 L32 33 M29 34 L34 30"/>' + fin + '</svg>';
+    case 'trickster': // 恶作剧D：鱼 + 面具
+      return '<svg viewBox="0 0 48 48" class="role-svg">' + base + fishBody
+        + '<path d="M28 9 A6.5 6.5 0 0 1 40.5 14"/><circle cx="31.5" cy="14.5" r="1.6" fill="currentColor" stroke="none"/><circle cx="37.5" cy="14.5" r="1.6" fill="currentColor" stroke="none"/>' + fin + '</svg>';
+    case 'orca': // 虎鲸：高背鳍 + 白斑
+      return '<svg viewBox="0 0 48 48" class="role-svg">' + base
+        + '<g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'
+        + '<path d="M10 26 C10 19 17 14 25 14 C32 14 37 17 38 26 C37 33 32 36 25 36 C17 36 10 32 10 26 Z"/>'
+        + '<path d="M25 14 L28 5 L31 14"/>'
+        + '<circle cx="18" cy="22" r="1.8" fill="currentColor" stroke="none"/>'
+        + '<path d="M20 28 Q24 31 28 28" opacity="0.45"/>' + fin + '</svg>';
+    default:
+      return '<svg viewBox="0 0 48 48" class="role-svg">' + base + fishBody + fin + '</svg>';
+  }
 }
 
 function getRoleName(role) {
@@ -4058,5 +4131,595 @@ function resetGame() {
 
 [data-theme="dark"] .stagemode-card-desc { background: #1a1a1a; }
 [data-theme="dark"] .stagemode-stat { background: rgba(44,82,130,0.06); border-color: rgba(90,139,191,0.15); }
+
+/* =========================================================================
+   SleepTown Noir · 深夜渔港侦探档案 视觉重构覆盖层 (v3.0)
+   艺术逻辑：黑色电影 × 深海灯塔 × 老式侦探档案
+   问询=审讯 · 流放=定罪 · 夜晚=凶案 · 伪装=伪造档案
+   ========================================================================= */
+
+/* ---- 1. Noir 双主题变量（覆盖 stagemode 深蓝系为暖灯档案系） ---- */
+:root {
+  /* 亮色 · 档案室白天 */
+  --st-bg: #f2e8d0;
+  --st-bg2: #e6d7b4;
+  --st-surface: #faf3e0;
+  --st-surface2: #f0e4c4;
+  --st-border: #c9b587;
+  --st-border-strong: #a08a56;
+  --st-ink: #3a2f1d;
+  --st-ink-soft: #6b5a3a;
+  --st-ink-faint: #9c8a63;
+  --st-lamp: #a06a1f;
+  --st-lamp-strong: #8a5410;
+  --st-stamp: #b03a2e;
+  --st-stamp-strong: #932a1f;
+  --st-good: #2e7d52;
+  --st-bad: #a93226;
+  --st-neutral: #7a6a52;
+  --st-typewriter: "Courier New", Courier, monospace;
+  --st-radius: 10px;
+  --st-shadow: 0 10px 30px rgba(90,70,30,0.25);
+  --st-bg-glow: rgba(160,106,31,0.12);
+
+  /* stagemode 变量 → Noir 暖灯档案（亮色） */
+  --stagemode-gold: #a06a1f;
+  --stagemode-gold-light: #c8912f;
+  --stagemode-gold-dark: #7a4d12;
+  --stagemode-bg: #f2e8d0;
+  --stagemode-surface: #faf3e0;
+  --stagemode-sidebar-bg: #efe2c2;
+  --stagemode-sidebar-border: #d6c49a;
+  --stagemode-text: #3a2f1d;
+  --stagemode-text-secondary: #6b5a3a;
+  --stagemode-text-muted: #9c8a63;
+  --stagemode-border: #d8c69c;
+  --stagemode-radius: 12px;
+  --stagemode-shadow: 0 4px 20px rgba(90,70,30,0.12);
+}
+
+[data-theme="dark"] {
+  /* 暗色 · 墨夜蓝 Noir */
+  --st-bg: #0b1320;
+  --st-bg2: #131f33;
+  --st-surface: #16233a;
+  --st-surface2: #1c2c47;
+  --st-border: #2c3d5e;
+  --st-border-strong: #4a5f86;
+  --st-ink: #d8c49a;
+  --st-ink-soft: #97a7c4;
+  --st-ink-faint: #5a7192;
+  --st-lamp: #e8c87a;
+  --st-lamp-strong: #f5d78a;
+  --st-stamp: #c0392b;
+  --st-stamp-strong: #e04a3a;
+  --st-good: #8fd0a8;
+  --st-bad: #e0655a;
+  --st-neutral: #c3b1a6;
+  --st-shadow: 0 10px 30px rgba(0,0,0,0.45);
+  --st-bg-glow: rgba(232,200,122,0.14);
+
+  /* stagemode 变量 → Noir 墨夜蓝（暗色） */
+  --stagemode-gold: #e8c87a;
+  --stagemode-gold-light: #f5d78a;
+  --stagemode-gold-dark: #c9a85a;
+  --stagemode-bg: #0b1320;
+  --stagemode-surface: #16233a;
+  --stagemode-sidebar-bg: #0e1828;
+  --stagemode-sidebar-border: #24354f;
+  --stagemode-text: #d8c49a;
+  --stagemode-text-secondary: #97a7c4;
+  --stagemode-text-muted: #5a7192;
+  --stagemode-border: #24354f;
+  --stagemode-shadow: 0 4px 20px rgba(0,0,0,0.35);
+}
+
+/* ---- 2. 页面背景（Noir 灯光氛围） ---- */
+.sleeptown-game {
+  background:
+    radial-gradient(1100px 420px at 78% -6%, var(--st-bg-glow), transparent 62%),
+    linear-gradient(180deg, var(--st-bg), var(--st-bg2));
+  border-radius: 14px;
+  box-shadow: var(--st-shadow);
+}
+
+.stagemode-page {
+  background:
+    radial-gradient(1100px 420px at 78% -6%, var(--st-bg-glow), transparent 62%),
+    linear-gradient(180deg, var(--st-bg), var(--st-bg2));
+}
+.stagemode-home { background: transparent; }
+
+.game-main {
+  background:
+    radial-gradient(900px 360px at 78% -6%, var(--st-bg-glow), transparent 62%),
+    linear-gradient(180deg, var(--st-bg), var(--st-bg2));
+  border-radius: 14px;
+  padding: 1.5rem;
+}
+[data-theme="dark"] .game-main {
+  background:
+    radial-gradient(900px 360px at 78% -6%, var(--st-bg-glow), transparent 62%),
+    linear-gradient(180deg, var(--st-bg), var(--st-bg2));
+}
+
+/* ---- 3. 首页 hero 与模式按钮（黄铜铭牌三态） ---- */
+.home-hero { border-bottom-color: var(--st-border); }
+.home-hero h1 {
+  letter-spacing: 0.08em;
+  color: var(--st-lamp);
+}
+[data-theme="dark"] .home-hero h1 { color: var(--st-lamp); }
+.home-subtitle {
+  font-family: var(--st-typewriter);
+  letter-spacing: 0.14em;
+  color: var(--st-ink-faint);
+  text-transform: uppercase;
+}
+
+.home-mode-btn {
+  background: linear-gradient(180deg, var(--st-surface), var(--st-surface2));
+  border: 1px solid var(--st-border-strong);
+  border-bottom: 3px solid var(--st-border-strong);
+  border-radius: var(--st-radius);
+  color: var(--st-ink);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+}
+.home-mode-btn:hover {
+  border-color: var(--st-lamp);
+  background: linear-gradient(180deg, var(--st-surface2), var(--st-surface2));
+  transform: translateY(-2px);
+}
+.home-mode-btn.primary {
+  border-left: 3px solid var(--st-lamp);
+  border-color: var(--st-lamp);
+}
+.home-mode-btn.quick {
+  background: linear-gradient(180deg, #d9b36a, #b08d4e);
+  border: 1px solid #8a6d3b;
+  border-bottom: 3px solid #7c5f2c;
+  color: #241a0c;
+}
+.home-mode-btn.quick:hover { opacity: 0.92; }
+.home-tip { color: var(--st-ink-faint); }
+
+/* ---- 4. 鱼卡档案 ---- */
+.fish-card {
+  background: linear-gradient(170deg, var(--st-surface), var(--st-surface2));
+  border: 1px solid var(--st-border);
+  border-radius: var(--st-radius);
+  padding: 1.1rem 0.8rem 0.9rem;
+  box-shadow: var(--st-shadow);
+  color: var(--st-ink);
+}
+.fish-card::before {
+  content: "";
+  position: absolute;
+  inset: 5px;
+  border: 1px dashed var(--st-border);
+  border-radius: 6px;
+  pointer-events: none;
+  opacity: 0.8;
+}
+[data-theme="dark"] .fish-card { background: linear-gradient(170deg, var(--st-surface), var(--st-surface2)); }
+.fish-card:hover:not(.dead) {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+  border-color: var(--st-lamp);
+}
+.fish-card.revealed { border-color: var(--st-lamp); }
+.fish-card.revealed::before { border-color: rgba(232,200,122,0.5); }
+[data-theme="dark"] .fish-card.revealed::before { border-color: rgba(232,200,122,0.5); }
+.fish-card.exile-mode { border-color: var(--st-stamp); }
+.fish-card.exile-mode:hover {
+  border-color: var(--st-stamp);
+  box-shadow: 0 6px 20px rgba(192,57,43,0.35);
+}
+.fish-card.can-inquire-again { border-color: var(--st-lamp); }
+.fish-card.can-inquire-again:hover {
+  border-color: var(--st-lamp);
+  box-shadow: 0 6px 20px rgba(232,200,122,0.3);
+}
+.fish-card.dead {
+  opacity: 0.6;
+  filter: grayscale(0.9) brightness(0.9);
+}
+[data-theme="dark"] .fish-card.dead { filter: grayscale(0.9) brightness(0.7); }
+.fish-card.dead::before { border-color: var(--st-ink-faint); }
+
+/* 徽记 SVG */
+.fish-avatar { margin-bottom: 0.35rem; }
+.role-svg {
+  width: 52px;
+  height: 52px;
+  display: inline-block;
+  vertical-align: middle;
+  color: var(--st-ink);
+}
+.fish-card.good .role-svg { color: var(--st-good); }
+.fish-card.revealed .role-svg { color: var(--st-lamp); }
+.fish-card.dead .role-svg { color: var(--st-ink-faint); }
+.hidden-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 2px solid var(--st-border-strong);
+  font-family: var(--st-typewriter);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--st-ink-faint);
+  background: radial-gradient(circle at 50% 40%, var(--st-bg-glow), transparent 70%);
+}
+
+.fish-number {
+  font-family: var(--st-typewriter);
+  font-size: 0.82rem;
+  color: var(--st-ink-faint);
+  letter-spacing: 0.05em;
+}
+.fish-role-name { font-family: 'Playfair Display', Georgia, serif; color: var(--st-ink); font-size: 1.05rem; }
+.fish-hint { color: var(--st-ink-faint); }
+.fish-status { color: var(--st-ink-faint); font-family: var(--st-typewriter); font-size: 0.85rem; }
+.fish-real-role { color: var(--st-ink-faint); font-size: 0.85rem; }
+
+/* 印章（右下角旋转） */
+.fish-stamp {
+  position: absolute;
+  bottom: 8px;
+  right: 9px;
+  transform: rotate(-8deg);
+  font-family: var(--st-typewriter);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  padding: 2px 6px;
+  border-radius: 3px;
+  border: 1.5px solid currentColor;
+  opacity: 0.9;
+  pointer-events: none;
+}
+.fish-stamp.evil { color: var(--st-stamp-strong); }
+.fish-stamp.ok { color: var(--st-good); }
+.fish-stamp.dead { color: var(--st-ink-faint); border-style: solid; }
+.fish-stamp.pending { color: var(--st-ink-faint); border-style: dashed; }
+
+/* 阵营标签 */
+.fish-faction-tag {
+  display: inline-block;
+  margin-top: 4px;
+  font-family: var(--st-typewriter);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  padding: 2px 8px;
+  border-radius: 3px;
+  border: 1px solid currentColor;
+}
+.fish-faction-tag.good { color: var(--st-good); }
+.fish-faction-tag.evil { color: var(--st-stamp-strong); }
+.fish-faction-tag.disguised { color: var(--st-lamp); }
+
+/* ---- 5. 状态栏（档案卡小组件） ---- */
+.status-bar {
+  background: transparent;
+  border: 1px solid var(--st-border);
+  border-radius: var(--st-radius);
+  padding: 0.8rem;
+  gap: 0.8rem;
+}
+.status-item {
+  background: var(--st-surface);
+  border: 1px solid var(--st-border);
+  border-left: 3px solid var(--st-lamp);
+  border-radius: 6px;
+  padding: 8px 14px;
+  min-width: 130px;
+  flex: 1;
+}
+.status-label {
+  font-family: var(--st-typewriter);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--st-ink-faint);
+}
+.status-value { color: var(--st-lamp-strong); }
+
+/* ---- 6. 日志（打字机审讯记录） ---- */
+.game-log {
+  background: rgba(0,0,0,0.25);
+  border: 1px solid var(--st-border);
+  border-left: 4px solid var(--st-lamp);
+  border-radius: var(--st-radius);
+  font-family: var(--st-typewriter);
+  font-size: 0.85rem;
+}
+[data-theme="dark"] .game-log { background: rgba(0,0,0,0.35); }
+.log-time { color: var(--st-ink-faint); margin-right: 0.4em; }
+
+.log-system { background: transparent; color: var(--st-ink-soft); }
+.log-day { background: transparent; color: var(--st-lamp); }
+.log-night { background: transparent; color: var(--st-ink-soft); }
+.log-action { background: transparent; color: var(--st-neutral); }
+.log-success { background: transparent; color: var(--st-good); }
+.log-warning { background: transparent; color: var(--st-lamp-strong); }
+.log-error { background: transparent; color: var(--st-bad); }
+.log-clue { background: transparent; color: var(--st-neutral); }
+.log-neutral { background: transparent; color: var(--st-ink-soft); }
+.log-death { background: transparent; color: var(--st-bad); }
+.log-trickster { background: transparent; color: var(--st-bad); }
+.log-magic { background: transparent; color: var(--st-neutral); }
+.log-entry { padding: 0.4rem 0.3rem; border-bottom: 1px dashed var(--st-border); border-radius: 0; }
+.log-entry:last-child { border-bottom: none; }
+
+/* ---- 7. 操作按钮三态 ---- */
+.action-bar { border-top-color: var(--st-border); }
+.action-btn {
+  border: 1px solid var(--st-border-strong);
+  border-bottom: 3px solid var(--st-border-strong);
+  background: linear-gradient(180deg, var(--st-surface), var(--st-surface2));
+  color: var(--st-ink);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+}
+.action-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.22); }
+.action-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.exile-btn {
+  background: linear-gradient(180deg, #7e2a22, #5c1d17);
+  border-color: #a03a2e;
+  border-bottom-color: #4a1510;
+  color: #f3d9c8;
+}
+.skip-exile-btn {
+  background: linear-gradient(180deg, #7e2a22, #5c1d17);
+  border-color: #a03a2e;
+  border-bottom-color: #4a1510;
+  color: #f3d9c8;
+}
+.info-btn, .reset-btn, .back-btn, .skip-btn { background: linear-gradient(180deg, var(--st-surface), var(--st-surface2)); color: var(--st-ink); }
+[data-theme="dark"] .exile-btn, [data-theme="dark"] .skip-exile-btn {
+  background: linear-gradient(180deg, #8a2f26, #64201a); color: #f3d9c8;
+}
+.result-actions .back-btn { background: var(--st-surface); border: 1px solid var(--st-border-strong); color: var(--st-ink); }
+
+/* ---- 8. 弹窗 ---- */
+.modal-content {
+  background: linear-gradient(180deg, var(--st-surface), var(--st-surface2));
+  border: 1px solid var(--st-border-strong);
+  box-shadow: var(--st-shadow);
+  color: var(--st-ink);
+}
+.modal-content h2, .modal-content h3, .modal-content h4 { color: var(--st-ink); }
+.result-title { color: var(--st-lamp); }
+.result-message { color: var(--st-ink-soft); }
+.win-modal .modal-content { border-color: var(--st-good); }
+.lose-modal .modal-content { border-color: var(--st-stamp); }
+.result-icon { filter: drop-shadow(0 0 14px var(--st-bg-glow)); }
+
+.truth-item { background: var(--st-surface); border: 1px solid var(--st-border); color: var(--st-ink); }
+.good-truth { background: rgba(46,125,82,0.12); color: var(--st-good); border-left: 3px solid var(--st-good); }
+.evil-truth { background: rgba(169,50,38,0.14); color: var(--st-bad); border-left: 3px solid var(--st-bad); }
+.neutral-truth { background: rgba(122,106,82,0.14); color: var(--st-neutral); border-left: 3px solid var(--st-neutral); }
+
+.play-again-btn {
+  background: linear-gradient(180deg, #4f9a6b, #33774e);
+  border: 1px solid #25613f;
+  border-bottom: 3px solid #1d5034;
+  color: #eaf7ef;
+  border-radius: 8px;
+}
+.next-stage-btn {
+  background: linear-gradient(180deg, #d9b36a, #b08d4e);
+  border: 1px solid #8a6d3b;
+  border-bottom: 3px solid #7c5f2c;
+  color: #241a0c;
+  border-radius: 8px;
+}
+.close-rules-btn {
+  background: linear-gradient(180deg, #d9b36a, #b08d4e);
+  border: 1px solid #8a6d3b;
+  border-bottom: 3px solid #7c5f2c;
+  color: #241a0c;
+  border-radius: 8px;
+}
+.close-rules-btn:hover { opacity: 0.92; }
+
+/* ---- 9. 自由配置界面 ---- */
+.setup-container {
+  background: linear-gradient(180deg, var(--st-surface), var(--st-surface2));
+  border: 1px solid var(--st-border);
+  border-radius: 16px;
+  box-shadow: var(--st-shadow);
+  color: var(--st-ink);
+}
+[data-theme="dark"] .setup-container { background: linear-gradient(180deg, var(--st-surface), var(--st-surface2)); }
+.back-to-selection-btn {
+  background: var(--st-surface);
+  border: 1px solid var(--st-border-strong);
+  color: var(--st-ink-soft);
+  border-radius: 8px;
+}
+.back-to-selection-btn:hover { background: var(--st-surface2); color: var(--st-ink); }
+.config-section { background: var(--st-bg); border: 1px solid var(--st-border); border-radius: 10px; }
+[data-theme="dark"] .config-section { background: var(--st-bg); }
+.config-section h3, .fish-count-config label, .option-row label, .config-preview h4 { color: var(--st-ink); }
+.section-desc, .summary-content, .hint { color: var(--st-ink-soft); }
+
+.role-faction-group {
+  background: var(--st-surface);
+  border: 1px solid var(--st-border);
+  border-radius: 10px;
+}
+.role-faction-group:hover { border-color: var(--st-border-strong); }
+.faction-title { color: var(--st-lamp-strong); }
+.role-checkbox-label {
+  background: var(--st-bg);
+  border: 1px solid var(--st-border);
+  color: var(--st-ink);
+  border-radius: 8px;
+}
+.role-checkbox-label:hover { border-color: var(--st-lamp); background: var(--st-surface); }
+.role-checkbox-label input[type="checkbox"]:checked + span,
+.role-checkbox-label input[type="checkbox"]:checked ~ span { color: var(--st-lamp); }
+
+.count-btn {
+  background: var(--st-surface);
+  border: 2px solid var(--st-lamp);
+  color: var(--st-lamp);
+}
+.count-btn:hover { background: var(--st-lamp); color: var(--st-surface); }
+.fish-count-input, .option-select {
+  background: var(--st-surface);
+  border: 1px solid var(--st-border-strong);
+  color: var(--st-ink);
+  border-radius: 8px;
+}
+.config-preview {
+  background: var(--st-bg);
+  border: 1px dashed var(--st-border-strong);
+  border-radius: 10px;
+  color: var(--st-ink);
+}
+.warning-message { background: rgba(192,57,43,0.12); border: 1px solid var(--st-stamp); color: var(--st-stamp-strong); }
+.new-badge { background: linear-gradient(135deg, var(--st-lamp), var(--st-lamp-strong)); color: #241a0c; }
+
+/* 开始按钮（金） */
+.start-btn {
+  background: linear-gradient(180deg, #d9b36a, #b08d4e);
+  border: 1px solid #8a6d3b;
+  border-bottom: 3px solid #7c5f2c;
+  color: #241a0c;
+  border-radius: 10px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+}
+.start-btn:hover:not(:disabled) { transform: translateY(-2px); opacity: 0.94; }
+.start-btn:disabled { opacity: 0.5; }
+
+/* ---- 10. Sidebar（Noir 档案夹） ---- */
+.stagemode-sidebar {
+  background: var(--stagemode-sidebar-bg);
+  border-right: 1px solid var(--stagemode-sidebar-border);
+}
+.stagemode-logo { color: var(--st-lamp); }
+.stagemode-logo:hover { color: var(--st-lamp-strong); }
+.stagemode-version { color: var(--st-ink-faint); }
+.stagemode-back-btn {
+  background: var(--st-surface);
+  border-color: var(--st-border-strong);
+  color: var(--st-ink-soft);
+}
+.stagemode-back-btn:hover { background: var(--st-surface2); color: var(--st-ink); border-color: var(--st-lamp); }
+.stagemode-nav-group-title { color: var(--st-ink-faint); }
+.stagemode-nav-link { color: var(--st-ink-soft); }
+.stagemode-nav-link:hover { background: rgba(232,200,122,0.08); border-left-color: var(--st-lamp); color: var(--st-ink); }
+.stagemode-nav-link.active {
+  background: linear-gradient(90deg, rgba(232,200,122,0.16), transparent);
+  border-left-color: var(--st-lamp);
+  color: var(--st-lamp-strong);
+}
+.stagemode-nav-num { font-family: var(--st-typewriter); color: var(--st-ink-faint); }
+.stagemode-nav-link.active .stagemode-nav-num { color: var(--st-lamp); }
+.stagemode-nav-diff { color: var(--st-lamp); }
+
+/* sidebar 徽记（SVG 注入后） */
+.stagemode-nav-num.nav-role-svg { min-width: 22px; }
+.stagemode-nav-num.nav-role-svg svg { display: inline-block; }
+.stagemode-nav-link.active .stagemode-nav-num.nav-role-svg { color: var(--st-lamp); }
+.stagemode-nav-link:hover .stagemode-nav-num.nav-role-svg { color: var(--st-lamp); }
+.stagemode-logo-icon { display: inline-flex; align-items: center; }
+.stagemode-logo-icon svg { display: inline-block; color: var(--st-lamp); }
+
+/* ---- 11. 关卡卡片 ---- */
+.stagemode-card {
+  background: linear-gradient(180deg, var(--st-surface), var(--st-surface2));
+  border: 1px solid var(--st-border-strong);
+  box-shadow: var(--st-shadow);
+  color: var(--st-ink);
+}
+.stagemode-card-num {
+  font-family: var(--st-typewriter);
+  background: linear-gradient(135deg, var(--st-lamp), var(--st-lamp-strong));
+  color: #241a0c;
+  box-shadow: 0 2px 8px rgba(232,200,122,0.3);
+}
+.stagemode-card-title { color: var(--st-ink); }
+.stagemode-card-difficulty {
+  background: rgba(232,200,122,0.12);
+  color: var(--st-lamp-strong);
+}
+.stagemode-card-highlight {
+  background: rgba(232,200,122,0.1);
+  color: var(--st-lamp-strong);
+  border-left-color: var(--st-lamp);
+}
+.stagemode-card-desc {
+  background: var(--st-bg);
+  border-left-color: var(--st-lamp);
+  color: var(--st-ink-soft);
+}
+.stagemode-card-desc strong { color: var(--st-ink); }
+.stagemode-stat {
+  background: rgba(232,200,122,0.08);
+  border: 1px solid rgba(232,200,122,0.2);
+  color: var(--st-ink);
+}
+.stagemode-start-btn {
+  background: linear-gradient(180deg, #d9b36a, #b08d4e);
+  border: 1px solid #8a6d3b;
+  border-bottom: 3px solid #7c5f2c;
+  color: #241a0c;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+}
+.stagemode-start-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(0,0,0,0.3); }
+.stage-difficulty {
+  background: linear-gradient(135deg, var(--st-lamp), var(--st-lamp-strong));
+  color: #241a0c;
+}
+.stage-info h3, .stage-number { color: var(--st-ink); }
+.stage-description { color: var(--st-ink-soft); }
+
+/* ---- 12. 规则弹窗 ---- */
+.rules-modal-content, .rules-content { color: var(--st-ink); }
+.rules-section-setup {
+  background: var(--st-bg);
+  border: 1px solid var(--st-border);
+  border-radius: 10px;
+  color: var(--st-ink);
+}
+.rules-section-setup h4 { color: var(--st-lamp-strong); }
+.rules-section-setup li, .rules-section-setup p { color: var(--st-ink-soft); }
+.role-card { background: var(--st-bg); border-left-color: var(--st-border-strong); }
+.good-role { background: rgba(46,125,82,0.1); border-color: var(--st-good); }
+.detective-role { background: rgba(160,106,31,0.1); border-color: var(--st-lamp); }
+.judge-role { background: rgba(122,106,82,0.14); border-color: var(--st-neutral); }
+.gossip-role { background: rgba(160,106,31,0.1); border-color: var(--st-lamp); }
+.sleepwalker-role { background: rgba(160,106,31,0.1); border-color: var(--st-lamp); }
+.mage-role { background: rgba(122,106,82,0.14); border-color: var(--st-neutral); }
+.evil-role { background: rgba(169,50,38,0.12); border-color: var(--st-bad); }
+.martyr-role { background: rgba(169,50,38,0.16); border-color: var(--st-bad); }
+.neutral-role { background: rgba(122,106,82,0.14); border-color: var(--st-neutral); }
+.role-card h4 { color: var(--st-ink); }
+.role-card p { color: var(--st-ink-soft); }
+
+/* ---- 13. 图鉴特殊徽章 ---- */
+.special-badge { color: var(--st-ink-soft); background: transparent; border: 1px solid var(--st-border); }
+.detective-badge { background: rgba(160,106,31,0.1); color: var(--st-lamp); border-color: var(--st-lamp); }
+.judge-badge { background: rgba(122,106,82,0.14); color: var(--st-neutral); border-color: var(--st-neutral); }
+.gossip-badge { background: rgba(160,106,31,0.1); color: var(--st-lamp); border-color: var(--st-lamp); }
+.trickster-badge { background: rgba(122,106,82,0.14); color: var(--st-neutral); border-color: var(--st-neutral); }
+.orca-badge { background: rgba(122,106,82,0.14); color: var(--st-neutral); border-color: var(--st-neutral); }
+
+/* ---- 14. 关卡 sidebar 顶部按钮微调 ---- */
+.stagemode-menu-toggle { background: var(--st-surface); box-shadow: var(--st-shadow); }
+
+/* ---- 15. 移动端微调 ---- */
+@media (max-width: 640px) {
+  .fish-pond { gap: 0.6rem; }
+  .role-svg, .hidden-avatar { width: 44px; height: 44px; }
+  .status-item { min-width: 0; }
+  .setup-container { padding: 2rem 1.2rem; }
+}
 </style>
 {{ end }}

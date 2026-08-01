@@ -18,6 +18,9 @@ Thumbs.db
 *.temp
 ~$*
 
+# Brainstorm skill temp
+.superpowers/
+
 /node_modules/
 
 # CPA PDF source text (extracted, not tracked in git)

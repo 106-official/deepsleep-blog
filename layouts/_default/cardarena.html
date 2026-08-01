@@ -1,10 +1,13 @@
 {{ define "main" }}
 <div class="cardarena-page">
-  <header class="ca-page-header">
-    <h1>CardArena</h1>
-    <p class="ca-page-sub">多角色轮换卡牌对战 · 选择 6 名角色出战，击败对方全部角色</p>
-  </header>
-  <div id="cardarena-app"></div>
+  <div class="ca-stage">
+    <header class="ca-page-header">
+      <h1>CardArena</h1>
+      <p class="ca-page-sub">多角色轮换卡牌对战 · 选择 6 名角色出战，击败对方全部角色</p>
+      <div class="ca-header-ornament" aria-hidden="true"><b></b><b></b><b></b><b></b></div>
+    </header>
+    <div id="cardarena-app"></div>
+  </div>
 </div>
 <link rel="stylesheet" href="/css/cardarena.css">
 <script src="/js/cardarena-data.js"></script>
@@ -22,6 +25,7 @@
     margin: 0 auto;
     padding: 16px 16px 0;
     position: relative;
+    text-align: center;
   }
   .ca-page-header h1 {
     font-family: var(--cardarena-serif, 'Noto Serif SC', 'Songti SC', 'SimSun', Georgia, serif);
@@ -60,10 +64,53 @@
     border: 1px solid var(--cardarena-gold, #c9a227);
   }
   .ca-page-sub {
-    margin: 0;
+    margin: 8px 0 0;
     color: var(--cardarena-muted, #7a6848);
     font-size: 0.9rem;
     letter-spacing: 0.04em;
   }
+  /* 标题下装饰条带：菱形 + 珠串 */
+  .ca-header-ornament {
+    margin: 10px auto 0;
+    height: 8px;
+    width: 76%;
+    position: relative;
+  }
+  .ca-header-ornament::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 3px;
+    height: 1px;
+    background: repeating-linear-gradient(90deg, transparent 0 7px, var(--cardarena-gold, #c9a227) 7px 9px);
+  }
+  .ca-header-ornament::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 10px;
+    height: 10px;
+    transform: translate(-50%, -50%) rotate(45deg);
+    background: var(--cardarena-gold, #c9a227);
+    opacity: 0.85;
+    box-shadow: 0 0 0 2px var(--cardarena-bg, #f4ead2), 0 0 0 3px var(--cardarena-gold, #c9a227);
+  }
+  .ca-header-ornament b {
+    position: absolute;
+    top: 50%;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--cardarena-gold, #c9a227);
+    transform: translateY(-50%);
+    opacity: 0.9;
+  }
+  .ca-header-ornament b:nth-of-type(1) { left: 12%; }
+  .ca-header-ornament b:nth-of-type(2) { left: 24%; }
+  .ca-header-ornament b:nth-of-type(3) { right: 24%; }
+  .ca-header-ornament b:nth-of-type(4) { right: 12%; }
+  [data-theme="dark"] .ca-page-header h1 { color: var(--cardarena-gold-light, #eed48a); }
 </style>
 {{ end }}

@@ -1,8 +1,8 @@
 # DeepSleep Blog - 项目技术文档
 
 > **最后更新**: 2026-08-02
-> **版本**: v5.12
-> **状态**: ✅ 生产就绪 | 评论系统正常运行 (Neon PostgreSQL) | 💬 社区系统已上线 | 👤 全局个人中心 | 📝 文章板块整合 (learn 风格 sidebar) | 🌗 主题切换圆形扩散动画 | 🐟 SleepTown 首页 sidebar 改造 | 🎮 交互式自我介绍 (/play/me/) | 🃏 CardArena 卡牌对战 (/play/cardarena/) | 👑 CardArena 苏丹宫廷风卡牌样式
+> **版本**: v5.13
+> **状态**: ✅ 生产就绪 | 评论系统正常运行 (Neon PostgreSQL) | 💬 社区系统已上线 | 👤 全局个人中心 | 📝 文章板块整合 (learn 风格 sidebar) | 🌗 主题切换圆形扩散动画 | 🐟 SleepTown 首页 sidebar 改造 | 🎮 交互式自我介绍 (/play/me/) | 🃏 CardArena 卡牌对战 (/play/cardarena/) | 👑 CardArena 苏丹宫廷风卡牌样式 | ⚔️ CardArena 极繁深化（界面繁化 + 战斗特效 + 随从卡）
 
 ---
 
@@ -54,6 +54,7 @@
 - 🎮 **交互式自我介绍**（`/play/me/` 滚动叙事 + 数据可视化 + 打字机流式）✅ v5.9 新增
 - 🃏 **CardArena 卡牌对战**（`/play/cardarena/` 8 角色选 6 + 独立卡组 + 6 关键词 + 基础 AI，模块化 JS 架构 data/engine/ai/ui 四文件）✅ v5.10 新增
 - 👑 **CardArena 苏丹宫廷风卡牌样式**（参考《苏丹的游戏》：黑金暗夜/浅金羊皮纸双主题随博客切换，四品级 × 八角星徽 + 四角卷草纹 + 圆形宝石费用 + 品级缎带；极繁主义装饰：放射光芒暗纹/双线角花/数值宝石框/英文品级缎带）✅ v5.12 新增
+- ⚔️ **CardArena 极繁深化**（舞台四角纹章 + 珠串边线 + 分区面板金珠内框 + 三层八珠光环徽章；随从卡 112×150 统一长方形极繁样式；出战区英文宫衔 + 八角星水印；战斗特效系统：伤害飘字/受击闪光/冲击波/死亡化灰烬/换人 3D 幽灵卡翻飞/召唤翻转入场，引擎零改动、UI 状态快照对比驱动）✅ v5.13 新增
 - 📚 **CPA 阶段B 习题整合**（六科 92 章「## 7. 同步练习」整合《必刷550题》1500+ 题 + 09 历年真题板块 2013-2025 × 6 科 78 页全文真题）✅ v5.11 新增
 
 ---
@@ -1414,6 +1415,50 @@ Hugo 的 partial 查找是精确匹配文件名，找不到 `extend_head.html` �
 | `PROJECT_DOCUMENTATION.md` | 功能特性、更新日志 v5.12 追加记录 |
 
 **验证**：`hugo --gc` 350 页无 error；浏览器四重验证（DOM/计算样式/逐帧采样/截图）— rAF 帧采样确认旋转角单调递减、每帧 8-10°、无跳帧闪烁；明/暗双主题角色卡（英文缎带/纯几何星徽/放射暗纹/宝石框）与手牌卡（星芒费用宝石/英文品级缎带）全部正常，无溢出、无 JS 报错。
+
+### v5.13 (2026-08-02) - CardArena 极繁深化：界面繁化 + 战斗特效 + 随从卡
+
+**新增功能**（对应需求：①进一步繁化徽章/界面/背景 ②对战界面卡牌 UI 同步繁化 + 攻击伤害特效 + 角色/随从死亡化灰烬 + 换人/出战新角色时从角色牌区翻开翻转移动到出战角色区（立体感）③随从卡繁化 + 统一卡牌长方形大小）:
+
+- ✅ **界面繁化**（舞台/分区面板/徽章三层光环）
+  - `.ca-stage` 舞台外框：四角纹章（SVG mask 非十进制编码，background 上色随主题变色）+ 边线珠串（repeating-linear-gradient）
+  - 分区面板（角色牌区/战场/手牌/战斗日志）inset 细线内框 + 四角金珠；战场放射光芒暗纹背景
+  - 徽章三层光环：旋转八珠光环（`.ca-*-halo` 55s 旋转）+ 双虚线圆环（`.ca-*-ring`），尺寸分级：角色 124px / 手牌 100px / 随从 74px
+- ✅ **随从卡全新极繁样式**：112×150 统一长方形（与角色/手牌卡比例一致），conic 放射暗纹 + 品级缎带（英文 GOLD/SILVER/BRONZE/STONE）+ 八角星徽记区 + 菱形宝石数值框（双层菱形）+ 关键词金线分隔 + 五层框阴影 + hover 上浮
+- ✅ **出战区繁化**：`.ca-hero::after` 内框 + 四角金珠 + `.ca-hero-en` 英文宫衔（Playfair + 0.42em 字距 + 左右渐隐金线）+ `.ca-hero-star` 八角星水印
+- ✅ **战斗特效系统**（引擎零改动，UI 状态快照对比驱动；`renderAll` 对比 `prevState` 深拷贝快照检测变化，特效元素 fixed 定位挂载 `document.body`，AI 回合同一宏任务多次 `renderAll` 不清特效，`setTimeout` 定时清理）
+
+| 变化 | 特效 |
+|---|---|
+| hero/minion 掉血 | 红色伤害飘字 `.ca-fx-dmg` + 受击白闪 `.ca-hit` + 金色冲击波 `.ca-fx-impact` + 攻击者前倾 `.ca-lunge`（仅玩家操作，`pendingAction` 提供） |
+| health 上升 | 绿色治疗飘字 `.ca-fx-heal` |
+| minion 从战场消失 | 22 粒金棕灰烬上飘旋转 `.ca-ash` + 烟尘 `.ca-ash-puff`（位置用 `captureRects` 预捕获旧 rect） |
+| 换人 `activeIndex` 变化 | `.ca-ghost` 3D 幽灵卡从角色牌区翻飞向出战区（WAAPI `element.animate` rotateY 0→180 + 位移）→ 落地 14 粒金尘 `.ca-spark` + `.ca-hero-enter` 下压抬升 |
+| 新随从入场 | `.ca-minion-enter` 翻转立起入场 |
+
+- ✅ **随从关键词中文化**：taunt→嘲讽 / charge→冲锋 / deathrattle→亡语 / divine_shield→圣盾 / windfury→风怒 / poison→剧毒（`KW_ZH` 映射 + `kwText()`）
+
+**技术变更**:
+- `cardarena.css`：三个 SVG mask 变量（`--ca-mask-corner` 四角纹章 / `--ca-mask-halo` 八珠光环 / `--ca-mask-star` 八角星）；特效元素全部 fixed 定位；追加至 1698 行
+- `cardarena-ui.js`：新增 `snapshot/captureRects/analyzeFx/applyFx` 特效引擎 + `pendingAction` 记录玩家操作（出牌/攻击/换人）；`playFloating/playAshes/playGhostSwap/burstSparks` 特效函数；`buildRosterBar` 换人 chip 用 IIFE 闭包记录 pendingAction
+- `cardarena-ai.js`：英雄攻击改实时取 `engine.validAttackTargets(side)`（修复攻击已死目标）
+
+**修复的 Bug**（浏览器子代理实测发现）:
+1. **致命**：`analyzeFx` 读引擎不存在的 `s[sn].minions` 字段（引擎用 `board`）→ 二次渲染 TypeError 冻结 UI → 改读 `(ns.board || [])`
+2. **致命**：`analyzeFx` 读不存在的 `ns.hero`（引擎 side 只有 `roster[activeIndex]`）→ 换人/英雄受击/英雄死亡特效分支永不执行 → 改 `ns.roster[ns.activeIndex]`
+3. AI 英雄攻击预计算目标中已被随从击杀的目标 → 日志"攻击 undefined" → 改实时取存活合法目标
+
+**Files Modified**:
+| 文件 | 变更 |
+|------|------|
+| `layouts/_default/cardarena.html` | 修改：`.ca-stage` 包裹层 + `.ca-header-ornament` 标题装饰条带 |
+| `static/css/cardarena.css` | 修改：界面繁化 + 随从卡极繁样式 + 战斗特效系统（追加至 1698 行） |
+| `static/js/cardarena-ui.js` | 修改：装饰挂载 + 特效引擎 + 关键词中文化 |
+| `static/js/cardarena-ai.js` | 修改：英雄攻击实时取目标 |
+| `PROJECT_CONTEXT.md` | 功能清单、文件索引、版本演进表 v5.13 |
+| `PROJECT_DOCUMENTATION.md` | 功能特性、更新日志 v5.13 条目 |
+
+**验证**：`hugo --gc` 350 页 0 error；浏览器子代理三轮实测 — 对局推进到第 7 回合无 JS 错误；召唤翻转入场、伤害飘字+灰烬、受击闪光、治疗飘字、换人 3D 幽灵卡翻飞 + 落地 hero-enter 全部确认触发；随从关键词中文化正常。
 
 ---
 

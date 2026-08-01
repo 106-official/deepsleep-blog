@@ -5,6 +5,8 @@
   var CONFIG = DATA.GAME_CONFIG;
   var app = null;
   var chosenRoles = [];       // 玩家选择的 6 个角色 id
+  var prevState = null;       // 上一次渲染的状态快照（用于特效对比）
+  var pendingAction = null;   // UI 发起的操作记录（攻击者等特效信息）
 
   function el(tag, cls, text) {
     var node = document.createElement(tag);
@@ -30,6 +32,17 @@
     if (power >= 5) return 'silver';
     if (power >= 3) return 'bronze';
     return 'stone';
+  }
+
+  // 品级英文名（缎带）
+  function tierEn(t) {
+    return { gold: 'GOLD', silver: 'SILVER', bronze: 'BRONZE', stone: 'STONE' }[t] || '';
+  }
+
+  // 随从关键词中文化（引擎存英文，界面显示中文）
+  var KW_ZH = { taunt: '嘲讽', charge: '冲锋', deathrattle: '亡语', divine_shield: '圣盾', windfury: '风怒', poison: '剧毒' };
+  function kwText(list) {
+    return list.map(function (k) { return KW_ZH[k] || k; }).join(' · ');
   }
 
   // ===== 开始界面：选择 6 个角色 =====
@@ -173,6 +186,9 @@
     if (!s) return;
     // 对局已结束：结算弹窗已由 showGameOver 渲染，跳过重建以免清掉 overlay
     if (s.phase === 'gameover') return;
+    // 特效分析：清空前捕获旧 DOM 位置，再对比前后状态
+    var oldRects = captureRects();
+    var fx = analyzeFx(s, prevState, oldRects);
     app.innerHTML = '';
     var layout = el('div', 'ca-layout');
     layout.appendChild(buildRosterBar(s.enemy, 'enemy'));
@@ -183,6 +199,254 @@
     layout.appendChild(buildHandBar(s));
     layout.appendChild(buildActionBar(s));
     app.appendChild(layout);
+    applyFx(fx);
+    prevState = snapshot(s);
+    pendingAction = null;
+  }
+
+  // ===== 特效系统 =====
+  // 状态快照（存值，避免引用被引擎就地修改）
+  function snapSide(side) {
+    var r = side.roster[side.activeIndex];
+    return {
+      activeIndex: side.activeIndex,
+      hero: r ? { health: r.health, alive: r.alive, id: r.id, name: r.name, attack: r.attack, maxHealth: r.maxHealth } : null,
+      minions: side.board.filter(function (m) { return m.health > 0; }).map(function (m) {
+        return { uid: m.uid, health: m.health };
+      })
+    };
+  }
+  function snapshot(s) {
+    return { player: snapSide(s.player), enemy: snapSide(s.enemy) };
+  }
+
+  // 捕获当前 DOM 中关键元素的屏幕位置（供特效定位）
+  function captureRects() {
+    var rects = {};
+    app.querySelectorAll('.ca-hero').forEach(function (h) {
+      rects['hero:' + h.dataset.side] = h.getBoundingClientRect();
+    });
+    app.querySelectorAll('.ca-minion[data-uid]').forEach(function (m) {
+      rects['minion:' + m.dataset.side + ':' + m.dataset.uid] = m.getBoundingClientRect();
+    });
+    app.querySelectorAll('.ca-roster-chip[data-side]').forEach(function (c) {
+      rects['chip:' + c.dataset.side + ':' + c.dataset.roleIndex] = c.getBoundingClientRect();
+    });
+    return rects;
+  }
+
+  // 对比前后状态，产出特效清单
+  function analyzeFx(s, prev, rects) {
+    var fx = { dmg: [], heal: [], deaths: [], summons: [], swap: null, attacker: null };
+    if (!prev) return fx;
+    ['player', 'enemy'].forEach(function (sn) {
+      var ns = s[sn];
+      var ps = prev[sn];
+      // ---- 随从（引擎状态用 board 字段，快照用 minions 字段）----
+      var cur = {}, old = {};
+      (ns.board || []).forEach(function (m) { if (m.health > 0) cur[m.uid] = m.health; });
+      ps.minions.forEach(function (m) { old[m.uid] = m.health; });
+      Object.keys(old).forEach(function (uid) {
+        if (!cur[uid]) fx.deaths.push({ side: sn, kind: 'minion', rect: rects['minion:' + sn + ':' + uid] });
+      });
+      (ns.board || []).forEach(function (m) {
+        if (m.health <= 0) return;
+        if (old[m.uid] === undefined) {
+          fx.summons.push({ side: sn, uid: m.uid });
+        } else if (old[m.uid] > m.health) {
+          fx.dmg.push({ side: sn, kind: 'minion', uid: m.uid, amount: old[m.uid] - m.health });
+        } else if (old[m.uid] < m.health) {
+          fx.heal.push({ side: sn, kind: 'minion', uid: m.uid, amount: m.health - old[m.uid] });
+        }
+      });
+      // ---- 出战角色（引擎 side 无 hero 字段，取 roster[activeIndex]）----
+      var nsRole = ns.roster[ns.activeIndex];
+      if (ps.hero && nsRole) {
+        if (ps.activeIndex === ns.activeIndex) {
+          if (nsRole.health < ps.hero.health) {
+            fx.dmg.push({ side: sn, kind: 'hero', amount: ps.hero.health - nsRole.health });
+          } else if (nsRole.health > ps.hero.health) {
+            fx.heal.push({ side: sn, kind: 'hero', amount: nsRole.health - ps.hero.health });
+          }
+        } else {
+          // 换人（主动或阵亡切换）
+          var oldRole = s[sn].roster[ps.activeIndex];
+          var roleDead = oldRole && !oldRole.alive;
+          if (roleDead) {
+            if (ps.hero.health > 0) fx.dmg.push({ side: sn, kind: 'hero', amount: ps.hero.health, dead: true, rect: rects['hero:' + sn] });
+            fx.deaths.push({ side: sn, kind: 'hero', rect: rects['hero:' + sn] });
+          }
+          fx.swap = {
+            side: sn,
+            fromIndex: ps.activeIndex,
+            fromRect: rects['chip:' + sn + ':' + ps.activeIndex],
+            role: nsRole
+          };
+        }
+      }
+    });
+    // 攻击者前倾（仅玩家操作触发）
+    if (pendingAction && pendingAction.type === 'attack') fx.attacker = pendingAction.attacker;
+    return fx;
+  }
+
+  // 在渲染完成后播放特效
+  function applyFx(fx) {
+    if (!fx) return;
+    // 攻击者前倾
+    if (fx.attacker) {
+      var atkEl = fx.attacker.kind === 'hero'
+        ? app.querySelector('.ca-hero-player')
+        : app.querySelector('.ca-minion[data-uid="' + fx.attacker.uid + '"]');
+      if (atkEl) atkEl.classList.add('ca-lunge');
+    }
+    // 伤害：飘字 + 受击闪光 + 冲击波
+    fx.dmg.forEach(function (d) {
+      var el2 = d.kind === 'hero'
+        ? app.querySelector('.ca-hero-' + d.side)
+        : app.querySelector('.ca-minion[data-uid="' + d.uid + '"]');
+      var rect = el2 ? el2.getBoundingClientRect() : d.rect;
+      if (!rect) return;
+      playFloating(d.amount, rect, 'dmg');
+      if (el2) {
+        el2.classList.remove('ca-hit');
+        void el2.offsetWidth;
+        el2.classList.add('ca-hit');
+        var imp = el('div', 'ca-fx ca-fx-impact');
+        el2.appendChild(imp);
+        setTimeout(function () { imp.remove(); }, 600);
+      } else {
+        playImpactAt(rect);
+      }
+    });
+    // 治疗飘字
+    fx.heal.forEach(function (h) {
+      var el2 = h.kind === 'hero'
+        ? app.querySelector('.ca-hero-' + h.side)
+        : app.querySelector('.ca-minion[data-uid="' + h.uid + '"]');
+      var rect = el2 ? el2.getBoundingClientRect() : null;
+      if (rect) playFloating(h.amount, rect, 'heal');
+    });
+    // 死亡化灰烬
+    fx.deaths.forEach(function (d) {
+      if (d.rect) playAshes(d.rect.left + d.rect.width / 2, d.rect.top + d.rect.height / 2);
+    });
+    // 召唤翻转入场
+    fx.summons.forEach(function (sm) {
+      var m = app.querySelector('.ca-minion[data-uid="' + sm.uid + '"]');
+      if (m) {
+        m.classList.remove('ca-minion-enter');
+        void m.offsetWidth;
+        m.classList.add('ca-minion-enter');
+      }
+    });
+    // 换人 3D 幽灵卡翻飞
+    if (fx.swap) playGhostSwap(fx.swap);
+  }
+
+  // 伤害/治疗飘字（fixed 定位到 body，不受重渲染影响）
+  function playFloating(amount, rect, kind) {
+    var fx = el('div', 'ca-fx ca-fx-' + kind, (kind === 'dmg' ? '-' : '+') + amount);
+    fx.style.left = Math.round(rect.left + rect.width / 2) + 'px';
+    fx.style.top = Math.round(rect.top + rect.height * 0.08) + 'px';
+    document.body.appendChild(fx);
+    setTimeout(function () { fx.remove(); }, 1100);
+  }
+
+  // 冲击波（目标已消失时定点播放）
+  function playImpactAt(rect) {
+    var imp = el('div', 'ca-fx ca-fx-impact');
+    imp.style.left = Math.round(rect.left + rect.width / 2) + 'px';
+    imp.style.top = Math.round(rect.top + rect.height / 2) + 'px';
+    document.body.appendChild(imp);
+    setTimeout(function () { imp.remove(); }, 600);
+  }
+
+  // 死亡：化为灰烬（金棕粒子 + 烟尘）
+  function playAshes(cx, cy) {
+    var wrap = el('div', 'ca-ashes');
+    document.body.appendChild(wrap);
+    for (var i = 0; i < 22; i++) {
+      var ash = el('span', 'ca-ash');
+      ash.style.setProperty('--ax', cx + 'px');
+      ash.style.setProperty('--ay', cy + 'px');
+      ash.style.setProperty('--as', (4 + Math.random() * 6).toFixed(1) + 'px');
+      ash.style.setProperty('--adx', (Math.random() * 70 - 35).toFixed(1) + 'px');
+      ash.style.setProperty('--ar', (Math.random() * 400 - 200).toFixed(1) + 'deg');
+      ash.style.setProperty('--ad', (0.9 + Math.random() * 0.7).toFixed(2) + 's');
+      ash.style.setProperty('--al', (Math.random() * 0.28).toFixed(2) + 's');
+      wrap.appendChild(ash);
+    }
+    var puff = el('span', 'ca-ash-puff');
+    puff.style.setProperty('--ax', cx + 'px');
+    puff.style.setProperty('--ay', cy + 'px');
+    wrap.appendChild(puff);
+    setTimeout(function () { wrap.remove(); }, 1700);
+  }
+
+  // 换人：幽灵卡从角色牌区 3D 翻开飞向出战区
+  function heroTier(r) {
+    if (!r) return 'gold';
+    var p = (r.maxHealth || 0) + (r.attack || 0);
+    if (p >= 23) return 'gold';
+    if (p >= 20) return 'silver';
+    if (p >= 18) return 'bronze';
+    return 'stone';
+  }
+  function playGhostSwap(swap) {
+    var fromRect = swap.fromRect;
+    if (!fromRect) return;
+    var toEl = app.querySelector('.ca-hero-' + swap.side);
+    if (!toEl) return;
+    var toRect = toEl.getBoundingClientRect();
+    var role = swap.role;
+    var ghost = el('div', 'ca-ghost');
+    ghost.style.left = Math.round(fromRect.left + fromRect.width / 2 - 58) + 'px';
+    ghost.style.top = Math.round(fromRect.top + fromRect.height / 2 - 78) + 'px';
+    ghost.style.setProperty('--ca-ghost-tier', 'var(--ca-tier-' + heroTier(role) + ')');
+    var front = el('div', 'ca-ghost-face ca-ghost-front');
+    front.appendChild(el('div', 'ca-ghost-title', role ? role.name : ''));
+    front.appendChild(el('div', 'ca-ghost-star'));
+    front.appendChild(el('div', 'ca-ghost-kv', role ? (role.attack + ' / ' + role.health) : ''));
+    var back = el('div', 'ca-ghost-face ca-ghost-back');
+    back.appendChild(el('div', 'ca-ghost-mark', 'ON DUTY'));
+    ghost.appendChild(front);
+    ghost.appendChild(back);
+    document.body.appendChild(ghost);
+
+    var dx = (toRect.left + toRect.width / 2) - (fromRect.left + fromRect.width / 2);
+    var dy = (toRect.top + toRect.height / 2) - (fromRect.top + fromRect.height / 2);
+
+    var anim = ghost.animate([
+      { transform: 'translate(0px, 0px) rotateY(0deg) scale(1)', offset: 0 },
+      { transform: 'translate(' + Math.round(dx * 0.5) + 'px, ' + Math.round(dy * 0.5 - 46) + 'px) rotateY(88deg) scale(1.06)', offset: 0.5 },
+      { transform: 'translate(' + Math.round(dx) + 'px, ' + Math.round(dy - 6) + 'px) rotateY(180deg) scale(0.94)', offset: 1 }
+    ], { duration: 820, easing: 'cubic-bezier(0.22, 1, 0.36, 1)', fill: 'forwards' });
+    anim.onfinish = function () {
+      ghost.remove();
+      burstSparks(Math.round(toRect.left + toRect.width / 2), Math.round(toRect.top + toRect.height / 2), 14);
+      var heroEl = app.querySelector('.ca-hero-' + swap.side);
+      if (heroEl) {
+        heroEl.classList.remove('ca-hero-enter');
+        void heroEl.offsetWidth;
+        heroEl.classList.add('ca-hero-enter');
+      }
+    };
+  }
+
+  // 落地金尘火花
+  function burstSparks(cx, cy, n) {
+    for (var i = 0; i < n; i++) {
+      var sp = el('span', 'ca-spark');
+      sp.style.left = cx + 'px';
+      sp.style.top = cy + 'px';
+      var ang = Math.random() * Math.PI * 2;
+      var dist = 26 + Math.random() * 46;
+      sp.style.setProperty('--sdx', Math.round(Math.cos(ang) * dist) + 'px');
+      sp.style.setProperty('--sdy', Math.round(Math.sin(ang) * dist) + 'px');
+      document.body.appendChild(sp);
+      (function (n2) { setTimeout(function () { n2.remove(); }, 800); })(sp);
+    }
   }
 
   function buildRosterBar(side, sideName) {
@@ -203,9 +467,12 @@
       if (sideName === 'player' && role.alive && i !== side.activeIndex) {
         chip.classList.add('swappable');
         chip.title = '点击换人（消耗整个回合）';
-        chip.addEventListener('click', function () {
-          window.CardArena.swapRole(i);
-        });
+        (function (idx) {
+          chip.addEventListener('click', function () {
+            pendingAction = { type: 'swap', roleIndex: idx };
+            window.CardArena.swapRole(idx);
+          });
+        })(i);
       }
       bar.appendChild(chip);
     });
@@ -214,6 +481,7 @@
 
   function buildHeroView(side, sideName) {
     var role = side.roster[side.activeIndex];
+    var def = DATA.ROLE_POOL.find(function (r) { return r.id === role.id; });
     var hero = el('div', 'ca-hero ca-hero-' + sideName);
     hero.dataset.side = sideName;
     if (sideName === 'player') {
@@ -221,6 +489,11 @@
       // 本回合已攻击或攻击力为 0 时置为不可攻击态（对齐随从的 disabled 表现）
       if (side.roleAttacked || role.attack === 0) hero.classList.add('disabled');
     }
+    // 宫廷光环（旋转珠环 + 双圆环，作为背景圣徽）
+    hero.appendChild(el('span', 'ca-role-halo'));
+    hero.appendChild(el('span', 'ca-role-ring'));
+    // 英文宫衔（细字距 + 左右渐隐金线）
+    if (def && def.titleEn) hero.appendChild(el('div', 'ca-hero-en', def.titleEn));
     var name = el('div', 'ca-hero-name', role.name);
     var stats = el('div', 'ca-hero-stats', (role.title ? role.title + ' · ' : '') + role.health + ' / ' + role.maxHealth + ' 生命 · ' + role.attack + ' 攻击');
     var mana = el('div', 'ca-hero-mana', sideName === 'player' ? '法力 ' + side.mana + ' / ' + side.maxMana : '');
@@ -229,6 +502,8 @@
     hero.appendChild(stats);
     if (sideName === 'player') hero.appendChild(mana);
     hero.appendChild(passive);
+    // 右上角八角星水印
+    hero.appendChild(el('span', 'ca-hero-star'));
     return hero;
   }
 
@@ -243,20 +518,30 @@
       cell.dataset.side = sideName;
       // 按战力映射品级（黄金/白银/青铜/岩石）
       var mp = (m.attack || 0) + (m.health || 0);
-      if (mp >= 8) cell.classList.add('ca-minion-tier-gold');
-      else if (mp >= 5) cell.classList.add('ca-minion-tier-silver');
-      else if (mp >= 3) cell.classList.add('ca-minion-tier-bronze');
-      else cell.classList.add('ca-minion-tier-stone');
+      var tier = mp >= 8 ? 'gold' : (mp >= 5 ? 'silver' : (mp >= 3 ? 'bronze' : 'stone'));
+      cell.classList.add('ca-minion-tier-' + tier);
       if (sideName === 'player') {
         cell.classList.add('attacker-selectable');
         if (m.exhausted || m.attack === 0) cell.classList.add('disabled');
       }
+      // 宫廷光环（背景圣徽）
+      cell.appendChild(el('span', 'ca-minion-halo'));
+      cell.appendChild(el('span', 'ca-minion-ring'));
+      // 品级缎带（英文品级）
+      cell.appendChild(el('div', 'ca-minion-band', tierEn(tier)));
+      // 徽记区：八角星徽
+      var art = el('div', 'ca-minion-art');
+      art.appendChild(el('div', 'ca-minion-star'));
+      cell.appendChild(art);
       var nm = el('div', 'ca-minion-name', m.name);
-      var kv = el('div', 'ca-minion-kv', m.attack + ' / ' + m.health);
       cell.appendChild(nm);
+      // 攻/血（菱形宝石数值框）
+      var kv = el('div', 'ca-minion-kv');
+      kv.appendChild(el('b', null, String(m.attack)));
+      kv.appendChild(el('b', null, String(m.health)));
       cell.appendChild(kv);
       if (m.keywords && m.keywords.length) {
-        var kw = el('div', 'ca-minion-kw', m.keywords.join(' · '));
+        var kw = el('div', 'ca-minion-kw', kwText(m.keywords));
         cell.appendChild(kw);
       }
       zone.appendChild(cell);
@@ -306,14 +591,16 @@
       // 苏丹卡品级（黄金/白银/青铜/岩石）
       var tier = cardTier(c);
       cardEl.classList.add('ca-card-tier-' + tier);
+      // 宫廷光环（背景圣徽，位于星徽之后）
+      cardEl.appendChild(el('span', 'ca-card-halo'));
+      cardEl.appendChild(el('span', 'ca-card-ring'));
       // 四角卷草纹角饰
       ['tl', 'tr', 'bl', 'br'].forEach(function (pos) {
         var corner = el('div', 'ca-card-corner ' + pos);
         cardEl.appendChild(corner);
       });
       // 品级缎带
-      var tierNames = { gold: 'GOLD', silver: 'SILVER', bronze: 'BRONZE', stone: 'STONE' };
-      var band = el('div', 'ca-card-tier-band', tierNames[tier] || '');
+      var band = el('div', 'ca-card-tier-band', tierEn(tier));
       cardEl.appendChild(band);
       // 费用宝石（圆形）
       var cost = el('div', 'ca-card-cost');
@@ -401,6 +688,7 @@
       // 2. 点击手牌 → 出牌
       if (node.dataset.handIndex !== undefined) {
         if (!node.classList.contains('disabled')) {
+          pendingAction = { type: 'play', handIndex: parseInt(node.dataset.handIndex, 10) };
           window.CardArena.playCard(parseInt(node.dataset.handIndex, 10));
         }
         return;
@@ -414,6 +702,7 @@
         } else {
           att = { kind: 'hero' };
         }
+        pendingAction = { type: 'attack', attacker: att };
         var ok = window.CardArena.selectAttacker(att);
         if (ok) applyTargetingMode();
         return;

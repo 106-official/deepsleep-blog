@@ -118,11 +118,14 @@
       var t = pickTargetForMinion(m, targets);
       if (t) engine.combat(side, m, t);
     });
-    // 出战角色攻击
+    // 出战角色攻击：从当前存活合法目标中选取（避免攻击已被随从击杀的目标）
     var hero = side.roster[side.activeIndex];
     if (hero.attack > 0 && !side.roleAttacked) {
-      var ht = targets[targets.length - 1]; // 最后一个元素是 hero
-      if (ht) engine.combat(side, { kind: 'hero', attack: hero.attack }, ht);
+      var live = engine.validAttackTargets(side);
+      if (live.length > 0) {
+        var ht = live[live.length - 1];
+        engine.combat(side, { kind: 'hero', attack: hero.attack }, ht);
+      }
     }
   }
 

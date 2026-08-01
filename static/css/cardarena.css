@@ -43,13 +43,15 @@
   font-family: var(--cardarena-serif);
   font-weight: 400;
   color: var(--cardarena-text);
-  /* 宫廷底纹：暖纸底 + 阿拉伯纹样 + 暗角 */
+  /* 宫廷底纹：暖纸底 + 阿拉伯纹样 + 暗角 + 中心光晕 + 放射光芒 */
   background-color: var(--cardarena-bg);
   background-image:
+    radial-gradient(circle at 50% 38%, rgba(212, 175, 55, 0.10), transparent 60%),
+    conic-gradient(from 0deg at 50% 38%, transparent 0deg, rgba(212, 175, 55, 0.028) 15deg, transparent 30deg, rgba(212, 175, 55, 0.028) 45deg, transparent 60deg, rgba(212, 175, 55, 0.028) 75deg, transparent 90deg, rgba(212, 175, 55, 0.028) 105deg, transparent 120deg, rgba(212, 175, 55, 0.028) 135deg, transparent 150deg, rgba(212, 175, 55, 0.028) 165deg, transparent 180deg, rgba(212, 175, 55, 0.028) 195deg, transparent 210deg, rgba(212, 175, 55, 0.028) 225deg, transparent 240deg, rgba(212, 175, 55, 0.028) 255deg, transparent 270deg, rgba(212, 175, 55, 0.028) 285deg, transparent 300deg, rgba(212, 175, 55, 0.028) 315deg, transparent 330deg, rgba(212, 175, 55, 0.028) 345deg, transparent 360deg),
     radial-gradient(ellipse at 50% 30%, rgba(255, 248, 226, 0.65), rgba(0, 0, 0, 0.08) 80%),
     var(--cardarena-pattern);
   border: 1px solid var(--cardarena-border);
-  box-shadow: inset 0 0 0 3px var(--cardarena-gold-dark), inset 0 0 0 4px var(--cardarena-ink), 0 4px 24px rgba(0, 0, 0, 0.22);
+  box-shadow: inset 0 0 0 3px var(--cardarena-gold-dark), inset 0 0 0 4px var(--cardarena-ink), inset 0 0 0 5px var(--cardarena-gold-dark), inset 0 0 0 6px var(--cardarena-ink), 0 4px 24px rgba(0, 0, 0, 0.22);
   padding: 18px;
   box-sizing: border-box;
   user-select: none;
@@ -57,6 +59,8 @@
 }
 [data-theme="dark"] #cardarena-app {
   background-image:
+    radial-gradient(circle at 50% 36%, rgba(212, 175, 55, 0.08), transparent 60%),
+    conic-gradient(from 0deg at 50% 36%, transparent 0deg, rgba(232, 198, 74, 0.02) 15deg, transparent 30deg, rgba(232, 198, 74, 0.02) 45deg, transparent 60deg, rgba(232, 198, 74, 0.02) 75deg, transparent 90deg, rgba(232, 198, 74, 0.02) 105deg, transparent 120deg, rgba(232, 198, 74, 0.02) 135deg, transparent 150deg, rgba(232, 198, 74, 0.02) 165deg, transparent 180deg, rgba(232, 198, 74, 0.02) 195deg, transparent 210deg, rgba(232, 198, 74, 0.02) 225deg, transparent 240deg, rgba(232, 198, 74, 0.02) 255deg, transparent 270deg, rgba(232, 198, 74, 0.02) 285deg, transparent 300deg, rgba(232, 198, 74, 0.02) 315deg, transparent 330deg, rgba(232, 198, 74, 0.02) 345deg, transparent 360deg),
     radial-gradient(ellipse at 50% 25%, rgba(122, 22, 38, 0.35), rgba(0, 0, 0, 0.30) 80%),
     var(--cardarena-pattern-dark);
 }
@@ -821,7 +825,7 @@
 .ca-card {
   position: relative;
   width: 156px;
-  min-height: 190px;
+  min-height: 200px;
   padding: 10px 11px 10px;
   border: 1px solid var(--cardarena-border);
   border-radius: 10px;
@@ -829,7 +833,7 @@
   background:
     conic-gradient(from 0deg at 50% 34%, transparent 0deg, rgba(212, 175, 55, 0.04) 15deg, transparent 30deg, rgba(212, 175, 55, 0.04) 45deg, transparent 60deg, rgba(212, 175, 55, 0.04) 75deg, transparent 90deg, rgba(212, 175, 55, 0.04) 105deg, transparent 120deg, rgba(212, 175, 55, 0.04) 135deg, transparent 150deg, rgba(212, 175, 55, 0.04) 165deg, transparent 180deg, rgba(212, 175, 55, 0.04) 195deg, transparent 210deg, rgba(212, 175, 55, 0.04) 225deg, transparent 240deg, rgba(212, 175, 55, 0.04) 255deg, transparent 270deg, rgba(212, 175, 55, 0.04) 285deg, transparent 300deg, rgba(212, 175, 55, 0.04) 315deg, transparent 330deg, rgba(212, 175, 55, 0.04) 345deg, transparent 360deg),
     linear-gradient(160deg, #0d0806 0%, #1d100c 48%, #0a0504 100%);
-  box-shadow: inset 0 0 0 1px rgba(212, 175, 55, 0.55), inset 0 0 26px rgba(212, 175, 55, 0.10), 0 10px 22px rgba(0, 0, 0, 0.5);
+  box-shadow: inset 0 0 0 1px rgba(212, 175, 55, 0.55), inset 0 0 0 5px transparent, inset 0 0 0 6px rgba(212, 175, 55, 0.16), inset 0 0 26px rgba(212, 175, 55, 0.10), 0 10px 22px rgba(0, 0, 0, 0.5);
   cursor: pointer;
   font-size: 0.8rem;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
@@ -837,12 +841,25 @@
   display: flex;
   flex-direction: column;
 }
+/* 绳编内框（虚线细框，极繁） */
+.ca-card::before {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  border: 1px dashed rgba(212, 175, 55, 0.30);
+  border-radius: 6px;
+  pointer-events: none;
+  z-index: 0;
+}
 /* 浅金羊皮纸（浅色主题） */
 :root:not([data-theme="dark"]) .ca-card {
   background:
     conic-gradient(from 0deg at 50% 34%, transparent 0deg, rgba(163, 134, 63, 0.05) 15deg, transparent 30deg, rgba(163, 134, 63, 0.05) 45deg, transparent 60deg, rgba(163, 134, 63, 0.05) 75deg, transparent 90deg, rgba(163, 134, 63, 0.05) 105deg, transparent 120deg, rgba(163, 134, 63, 0.05) 135deg, transparent 150deg, rgba(163, 134, 63, 0.05) 165deg, transparent 180deg, rgba(163, 134, 63, 0.05) 195deg, transparent 210deg, rgba(163, 134, 63, 0.05) 225deg, transparent 240deg, rgba(163, 134, 63, 0.05) 255deg, transparent 270deg, rgba(163, 134, 63, 0.05) 285deg, transparent 300deg, rgba(163, 134, 63, 0.05) 315deg, transparent 330deg, rgba(163, 134, 63, 0.05) 345deg, transparent 360deg),
     linear-gradient(165deg, #fdf6e3 0%, #f0e2bd 55%, #e8d5a6 100%);
-  box-shadow: inset 0 0 0 1px rgba(163, 134, 63, 0.5), inset 0 0 22px rgba(163, 134, 63, 0.18), 0 8px 18px rgba(90, 70, 30, 0.25);
+  box-shadow: inset 0 0 0 1px rgba(163, 134, 63, 0.5), inset 0 0 0 5px transparent, inset 0 0 0 6px rgba(163, 134, 63, 0.14), inset 0 0 22px rgba(163, 134, 63, 0.18), 0 8px 18px rgba(90, 70, 30, 0.25);
+}
+:root:not([data-theme="dark"]) .ca-card::before {
+  border-color: rgba(163, 134, 63, 0.28);
 }
 .ca-card:hover:not(.disabled) {
   transform: translateY(-3px);
@@ -886,6 +903,18 @@
   height: 1px;
   background: linear-gradient(90deg, transparent, var(--ca-tier-color, var(--cardarena-gold)), transparent);
 }
+.ca-card-tier-band::before {
+  content: '';
+  position: absolute;
+  left: 12%;
+  top: 50%;
+  width: 4px;
+  height: 4px;
+  margin-top: -2px;
+  transform: rotate(45deg);
+  background: var(--ca-tier-color, var(--cardarena-gold));
+  opacity: 0.7;
+}
 /* 费用宝石（圆形径向高光 + 放射星芒） */
 .ca-card-cost {
   position: absolute;
@@ -915,6 +944,7 @@
   -webkit-mask-image: radial-gradient(circle at 50% 50%, transparent 55%, black 58%, black 72%, transparent 76%);
   mask-image: radial-gradient(circle at 50% 50%, transparent 55%, black 58%, black 72%, transparent 76%);
   z-index: -1;
+  animation: ca-cost-spin 18s linear infinite;
 }
 :root:not([data-theme="dark"]) .ca-card-cost {
   color: #3a2a1a;
@@ -1094,4 +1124,575 @@
   .ca-minion {
     min-width: 60px;
   }
+}
+
+/* ==========================================================================
+   v5.13 极繁深化：舞台外框 / 分区面板 / 徽章光环 / 随从卡 / 战斗特效
+   ========================================================================== */
+:root {
+  /* 通用 SVG mask 构件（黑形 + background 上色，随主题变量变色） */
+  --ca-mask-corner: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72' viewBox='0 0 72 72'%3E%3Cg fill='none' stroke='%23000' stroke-width='1.5'%3E%3Cpath d='M6 71 L6 6 L71 6'/%3E%3Cpath d='M16 71 L16 16 L71 16'/%3E%3Cpath d='M25 47 A22 22 0 0 1 47 25'/%3E%3C/g%3E%3Cg fill='%23000'%3E%3Crect x='7.5' y='7.5' width='10' height='10' transform='rotate(45 12.5 12.5)'/%3E%3Ccircle cx='19' cy='33' r='2.2'/%3E%3Ccircle cx='33' cy='19' r='2.2'/%3E%3Ccircle cx='14' cy='52' r='1.8'/%3E%3Ccircle cx='52' cy='14' r='1.8'/%3E%3C/g%3E%3C/svg%3E");
+  --ca-mask-halo: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='%23000'%3E%3Ccircle cx='60' cy='11' r='3.4'/%3E%3Ccircle cx='94.6' cy='25.4' r='3.4'/%3E%3Ccircle cx='109' cy='60' r='3.4'/%3E%3Ccircle cx='94.6' cy='94.6' r='3.4'/%3E%3Ccircle cx='60' cy='109' r='3.4'/%3E%3Ccircle cx='25.4' cy='94.6' r='3.4'/%3E%3Ccircle cx='11' cy='60' r='3.4'/%3E%3Ccircle cx='25.4' cy='25.4' r='3.4'/%3E%3C/g%3E%3C/svg%3E");
+  --ca-mask-star: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cg fill='%23000'%3E%3Crect x='36' y='36' width='88' height='88'/%3E%3Crect x='36' y='36' width='88' height='88' transform='rotate(45 80 80)'/%3E%3Ccircle cx='80' cy='80' r='9'/%3E%3Ccircle cx='80' cy='18' r='3.5'/%3E%3Ccircle cx='80' cy='142' r='3.5'/%3E%3Ccircle cx='18' cy='80' r='3.5'/%3E%3Ccircle cx='142' cy='80' r='3.5'/%3E%3Cpath d='M80 30 L84 76 L80 130 L76 76 Z'/%3E%3C/g%3E%3C/svg%3E");
+}
+@keyframes ca-cost-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes ca-spin {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* ---- 舞台外框：四角纹章 + 边线珠串 ---- */
+.ca-stage {
+  position: relative;
+  max-width: 968px;
+  margin: 0 auto;
+  padding: 10px 10px 6px;
+}
+.ca-stage::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  background: var(--cardarena-gold);
+  -webkit-mask-image: var(--ca-mask-corner), var(--ca-mask-corner), var(--ca-mask-corner), var(--ca-mask-corner);
+  -webkit-mask-size: 88px 88px, 88px 88px, 88px 88px, 88px 88px;
+  -webkit-mask-position: 2px 2px, calc(100% - 2px) 2px, 2px calc(100% - 2px), calc(100% - 2px) calc(100% - 2px);
+  -webkit-mask-repeat: no-repeat;
+  mask-image: var(--ca-mask-corner), var(--ca-mask-corner), var(--ca-mask-corner), var(--ca-mask-corner);
+  mask-size: 88px 88px, 88px 88px, 88px 88px, 88px 88px;
+  mask-position: 2px 2px, calc(100% - 2px) 2px, 2px calc(100% - 2px), calc(100% - 2px) calc(100% - 2px);
+  mask-repeat: no-repeat;
+  opacity: 0.9;
+}
+.ca-stage::after {
+  content: '';
+  position: absolute;
+  inset: 12px;
+  pointer-events: none;
+  z-index: 3;
+  background-image:
+    repeating-linear-gradient(90deg, transparent 0 11px, var(--cardarena-ink) 11px 13px),
+    repeating-linear-gradient(90deg, transparent 0 11px, var(--cardarena-ink) 11px 13px),
+    repeating-linear-gradient(0deg, transparent 0 11px, var(--cardarena-ink) 11px 13px),
+    repeating-linear-gradient(0deg, transparent 0 11px, var(--cardarena-ink) 11px 13px);
+  background-size: calc(100% - 60px) 1px, calc(100% - 60px) 1px, 1px calc(100% - 60px), 1px calc(100% - 60px);
+  background-position: 30px 0, 30px 100%, 0 30px, 100% 30px;
+  background-repeat: no-repeat;
+  opacity: 0.4;
+}
+[data-theme="dark"] .ca-stage::before { background: var(--cardarena-gold-light); opacity: 0.8; }
+
+/* ---- 分区标签中心菱形 ---- */
+.ca-label-gem {
+  display: inline-block;
+  flex: 0 0 auto;
+  width: 7px;
+  height: 7px;
+  transform: rotate(45deg);
+  background: var(--cardarena-gold);
+  opacity: 0.85;
+}
+[data-theme="dark"] .ca-label-gem { background: var(--cardarena-gold-light); }
+
+/* ---- 分区面板：细线内框 + 四角金珠 ---- */
+.ca-roster, .ca-board, .ca-hand, .ca-log {
+  position: relative;
+}
+.ca-roster::before, .ca-board::before, .ca-hand::before, .ca-log::before {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  pointer-events: none;
+  border: 1px solid var(--cardarena-ink);
+  border-radius: 1px;
+  background-image:
+    radial-gradient(circle at 7px 7px, var(--cardarena-gold) 1.5px, transparent 2.3px),
+    radial-gradient(circle at calc(100% - 7px) 7px, var(--cardarena-gold) 1.5px, transparent 2.3px),
+    radial-gradient(circle at 7px calc(100% - 7px), var(--cardarena-gold) 1.5px, transparent 2.3px),
+    radial-gradient(circle at calc(100% - 7px) calc(100% - 7px), var(--cardarena-gold) 1.5px, transparent 2.3px);
+  background-repeat: no-repeat;
+  opacity: 0.7;
+}
+.ca-board::before { border-style: dashed; }
+[data-theme="dark"] .ca-roster::before, [data-theme="dark"] .ca-board::before,
+[data-theme="dark"] .ca-hand::before, [data-theme="dark"] .ca-log::before {
+  border-color: rgba(212, 175, 55, 0.30);
+}
+/* 随从区升级：实线金框 + 暗纹底 */
+.ca-board {
+  align-items: center;
+  gap: 10px;
+  min-height: 172px;
+  padding: 12px;
+  border: 1px solid var(--cardarena-border);
+  border-radius: 2px;
+  background:
+    linear-gradient(180deg, rgba(255, 250, 230, 0.35), rgba(163, 134, 63, 0.05)),
+    radial-gradient(circle at 50% 40%, rgba(212, 175, 55, 0.06), transparent 60%);
+}
+[data-theme="dark"] .ca-board {
+  background:
+    linear-gradient(180deg, rgba(232, 220, 190, 0.04), rgba(0, 0, 0, 0.10)),
+    radial-gradient(circle at 50% 40%, rgba(212, 175, 55, 0.05), transparent 60%);
+}
+
+/* ---- 徽章光环层：外珠环 + 双圆环（角色卡 / 手牌卡通用） ---- */
+.ca-role-halo, .ca-card-halo, .ca-minion-halo {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--ca-tier-color, var(--cardarena-gold));
+  -webkit-mask-image: var(--ca-mask-halo);
+  mask-image: var(--ca-mask-halo);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  opacity: 0.5;
+  animation: ca-spin 55s linear infinite;
+  pointer-events: none;
+}
+.ca-role-halo { width: 124px; height: 124px; }
+.ca-card-halo { width: 100px; height: 100px; }
+.ca-minion-halo { width: 74px; height: 74px; }
+.ca-role-ring, .ca-card-ring, .ca-minion-ring {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  border: 1px dashed var(--ca-tier-color, var(--cardarena-gold));
+  border-radius: 50%;
+  opacity: 0.45;
+  pointer-events: none;
+}
+.ca-role-ring { width: 104px; height: 104px; }
+.ca-card-ring { width: 84px; height: 84px; }
+.ca-minion-ring { width: 60px; height: 60px; }
+.ca-role-ring::after, .ca-card-ring::after, .ca-minion-ring::after {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  border: 1px solid var(--ca-tier-color, var(--cardarena-gold));
+  border-radius: 50%;
+  opacity: 0.5;
+}
+
+/* ---- 随从卡：与手牌卡同族的长方形卡面 ---- */
+.ca-minion {
+  position: relative;
+  width: 112px;
+  min-height: 150px;
+  padding: 8px 8px 7px;
+  border: 1px solid var(--ca-tier-color, var(--cardarena-gold));
+  border-radius: 10px;
+  background:
+    conic-gradient(from 0deg at 50% 34%, transparent 0deg, rgba(212, 175, 55, 0.035) 15deg, transparent 30deg, rgba(212, 175, 55, 0.035) 45deg, transparent 60deg, rgba(212, 175, 55, 0.035) 75deg, transparent 90deg, rgba(212, 175, 55, 0.035) 105deg, transparent 120deg, rgba(212, 175, 55, 0.035) 135deg, transparent 150deg, rgba(212, 175, 55, 0.035) 165deg, transparent 180deg, rgba(212, 175, 55, 0.035) 195deg, transparent 210deg, rgba(212, 175, 55, 0.035) 225deg, transparent 240deg, rgba(212, 175, 55, 0.035) 255deg, transparent 270deg, rgba(212, 175, 55, 0.035) 285deg, transparent 300deg, rgba(212, 175, 55, 0.035) 315deg, transparent 330deg, rgba(212, 175, 55, 0.035) 345deg, transparent 360deg),
+    linear-gradient(160deg, #0d0806 0%, #1d100c 48%, #0a0504 100%);
+  box-shadow: inset 0 0 0 1px rgba(212, 175, 55, 0.5), inset 0 0 0 4px transparent, inset 0 0 0 5px rgba(212, 175, 55, 0.14), inset 0 0 18px rgba(212, 175, 55, 0.10), 0 6px 14px rgba(0, 0, 0, 0.45);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  cursor: default;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.ca-minion::before {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border: 1px dashed rgba(212, 175, 55, 0.25);
+  border-radius: 6px;
+  pointer-events: none;
+}
+:root:not([data-theme="dark"]) .ca-minion {
+  background:
+    conic-gradient(from 0deg at 50% 34%, transparent 0deg, rgba(163, 134, 63, 0.045) 15deg, transparent 30deg, rgba(163, 134, 63, 0.045) 45deg, transparent 60deg, rgba(163, 134, 63, 0.045) 75deg, transparent 90deg, rgba(163, 134, 63, 0.045) 105deg, transparent 120deg, rgba(163, 134, 63, 0.045) 135deg, transparent 150deg, rgba(163, 134, 63, 0.045) 165deg, transparent 180deg, rgba(163, 134, 63, 0.045) 195deg, transparent 210deg, rgba(163, 134, 63, 0.045) 225deg, transparent 240deg, rgba(163, 134, 63, 0.045) 255deg, transparent 270deg, rgba(163, 134, 63, 0.045) 285deg, transparent 300deg, rgba(163, 134, 63, 0.045) 315deg, transparent 330deg, rgba(163, 134, 63, 0.045) 345deg, transparent 360deg),
+    linear-gradient(165deg, #fdf6e3 0%, #f0e2bd 55%, #e8d5a6 100%);
+  box-shadow: inset 0 0 0 1px rgba(163, 134, 63, 0.45), inset 0 0 0 4px transparent, inset 0 0 0 5px rgba(163, 134, 63, 0.12), inset 0 0 16px rgba(163, 134, 63, 0.14), 0 5px 12px rgba(90, 70, 30, 0.22);
+}
+:root:not([data-theme="dark"]) .ca-minion::before { border-color: rgba(163, 134, 63, 0.24); }
+.ca-minion:hover:not(.disabled) {
+  transform: translateY(-3px);
+}
+.ca-minion.disabled { opacity: 0.55; cursor: not-allowed; }
+/* 随从品级（变量化，与手牌卡同源） */
+.ca-minion-tier-gold   { --ca-tier-color: var(--ca-tier-gold);   --ca-tier-bright: var(--ca-tier-gold-bright);   --ca-tier-glow: rgba(232, 198, 74, 0.16); border-color: var(--ca-tier-gold); }
+.ca-minion-tier-silver { --ca-tier-color: var(--ca-tier-silver); --ca-tier-bright: var(--ca-tier-silver-bright); --ca-tier-glow: rgba(195, 199, 208, 0.12); border-color: var(--ca-tier-silver); }
+.ca-minion-tier-bronze { --ca-tier-color: var(--ca-tier-bronze); --ca-tier-bright: var(--ca-tier-bronze-bright); --ca-tier-glow: rgba(192, 138, 79, 0.12); border-color: var(--ca-tier-bronze); }
+.ca-minion-tier-stone  { --ca-tier-color: var(--ca-tier-stone);  --ca-tier-bright: var(--ca-tier-stone-bright);  --ca-tier-glow: rgba(143, 138, 132, 0.10); border-color: var(--ca-tier-stone); }
+.ca-minion-band {
+  position: relative;
+  width: 100%;
+  font-size: 0.82rem;
+  letter-spacing: 0.12em;
+  padding: 2px 0 5px;
+  color: var(--ca-tier-bright, var(--cardarena-gold-light));
+  text-shadow: 0 0 8px rgba(232, 198, 74, 0.35);
+}
+.ca-minion-band::after {
+  content: '';
+  position: absolute;
+  left: 16%;
+  right: 16%;
+  bottom: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--ca-tier-color, var(--cardarena-gold)), transparent);
+}
+:root:not([data-theme="dark"]) .ca-minion-band { color: #7a2a14; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5); }
+.ca-minion-art {
+  position: relative;
+  flex: 1;
+  width: 100%;
+  min-height: 52px;
+  margin: 7px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--ca-tier-color, var(--cardarena-gold));
+  border-radius: 5px;
+  background: radial-gradient(circle at 50% 42%, var(--ca-tier-glow, rgba(212, 175, 55, 0.12)), transparent 70%);
+}
+.ca-minion-star {
+  width: 54px;
+  height: 54px;
+  background: var(--ca-tier-color, var(--cardarena-gold));
+  -webkit-mask-image: var(--ca-mask-star);
+  mask-image: var(--ca-mask-star);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  opacity: 0.9;
+}
+.ca-minion-kv {
+  position: relative;
+  display: flex;
+  gap: 12px;
+  margin-top: 7px;
+}
+.ca-minion-kv b {
+  position: relative;
+  z-index: 1;
+  padding: 4px 11px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--ca-tier-bright, var(--cardarena-gold-light));
+}
+.ca-minion-kv b::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: rotate(45deg) scale(1.06);
+  border: 1px solid var(--ca-tier-color, var(--cardarena-gold));
+  background: var(--ca-tier-glow, rgba(212, 175, 55, 0.10));
+  border-radius: 3px;
+  z-index: -1;
+}
+.ca-minion-kv b::after {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  transform: rotate(45deg) scale(1.06);
+  border: 1px dashed rgba(212, 175, 55, 0.4);
+  border-radius: 3px;
+  z-index: -1;
+}
+:root:not([data-theme="dark"]) .ca-minion-kv b { color: #8a5a14; }
+.ca-minion-kw {
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  color: var(--cardarena-muted);
+  margin-top: 6px;
+  padding-top: 4px;
+  position: relative;
+}
+.ca-minion-kw::before {
+  content: '';
+  position: absolute;
+  left: 25%;
+  right: 25%;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--ca-tier-color, var(--cardarena-gold)), transparent);
+}
+
+/* ---- 出战角色区繁化 ---- */
+.ca-hero {
+  overflow: visible;
+}
+.ca-hero::after {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  pointer-events: none;
+  border: 1px solid var(--cardarena-ink);
+  border-radius: 1px;
+  background-image:
+    radial-gradient(circle at 7px 7px, var(--cardarena-gold) 1.5px, transparent 2.3px),
+    radial-gradient(circle at calc(100% - 7px) 7px, var(--cardarena-gold) 1.5px, transparent 2.3px),
+    radial-gradient(circle at 7px calc(100% - 7px), var(--cardarena-gold) 1.5px, transparent 2.3px),
+    radial-gradient(circle at calc(100% - 7px) calc(100% - 7px), var(--cardarena-gold) 1.5px, transparent 2.3px);
+  background-repeat: no-repeat;
+  opacity: 0.7;
+}
+.ca-hero-en {
+  font-family: 'Playfair Display', 'Times New Roman', serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: var(--cardarena-muted);
+  margin-bottom: 2px;
+  position: relative;
+}
+.ca-hero-en::before, .ca-hero-en::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 22px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--cardarena-gold));
+}
+.ca-hero-en::before { left: -26px; }
+.ca-hero-en::after { right: -26px; }
+.ca-hero-star {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  width: 60px;
+  height: 60px;
+  transform: translateY(-50%);
+  background: var(--cardarena-gold);
+  -webkit-mask-image: var(--ca-mask-star);
+  mask-image: var(--ca-mask-star);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  opacity: 0.10;
+  pointer-events: none;
+}
+[data-theme="dark"] .ca-hero-star { opacity: 0.14; }
+
+/* ---- 战斗特效 ---- */
+.ca-fx {
+  position: absolute;
+  pointer-events: none;
+  z-index: 60;
+  font-weight: 700;
+}
+.ca-fx-dmg {
+  left: 50%;
+  top: 8%;
+  font-size: 1.05rem;
+  font-family: 'Playfair Display', 'Times New Roman', serif;
+  color: #ff5a4d;
+  text-shadow: 0 0 6px rgba(255, 90, 77, 0.8), 0 0 14px rgba(255, 200, 60, 0.5), 0 2px 0 rgba(0, 0, 0, 0.6);
+  animation: ca-fx-dmg 1s ease-out forwards;
+}
+.ca-fx-heal {
+  left: 50%;
+  top: 8%;
+  font-size: 1rem;
+  font-family: 'Playfair Display', 'Times New Roman', serif;
+  color: #7ceea0;
+  text-shadow: 0 0 6px rgba(80, 220, 130, 0.8), 0 2px 0 rgba(0, 0, 0, 0.6);
+  animation: ca-fx-dmg 1s ease-out forwards;
+}
+@keyframes ca-fx-dmg {
+  0%   { opacity: 0; transform: translate(-50%, 0) scale(0.5); }
+  18%  { opacity: 1; transform: translate(-50%, -10px) scale(1.25); }
+  100% { opacity: 0; transform: translate(-50%, -52px) scale(1); }
+}
+.ca-hit { animation: ca-hit 0.45s ease-out; }
+@keyframes ca-hit {
+  0%   { box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.95), 0 0 26px 8px rgba(255, 240, 200, 0.85); filter: brightness(2); }
+  60%  { filter: brightness(1.4); }
+  100% { filter: brightness(1); }
+}
+.ca-fx-impact {
+  left: 50%;
+  top: 50%;
+  width: 130px;
+  height: 130px;
+  transform: translate(-50%, -50%);
+  border: 2px solid rgba(255, 225, 150, 0.9);
+  border-radius: 50%;
+  box-shadow: 0 0 18px rgba(255, 210, 110, 0.5), inset 0 0 12px rgba(255, 210, 110, 0.4);
+  animation: ca-impact 0.55s ease-out forwards;
+}
+@keyframes ca-impact {
+  0%   { opacity: 1; transform: translate(-50%, -50%) scale(0.15); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.35); }
+}
+.ca-lunge { animation: ca-lunge 0.5s cubic-bezier(0.3, 0.7, 0.4, 1); }
+.ca-hero-player.ca-lunge, .ca-minion[data-side="player"].ca-lunge { --ca-lunge-dir: 16px; }
+.ca-hero-enemy.ca-lunge, .ca-minion[data-side="enemy"].ca-lunge { --ca-lunge-dir: -16px; }
+@keyframes ca-lunge {
+  0%   { transform: none; }
+  32%  { transform: translateX(var(--ca-lunge-dir, 16px)) scale(1.06); }
+  58%  { transform: translateX(calc(var(--ca-lunge-dir, 16px) * -0.3)) scale(0.98); }
+  100% { transform: none; }
+}
+
+/* ---- 死亡：化为灰烬 ---- */
+.ca-ashes {
+  position: fixed;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  z-index: 90;
+}
+.ca-ash {
+  position: absolute;
+  left: var(--ax, 0px);
+  top: var(--ay, 0px);
+  width: var(--as, 7px);
+  height: var(--as, 7px);
+  border-radius: 50% 40% 55% 45%;
+  background: radial-gradient(circle at 35% 35%, #e8c64a, #8a6a2f 60%, #4a3410);
+  box-shadow: 0 0 6px rgba(232, 198, 74, 0.6);
+  opacity: 0.95;
+  animation: ca-ash-rise var(--ad, 1.3s) ease-out var(--al, 0s) forwards;
+}
+@keyframes ca-ash-rise {
+  0%   { transform: translate(0, 0) rotate(0deg) scale(1); opacity: 0.95; }
+  18%  { opacity: 0.9; }
+  100% { transform: translate(var(--adx, 14px), -92px) rotate(var(--ar, 200deg)) scale(0.3); opacity: 0; }
+}
+.ca-ash-puff {
+  position: absolute;
+  left: var(--ax, 0px);
+  top: var(--ay, 0px);
+  width: 92px;
+  height: 92px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(150, 118, 60, 0.55), rgba(90, 70, 35, 0.25) 55%, transparent 75%);
+  animation: ca-puff 1.15s ease-out forwards;
+}
+@keyframes ca-puff {
+  0%   { opacity: 0.7; transform: translate(-50%, -50%) scale(0.2); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.7); }
+}
+
+/* ---- 出战/换人：幽灵卡 3D 翻开飞行 ---- */
+.ca-ghost {
+  position: fixed;
+  width: 116px;
+  height: 156px;
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+  pointer-events: none;
+  z-index: 120;
+}
+.ca-ghost-face {
+  position: absolute;
+  inset: 0;
+  border-radius: 10px;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 8px;
+  text-align: center;
+}
+.ca-ghost-front {
+  background:
+    conic-gradient(from 0deg at 50% 36%, transparent 0deg, rgba(212, 175, 55, 0.05) 15deg, transparent 30deg, rgba(212, 175, 55, 0.05) 45deg, transparent 60deg, rgba(212, 175, 55, 0.05) 75deg, transparent 90deg, rgba(212, 175, 55, 0.05) 105deg, transparent 120deg, rgba(212, 175, 55, 0.05) 135deg, transparent 150deg, rgba(212, 175, 55, 0.05) 165deg, transparent 180deg, rgba(212, 175, 55, 0.05) 195deg, transparent 210deg, rgba(212, 175, 55, 0.05) 225deg, transparent 240deg, rgba(212, 175, 55, 0.05) 255deg, transparent 270deg, rgba(212, 175, 55, 0.05) 285deg, transparent 300deg, rgba(212, 175, 55, 0.05) 315deg, transparent 330deg, rgba(212, 175, 55, 0.05) 345deg, transparent 360deg),
+    linear-gradient(160deg, #0d0806 0%, #1d100c 48%, #0a0504 100%);
+  border: 1px solid var(--ca-ghost-tier, #d4af37);
+  box-shadow: inset 0 0 0 1px rgba(212, 175, 55, 0.55), inset 0 0 0 5px transparent, inset 0 0 0 6px rgba(212, 175, 55, 0.2), 0 12px 30px rgba(0, 0, 0, 0.6);
+}
+:root:not([data-theme="dark"]) .ca-ghost-front {
+  background:
+    conic-gradient(from 0deg at 50% 36%, transparent 0deg, rgba(163, 134, 63, 0.06) 15deg, transparent 30deg, rgba(163, 134, 63, 0.06) 45deg, transparent 60deg, rgba(163, 134, 63, 0.06) 75deg, transparent 90deg, rgba(163, 134, 63, 0.06) 105deg, transparent 120deg, rgba(163, 134, 63, 0.06) 135deg, transparent 150deg, rgba(163, 134, 63, 0.06) 165deg, transparent 180deg, rgba(163, 134, 63, 0.06) 195deg, transparent 210deg, rgba(163, 134, 63, 0.06) 225deg, transparent 240deg, rgba(163, 134, 63, 0.06) 255deg, transparent 270deg, rgba(163, 134, 63, 0.06) 285deg, transparent 300deg, rgba(163, 134, 63, 0.06) 315deg, transparent 330deg, rgba(163, 134, 63, 0.06) 345deg, transparent 360deg),
+    linear-gradient(165deg, #fdf6e3 0%, #f0e2bd 55%, #e8d5a6 100%);
+}
+.ca-ghost-back {
+  transform: rotateY(180deg);
+  background:
+    conic-gradient(from 0deg at 50% 42%, transparent 0deg, rgba(232, 198, 74, 0.05) 15deg, transparent 30deg, rgba(232, 198, 74, 0.05) 45deg, transparent 60deg, rgba(232, 198, 74, 0.05) 75deg, transparent 90deg, rgba(232, 198, 74, 0.05) 105deg, transparent 120deg, rgba(232, 198, 74, 0.05) 135deg, transparent 150deg, rgba(232, 198, 74, 0.05) 165deg, transparent 180deg, rgba(232, 198, 74, 0.05) 195deg, transparent 210deg, rgba(232, 198, 74, 0.05) 225deg, transparent 240deg, rgba(232, 198, 74, 0.05) 255deg, transparent 270deg, rgba(232, 198, 74, 0.05) 285deg, transparent 300deg, rgba(232, 198, 74, 0.05) 315deg, transparent 330deg, rgba(232, 198, 74, 0.05) 345deg, transparent 360deg),
+    linear-gradient(160deg, #2b1608 0%, #4a2410 50%, #1d0e05 100%);
+  border: 1px solid #e8c64a;
+  box-shadow: inset 0 0 0 1px rgba(232, 198, 74, 0.6), inset 0 0 30px rgba(212, 175, 55, 0.18), 0 12px 30px rgba(0, 0, 0, 0.6);
+}
+.ca-ghost-title {
+  font-family: var(--cardarena-serif);
+  font-weight: 600;
+  font-size: 0.92rem;
+  letter-spacing: 0.1em;
+  color: #e8c64a;
+  margin-bottom: 4px;
+}
+:root:not([data-theme="dark"]) .ca-ghost-title { color: #7a2a14; }
+.ca-ghost-star {
+  width: 52px;
+  height: 52px;
+  background: var(--ca-ghost-tier, #d4af37);
+  -webkit-mask-image: var(--ca-mask-star);
+  mask-image: var(--ca-mask-star);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  opacity: 0.9;
+}
+.ca-ghost-kv {
+  margin-top: 5px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: #d4af37;
+}
+:root:not([data-theme="dark"]) .ca-ghost-kv { color: #8a5a14; }
+.ca-ghost-mark {
+  font-size: 0.58rem;
+  letter-spacing: 0.5em;
+  text-indent: 0.5em;
+  color: #d4af37;
+  border-top: 1px solid rgba(212, 175, 55, 0.5);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.5);
+  padding: 3px 10px;
+}
+.ca-spark {
+  position: fixed;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fdf0c0, #d4af37 60%, transparent);
+  box-shadow: 0 0 10px #d4af37;
+  pointer-events: none;
+  z-index: 121;
+  animation: ca-spark 0.75s ease-out forwards;
+}
+@keyframes ca-spark {
+  0%   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0; transform: translate(calc(-50% + var(--sdx, 0px)), calc(-50% + var(--sdy, -40px))) scale(0.25); }
+}
+.ca-hero-enter { animation: ca-hero-enter 0.7s cubic-bezier(0.22, 1, 0.36, 1); }
+@keyframes ca-hero-enter {
+  0%   { transform: perspective(700px) rotateX(-14deg) translateY(34px) scale(0.86); opacity: 0; }
+  100% { transform: none; opacity: 1; }
+}
+.ca-minion-enter { animation: ca-minion-enter 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
+@keyframes ca-minion-enter {
+  0%   { transform: perspective(600px) rotateY(88deg) translateY(28px) scale(0.7); opacity: 0; }
+  60%  { opacity: 1; }
+  100% { transform: perspective(600px) rotateY(0deg) translateY(0) scale(1); opacity: 1; }
 }

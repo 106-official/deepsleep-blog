@@ -1,31 +1,41 @@
-/* cardarena.css — CardArena 极简几何风 */
+/* cardarena.css — CardArena 复古藏书/版画风（做旧纸张 + 木版画描边 + 铅字排版） */
 :root {
-  --cardarena-bg: #f7fafc;
-  --cardarena-panel: #ffffff;
-  --cardarena-border: #cbd5e0;
-  --cardarena-text: #2d3748;
-  --cardarena-muted: #718096;
-  --cardarena-primary: #2c5282;
-  --cardarena-accent: #3182ce;
-  --cardarena-danger: #c53030;
-  --cardarena-success: #2f855a;
-  --cardarena-target: #38a169;
+  --cardarena-bg: #efe3c8;
+  --cardarena-panel: #f7efdd;
+  --cardarena-border: #8a6a3b;
+  --cardarena-text: #3b2b1e;
+  --cardarena-muted: #7a6848;
+  --cardarena-primary: #8c2f1f;
+  --cardarena-accent: #a06a2c;
+  --cardarena-danger: #8f1d1d;
+  --cardarena-success: #3d5a3a;
+  --cardarena-target: #b8860b;
+  --cardarena-ink: rgba(138, 106, 59, 0.30);
+  --cardarena-serif: 'Noto Serif SC', 'Songti SC', 'STSong', 'SimSun', Georgia, 'Times New Roman', serif;
 }
 [data-theme="dark"] {
-  --cardarena-bg: #171923;
-  --cardarena-panel: #1a202c;
-  --cardarena-border: #2d3748;
-  --cardarena-text: #e2e8f0;
-  --cardarena-muted: #a0aec0;
+  --cardarena-bg: #1f1810;
+  --cardarena-panel: #2a2118;
+  --cardarena-border: #4d3a22;
+  --cardarena-text: #e8d9b8;
+  --cardarena-muted: #a9926d;
+  --cardarena-primary: #d49a5a;
+  --cardarena-accent: #c98a3e;
+  --cardarena-target: #e0b04f;
+  --cardarena-ink: rgba(232, 217, 184, 0.18);
 }
 
 #cardarena-app {
   max-width: 920px;
   margin: 0 auto;
-  font-family: Inter, -apple-system, sans-serif;
+  font-family: var(--cardarena-serif);
   font-weight: 400;
   color: var(--cardarena-text);
-  background: var(--cardarena-bg);
+  /* 旧纸质感：暖黄底 + 边缘暗角 + 细噪点 */
+  background-color: var(--cardarena-bg);
+  background-image:
+    radial-gradient(ellipse at 50% 35%, rgba(255, 250, 230, 0.55), rgba(0, 0, 0, 0.06) 78%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.05'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   padding: 16px;
   box-sizing: border-box;
   user-select: none;
@@ -33,7 +43,7 @@
 
 /* ===== 开始界面 ===== */
 .ca-setup-title {
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: var(--cardarena-serif);
   font-weight: 500;
   font-size: 1.6rem;
   margin: 0 0 4px;
@@ -56,7 +66,7 @@
   text-align: left;
   background: var(--cardarena-panel);
   border: 1px solid var(--cardarena-border);
-  border-radius: 6px;
+  border-radius: 3px;
   padding: 12px;
   cursor: pointer;
   color: var(--cardarena-text);
@@ -68,13 +78,13 @@
 }
 .ca-setup-role.selected {
   border-color: var(--cardarena-primary);
-  background: #ebf8ff;
+  background: #fdf3dd;
 }
 [data-theme="dark"] .ca-setup-role.selected {
-  background: #1a365d;
+  background: #3a2c1a;
 }
 .ca-setup-role-name {
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: var(--cardarena-serif);
   font-weight: 500;
   font-size: 1.1rem;
   margin-bottom: 4px;
@@ -102,7 +112,7 @@
 .ca-btn {
   background: transparent;
   border: 1px solid var(--cardarena-border);
-  border-radius: 4px;
+  border-radius: 2px;
   padding: 6px 16px;
   font-family: inherit;
   font-weight: 400;
@@ -140,7 +150,7 @@
   flex-wrap: wrap;
   padding: 8px;
   border: 1px solid var(--cardarena-border);
-  border-radius: 6px;
+  border-radius: 3px;
   background: var(--cardarena-panel);
 }
 .ca-roster-label {
@@ -153,7 +163,7 @@
   align-items: center;
   gap: 6px;
   border: 1px solid var(--cardarena-border);
-  border-radius: 4px;
+  border-radius: 2px;
   padding: 4px 8px;
   font-size: 0.8rem;
 }
@@ -183,7 +193,7 @@
 }
 .ca-hero {
   border: 1px solid var(--cardarena-border);
-  border-radius: 6px;
+  border-radius: 3px;
   padding: 10px 12px;
   background: var(--cardarena-panel);
 }
@@ -191,7 +201,7 @@
   border-color: var(--cardarena-primary);
 }
 .ca-hero-name {
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: var(--cardarena-serif);
   font-weight: 500;
   font-size: 1.15rem;
   margin-bottom: 2px;
@@ -220,7 +230,7 @@
   min-height: 64px;
   padding: 8px;
   border: 1px dashed var(--cardarena-border);
-  border-radius: 6px;
+  border-radius: 3px;
 }
 .ca-board-label {
   width: 100%;
@@ -232,7 +242,7 @@
   min-width: 72px;
   padding: 8px;
   border: 1px solid var(--cardarena-border);
-  border-radius: 6px;
+  border-radius: 3px;
   background: var(--cardarena-panel);
   text-align: center;
   font-size: 0.8rem;
@@ -274,7 +284,7 @@
 /* ===== 日志 ===== */
 .ca-log {
   border: 1px solid var(--cardarena-border);
-  border-radius: 6px;
+  border-radius: 3px;
   padding: 8px;
   background: var(--cardarena-panel);
 }
@@ -296,7 +306,7 @@
 /* ===== 手牌 ===== */
 .ca-hand {
   border: 1px solid var(--cardarena-border);
-  border-radius: 6px;
+  border-radius: 3px;
   padding: 8px;
   background: var(--cardarena-panel);
 }
@@ -316,7 +326,7 @@
   min-height: 96px;
   padding: 8px 8px 6px;
   border: 1px solid var(--cardarena-border);
-  border-radius: 6px;
+  border-radius: 3px;
   background: var(--cardarena-panel);
   cursor: pointer;
   font-size: 0.8rem;
@@ -332,14 +342,16 @@
   position: absolute;
   top: -8px;
   left: -8px;
-  width: 22px;
-  height: 22px;
-  line-height: 22px;
+  width: 26px;
+  height: 26px;
+  line-height: 24px;
   text-align: center;
-  border-radius: 50%;
+  border-radius: 2px;
   background: var(--cardarena-primary);
-  color: #ffffff;
-  font-size: 0.8rem;
+  color: #f7efdd;
+  font-size: 0.85rem;
+  font-weight: 600;
+  box-shadow: inset 0 0 0 1px rgba(247, 239, 221, 0.55);
 }
 .ca-card-name {
   font-size: 0.9rem;
@@ -381,12 +393,12 @@
 }
 .ca-overlay-box {
   background: var(--cardarena-panel);
-  border-radius: 8px;
+  border-radius: 3px;
   padding: 24px 32px;
   text-align: center;
 }
 .ca-overlay-title {
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: var(--cardarena-serif);
   font-weight: 500;
   font-size: 1.6rem;
   margin: 0 0 8px;
@@ -409,4 +421,62 @@
   .ca-minion {
     min-width: 60px;
   }
+}
+
+/* ===== 复古藏书/版画装饰 ===== */
+/* 书页面板：外框 + 内侧细线（版画双线描边）+ 泛黄纸面 */
+.ca-roster, .ca-board, .ca-hand, .ca-log,
+.ca-hero, .ca-minion, .ca-card, .ca-overlay-box, .ca-setup-role {
+  box-shadow: inset 0 0 0 1px var(--cardarena-ink);
+  background-image: linear-gradient(180deg, rgba(255, 252, 240, 0.55), rgba(138, 106, 59, 0.06));
+}
+[data-theme="dark"] .ca-roster, [data-theme="dark"] .ca-board,
+[data-theme="dark"] .ca-hand, [data-theme="dark"] .ca-log,
+[data-theme="dark"] .ca-hero, [data-theme="dark"] .ca-minion,
+[data-theme="dark"] .ca-card, [data-theme="dark"] .ca-overlay-box,
+[data-theme="dark"] .ca-setup-role {
+  background-image: linear-gradient(180deg, rgba(232, 217, 184, 0.06), rgba(0, 0, 0, 0.10));
+}
+/* 随从/卡牌右上角小方印（卷轴印） */
+.ca-card::after, .ca-minion::after {
+  content: '';
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 14px;
+  height: 14px;
+  border: 1px solid var(--cardarena-primary);
+  opacity: 0.5;
+}
+.ca-minion::after {
+  top: 5px;
+  right: 5px;
+  width: 10px;
+  height: 10px;
+}
+/* 卡牌/随从悬浮：纸张抬起 */
+.ca-card:hover:not(.disabled), .ca-minion:hover:not(.disabled) {
+  box-shadow: inset 0 0 0 1px var(--cardarena-ink), 0 3px 8px rgba(59, 43, 30, 0.20);
+}
+/* 古籍回纹分隔：区标签加字距 */
+.ca-board-label, .ca-hand-label, .ca-roster-label, .ca-log-label {
+  letter-spacing: 0.18em;
+}
+/* 印章式目标高亮 */
+.targetable {
+  outline: 2px solid var(--cardarena-target);
+  box-shadow: inset 0 0 0 1px var(--cardarena-ink), 0 0 0 4px rgba(184, 134, 11, 0.20);
+}
+/* 按钮 hover 填充用纸白 */
+.ca-btn-primary:hover:not(:disabled) {
+  background: var(--cardarena-primary);
+  color: #f7efdd;
+}
+/* 结算遮罩更偏暖墨色 */
+.ca-overlay {
+  background: rgba(35, 25, 12, 0.62);
+}
+/* 出战角色区（玩家）保留朱砂描边，内线弱化 */
+.ca-hero-player {
+  box-shadow: inset 0 0 0 1px var(--cardarena-ink), 0 0 0 1px var(--cardarena-primary);
 }

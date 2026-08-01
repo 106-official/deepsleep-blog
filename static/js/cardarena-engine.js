@@ -310,7 +310,10 @@
     }
     var all = enemy.board.filter(function (m) { return m.health > 0; })
       .map(function (m) { return { kind: 'minion', side: enemy, uid: m.uid }; });
-    all.push({ kind: 'hero', side: enemy });
+    // 场上还有随从时，出战角色受随从保护、不可被攻击；清场后才能直接攻击角色
+    if (all.length === 0) {
+      all.push({ kind: 'hero', side: enemy });
+    }
     return all;
   }
 

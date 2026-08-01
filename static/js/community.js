@@ -1,4 +1,6 @@
-const API_BASE = 'https://community-deepsleep.vercel.app/api';
+// API 迁移到腾讯云 SCF（2026-07-30）：Vercel 域名在国内手机/校园网不可达
+// SCF 端点国内直连，无需代理。旧端点 community-deepsleep.vercel.app 保留作电脑端备用
+const API_BASE = 'https://1437998910-loiqxuadw0.ap-shanghai.tencentscf.com/api';
 
 function getToken() { return localStorage.getItem('community_token'); }
 function setToken(t) { localStorage.setItem('community_token', t); }

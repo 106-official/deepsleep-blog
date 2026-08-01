@@ -19,3 +19,9 @@ Thumbs.db
 ~$*
 
 /node_modules/
+
+# CPA PDF source text (extracted, not tracked in git)
+docs/cpa-source/textbooks/
+docs/cpa-source/past-papers/
+docs/cpa-source/exercises/
+docs/cpa-source/exams/

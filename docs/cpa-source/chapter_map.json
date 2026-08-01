@@ -1,0 +1,1686 @@
+{
+  "accounting": {
+    "subject": "accounting",
+    "subject_dir": "02-accounting",
+    "source_file": "accounting.txt",
+    "source_lines": 47813,
+    "body_start_line": 367,
+    "extracted_chapters": [
+      {
+        "ch_num": 1,
+        "title": "总论",
+        "toc_title": "总论",
+        "start_line": 444,
+        "occurrence_count": 12,
+        "match_score": 1.0,
+        "end_line": 1723,
+        "line_count": 1279,
+        "size_kb": 103.3
+      },
+      {
+        "ch_num": 2,
+        "title": "存.，（告",
+        "toc_title": "",
+        "start_line": 1723,
+        "occurrence_count": 9,
+        "match_score": null,
+        "end_line": 2313,
+        "line_count": 590,
+        "size_kb": 39.4
+      },
+      {
+        "ch_num": 3,
+        "title": "固定资产",
+        "toc_title": "固定资产",
+        "start_line": 2313,
+        "occurrence_count": 6,
+        "match_score": 1.0,
+        "end_line": 3319,
+        "line_count": 1006,
+        "size_kb": 59.2
+      },
+      {
+        "ch_num": 4,
+        "title": "无形资产",
+        "toc_title": "无形资产",
+        "start_line": 3319,
+        "occurrence_count": 9,
+        "match_score": 1.0,
+        "end_line": 4385,
+        "line_count": 1066,
+        "size_kb": 73.6
+      },
+      {
+        "ch_num": 5,
+        "title": "投资性房地产",
+        "toc_title": "投资性房地产",
+        "start_line": 4385,
+        "occurrence_count": 7,
+        "match_score": 1.0,
+        "end_line": 4986,
+        "line_count": 601,
+        "size_kb": 39.4
+      },
+      {
+        "ch_num": 6,
+        "title": "长期般权投资与合营安排",
+        "toc_title": "长期般权投资与合营安排",
+        "start_line": 4986,
+        "occurrence_count": 22,
+        "match_score": 0.91,
+        "end_line": 7123,
+        "line_count": 2137,
+        "size_kb": 143.3
+      },
+      {
+        "ch_num": 7,
+        "title": "资产；戒值",
+        "toc_title": "资产；戒值",
+        "start_line": 7123,
+        "occurrence_count": 10,
+        "match_score": 0.6,
+        "end_line": 8338,
+        "line_count": 1215,
+        "size_kb": 59.2
+      },
+      {
+        "ch_num": 8,
+        "title": "兔债",
+        "toc_title": "兔债",
+        "start_line": 8338,
+        "occurrence_count": 7,
+        "match_score": 0.0,
+        "end_line": 9486,
+        "line_count": 1148,
+        "size_kb": 69.3
+      },
+      {
+        "ch_num": 9,
+        "title": "职工藉酣",
+        "toc_title": "职工藉酣",
+        "start_line": 9486,
+        "occurrence_count": 4,
+        "match_score": 0.75,
+        "end_line": 9671,
+        "line_count": 185,
+        "size_kb": 7.3
+      },
+      {
+        "ch_num": 10,
+        "title": "股份支付",
+        "toc_title": "股份支付",
+        "start_line": 9671,
+        "occurrence_count": 10,
+        "match_score": 1.0,
+        "end_line": 10734,
+        "line_count": 1063,
+        "size_kb": 62.0
+      },
+      {
+        "ch_num": 11,
+        "title": "借款费用静",
+        "toc_title": "",
+        "start_line": 10734,
+        "occurrence_count": 3,
+        "match_score": null,
+        "end_line": 11228,
+        "line_count": 494,
+        "size_kb": 27.3
+      },
+      {
+        "ch_num": 12,
+        "title": "或有事项",
+        "toc_title": "或有事项",
+        "start_line": 11228,
+        "occurrence_count": 21,
+        "match_score": 1.0,
+        "end_line": 11756,
+        "line_count": 528,
+        "size_kb": 37.8
+      },
+      {
+        "ch_num": 13,
+        "title": "金融工具与保险合罔",
+        "toc_title": "",
+        "start_line": 11756,
+        "occurrence_count": 27,
+        "match_score": null,
+        "end_line": 16247,
+        "line_count": 4491,
+        "size_kb": 291.7
+      },
+      {
+        "ch_num": 14,
+        "title": "租赁",
+        "toc_title": "租赁",
+        "start_line": 16247,
+        "occurrence_count": 12,
+        "match_score": 1.0,
+        "end_line": 17848,
+        "line_count": 1601,
+        "size_kb": 96.7
+      },
+      {
+        "ch_num": 15,
+        "title": "持葡待售的非流动资产",
+        "toc_title": "",
+        "start_line": 17848,
+        "occurrence_count": 10,
+        "match_score": null,
+        "end_line": 19134,
+        "line_count": 1286,
+        "size_kb": 71.7
+      },
+      {
+        "ch_num": 16,
+        "title": "所有者按益",
+        "toc_title": "所有者按益",
+        "start_line": 19134,
+        "occurrence_count": 7,
+        "match_score": 0.8,
+        "end_line": 21255,
+        "line_count": 2121,
+        "size_kb": 155.9
+      },
+      {
+        "ch_num": 17,
+        "title": "收入、费翔和利润",
+        "toc_title": "收入、费翔和利润",
+        "start_line": 21255,
+        "occurrence_count": 28,
+        "match_score": 0.86,
+        "end_line": 22506,
+        "line_count": 1251,
+        "size_kb": 76.5
+      },
+      {
+        "ch_num": 18,
+        "title": "政府补助",
+        "toc_title": "政府补助",
+        "start_line": 22506,
+        "occurrence_count": 7,
+        "match_score": 1.0,
+        "end_line": 23363,
+        "line_count": 857,
+        "size_kb": 38.0
+      },
+      {
+        "ch_num": 19,
+        "title": "所得税",
+        "toc_title": "所得税",
+        "start_line": 23363,
+        "occurrence_count": 13,
+        "match_score": 1.0,
+        "end_line": 24711,
+        "line_count": 1348,
+        "size_kb": 80.7
+      },
+      {
+        "ch_num": 20,
+        "title": "非货币性资产交换带将",
+        "toc_title": "",
+        "start_line": 24711,
+        "occurrence_count": 21,
+        "match_score": null,
+        "end_line": 25331,
+        "line_count": 620,
+        "size_kb": 41.1
+      },
+      {
+        "ch_num": 21,
+        "title": "债务重组",
+        "toc_title": "",
+        "start_line": 25331,
+        "occurrence_count": 5,
+        "match_score": null,
+        "end_line": 26005,
+        "line_count": 674,
+        "size_kb": 40.1
+      },
+      {
+        "ch_num": 22,
+        "title": "外币折算",
+        "toc_title": "",
+        "start_line": 26005,
+        "occurrence_count": 11,
+        "match_score": null,
+        "end_line": 26731,
+        "line_count": 726,
+        "size_kb": 32.1
+      },
+      {
+        "ch_num": 23,
+        "title": "财务报告~， 5271",
+        "toc_title": "",
+        "start_line": 26731,
+        "occurrence_count": 6,
+        "match_score": null,
+        "end_line": 29520,
+        "line_count": 2789,
+        "size_kb": 190.7
+      },
+      {
+        "ch_num": 24,
+        "title": "会计政策、会计估计及其变更相差错更正",
+        "toc_title": "会计政策、会计估计及其变更相差错更正",
+        "start_line": 29520,
+        "occurrence_count": 7,
+        "match_score": 0.89,
+        "end_line": 29640,
+        "line_count": 120,
+        "size_kb": 7.7
+      },
+      {
+        "ch_num": 25,
+        "title": "资产负债表目启事项",
+        "toc_title": "资产负债表目启事项",
+        "start_line": 29640,
+        "occurrence_count": 7,
+        "match_score": 1.0,
+        "end_line": 30363,
+        "line_count": 723,
+        "size_kb": 38.7
+      },
+      {
+        "ch_num": 26,
+        "title": "企业合并",
+        "toc_title": "企业合并",
+        "start_line": 30363,
+        "occurrence_count": 10,
+        "match_score": 1.0,
+        "end_line": 30855,
+        "line_count": 492,
+        "size_kb": 30.6
+      },
+      {
+        "ch_num": 27,
+        "title": "合并财务报表的有关规定进行抵销",
+        "toc_title": "",
+        "start_line": 30855,
+        "occurrence_count": 55,
+        "match_score": null,
+        "end_line": 43005,
+        "line_count": 12150,
+        "size_kb": 400.5
+      },
+      {
+        "ch_num": 28,
+        "title": "每股收益",
+        "toc_title": "每股收益",
+        "start_line": 43005,
+        "occurrence_count": 6,
+        "match_score": 1.0,
+        "end_line": 43757,
+        "line_count": 752,
+        "size_kb": 48.3
+      },
+      {
+        "ch_num": 29,
+        "title": "公允价值计量",
+        "toc_title": "公允价值计量",
+        "start_line": 43757,
+        "occurrence_count": 10,
+        "match_score": 1.0,
+        "end_line": 44730,
+        "line_count": 973,
+        "size_kb": 75.0
+      },
+      {
+        "ch_num": 30,
+        "title": "政府及民间非营利组织会计",
+        "toc_title": "政府及民间非营利组织会计",
+        "start_line": 44730,
+        "occurrence_count": 12,
+        "match_score": 1.0,
+        "end_line": 47814,
+        "line_count": 3084,
+        "size_kb": 210.7
+      }
+    ],
+    "existing_md_chapters": [
+      {
+        "weight": 1,
+        "filename": "01-basic-concepts.md",
+        "slug": "basic-concepts"
+      },
+      {
+        "weight": 2,
+        "filename": "02-inventory.md",
+        "slug": "inventory"
+      },
+      {
+        "weight": 3,
+        "filename": "03-fixed-assets.md",
+        "slug": "fixed-assets"
+      },
+      {
+        "weight": 4,
+        "filename": "04-intangible-assets.md",
+        "slug": "intangible-assets"
+      },
+      {
+        "weight": 5,
+        "filename": "05-investment-property.md",
+        "slug": "investment-property"
+      },
+      {
+        "weight": 6,
+        "filename": "06-long-term-equity.md",
+        "slug": "long-term-equity"
+      },
+      {
+        "weight": 7,
+        "filename": "07-asset-impairment.md",
+        "slug": "asset-impairment"
+      },
+      {
+        "weight": 8,
+        "filename": "08-employee-benefits.md",
+        "slug": "employee-benefits"
+      },
+      {
+        "weight": 9,
+        "filename": "09-share-based-payment.md",
+        "slug": "share-based-payment"
+      },
+      {
+        "weight": 10,
+        "filename": "10-borrowing-costs.md",
+        "slug": "borrowing-costs"
+      },
+      {
+        "weight": 11,
+        "filename": "11-contingencies.md",
+        "slug": "contingencies"
+      },
+      {
+        "weight": 12,
+        "filename": "12-financial-instruments.md",
+        "slug": "financial-instruments"
+      },
+      {
+        "weight": 13,
+        "filename": "13-revenue.md",
+        "slug": "revenue"
+      },
+      {
+        "weight": 14,
+        "filename": "14-government-grants.md",
+        "slug": "government-grants"
+      },
+      {
+        "weight": 15,
+        "filename": "15-income-tax.md",
+        "slug": "income-tax"
+      },
+      {
+        "weight": 16,
+        "filename": "16-foreign-currency.md",
+        "slug": "foreign-currency"
+      },
+      {
+        "weight": 17,
+        "filename": "17-leases.md",
+        "slug": "leases"
+      },
+      {
+        "weight": 18,
+        "filename": "18-non-monetary-exchange.md",
+        "slug": "non-monetary-exchange"
+      },
+      {
+        "weight": 19,
+        "filename": "19-debt-restructuring.md",
+        "slug": "debt-restructuring"
+      },
+      {
+        "weight": 20,
+        "filename": "20-accounting-changes.md",
+        "slug": "accounting-changes"
+      },
+      {
+        "weight": 21,
+        "filename": "21-events-after-balance-sheet.md",
+        "slug": "events-after-balance-sheet"
+      },
+      {
+        "weight": 22,
+        "filename": "22-financial-statements.md",
+        "slug": "financial-statements"
+      },
+      {
+        "weight": 23,
+        "filename": "23-consolidation.md",
+        "slug": "consolidation"
+      },
+      {
+        "weight": 24,
+        "filename": "24-business-combination.md",
+        "slug": "business-combination"
+      },
+      {
+        "weight": 25,
+        "filename": "25-government-accounting.md",
+        "slug": "government-accounting"
+      }
+    ]
+  },
+  "audit": {
+    "subject": "audit",
+    "subject_dir": "03-audit",
+    "source_file": "audit.txt",
+    "source_lines": 29228,
+    "body_start_line": 275,
+    "extracted_chapters": [
+      {
+        "ch_num": 1,
+        "title": "审计概述",
+        "toc_title": "审计概述",
+        "start_line": 288,
+        "occurrence_count": 13,
+        "match_score": 1.0,
+        "end_line": 1280,
+        "line_count": 992,
+        "size_kb": 81.3
+      },
+      {
+        "ch_num": 2,
+        "title": "职业道德基本原则和解决职业道德问题的基本思路",
+        "toc_title": "职业道德基本原则和解决职业道德问题的基本思路",
+        "start_line": 1280,
+        "occurrence_count": 12,
+        "match_score": 1.0,
+        "end_line": 2158,
+        "line_count": 878,
+        "size_kb": 65.4
+      },
+      {
+        "ch_num": 3,
+        "title": "审计业务的独立性要求",
+        "toc_title": "审计业务的独立性要求",
+        "start_line": 2158,
+        "occurrence_count": 21,
+        "match_score": 1.0,
+        "end_line": 3765,
+        "line_count": 1607,
+        "size_kb": 105.4
+      },
+      {
+        "ch_num": 4,
+        "title": "审计证据",
+        "toc_title": "审计证据",
+        "start_line": 3765,
+        "occurrence_count": 13,
+        "match_score": 1.0,
+        "end_line": 4705,
+        "line_count": 940,
+        "size_kb": 77.5
+      },
+      {
+        "ch_num": 5,
+        "title": "审计抽样方法",
+        "toc_title": "审计抽样方法",
+        "start_line": 4705,
+        "occurrence_count": 18,
+        "match_score": 1.0,
+        "end_line": 6875,
+        "line_count": 2170,
+        "size_kb": 111.4
+      },
+      {
+        "ch_num": 6,
+        "title": "审计计划",
+        "toc_title": "审计计划",
+        "start_line": 6875,
+        "occurrence_count": 11,
+        "match_score": 1.0,
+        "end_line": 7678,
+        "line_count": 803,
+        "size_kb": 56.3
+      },
+      {
+        "ch_num": 7,
+        "title": "风险评估",
+        "toc_title": "风险评估",
+        "start_line": 7678,
+        "occurrence_count": 26,
+        "match_score": 1.0,
+        "end_line": 9875,
+        "line_count": 2197,
+        "size_kb": 168.0
+      },
+      {
+        "ch_num": 8,
+        "title": "风险应对",
+        "toc_title": "风险应对",
+        "start_line": 9875,
+        "occurrence_count": 10,
+        "match_score": 1.0,
+        "end_line": 10701,
+        "line_count": 826,
+        "size_kb": 67.5
+      },
+      {
+        "ch_num": 9,
+        "title": "信息技术对审计的影响",
+        "toc_title": "信息技术对审计的影响",
+        "start_line": 10701,
+        "occurrence_count": 13,
+        "match_score": 1.0,
+        "end_line": 11643,
+        "line_count": 942,
+        "size_kb": 73.6
+      },
+      {
+        "ch_num": 10,
+        "title": "销售与收款循环的审计",
+        "toc_title": "销售与收款循环的审计",
+        "start_line": 11643,
+        "occurrence_count": 18,
+        "match_score": 1.0,
+        "end_line": 13251,
+        "line_count": 1608,
+        "size_kb": 105.2
+      },
+      {
+        "ch_num": 11,
+        "title": "采购与付款循环的审计",
+        "toc_title": "采购与付款循环的审计",
+        "start_line": 13251,
+        "occurrence_count": 7,
+        "match_score": 1.0,
+        "end_line": 13961,
+        "line_count": 710,
+        "size_kb": 41.1
+      },
+      {
+        "ch_num": 12,
+        "title": "生产与存货循环的审计",
+        "toc_title": "生产与存货循环的审计",
+        "start_line": 13961,
+        "occurrence_count": 11,
+        "match_score": 1.0,
+        "end_line": 14989,
+        "line_count": 1028,
+        "size_kb": 71.7
+      },
+      {
+        "ch_num": 13,
+        "title": "货币资金的审计",
+        "toc_title": "货币资金的审计",
+        "start_line": 14989,
+        "occurrence_count": 10,
+        "match_score": 1.0,
+        "end_line": 15836,
+        "line_count": 847,
+        "size_kb": 52.5
+      },
+      {
+        "ch_num": 14,
+        "title": "对舞弊和法律法规的考虑",
+        "toc_title": "对舞弊和法律法规的考虑",
+        "start_line": 15836,
+        "occurrence_count": 16,
+        "match_score": 1.0,
+        "end_line": 17244,
+        "line_count": 1408,
+        "size_kb": 101.9
+      },
+      {
+        "ch_num": 15,
+        "title": "审计沟通",
+        "toc_title": "审计沟通",
+        "start_line": 17244,
+        "occurrence_count": 9,
+        "match_score": 1.0,
+        "end_line": 17972,
+        "line_count": 728,
+        "size_kb": 59.2
+      },
+      {
+        "ch_num": 16,
+        "title": ".注册会计师利用他人的工作",
+        "toc_title": ".注册会计师利用他人的工作",
+        "start_line": 17972,
+        "occurrence_count": 6,
+        "match_score": 1.0,
+        "end_line": 18422,
+        "line_count": 450,
+        "size_kb": 32.9
+      },
+      {
+        "ch_num": 17,
+        "title": "对集团财务报表审计的特殊考虑",
+        "toc_title": "对集团财务报表审计的特殊考虑",
+        "start_line": 18422,
+        "occurrence_count": 9,
+        "match_score": 1.0,
+        "end_line": 19082,
+        "line_count": 660,
+        "size_kb": 50.8
+      },
+      {
+        "ch_num": 18,
+        "title": "其他特殊项目的审计",
+        "toc_title": "其他特殊项目的审计",
+        "start_line": 19082,
+        "occurrence_count": 18,
+        "match_score": 1.0,
+        "end_line": 20559,
+        "line_count": 1477,
+        "size_kb": 116.1
+      },
+      {
+        "ch_num": 19,
+        "title": "完成审计工作",
+        "toc_title": "完成审计工作",
+        "start_line": 20559,
+        "occurrence_count": 9,
+        "match_score": 1.0,
+        "end_line": 21246,
+        "line_count": 687,
+        "size_kb": 51.6
+      },
+      {
+        "ch_num": 20,
+        "title": "审计报告",
+        "toc_title": "审计报告",
+        "start_line": 21246,
+        "occurrence_count": 29,
+        "match_score": 1.0,
+        "end_line": 23541,
+        "line_count": 2295,
+        "size_kb": 172.7
+      },
+      {
+        "ch_num": 21,
+        "title": "审计工作底稿",
+        "toc_title": "审计工作底稿",
+        "start_line": 23541,
+        "occurrence_count": 6,
+        "match_score": 1.0,
+        "end_line": 24013,
+        "line_count": 472,
+        "size_kb": 29.3
+      },
+      {
+        "ch_num": 22,
+        "title": "企业内部控制审计",
+        "toc_title": "企业内部控制审计",
+        "start_line": 24013,
+        "occurrence_count": 29,
+        "match_score": 1.0,
+        "end_line": 26907,
+        "line_count": 2894,
+        "size_kb": 158.6
+      },
+      {
+        "ch_num": 23,
+        "title": "企业可持续信息鉴证",
+        "toc_title": "企业可持续信息鉴证",
+        "start_line": 26907,
+        "occurrence_count": 16,
+        "match_score": 1.0,
+        "end_line": 28187,
+        "line_count": 1280,
+        "size_kb": 85.6
+      },
+      {
+        "ch_num": 24,
+        "title": "会计师事务所业务质量管理",
+        "toc_title": "会计师事务所业务质量管理",
+        "start_line": 28187,
+        "occurrence_count": 14,
+        "match_score": 1.0,
+        "end_line": 29229,
+        "line_count": 1042,
+        "size_kb": 76.2
+      }
+    ],
+    "existing_md_chapters": [
+      {
+        "weight": 1,
+        "filename": "01-audit-overview.md",
+        "slug": "audit-overview"
+      },
+      {
+        "weight": 2,
+        "filename": "02-audit-planning.md",
+        "slug": "audit-planning"
+      },
+      {
+        "weight": 3,
+        "filename": "03-audit-evidence.md",
+        "slug": "audit-evidence"
+      },
+      {
+        "weight": 4,
+        "filename": "04-audit-sampling.md",
+        "slug": "audit-sampling"
+      },
+      {
+        "weight": 5,
+        "filename": "05-it-audit.md",
+        "slug": "it-audit"
+      },
+      {
+        "weight": 6,
+        "filename": "06-risk-assessment.md",
+        "slug": "risk-assessment"
+      },
+      {
+        "weight": 7,
+        "filename": "07-risk-response.md",
+        "slug": "risk-response"
+      },
+      {
+        "weight": 8,
+        "filename": "08-sales-collection-cycle.md",
+        "slug": "sales-collection-cycle"
+      },
+      {
+        "weight": 9,
+        "filename": "09-purchase-payment-cycle.md",
+        "slug": "purchase-payment-cycle"
+      },
+      {
+        "weight": 10,
+        "filename": "10-production-inventory-cycle.md",
+        "slug": "production-inventory-cycle"
+      },
+      {
+        "weight": 11,
+        "filename": "11-cash-audit.md",
+        "slug": "cash-audit"
+      },
+      {
+        "weight": 12,
+        "filename": "12-completing-audit.md",
+        "slug": "completing-audit"
+      }
+    ]
+  },
+  "fm": {
+    "subject": "fm",
+    "subject_dir": "04-fm",
+    "source_file": "fm.txt",
+    "source_lines": 30144,
+    "body_start_line": 311,
+    "extracted_chapters": [
+      {
+        "ch_num": 1,
+        "title": "财务管理概述",
+        "toc_title": "财务管理概述",
+        "start_line": 423,
+        "occurrence_count": 15,
+        "match_score": 1.0,
+        "end_line": 2505,
+        "line_count": 2082,
+        "size_kb": 121.8
+      },
+      {
+        "ch_num": 2,
+        "title": ",财务书去分析和财条预高",
+        "toc_title": ",财务书去分析和财条预高",
+        "start_line": 2505,
+        "occurrence_count": 23,
+        "match_score": 0.58,
+        "end_line": 4670,
+        "line_count": 2165,
+        "size_kb": 74.5
+      },
+      {
+        "ch_num": 3,
+        "title": "价值评估基",
+        "toc_title": "价值评估基",
+        "start_line": 4670,
+        "occurrence_count": 23,
+        "match_score": 1.0,
+        "end_line": 6712,
+        "line_count": 2042,
+        "size_kb": 95.6
+      },
+      {
+        "ch_num": 4,
+        "title": "资本成本",
+        "toc_title": "",
+        "start_line": 6712,
+        "occurrence_count": 10,
+        "match_score": null,
+        "end_line": 8083,
+        "line_count": 1371,
+        "size_kb": 68.1
+      },
+      {
+        "ch_num": 5,
+        "title": "投资项自资本质算",
+        "toc_title": "投资项自资本质算",
+        "start_line": 8083,
+        "occurrence_count": 13,
+        "match_score": 0.75,
+        "end_line": 9562,
+        "line_count": 1479,
+        "size_kb": 51.9
+      },
+      {
+        "ch_num": 6,
+        "title": "期权价值评估",
+        "toc_title": "期权价值评估",
+        "start_line": 9562,
+        "occurrence_count": 22,
+        "match_score": 1.0,
+        "end_line": 12032,
+        "line_count": 2470,
+        "size_kb": 94.7
+      },
+      {
+        "ch_num": 7,
+        "title": "企业价信评估",
+        "toc_title": "企业价信评估",
+        "start_line": 12032,
+        "occurrence_count": 11,
+        "match_score": 0.83,
+        "end_line": 13248,
+        "line_count": 1216,
+        "size_kb": 61.7
+      },
+      {
+        "ch_num": 8,
+        "title": "资本结构",
+        "toc_title": "资本结构",
+        "start_line": 13248,
+        "occurrence_count": 12,
+        "match_score": 1.0,
+        "end_line": 14422,
+        "line_count": 1174,
+        "size_kb": 54.2
+      },
+      {
+        "ch_num": 9,
+        "title": "长期筹资",
+        "toc_title": "",
+        "start_line": 14422,
+        "occurrence_count": 19,
+        "match_score": null,
+        "end_line": 17042,
+        "line_count": 2620,
+        "size_kb": 166.7
+      },
+      {
+        "ch_num": 10,
+        "title": "股利分配、股差分割与段蒸回监",
+        "toc_title": "股利分配、股差分割与段蒸回监",
+        "start_line": 17042,
+        "occurrence_count": 8,
+        "match_score": 0.62,
+        "end_line": 17132,
+        "line_count": 90,
+        "size_kb": 6.8
+      },
+      {
+        "ch_num": 11,
+        "title": "营运资本管理",
+        "toc_title": "营运资本管理",
+        "start_line": 17132,
+        "occurrence_count": 16,
+        "match_score": 1.0,
+        "end_line": 18831,
+        "line_count": 1699,
+        "size_kb": 92.5
+      },
+      {
+        "ch_num": 12,
+        "title": "成本管理会计的基础彩念和基本理设",
+        "toc_title": "成本管理会计的基础彩念和基本理设",
+        "start_line": 18831,
+        "occurrence_count": 2,
+        "match_score": 0.88,
+        "end_line": 19005,
+        "line_count": 174,
+        "size_kb": 10.5
+      },
+      {
+        "ch_num": 13,
+        "title": "产品成本计象",
+        "toc_title": "产品成本计象",
+        "start_line": 19005,
+        "occurrence_count": 13,
+        "match_score": 0.83,
+        "end_line": 20939,
+        "line_count": 1934,
+        "size_kb": 66.7
+      },
+      {
+        "ch_num": 14,
+        "title": "标准成本法",
+        "toc_title": "标准成本法",
+        "start_line": 20939,
+        "occurrence_count": 5,
+        "match_score": 1.0,
+        "end_line": 21616,
+        "line_count": 677,
+        "size_kb": 35.3
+      },
+      {
+        "ch_num": 15,
+        "title": "作业成本法和生命周期成本法",
+        "toc_title": "作业成本法和生命周期成本法",
+        "start_line": 21616,
+        "occurrence_count": 10,
+        "match_score": 1.0,
+        "end_line": 22732,
+        "line_count": 1116,
+        "size_kb": 46.2
+      },
+      {
+        "ch_num": 16,
+        "title": "本量利分析",
+        "toc_title": "本量利分析",
+        "start_line": 22732,
+        "occurrence_count": 11,
+        "match_score": 1.0,
+        "end_line": 23807,
+        "line_count": 1075,
+        "size_kb": 47.9
+      },
+      {
+        "ch_num": 17,
+        "title": "短期经营决策",
+        "toc_title": "短期经营决策",
+        "start_line": 23807,
+        "occurrence_count": 9,
+        "match_score": 1.0,
+        "end_line": 24564,
+        "line_count": 757,
+        "size_kb": 37.7
+      },
+      {
+        "ch_num": 18,
+        "title": "全面预算",
+        "toc_title": "全面预算",
+        "start_line": 24564,
+        "occurrence_count": 11,
+        "match_score": 1.0,
+        "end_line": 26074,
+        "line_count": 1510,
+        "size_kb": 50.8
+      },
+      {
+        "ch_num": 19,
+        "title": "贵任会计 ( 过",
+        "toc_title": "",
+        "start_line": 26074,
+        "occurrence_count": 7,
+        "match_score": null,
+        "end_line": 26761,
+        "line_count": 687,
+        "size_kb": 36.5
+      },
+      {
+        "ch_num": 20,
+        "title": ",业结评价",
+        "toc_title": ",业结评价",
+        "start_line": 26761,
+        "occurrence_count": 9,
+        "match_score": 0.6,
+        "end_line": 30145,
+        "line_count": 3384,
+        "size_kb": 79.9
+      }
+    ],
+    "existing_md_chapters": [
+      {
+        "weight": 1,
+        "filename": "01-fm-basics.md",
+        "slug": "fm-basics"
+      },
+      {
+        "weight": 2,
+        "filename": "02-financial-statement-analysis.md",
+        "slug": "financial-statement-analysis"
+      },
+      {
+        "weight": 3,
+        "filename": "03-long-term-planning.md",
+        "slug": "long-term-planning"
+      },
+      {
+        "weight": 4,
+        "filename": "04-valuation-basics.md",
+        "slug": "valuation-basics"
+      },
+      {
+        "weight": 5,
+        "filename": "05-cost-of-capital.md",
+        "slug": "cost-of-capital"
+      },
+      {
+        "weight": 6,
+        "filename": "06-capital-budgeting.md",
+        "slug": "capital-budgeting"
+      },
+      {
+        "weight": 7,
+        "filename": "07-bond-stock-valuation.md",
+        "slug": "bond-stock-valuation"
+      },
+      {
+        "weight": 8,
+        "filename": "08-option-valuation.md",
+        "slug": "option-valuation"
+      },
+      {
+        "weight": 9,
+        "filename": "09-enterprise-valuation.md",
+        "slug": "enterprise-valuation"
+      },
+      {
+        "weight": 10,
+        "filename": "10-capital-structure.md",
+        "slug": "capital-structure"
+      },
+      {
+        "weight": 11,
+        "filename": "11-dividend-distribution.md",
+        "slug": "dividend-distribution"
+      },
+      {
+        "weight": 12,
+        "filename": "12-working-capital.md",
+        "slug": "working-capital"
+      },
+      {
+        "weight": 13,
+        "filename": "13-product-costing.md",
+        "slug": "product-costing"
+      },
+      {
+        "weight": 14,
+        "filename": "14-standard-costing.md",
+        "slug": "standard-costing"
+      },
+      {
+        "weight": 15,
+        "filename": "15-cvp-analysis.md",
+        "slug": "cvp-analysis"
+      }
+    ]
+  },
+  "strategy": {
+    "subject": "strategy",
+    "subject_dir": "05-strategy",
+    "source_file": "strategy.txt",
+    "source_lines": 23797,
+    "body_start_line": 142,
+    "extracted_chapters": [
+      {
+        "ch_num": 1,
+        "title": "战略与战略管理概述",
+        "toc_title": "战略与战略管理概述",
+        "start_line": 151,
+        "occurrence_count": 19,
+        "match_score": 1.0,
+        "end_line": 1762,
+        "line_count": 1611,
+        "size_kb": 111.5
+      },
+      {
+        "ch_num": 2,
+        "title": "战略分析",
+        "toc_title": "战略分析",
+        "start_line": 1762,
+        "occurrence_count": 33,
+        "match_score": 1.0,
+        "end_line": 4791,
+        "line_count": 3029,
+        "size_kb": 194.5
+      },
+      {
+        "ch_num": 3,
+        "title": "战略选择",
+        "toc_title": "战略选择",
+        "start_line": 4791,
+        "occurrence_count": 88,
+        "match_score": 1.0,
+        "end_line": 12080,
+        "line_count": 7289,
+        "size_kb": 493.2
+      },
+      {
+        "ch_num": 4,
+        "title": "战略实施",
+        "toc_title": "战略实施",
+        "start_line": 12080,
+        "occurrence_count": 34,
+        "match_score": 1.0,
+        "end_line": 15098,
+        "line_count": 3018,
+        "size_kb": 213.4
+      },
+      {
+        "ch_num": 5,
+        "title": "公司治理",
+        "toc_title": "公司治理",
+        "start_line": 15098,
+        "occurrence_count": 18,
+        "match_score": 1.0,
+        "end_line": 16687,
+        "line_count": 1589,
+        "size_kb": 134.5
+      },
+      {
+        "ch_num": 6,
+        "title": "风险与风险管理概述",
+        "toc_title": "风险与风险管理概述",
+        "start_line": 16687,
+        "occurrence_count": 10,
+        "match_score": 1.0,
+        "end_line": 17447,
+        "line_count": 760,
+        "size_kb": 63.8
+      },
+      {
+        "ch_num": 7,
+        "title": "风险管理的流程、体系与方法",
+        "toc_title": "风险管理的流程、体系与方法",
+        "start_line": 17447,
+        "occurrence_count": 28,
+        "match_score": 1.0,
+        "end_line": 19783,
+        "line_count": 2336,
+        "size_kb": 150.5
+      },
+      {
+        "ch_num": 8,
+        "title": "企业面对的主要风险与应对",
+        "toc_title": "企业面对的主要风险与应对",
+        "start_line": 19783,
+        "occurrence_count": 23,
+        "match_score": 1.0,
+        "end_line": 23798,
+        "line_count": 4015,
+        "size_kb": 330.0
+      }
+    ],
+    "existing_md_chapters": [
+      {
+        "weight": 1,
+        "filename": "01-strategy-overview.md",
+        "slug": "strategy-overview"
+      },
+      {
+        "weight": 2,
+        "filename": "02-strategic-analysis.md",
+        "slug": "strategic-analysis"
+      },
+      {
+        "weight": 3,
+        "filename": "03-strategic-choice.md",
+        "slug": "strategic-choice"
+      },
+      {
+        "weight": 4,
+        "filename": "04-strategic-implementation.md",
+        "slug": "strategic-implementation"
+      },
+      {
+        "weight": 5,
+        "filename": "05-corporate-governance.md",
+        "slug": "corporate-governance"
+      },
+      {
+        "weight": 6,
+        "filename": "06-risk-management.md",
+        "slug": "risk-management"
+      },
+      {
+        "weight": 7,
+        "filename": "07-internal-control.md",
+        "slug": "internal-control"
+      },
+      {
+        "weight": 8,
+        "filename": "08-mis-application.md",
+        "slug": "mis-application"
+      }
+    ]
+  },
+  "economic-law": {
+    "subject": "economic-law",
+    "subject_dir": "06-economic-law",
+    "source_file": "economic-law.txt",
+    "source_lines": 24474,
+    "body_start_line": 181,
+    "extracted_chapters": [
+      {
+        "ch_num": 1,
+        "title": "法律基本原理",
+        "toc_title": "法律基本原理",
+        "start_line": 197,
+        "occurrence_count": 12,
+        "match_score": 1.0,
+        "end_line": 1153,
+        "line_count": 956,
+        "size_kb": 83.2
+      },
+      {
+        "ch_num": 2,
+        "title": "基本民事法律制度",
+        "toc_title": "基本民事法律制度",
+        "start_line": 1153,
+        "occurrence_count": 10,
+        "match_score": 1.0,
+        "end_line": 1890,
+        "line_count": 737,
+        "size_kb": 62.8
+      },
+      {
+        "ch_num": 3,
+        "title": "物权法律制度",
+        "toc_title": "物权法律制度",
+        "start_line": 1890,
+        "occurrence_count": 20,
+        "match_score": 1.0,
+        "end_line": 3495,
+        "line_count": 1605,
+        "size_kb": 128.5
+      },
+      {
+        "ch_num": 4,
+        "title": "合同法律制度",
+        "toc_title": "合同法律制度",
+        "start_line": 3495,
+        "occurrence_count": 30,
+        "match_score": 1.0,
+        "end_line": 5864,
+        "line_count": 2369,
+        "size_kb": 193.1
+      },
+      {
+        "ch_num": 5,
+        "title": "合伙企业法律制度",
+        "toc_title": "合伙企业法律制度",
+        "start_line": 5864,
+        "occurrence_count": 13,
+        "match_score": 1.0,
+        "end_line": 6900,
+        "line_count": 1036,
+        "size_kb": 87.2
+      },
+      {
+        "ch_num": 6,
+        "title": "公司法律制度",
+        "toc_title": "公司法律制度",
+        "start_line": 6900,
+        "occurrence_count": 35,
+        "match_score": 1.0,
+        "end_line": 9764,
+        "line_count": 2864,
+        "size_kb": 244.0
+      },
+      {
+        "ch_num": 7,
+        "title": "证券法律制度",
+        "toc_title": "证券法律制度",
+        "start_line": 9764,
+        "occurrence_count": 56,
+        "match_score": 1.0,
+        "end_line": 14399,
+        "line_count": 4635,
+        "size_kb": 386.8
+      },
+      {
+        "ch_num": 8,
+        "title": "企业破产法律制度",
+        "toc_title": "企业破产法律制度",
+        "start_line": 14399,
+        "occurrence_count": 37,
+        "match_score": 1.0,
+        "end_line": 17469,
+        "line_count": 3070,
+        "size_kb": 280.5
+      },
+      {
+        "ch_num": 9,
+        "title": "票据与支付结算法律制度",
+        "toc_title": "票据与支付结算法律制度",
+        "start_line": 17469,
+        "occurrence_count": 33,
+        "match_score": 1.0,
+        "end_line": 20165,
+        "line_count": 2696,
+        "size_kb": 218.1
+      },
+      {
+        "ch_num": 10,
+        "title": "企业国有资产法律制度",
+        "toc_title": "企业国有资产法律制度",
+        "start_line": 20165,
+        "occurrence_count": 15,
+        "match_score": 1.0,
+        "end_line": 21329,
+        "line_count": 1164,
+        "size_kb": 99.3
+      },
+      {
+        "ch_num": 11,
+        "title": "反盔断法律制度",
+        "toc_title": "反盔断法律制度",
+        "start_line": 21329,
+        "occurrence_count": 21,
+        "match_score": 0.86,
+        "end_line": 23034,
+        "line_count": 1705,
+        "size_kb": 147.3
+      },
+      {
+        "ch_num": 12,
+        "title": "涉外经济法律制度",
+        "toc_title": "涉外经济法律制度",
+        "start_line": 23034,
+        "occurrence_count": 17,
+        "match_score": 1.0,
+        "end_line": 24475,
+        "line_count": 1441,
+        "size_kb": 128.7
+      }
+    ],
+    "existing_md_chapters": [
+      {
+        "weight": 1,
+        "filename": "01-legal-principles.md",
+        "slug": "legal-principles"
+      },
+      {
+        "weight": 2,
+        "filename": "02-civil-law.md",
+        "slug": "civil-law"
+      },
+      {
+        "weight": 3,
+        "filename": "03-property-law.md",
+        "slug": "property-law"
+      },
+      {
+        "weight": 4,
+        "filename": "04-contract-law.md",
+        "slug": "contract-law"
+      },
+      {
+        "weight": 5,
+        "filename": "05-partnership-law.md",
+        "slug": "partnership-law"
+      },
+      {
+        "weight": 6,
+        "filename": "06-company-law.md",
+        "slug": "company-law"
+      },
+      {
+        "weight": 7,
+        "filename": "07-securities-law.md",
+        "slug": "securities-law"
+      },
+      {
+        "weight": 8,
+        "filename": "08-bankruptcy-law.md",
+        "slug": "bankruptcy-law"
+      },
+      {
+        "weight": 9,
+        "filename": "09-negotiable-instruments.md",
+        "slug": "negotiable-instruments"
+      },
+      {
+        "weight": 10,
+        "filename": "10-antitrust-law.md",
+        "slug": "antitrust-law"
+      },
+      {
+        "weight": 11,
+        "filename": "11-foreign-economic-law.md",
+        "slug": "foreign-economic-law"
+      },
+      {
+        "weight": 12,
+        "filename": "12-unfair-competition-law.md",
+        "slug": "unfair-competition-law"
+      }
+    ]
+  },
+  "tax-law": {
+    "subject": "tax-law",
+    "subject_dir": "07-tax-law",
+    "source_file": "tax-law.txt",
+    "source_lines": 29269,
+    "body_start_line": 198,
+    "extracted_chapters": [
+      {
+        "ch_num": 1,
+        "title": "税法总论",
+        "toc_title": "税法总论",
+        "start_line": 207,
+        "occurrence_count": 17,
+        "match_score": 1.0,
+        "end_line": 1562,
+        "line_count": 1355,
+        "size_kb": 108.1
+      },
+      {
+        "ch_num": 2,
+        "title": "增值税法",
+        "toc_title": "增值税法",
+        "start_line": 1562,
+        "occurrence_count": 55,
+        "match_score": 1.0,
+        "end_line": 6267,
+        "line_count": 4705,
+        "size_kb": 335.2
+      },
+      {
+        "ch_num": 3,
+        "title": "消费税法",
+        "toc_title": "消费税法",
+        "start_line": 6267,
+        "occurrence_count": 14,
+        "match_score": 1.0,
+        "end_line": 7381,
+        "line_count": 1114,
+        "size_kb": 71.3
+      },
+      {
+        "ch_num": 4,
+        "title": "企业所得税法",
+        "toc_title": "企业所得税法",
+        "start_line": 7381,
+        "occurrence_count": 43,
+        "match_score": 1.0,
+        "end_line": 11035,
+        "line_count": 3654,
+        "size_kb": 266.8
+      },
+      {
+        "ch_num": 5,
+        "title": "个人所得税法",
+        "toc_title": "个人所得税法",
+        "start_line": 11035,
+        "occurrence_count": 50,
+        "match_score": 1.0,
+        "end_line": 15261,
+        "line_count": 4226,
+        "size_kb": 312.6
+      },
+      {
+        "ch_num": 6,
+        "title": "城市维护建设税法和烟叶税法",
+        "toc_title": "城市维护建设税法和烟叶税法",
+        "start_line": 15261,
+        "occurrence_count": 6,
+        "match_score": 1.0,
+        "end_line": 15628,
+        "line_count": 367,
+        "size_kb": 25.1
+      },
+      {
+        "ch_num": 7,
+        "title": "关税法和船舶吨税法",
+        "toc_title": "关税法和船舶吨税法",
+        "start_line": 15628,
+        "occurrence_count": 14,
+        "match_score": 1.0,
+        "end_line": 16706,
+        "line_count": 1078,
+        "size_kb": 78.0
+      },
+      {
+        "ch_num": 8,
+        "title": "资源税法和环境保护税法",
+        "toc_title": "资源税法和环境保护税法",
+        "start_line": 16706,
+        "occurrence_count": 18,
+        "match_score": 1.0,
+        "end_line": 18250,
+        "line_count": 1544,
+        "size_kb": 79.6
+      },
+      {
+        "ch_num": 9,
+        "title": "城镇土地使用税法和耕地占用税法",
+        "toc_title": "城镇土地使用税法和耕地占用税法",
+        "start_line": 18250,
+        "occurrence_count": 7,
+        "match_score": 1.0,
+        "end_line": 18748,
+        "line_count": 498,
+        "size_kb": 35.3
+      },
+      {
+        "ch_num": 10,
+        "title": "房产税法、契税法和土地增值税法",
+        "toc_title": "房产税法、契税法和土地增值税法",
+        "start_line": 18748,
+        "occurrence_count": 15,
+        "match_score": 1.0,
+        "end_line": 19927,
+        "line_count": 1179,
+        "size_kb": 87.4
+      },
+      {
+        "ch_num": 11,
+        "title": "车辆购置税法、车船税法和印花税法",
+        "toc_title": "车辆购置税法、车船税法和印花税法",
+        "start_line": 19927,
+        "occurrence_count": 11,
+        "match_score": 1.0,
+        "end_line": 20856,
+        "line_count": 929,
+        "size_kb": 62.2
+      },
+      {
+        "ch_num": 12,
+        "title": "国际税收税务管理实务",
+        "toc_title": "国际税收税务管理实务",
+        "start_line": 20856,
+        "occurrence_count": 43,
+        "match_score": 1.0,
+        "end_line": 24336,
+        "line_count": 3480,
+        "size_kb": 271.9
+      },
+      {
+        "ch_num": 13,
+        "title": "税收征收管理法",
+        "toc_title": "税收征收管理法",
+        "start_line": 24336,
+        "occurrence_count": 47,
+        "match_score": 1.0,
+        "end_line": 28096,
+        "line_count": 3760,
+        "size_kb": 281.1
+      },
+      {
+        "ch_num": 14,
+        "title": "税务行政法制",
+        "toc_title": "税务行政法制",
+        "start_line": 28096,
+        "occurrence_count": 15,
+        "match_score": 1.0,
+        "end_line": 29270,
+        "line_count": 1174,
+        "size_kb": 87.4
+      }
+    ],
+    "existing_md_chapters": [
+      {
+        "weight": 1,
+        "filename": "01-tax-law-overview.md",
+        "slug": "tax-law-overview"
+      },
+      {
+        "weight": 2,
+        "filename": "02-vat.md",
+        "slug": "vat"
+      },
+      {
+        "weight": 3,
+        "filename": "03-consumption-tax.md",
+        "slug": "consumption-tax"
+      },
+      {
+        "weight": 4,
+        "filename": "04-corporate-income-tax.md",
+        "slug": "corporate-income-tax"
+      },
+      {
+        "weight": 5,
+        "filename": "05-individual-income-tax.md",
+        "slug": "individual-income-tax"
+      },
+      {
+        "weight": 6,
+        "filename": "06-urban-construction-tax.md",
+        "slug": "urban-construction-tax"
+      },
+      {
+        "weight": 7,
+        "filename": "07-customs-duty.md",
+        "slug": "customs-duty"
+      },
+      {
+        "weight": 8,
+        "filename": "08-resource-tax.md",
+        "slug": "resource-tax"
+      },
+      {
+        "weight": 9,
+        "filename": "09-land-use-tax.md",
+        "slug": "land-use-tax"
+      },
+      {
+        "weight": 10,
+        "filename": "10-property-tax.md",
+        "slug": "property-tax"
+      },
+      {
+        "weight": 11,
+        "filename": "11-vehicle-vessel-tax.md",
+        "slug": "vehicle-vessel-tax"
+      },
+      {
+        "weight": 12,
+        "filename": "12-stamp-duty.md",
+        "slug": "stamp-duty"
+      },
+      {
+        "weight": 13,
+        "filename": "13-deed-tax.md",
+        "slug": "deed-tax"
+      },
+      {
+        "weight": 14,
+        "filename": "14-tax-collection.md",
+        "slug": "tax-collection"
+      }
+    ]
+  }
+}

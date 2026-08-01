@@ -25,7 +25,7 @@
         {{- $cpaAll := union $cpa.RegularPages $cpa.Sections -}}
         {{- range $cpaAll.ByParam "weight" -}}
         {{- if .IsSection -}}
-        {{- $isCurrentSubject := eq $.CurrentSection.RelPermalink .RelPermalink -}}
+        {{- $isCurrentSubject := or (eq $.CurrentSection.RelPermalink .RelPermalink) (strings.HasPrefix $.CurrentSection.RelPermalink .RelPermalink) -}}
         <details class="learn-nav-subject"{{ if $isCurrentSubject }} open{{ end }}>
           <summary class="learn-nav-subject-title {{ if $isCurrentSubject }}current{{ end }}">
             <span class="learn-nav-num">{{ printf "%02d" .Params.weight }}</span>

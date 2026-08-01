@@ -1357,6 +1357,32 @@ Hugo 的 partial 查找是精确匹配文件名，找不到 `extend_head.html` �
 
 **验证**：`hugo --gc` 350 页无 error；浏览器实测明/暗双主题手牌卡全部元素（费用宝石/品级缎带/八角星徽/四角角饰/攻血值）正常，无布局溢出、无 JS 报错。
 
+### v5.12 补充（同日追加）- 角色选卡界面升级：苏丹宫廷风卡牌 + 翻转闪光特效
+
+**新增功能**:
+- ✅ **角色选卡卡牌化**（renderSetup 重构）：8 张角色卡由简单方框升级为与手牌卡同款苏丹宫廷风卡面
+  - 双主题随博客切换：深色 = 黑金暗夜，浅色 = 浅金羊皮纸
+  - 宫衔缎带（宫廷侍卫长/大殿法官等）置顶 + 渐隐金线
+  - 中央八角星徽（CSS mask）+ 角色名首字（守/仲/预…）徽记
+  - 底部金线分隔 ❤ 生命 / ⚔ 攻击 数值 + 被动描述
+  - 品级按战力（maxHealth+attack）映射：≥23 金 / ≥20 银 / ≥18 铜 / 其余石
+- ✅ **翻转选卡闪光特效**：
+  - 双面 3D 卡（`.ca-role-inner` preserve-3d + `.ca-role-face` backface-visibility）：
+    - 正面 = 角色信息；背面 = 鎏金「已出战」印版（八角星 + 角色名 + 已出战字样）
+    - `.selected` 触发 `rotateY(180deg)` 0.55s 过渡
+  - 点击瞬间 `.flipping` 类（650ms）触发双动画：
+    - `ca-role-flip-bounce`：90° 翻转 + 1.06 放大回弹（cubic-bezier 过冲）
+    - `ca-role-shine-sweep`：金色斜向闪光层扫过卡面（skewX -18° + translateX -160%→340%）
+  - 取消选择同样播放反向翻转 + 闪光；超 6 张拦截保护保留
+
+**Files Modified**:
+| 文件 | 变更 |
+|------|------|
+| `static/css/cardarena.css` | 修改：角色卡卡面样式（正/背面）+ 翻转/闪光 keyframes + 品级变量 |
+| `static/js/cardarena-ui.js` | 修改：renderSetup 新 DOM、roleTier() 品级映射、toggleRole 动画触发 |
+
+**验证**：`hugo --gc` 350 页无 error；浏览器实测明/暗双主题 8 角色卡元素齐全、翻转选卡动画流畅（帧采样 transform 连续变化、animationstart/end 双向触发）、计数 0-6/6 与按钮禁用联动正确、无溢出/重叠/JS 报错。
+
 ---
 
 ### v5.11 (2026-08-01) - CPA 阶段B 习题整合（历年真题板块 + 550题同步练习）

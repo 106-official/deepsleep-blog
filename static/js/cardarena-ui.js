@@ -33,26 +33,59 @@
   }
 
   // ===== 开始界面：选择 6 个角色 =====
+  // 角色品级：战力 = maxHealth + attack
+  function roleTier(r) {
+    var power = r.maxHealth + r.attack;
+    if (power >= 23) return 'gold';
+    if (power >= 20) return 'silver';
+    if (power >= 18) return 'bronze';
+    return 'stone';
+  }
   function renderSetup() {
     app.innerHTML = '';
     var box = el('div', 'ca-setup');
     var title = el('h2', 'ca-setup-title', '选择出战角色');
-    var sub = el('p', 'ca-setup-sub', '从 8 个角色中选择 6 个出战，AI 将随机挑选 6 个');
+    var sub = el('p', 'ca-setup-sub', '从 8 个角色中选择 6 个出战，AI 将随机挑选 6 个。点击角色卡翻转选卡');
     box.appendChild(title);
     box.appendChild(sub);
 
     var grid = el('div', 'ca-setup-grid');
     DATA.ROLE_POOL.forEach(function (role) {
-      var card = el('button', 'ca-setup-role');
+      var tier = roleTier(role);
+      var card = el('button', 'ca-setup-role tier-' + tier);
       card.dataset.role = role.id;
-      var name = el('div', 'ca-setup-role-name', role.name);
-      var stat = el('div', 'ca-setup-role-stat', (role.title ? role.title + ' · ' : '') + role.maxHealth + ' 生命 · ' + role.attack + ' 攻击');
-      var intro = el('div', 'ca-setup-role-intro', role.intro);
-      var passive = el('div', 'ca-setup-role-passive', '被动: ' + (role.passive ? describePassive(role.passive) : '无'));
-      card.appendChild(name);
-      card.appendChild(stat);
-      card.appendChild(intro);
-      card.appendChild(passive);
+
+      var inner = el('span', 'ca-role-inner');
+
+      // 正面
+      var front = el('span', 'ca-role-face ca-role-front');
+      ['tl', 'tr', 'bl', 'br'].forEach(function (pos) {
+        front.appendChild(el('span', 'ca-card-corner ' + pos));
+      });
+      front.appendChild(el('div', 'ca-role-band', role.title || ''));
+      var art = el('div', 'ca-role-art');
+      art.appendChild(el('span', 'ca-role-star'));
+      art.appendChild(el('span', 'ca-role-initial', role.name.charAt(0)));
+      front.appendChild(art);
+      front.appendChild(el('div', 'ca-setup-role-name', role.name));
+      front.appendChild(el('div', 'ca-setup-role-intro', role.intro));
+      var stats = el('div', 'ca-role-stats');
+      stats.appendChild(el('span', null, '\u2764 ' + role.maxHealth));
+      stats.appendChild(el('span', null, '\u2694 ' + role.attack));
+      front.appendChild(stats);
+      front.appendChild(el('div', 'ca-setup-role-passive', '被动: ' + (role.passive ? describePassive(role.passive) : '无')));
+      inner.appendChild(front);
+
+      // 背面（已出战印版）
+      var back = el('span', 'ca-role-face ca-role-back');
+      back.appendChild(el('span', 'ca-role-back-star ca-role-star'));
+      back.appendChild(el('div', 'ca-role-back-name', role.name));
+      back.appendChild(el('div', 'ca-role-back-mark', '\u5DF2\u51FA\u6218'));
+      inner.appendChild(back);
+
+      card.appendChild(inner);
+      // 闪光层
+      card.appendChild(el('span', 'ca-role-shine'));
       card.addEventListener('click', function () { toggleRole(role.id); });
       grid.appendChild(card);
     });
@@ -90,7 +123,16 @@
     }
     var cards = app.querySelectorAll('.ca-setup-role');
     cards.forEach(function (c) {
-      c.classList.toggle('selected', chosenRoles.indexOf(c.dataset.role) !== -1);
+      var isChosen = chosenRoles.indexOf(c.dataset.role) !== -1;
+      var changed = c.classList.contains('selected') !== isChosen;
+      c.classList.toggle('selected', isChosen);
+      if (changed) {
+        // 翻转闪光特效：移除旧动画后强制重排再播放
+        c.classList.remove('flipping');
+        void c.offsetWidth;
+        c.classList.add('flipping');
+        setTimeout(function () { c.classList.remove('flipping'); }, 650);
+      }
     });
     var count = app.querySelector('#ca-count');
     if (count) count.textContent = '已选 ' + chosenRoles.length + ' / 6';

@@ -1,7 +1,7 @@
 # DeepSleep Blog - 项目技术文档
 
 > **最后更新**: 2026-08-01
-> **版本**: v5.10
+> **版本**: v5.11
 > **状态**: ✅ 生产就绪 | 评论系统正常运行 (Neon PostgreSQL) | 💬 社区系统已上线 | 👤 全局个人中心 | 📝 文章板块整合 (learn 风格 sidebar) | 🌗 主题切换圆形扩散动画 | 🐟 SleepTown 首页 sidebar 改造 | 🎮 交互式自我介绍 (/play/me/) | 🃏 CardArena 卡牌对战 (/play/cardarena/)
 
 ---
@@ -53,6 +53,7 @@
 - ⚡ 零 CDN 依赖（Waline 前端资源完全本地化）
 - 🎮 **交互式自我介绍**（`/play/me/` 滚动叙事 + 数据可视化 + 打字机流式）✅ v5.9 新增
 - 🃏 **CardArena 卡牌对战**（`/play/cardarena/` 8 角色选 6 + 独立卡组 + 6 关键词 + 基础 AI，模块化 JS 架构 data/engine/ai/ui 四文件）✅ v5.10 新增
+- 📚 **CPA 阶段B 习题整合**（六科 92 章「## 7. 同步练习」整合《必刷550题》1500+ 题 + 09 历年真题板块 2013-2025 × 6 科 78 页全文真题）✅ v5.11 新增
 
 ---
 
@@ -149,6 +150,7 @@
 | **lixin sidebar 改造** | **双层 Tab → learn 风格 sidebar + LLM 对话主页化** (v5.8) | **悬浮弹窗 → 主内容区默认全屏 flex 视图，sidebar 含精简 Hero + 导航组（立信问答/校内 10 项/校外 2 项），视图切换不丢失对话状态** ⭐ 新增 |
 | **SleepTown 首页 sidebar 改造** | **花哨彩色卡片 → learn 风格 sidebar + 鱼图鉴** (v5.9) | **原 mode-cards 双卡片 + 表情过多 → sidebar 导航 + 3 个简洁垂直按钮 + 10 种鱼角色图鉴（按阵营分组）+ 规则 modal 弹窗** ⭐ 新增 |
 | **CardArena 模块化架构** | **data/engine/ai/ui 四文件拆分** (v5.10) | **纯前端回合制卡牌游戏，engine 为纯状态机不碰 DOM，ui 全权负责渲染与交互，ai 复用 engine `_internal` 只读接口，data 集中配置可自定义角色卡牌（区别于 SleepTown 单文件模板）** ⭐ 新增 |
+| **CPA 习题整合（阶段B）** | **550题进章节同步练习 + 真题单开 09 板块** (v5.11) | **六科 92 章补「## 7. 同步练习」（题目 + `**练习答案**`，不标注来源）；2013-2025 真题全文结构化 78 页；learn.html 嵌套 section 自动展开改 `strings.HasPrefix`（eq 对 09-exams 年份子页失效）；KaTeX 按需动态加载（检测 `$` 分隔符才加载，`%` 转义 `\%`）** ⭐ 新增 |
 ### 🎨 Sidebar 设计模式（learn 风格，v5.5 统一）
 
 DeepSleep 博客的 5 个板块复用同一套 learn 风格 sidebar 设计模式，保证视觉与交互一致性：
@@ -220,6 +222,7 @@ blog-static/
 │   └── play/                        # 游戏板块
 │       ├── me.md                    # 交互式自我介绍页声明 (layout: me-game) v5.9
 │       └── cardarena.md             # CardArena 页声明 (layout: cardarena) v5.10 新增
+│   └── learn/cpa/09-exams/           # ⭐ CPA 历年真题板块 (2013-2025 × 6 科 = 78 页全文真题) v5.11 新增
 ├── layouts/
 │   ├── partials/
 │   │   ├── comments.html            # Waline 评论组件
@@ -227,6 +230,7 @@ blog-static/
 │   │   └── extend_head.html          # ⭐ 全局样式（个人按钮 + 弹窗样式）v5.2 更新；v5.8 修正文件名（extended_head.html 未被 PaperMod 加载）
 │   └── _default/
 │       ├── community.html           # 社区布局模板
+│       ├── learn.html              # ⭐ 学习板块模板 (CPA/ACCA sidebar，v5.11 嵌套 section HasPrefix 自动展开 + KaTeX 动态加载)
 │       ├── posts.html              # ⭐ 文章列表模板 (learn 风格 sidebar) v5.5 改造
 │       ├── resources.html           # ⭐ 资源列表模板 (learn 风格 sidebar) v5.5 新增
 │       ├── play.html                # 娱乐中心模板 (Playfair Display 标题 + 紧凑卡片) v5.6
@@ -1322,6 +1326,44 @@ Hugo 的 partial 查找是精确匹配文件名，找不到 `extend_head.html` �
 
 ## 📝 更新日志
 
+### v5.11 (2026-08-01) - CPA 阶段B 习题整合（历年真题板块 + 550题同步练习）
+
+**新增功能**:
+- ✅ **09 历年真题板块** (`/learn/cpa/09-exams/`)：2013-2025 共 13 年 × 6 科 = 78 页全文真题
+  - 每页结构：`## 一、单项选择题 / 二、多项选择题 / 三、简答题 / 四、综合题`（按科目题型）+ `**参考答案与解析**`
+  - 真题源：`1、CPA注册会计师（历年真题）（2013-2025）` 143 个 PDF（`docs/cpa-source/extract_exams.py` 提取）
+  - 位于 08 综合阶段之后（weight: 9），侧边栏自动展开年份子页
+- ✅ **550 题同步练习整合**：六科 92 章补「## 7. 同步练习」小节（1500+ 题，不标注来源）
+  - 题源：`8、CPA注册会计师（必刷550题）` 6 个 PDF（`docs/cpa-source/split_550.py` 按章切分）
+  - 章节映射表：`docs/cpa-source/chapter_map_550.json`（审计编号错位/财管 19→15 章合并/税法 10-14 错位已人工梳理）
+  - 会计 1-7、16-29 章 550 原书缺答案 → 练习答案段标注"可参考09历年真题板块"
+
+**技术变更**:
+- `learn.html` 侧边栏嵌套 section 自动展开：`eq $.CurrentSection.RelPermalink .RelPermalink` → `or (eq ...) (strings.HasPrefix ...)`（09-exams 年份子页属于嵌套 section，eq 失效）
+- `extend_footer.html` + `extend_head.html`：KaTeX 按需动态加载（检测 `.md-content` 含 `$` 分隔符才加载 CSS/JS，`%` 转义 `\%`，jsdelivr 主源 + bootcdn 备用）
+- `docs/cpa-source/` 提取脚本与映射表入库；`textbooks/ exams/ exercises/ past-papers/` 中间文本加入 `.gitignore`
+- 六科章节结构升级为**七段式**（原六段 + 第 7 段「## 7. 同步练习」）
+
+**Files Modified**:
+| 文件 | 变更 |
+|------|------|
+| `content/learn/cpa/09-exams/` | 新增：真题板块（_index + 13 年份 × 6 科 = 79 个 md） |
+| `content/learn/cpa/02-accounting/` ~ `07-tax-law/` | 修改：92 章追加「## 7. 同步练习」 |
+| `content/learn/cpa/_index.md` | 修改：新增 09-exams 条目 |
+| `layouts/_default/learn.html` | 修改：嵌套 section HasPrefix 自动展开 |
+| `layouts/partials/extend_head.html` | 修改：KaTeX CSS 静态引入 |
+| `layouts/partials/extend_footer.html` | 修改：KaTeX 按需动态加载 IIFE |
+| `docs/cpa-source/` | 新增：提取脚本 + chapter_map_550.json（中间文本已 gitignore） |
+| `static/js/community.js` | 修改：API_BASE 迁移腾讯云 SCF（遗留改动） |
+| `PROJECT_CONTEXT.md` | 版本号 v5.10→v5.11、功能清单、文件索引、技术决策表 |
+| `PROJECT_DOCUMENTATION.md` | 版本号、功能特性、目录结构、技术决策表、更新日志 v5.11 条目 |
+
+**验证**：`hugo --gc` 350 页无 error；`docs/cpa-source/check_sync_exercises.py` 全科同步练习小节校验通过（无重复/无缺失）。
+
+**Commit**: `637dd42`（215 files, +73248 / -1593）
+
+---
+
 ### v5.10 (2026-08-01) - CardArena 多角色轮换卡牌对战
 
 **新增功能**:
@@ -1811,4 +1853,4 @@ Hugo 的 partial 查找是精确匹配文件名，找不到 `extend_head.html` �
 
 ---
 
-*文档结束 | 最后更新: 2026-08-01 | 版本: v5.10 | 状态: ✅ 生产就绪*
+*文档结束 | 最后更新: 2026-08-01 | 版本: v5.11 | 状态: ✅ 生产就绪*

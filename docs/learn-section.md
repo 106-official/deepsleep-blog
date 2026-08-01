@@ -168,18 +168,19 @@ CPA 板块采用**两级嵌套 sidebar**（科目 → 章节），核心组件�
 |------|------|
 | `.learn-nav-cert` | 证书分组容器（CPA / ACCA） |
 | `.learn-nav-subject` | `<details>` 元素，科目折叠组（会计/审计/财管/战略/经济法/税法）|
-| `.learn-nav-subject-title` | `<summary>` 元素，纯 toggle（不导航），含图标+科目名+章数徽章 |
-| `.learn-nav-subject-icon` | 科目图标，从 front matter `icon` 读取（如 📒/🔍/📊/🎯/⚖️/💰）|
-| `.learn-nav-count` | 章数徽章（圆形小标签），自动从 `len .Pages` 计算 |
+| `.learn-nav-subject-title` | `<summary>` 元素，纯 toggle（不导航），含序号+科目名（v5.5 视觉统一后无图标/章数徽章）|
+| `.learn-nav-num` | 科目序号（两位数字，如 `02`），等宽字体 |
+| `.learn-nav-subject-text` | 科目名文本 |
 | `.learn-nav-chapters` | 章节列表容器，含点状左边框模拟树状结构 |
 | `.learn-nav-overview` | 「科目概览」链接，斜体显示，点击导航到科目 _index.md |
 
-**自动展开逻辑**：模板通过 `eq $.CurrentSection.RelPermalink .RelPermalink` 判断当前页所属科目，给对应 `<details>` 添加 `open` 属性。用户也可手动点击 summary 展开/折叠其他科目。
+**自动展开逻辑**：模板通过 `or (eq $.CurrentSection.RelPermalink .RelPermalink) (strings.HasPrefix $.CurrentSection.RelPermalink .RelPermalink)` 判断当前页是否属于某科目，给对应 `<details>` 添加 `open` 属性。**必须用 `strings.HasPrefix` 兜底** —— 09-exams 的年份子页（如 `/learn/cpa/09-exams/2024-exam/`）是嵌套 section，`eq` 无法匹配其所属的 `09-exams` 折叠组。用户也可手动点击 summary 展开/折叠其他科目。
 
 **数据查询**：
 - 顶层普通页：`$cpa.RegularPages`（01-overview, 08-comprehensive）
-- 科目子节：`$cpa.Sections`（02-accounting, 03-audit, ...）
+- 科目子节：`$cpa.Sections`（02-accounting, 03-audit, ..., 09-exams），合并后按 `weight` 统一排序：`union $cpa.RegularPages $cpa.Sections` + `.ByParam "weight"`
 - 各科章节：`$subject.Pages`（按 `weight` 排序）
+- 09-exams 嵌套：年份目录（2013-exam ~ 2025-exam）作为 09-exams 下的子 section，其 6 科真题页由 `$year.Pages` 遍历（前端 JS 自动按年份展开当前年份）
 
 ### 5.2 TOC 此页内容
 
@@ -278,6 +279,9 @@ draft: false                         # 必填，false 让占位章节也能访�
 ### 官方资源
 ### 主流机构
 ```
+
+> **CPA 章节结构**：CPA 六科章节采用**七段式**（区别于上方通用模板），见 `CPA-教材蒸馏-项目文档.md` 第 5 节：
+> `## 1. 章节定位` / `## 2. 考情分析` / `## 3. 知识框架` / `## 4. 核心精讲` / `## 5. 典型例题` / `## 6. 记忆口诀` / `## 7. 同步练习`（阶段B 起新增，整合《必刷550题》，题目 + `**练习答案**`，不标注来源）。段间用 `---` 分隔。
 
 ### 6.3 占位章节模板
 

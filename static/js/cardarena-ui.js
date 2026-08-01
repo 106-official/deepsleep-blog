@@ -18,6 +18,20 @@
     return c ? c.name : cardId;
   }
 
+  // 苏丹卡品级：黄金 / 白银 / 青铜 / 岩石（法术按费用，随从按战力）
+  function cardTier(c) {
+    if (c.type === 'spell') {
+      if (c.cost >= 4) return 'gold';
+      if (c.cost >= 2) return 'silver';
+      return 'bronze';
+    }
+    var power = (c.attack || 0) + (c.health || 0);
+    if (power >= 8) return 'gold';
+    if (power >= 5) return 'silver';
+    if (power >= 3) return 'bronze';
+    return 'stone';
+  }
+
   // ===== 开始界面：选择 6 个角色 =====
   function renderSetup() {
     app.innerHTML = '';
@@ -32,7 +46,7 @@
       var card = el('button', 'ca-setup-role');
       card.dataset.role = role.id;
       var name = el('div', 'ca-setup-role-name', role.name);
-      var stat = el('div', 'ca-setup-role-stat', role.maxHealth + ' 生命 · ' + role.attack + ' 攻击');
+      var stat = el('div', 'ca-setup-role-stat', (role.title ? role.title + ' · ' : '') + role.maxHealth + ' 生命 · ' + role.attack + ' 攻击');
       var intro = el('div', 'ca-setup-role-intro', role.intro);
       var passive = el('div', 'ca-setup-role-passive', '被动: ' + (role.passive ? describePassive(role.passive) : '无'));
       card.appendChild(name);
@@ -155,7 +169,7 @@
       if (side.roleAttacked || role.attack === 0) hero.classList.add('disabled');
     }
     var name = el('div', 'ca-hero-name', role.name);
-    var stats = el('div', 'ca-hero-stats', role.health + ' / ' + role.maxHealth + ' 生命 · ' + role.attack + ' 攻击');
+    var stats = el('div', 'ca-hero-stats', (role.title ? role.title + ' · ' : '') + role.health + ' / ' + role.maxHealth + ' 生命 · ' + role.attack + ' 攻击');
     var mana = el('div', 'ca-hero-mana', sideName === 'player' ? '法力 ' + side.mana + ' / ' + side.maxMana : '');
     var passive = el('div', 'ca-hero-passive', role.passive ? '被动: ' + describePassive(role.passive) : '');
     hero.appendChild(name);
@@ -174,6 +188,12 @@
       var cell = el('div', 'ca-minion');
       cell.dataset.uid = m.uid;
       cell.dataset.side = sideName;
+      // 按战力映射品级（黄金/白银/青铜/岩石）
+      var mp = (m.attack || 0) + (m.health || 0);
+      if (mp >= 8) cell.classList.add('ca-minion-tier-gold');
+      else if (mp >= 5) cell.classList.add('ca-minion-tier-silver');
+      else if (mp >= 3) cell.classList.add('ca-minion-tier-bronze');
+      else cell.classList.add('ca-minion-tier-stone');
       if (sideName === 'player') {
         cell.classList.add('attacker-selectable');
         if (m.exhausted || m.attack === 0) cell.classList.add('disabled');
@@ -230,10 +250,29 @@
       var cardEl = el('div', 'ca-card');
       cardEl.dataset.handIndex = i;
       if (c.cost > s.player.mana) cardEl.classList.add('disabled');
-      var cost = el('div', 'ca-card-cost', String(c.cost));
+      // 苏丹卡品级（黄金/白银/青铜/岩石）
+      var tier = cardTier(c);
+      cardEl.classList.add('ca-card-tier-' + tier);
+      // 四角卷草纹角饰
+      ['tl', 'tr', 'bl', 'br'].forEach(function (pos) {
+        var corner = el('div', 'ca-card-corner ' + pos);
+        cardEl.appendChild(corner);
+      });
+      // 品级缎带
+      var tierNames = { gold: '黄金', silver: '白银', bronze: '青铜', stone: '岩石' };
+      var band = el('div', 'ca-card-tier-band', tierNames[tier] || '');
+      cardEl.appendChild(band);
+      // 费用宝石（圆形）
+      var cost = el('div', 'ca-card-cost');
+      var costNum = el('span', null, String(c.cost));
+      cost.appendChild(costNum);
+      cardEl.appendChild(cost);
+      // 中央八角星徽
+      var art = el('div', 'ca-card-art');
+      art.appendChild(el('div', 'ca-card-star'));
+      cardEl.appendChild(art);
       var nm = el('div', 'ca-card-name', c.name);
       var body = el('div', 'ca-card-desc', c.desc);
-      cardEl.appendChild(cost);
       cardEl.appendChild(nm);
       cardEl.appendChild(body);
       if (c.type === 'minion') {

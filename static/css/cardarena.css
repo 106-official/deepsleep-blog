@@ -1,28 +1,40 @@
-/* cardarena.css — CardArena 复古藏书/版画风（做旧纸张 + 木版画描边 + 铅字排版） */
+/* cardarena.css — CardArena 苏丹宫廷风（巴洛克深红 × 鎏金 × 阿拉伯纹样） */
 :root {
-  --cardarena-bg: #efe3c8;
-  --cardarena-panel: #f7efdd;
-  --cardarena-border: #8a6a3b;
-  --cardarena-text: #3b2b1e;
+  --cardarena-bg: #f4ead2;
+  --cardarena-panel: #fbf3df;
+  --cardarena-border: #a3863f;
+  --cardarena-text: #3a2a1a;
   --cardarena-muted: #7a6848;
-  --cardarena-primary: #8c2f1f;
-  --cardarena-accent: #a06a2c;
+  --cardarena-primary: #8c1f1f;
+  --cardarena-accent: #b8860b;
+  --cardarena-gold: #c9a227;
+  --cardarena-gold-light: #eed48a;
+  --cardarena-gold-dark: #8a6a2f;
   --cardarena-danger: #8f1d1d;
   --cardarena-success: #3d5a3a;
-  --cardarena-target: #b8860b;
-  --cardarena-ink: rgba(138, 106, 59, 0.30);
+  --cardarena-target: #d4af37;
+  --cardarena-ink: rgba(163, 134, 63, 0.30);
+  --cardarena-crimson: #7a1626;
+  --cardarena-crimson-deep: #52101b;
   --cardarena-serif: 'Noto Serif SC', 'Songti SC', 'STSong', 'SimSun', Georgia, 'Times New Roman', serif;
+  /* 阿拉伯八角星纹样（双方形叠加 + 中心圆） */
+  --cardarena-pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cg fill='none' stroke='%23a3863f' stroke-width='1.2' opacity='0.20'%3E%3Crect x='32' y='32' width='96' height='96'/%3E%3Crect x='32' y='32' width='96' height='96' transform='rotate(45 80 80)'/%3E%3Ccircle cx='80' cy='80' r='7'/%3E%3Ccircle cx='80' cy='18' r='4'/%3E%3Ccircle cx='80' cy='142' r='4'/%3E%3Ccircle cx='18' cy='80' r='4'/%3E%3Ccircle cx='142' cy='80' r='4'/%3E%3C/g%3E%3C/svg%3E");
+  --cardarena-pattern-dark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cg fill='none' stroke='%23d4af37' stroke-width='1.2' opacity='0.14'%3E%3Crect x='32' y='32' width='96' height='96'/%3E%3Crect x='32' y='32' width='96' height='96' transform='rotate(45 80 80)'/%3E%3Ccircle cx='80' cy='80' r='7'/%3E%3Ccircle cx='80' cy='18' r='4'/%3E%3Ccircle cx='80' cy='142' r='4'/%3E%3Ccircle cx='18' cy='80' r='4'/%3E%3Ccircle cx='142' cy='80' r='4'/%3E%3C/g%3E%3C/svg%3E");
 }
 [data-theme="dark"] {
-  --cardarena-bg: #1f1810;
-  --cardarena-panel: #2a2118;
-  --cardarena-border: #4d3a22;
-  --cardarena-text: #e8d9b8;
-  --cardarena-muted: #a9926d;
-  --cardarena-primary: #d49a5a;
-  --cardarena-accent: #c98a3e;
-  --cardarena-target: #e0b04f;
-  --cardarena-ink: rgba(232, 217, 184, 0.18);
+  --cardarena-bg: #1c0f0c;
+  --cardarena-panel: #2b1612;
+  --cardarena-border: #b08d3e;
+  --cardarena-text: #e8dcc0;
+  --cardarena-muted: #a08a5e;
+  --cardarena-primary: #d4af37;
+  --cardarena-accent: #c9a227;
+  --cardarena-gold: #e8c64a;
+  --cardarena-gold-light: #f3dfa0;
+  --cardarena-gold-dark: #8a6a2f;
+  --cardarena-ink: rgba(200, 165, 60, 0.22);
+  --cardarena-crimson: #8c2233;
+  --cardarena-crimson-deep: #4a0e18;
 }
 
 #cardarena-app {
@@ -31,23 +43,32 @@
   font-family: var(--cardarena-serif);
   font-weight: 400;
   color: var(--cardarena-text);
-  /* 旧纸质感：暖黄底 + 边缘暗角 + 细噪点 */
+  /* 宫廷底纹：暖纸底 + 阿拉伯纹样 + 暗角 */
   background-color: var(--cardarena-bg);
   background-image:
-    radial-gradient(ellipse at 50% 35%, rgba(255, 250, 230, 0.55), rgba(0, 0, 0, 0.06) 78%),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.05'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  padding: 16px;
+    radial-gradient(ellipse at 50% 30%, rgba(255, 248, 226, 0.65), rgba(0, 0, 0, 0.08) 80%),
+    var(--cardarena-pattern);
+  border: 1px solid var(--cardarena-border);
+  box-shadow: inset 0 0 0 3px var(--cardarena-gold-dark), inset 0 0 0 4px var(--cardarena-ink), 0 4px 24px rgba(0, 0, 0, 0.22);
+  padding: 18px;
   box-sizing: border-box;
   user-select: none;
+  position: relative;
+}
+[data-theme="dark"] #cardarena-app {
+  background-image:
+    radial-gradient(ellipse at 50% 25%, rgba(122, 22, 38, 0.35), rgba(0, 0, 0, 0.30) 80%),
+    var(--cardarena-pattern-dark);
 }
 
 /* ===== 开始界面 ===== */
 .ca-setup-title {
   font-family: var(--cardarena-serif);
-  font-weight: 500;
+  font-weight: 600;
   font-size: 1.6rem;
   margin: 0 0 4px;
   color: var(--cardarena-primary);
+  letter-spacing: 0.08em;
 }
 .ca-setup-sub {
   margin: 0 0 16px;
@@ -66,31 +87,41 @@
   text-align: left;
   background: var(--cardarena-panel);
   border: 1px solid var(--cardarena-border);
-  border-radius: 3px;
+  border-radius: 2px;
   padding: 12px;
   cursor: pointer;
   color: var(--cardarena-text);
   font-family: inherit;
   font-weight: 400;
+  box-shadow: inset 0 0 0 1px var(--cardarena-ink);
+  position: relative;
 }
 .ca-setup-role:hover {
   border-color: var(--cardarena-accent);
+  box-shadow: inset 0 0 0 1px var(--cardarena-ink), 0 2px 10px rgba(184, 134, 11, 0.25);
 }
 .ca-setup-role.selected {
   border-color: var(--cardarena-primary);
-  background: #fdf3dd;
+  background: linear-gradient(180deg, rgba(212, 175, 55, 0.12), var(--cardarena-panel));
 }
-[data-theme="dark"] .ca-setup-role.selected {
-  background: #3a2c1a;
+.ca-setup-role.selected::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(180deg, var(--cardarena-gold), var(--cardarena-crimson));
 }
 .ca-setup-role-name {
   font-family: var(--cardarena-serif);
-  font-weight: 500;
+  font-weight: 600;
   font-size: 1.1rem;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
+  color: var(--cardarena-primary);
 }
 .ca-setup-role-stat {
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   color: var(--cardarena-muted);
 }
 .ca-setup-role-intro {
@@ -108,17 +139,18 @@
   font-size: 0.85rem;
 }
 
-/* ===== 通用按钮（扁平，非卡片）===== */
+/* ===== 通用按钮（鎏金描边，非卡片）===== */
 .ca-btn {
   background: transparent;
   border: 1px solid var(--cardarena-border);
   border-radius: 2px;
-  padding: 6px 16px;
+  padding: 6px 18px;
   font-family: inherit;
   font-weight: 400;
   font-size: 0.9rem;
   color: var(--cardarena-text);
   cursor: pointer;
+  letter-spacing: 0.05em;
 }
 .ca-btn:hover:not(:disabled) {
   border-color: var(--cardarena-accent);
@@ -131,10 +163,12 @@
 .ca-btn-primary {
   border-color: var(--cardarena-primary);
   color: var(--cardarena-primary);
+  background: linear-gradient(180deg, rgba(212, 175, 55, 0.10), rgba(122, 22, 38, 0.08));
 }
 .ca-btn-primary:hover:not(:disabled) {
-  background: var(--cardarena-primary);
-  color: #ffffff;
+  background: linear-gradient(180deg, var(--cardarena-gold), var(--cardarena-gold-dark));
+  color: #fdf6e3;
+  border-color: var(--cardarena-gold-dark);
 }
 
 /* ===== 对局布局 ===== */
@@ -143,6 +177,29 @@
   flex-direction: column;
   gap: 12px;
 }
+/* 区标签：阿拉伯双线分隔 */
+.ca-roster-label, .ca-board-label, .ca-hand-label, .ca-log-label {
+  letter-spacing: 0.18em;
+  font-size: 0.75rem;
+  color: var(--cardarena-muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.ca-roster-label::before, .ca-roster-label::after,
+.ca-board-label::before, .ca-board-label::after,
+.ca-hand-label::before, .ca-hand-label::after,
+.ca-log-label::before, .ca-log-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--cardarena-gold), transparent);
+}
+.ca-roster-label::before, .ca-board-label::before,
+.ca-hand-label::before, .ca-log-label::before {
+  flex: 0 0 24px;
+}
 .ca-roster {
   display: flex;
   align-items: center;
@@ -150,13 +207,13 @@
   flex-wrap: wrap;
   padding: 8px;
   border: 1px solid var(--cardarena-border);
-  border-radius: 3px;
+  border-radius: 2px;
   background: var(--cardarena-panel);
+  box-shadow: inset 0 0 0 1px var(--cardarena-ink);
+  background-image: linear-gradient(180deg, rgba(255, 250, 230, 0.5), rgba(163, 134, 63, 0.06));
 }
-.ca-roster-label {
-  font-size: 0.8rem;
-  color: var(--cardarena-muted);
-  width: 100%;
+[data-theme="dark"] .ca-roster {
+  background-image: linear-gradient(180deg, rgba(232, 220, 190, 0.05), rgba(0, 0, 0, 0.12));
 }
 .ca-roster-chip {
   display: inline-flex;
@@ -166,10 +223,13 @@
   border-radius: 2px;
   padding: 4px 8px;
   font-size: 0.8rem;
+  background: var(--cardarena-bg);
 }
 .ca-roster-chip.active {
-  border-color: var(--cardarena-primary);
+  border-color: var(--cardarena-gold);
   color: var(--cardarena-primary);
+  background: linear-gradient(180deg, rgba(212, 175, 55, 0.22), rgba(212, 175, 55, 0.05));
+  box-shadow: inset 0 0 0 1px var(--cardarena-gold-dark);
 }
 .ca-roster-chip.dead {
   opacity: 0.4;
@@ -193,27 +253,58 @@
 }
 .ca-hero {
   border: 1px solid var(--cardarena-border);
-  border-radius: 3px;
+  border-radius: 2px;
   padding: 10px 12px;
-  background: var(--cardarena-panel);
+  background: linear-gradient(180deg, var(--cardarena-panel), rgba(122, 22, 38, 0.10));
+  box-shadow: inset 0 0 0 1px var(--cardarena-ink);
+  position: relative;
+}
+.ca-hero::before {
+  content: '';
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  top: 3px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--cardarena-gold), transparent);
 }
 .ca-hero-player {
-  border-color: var(--cardarena-primary);
+  border-color: var(--cardarena-gold-dark);
+  background: linear-gradient(180deg, rgba(212, 175, 55, 0.10), rgba(122, 22, 38, 0.16));
+  box-shadow: inset 0 0 0 1px var(--cardarena-gold-dark);
+}
+[data-theme="dark"] .ca-hero-player {
+  background: linear-gradient(180deg, rgba(212, 175, 55, 0.14), rgba(74, 14, 24, 0.30));
 }
 .ca-hero-name {
   font-family: var(--cardarena-serif);
-  font-weight: 500;
+  font-weight: 600;
   font-size: 1.15rem;
   margin-bottom: 2px;
+  color: var(--cardarena-primary);
 }
 .ca-hero-stats {
   font-size: 0.85rem;
   color: var(--cardarena-muted);
 }
+/* 法力宝石（菱形） */
 .ca-hero-mana {
   font-size: 0.85rem;
-  color: var(--cardarena-accent);
+  color: var(--cardarena-gold-dark);
   margin-top: 2px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+[data-theme="dark"] .ca-hero-mana { color: var(--cardarena-gold); }
+.ca-hero-mana::before {
+  content: '';
+  width: 10px;
+  height: 10px;
+  background: linear-gradient(135deg, var(--cardarena-gold-light), var(--cardarena-gold-dark));
+  transform: rotate(45deg);
+  display: inline-block;
+  box-shadow: inset 0 0 0 1px var(--cardarena-gold-dark);
 }
 .ca-hero-passive {
   font-size: 0.8rem;
@@ -230,30 +321,31 @@
   min-height: 64px;
   padding: 8px;
   border: 1px dashed var(--cardarena-border);
-  border-radius: 3px;
+  border-radius: 2px;
 }
 .ca-board-label {
   width: 100%;
-  font-size: 0.75rem;
-  color: var(--cardarena-muted);
 }
 .ca-minion {
   position: relative;
   min-width: 72px;
   padding: 8px;
   border: 1px solid var(--cardarena-border);
-  border-radius: 3px;
+  border-radius: 2px;
   background: var(--cardarena-panel);
+  box-shadow: inset 0 0 0 1px var(--cardarena-ink);
   text-align: center;
   font-size: 0.8rem;
 }
 .ca-minion-name {
   font-size: 0.85rem;
   margin-bottom: 2px;
+  color: var(--cardarena-text);
 }
 .ca-minion-kv {
   font-size: 0.9rem;
   color: var(--cardarena-primary);
+  font-weight: 600;
 }
 .ca-minion-kw {
   font-size: 0.7rem;
@@ -278,19 +370,19 @@
 }
 .targetable {
   outline: 2px solid var(--cardarena-target);
+  box-shadow: inset 0 0 0 1px var(--cardarena-ink), 0 0 0 4px rgba(212, 175, 55, 0.22);
   cursor: crosshair;
 }
 
 /* ===== 日志 ===== */
 .ca-log {
   border: 1px solid var(--cardarena-border);
-  border-radius: 3px;
+  border-radius: 2px;
   padding: 8px;
   background: var(--cardarena-panel);
+  box-shadow: inset 0 0 0 1px var(--cardarena-ink);
 }
 .ca-log-label {
-  font-size: 0.75rem;
-  color: var(--cardarena-muted);
   margin-bottom: 4px;
 }
 .ca-log-list {
@@ -306,13 +398,12 @@
 /* ===== 手牌 ===== */
 .ca-hand {
   border: 1px solid var(--cardarena-border);
-  border-radius: 3px;
+  border-radius: 2px;
   padding: 8px;
   background: var(--cardarena-panel);
+  box-shadow: inset 0 0 0 1px var(--cardarena-ink);
 }
 .ca-hand-label {
-  font-size: 0.75rem;
-  color: var(--cardarena-muted);
   margin-bottom: 6px;
 }
 .ca-hand-cards {
@@ -320,54 +411,197 @@
   gap: 8px;
   flex-wrap: wrap;
 }
+/* ===== 卡牌（苏丹宫廷风：品级缎带 + 八角星徽 + 宝石费用）===== */
+/* 品级主色变量（明暗两套） */
+:root {
+  --ca-tier-gold: #b8860b;   --ca-tier-gold-bright: #e2b93b;
+  --ca-tier-silver: #808fa8; --ca-tier-silver-bright: #cfd6e2;
+  --ca-tier-bronze: #a0762f; --ca-tier-bronze-bright: #d4a86e;
+  --ca-tier-stone: #7d7a72;  --ca-tier-stone-bright: #b3aea8;
+}
+[data-theme="dark"] {
+  --ca-tier-gold: #e8c64a;   --ca-tier-gold-bright: #f6e7ae;
+  --ca-tier-silver: #dfe2e8; --ca-tier-silver-bright: #f2f3f7;
+  --ca-tier-bronze: #d9a86e; --ca-tier-bronze-bright: #e2bd8f;
+  --ca-tier-stone: #a8a39d;  --ca-tier-stone-bright: #c9c4bd;
+}
 .ca-card {
   position: relative;
-  width: 132px;
-  min-height: 96px;
-  padding: 8px 8px 6px;
+  width: 156px;
+  min-height: 190px;
+  padding: 10px 11px 10px;
   border: 1px solid var(--cardarena-border);
-  border-radius: 3px;
-  background: var(--cardarena-panel);
+  border-radius: 10px;
+  /* 黑金暗夜（深色主题） */
+  background: linear-gradient(160deg, #0d0806 0%, #1d100c 48%, #0a0504 100%);
+  box-shadow: inset 0 0 0 1px rgba(212, 175, 55, 0.55), inset 0 0 26px rgba(212, 175, 55, 0.10), 0 10px 22px rgba(0, 0, 0, 0.5);
   cursor: pointer;
   font-size: 0.8rem;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+/* 浅金羊皮纸（浅色主题） */
+:root:not([data-theme="dark"]) .ca-card {
+  background: linear-gradient(165deg, #fdf6e3 0%, #f0e2bd 55%, #e8d5a6 100%);
+  box-shadow: inset 0 0 0 1px rgba(163, 134, 63, 0.5), inset 0 0 22px rgba(163, 134, 63, 0.18), 0 8px 18px rgba(90, 70, 30, 0.25);
 }
 .ca-card:hover:not(.disabled) {
-  border-color: var(--cardarena-accent);
+  transform: translateY(-3px);
+  box-shadow: inset 0 0 0 1px rgba(212, 175, 55, 0.7), inset 0 0 30px rgba(212, 175, 55, 0.16), 0 12px 26px rgba(0, 0, 0, 0.55);
+}
+:root:not([data-theme="dark"]) .ca-card:hover:not(.disabled) {
+  box-shadow: inset 0 0 0 1px rgba(163, 134, 63, 0.7), inset 0 0 26px rgba(163, 134, 63, 0.22), 0 12px 24px rgba(90, 70, 30, 0.35);
 }
 .ca-card.disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
+/* 四角卷草纹角饰（L 形金线） */
+.ca-card-corner {
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  opacity: 0.85;
+  pointer-events: none;
+}
+.ca-card-corner.tl { top: 7px; left: 7px; border-top: 1px solid var(--ca-tier-color, var(--cardarena-gold)); border-left: 1px solid var(--ca-tier-color, var(--cardarena-gold)); border-top-left-radius: 4px; }
+.ca-card-corner.tr { top: 7px; right: 7px; border-top: 1px solid var(--ca-tier-color, var(--cardarena-gold)); border-right: 1px solid var(--ca-tier-color, var(--cardarena-gold)); border-top-right-radius: 4px; }
+.ca-card-corner.bl { bottom: 7px; left: 7px; border-bottom: 1px solid var(--ca-tier-color, var(--cardarena-gold)); border-left: 1px solid var(--ca-tier-color, var(--cardarena-gold)); border-bottom-left-radius: 4px; }
+.ca-card-corner.br { bottom: 7px; right: 7px; border-bottom: 1px solid var(--ca-tier-color, var(--cardarena-gold)); border-right: 1px solid var(--ca-tier-color, var(--cardarena-gold)); border-bottom-right-radius: 4px; }
+/* 品级缎带（顶部居中小字 + 渐隐金线） */
+.ca-card-tier-band {
+  text-align: center;
+  font-size: 0.66rem;
+  letter-spacing: 0.42em;
+  text-indent: 0.42em;
+  padding: 1px 0 5px;
+  color: var(--ca-tier-color, var(--cardarena-gold));
+  position: relative;
+}
+.ca-card-tier-band::after {
+  content: '';
+  position: absolute;
+  left: 18%;
+  right: 18%;
+  bottom: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--ca-tier-color, var(--cardarena-gold)), transparent);
+}
+/* 费用宝石（圆形径向高光） */
 .ca-card-cost {
   position: absolute;
   top: -8px;
   left: -8px;
-  width: 26px;
-  height: 26px;
-  line-height: 24px;
-  text-align: center;
-  border-radius: 2px;
-  background: var(--cardarena-primary);
-  color: #f7efdd;
-  font-size: 0.85rem;
-  font-weight: 600;
-  box-shadow: inset 0 0 0 1px rgba(247, 239, 221, 0.55);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #1c0f0c;
+  background: radial-gradient(circle at 35% 30%, #f6e7ae, #d4af37 55%, #6b5217);
+  box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.35), 0 3px 8px rgba(0, 0, 0, 0.6), inset 0 0 0 1px #f6e7ae;
+  z-index: 2;
 }
+:root:not([data-theme="dark"]) .ca-card-cost {
+  color: #3a2a1a;
+  background: radial-gradient(circle at 35% 30%, #fff7e0, #d9b75e 55%, #9c7c2f);
+  box-shadow: 0 0 0 2px rgba(163, 134, 63, 0.35), 0 3px 8px rgba(90, 70, 30, 0.35), inset 0 0 0 1px #fff7e0;
+}
+/* 卡面徽记区（中央八角星徽） */
+.ca-card-art {
+  flex: 1;
+  margin: 9px 0;
+  border-radius: 6px;
+  min-height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  border: 1px solid var(--ca-tier-color, var(--cardarena-gold));
+  background: radial-gradient(circle at 50% 42%, var(--ca-tier-glow, rgba(212, 175, 55, 0.16)), transparent 72%);
+}
+:root:not([data-theme="dark"]) .ca-card-art {
+  background: radial-gradient(circle at 50% 42%, rgba(163, 134, 63, 0.14), transparent 72%);
+}
+.ca-card-star {
+  width: 76px;
+  height: 76px;
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cg fill='%23000'%3E%3Crect x='36' y='36' width='88' height='88'/%3E%3Crect x='36' y='36' width='88' height='88' transform='rotate(45 80 80)'/%3E%3Ccircle cx='80' cy='80' r='9'/%3E%3Ccircle cx='80' cy='18' r='3.5'/%3E%3Ccircle cx='80' cy='142' r='3.5'/%3E%3Ccircle cx='18' cy='80' r='3.5'/%3E%3Ccircle cx='142' cy='80' r='3.5'/%3E%3Cpath d='M80 30 L84 76 L80 130 L76 76 Z'/%3E%3C/g%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cg fill='%23000'%3E%3Crect x='36' y='36' width='88' height='88'/%3E%3Crect x='36' y='36' width='88' height='88' transform='rotate(45 80 80)'/%3E%3Ccircle cx='80' cy='80' r='9'/%3E%3Ccircle cx='80' cy='18' r='3.5'/%3E%3Ccircle cx='80' cy='142' r='3.5'/%3E%3Ccircle cx='18' cy='80' r='3.5'/%3E%3Ccircle cx='142' cy='80' r='3.5'/%3E%3Cpath d='M80 30 L84 76 L80 130 L76 76 Z'/%3E%3C/g%3E%3C/svg%3E");
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  background: var(--ca-tier-color, var(--cardarena-gold));
+  opacity: 0.85;
+}
+/* 卡名 / 描述 / 攻血 */
 .ca-card-name {
-  font-size: 0.9rem;
-  margin-bottom: 4px;
-  padding-right: 4px;
+  text-align: center;
+  font-size: 1.02rem;
+  letter-spacing: 0.14em;
+  margin: 0 0 3px;
+  font-weight: 600;
+  color: var(--cardarena-gold-light);
+  text-shadow: 0 0 10px rgba(232, 198, 74, 0.35);
+}
+:root:not([data-theme="dark"]) .ca-card-name {
+  color: #7a2a14;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 .ca-card-desc {
-  font-size: 0.75rem;
-  color: var(--cardarena-muted);
-  line-height: 1.4;
+  font-size: 0.68rem;
+  line-height: 1.5;
+  text-align: center;
+  color: #b3966a;
+}
+:root:not([data-theme="dark"]) .ca-card-desc {
+  color: #6b5633;
 }
 .ca-card-kv {
-  margin-top: 6px;
-  font-size: 0.85rem;
-  color: var(--cardarena-primary);
+  margin-top: 7px;
+  padding-top: 5px;
+  position: relative;
+  text-align: center;
+  font-size: 1.18rem;
+  letter-spacing: 0.22em;
+  font-weight: 600;
+  color: var(--ca-tier-bright, var(--cardarena-gold-light));
 }
+.ca-card-kv::before {
+  content: '';
+  position: absolute;
+  left: 22%;
+  right: 22%;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--ca-tier-color, var(--cardarena-gold)), transparent);
+}
+:root:not([data-theme="dark"]) .ca-card-kv {
+  color: #8a5a14;
+}
+/* 品级应用（描边 / 缎带 / 星徽 / 攻血线共用 --ca-tier-* 变量） */
+.ca-card-tier-gold   { --ca-tier-color: var(--ca-tier-gold);   --ca-tier-bright: var(--ca-tier-gold-bright);   --ca-tier-glow: rgba(232, 198, 74, 0.16); border-color: var(--ca-tier-gold); }
+.ca-card-tier-silver { --ca-tier-color: var(--ca-tier-silver); --ca-tier-bright: var(--ca-tier-silver-bright); --ca-tier-glow: rgba(195, 199, 208, 0.12); border-color: var(--ca-tier-silver); }
+.ca-card-tier-bronze { --ca-tier-color: var(--ca-tier-bronze); --ca-tier-bright: var(--ca-tier-bronze-bright); --ca-tier-glow: rgba(192, 138, 79, 0.12); border-color: var(--ca-tier-bronze); }
+.ca-card-tier-stone  { --ca-tier-color: var(--ca-tier-stone);  --ca-tier-bright: var(--ca-tier-stone-bright);  --ca-tier-glow: rgba(143, 138, 132, 0.10); border-color: var(--ca-tier-stone); }
+:root:not([data-theme="dark"]) .ca-card-tier-gold   { --ca-tier-glow: rgba(184, 134, 11, 0.14); }
+:root:not([data-theme="dark"]) .ca-card-tier-silver { --ca-tier-glow: rgba(128, 143, 168, 0.12); }
+:root:not([data-theme="dark"]) .ca-card-tier-bronze { --ca-tier-glow: rgba(160, 118, 47, 0.12); }
+:root:not([data-theme="dark"]) .ca-card-tier-stone  { --ca-tier-glow: rgba(125, 122, 114, 0.10); }
+
+/* 随从品级（按战力） */
+.ca-minion-tier-gold { border-color: var(--cardarena-gold); box-shadow: inset 0 0 0 1px var(--cardarena-gold-dark); }
+.ca-minion-tier-silver { border-color: #b9bcc4; box-shadow: inset 0 0 0 1px #8f939c; }
+.ca-minion-tier-bronze { border-color: #b08050; box-shadow: inset 0 0 0 1px #8a5f36; }
+.ca-minion-tier-stone { border-color: #9a928a; box-shadow: inset 0 0 0 1px #736c64; }
 
 /* ===== 操作栏 ===== */
 .ca-actions {
@@ -375,6 +609,8 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+  border-top: 1px solid var(--cardarena-ink);
+  padding-top: 10px;
 }
 .ca-actions-info {
   font-size: 0.85rem;
@@ -385,7 +621,7 @@
 .ca-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(28, 15, 12, 0.70);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -393,19 +629,33 @@
 }
 .ca-overlay-box {
   background: var(--cardarena-panel);
-  border-radius: 3px;
-  padding: 24px 32px;
+  border: 1px solid var(--cardarena-gold);
+  border-radius: 2px;
+  padding: 28px 40px;
   text-align: center;
+  box-shadow: inset 0 0 0 1px var(--cardarena-gold-dark), 0 12px 40px rgba(0, 0, 0, 0.5);
+  background-image: var(--cardarena-pattern), linear-gradient(180deg, rgba(255, 250, 230, 0.4), rgba(122, 22, 38, 0.10));
+  position: relative;
+}
+.ca-overlay-box::before {
+  content: '';
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  top: 6px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--cardarena-gold), transparent);
 }
 .ca-overlay-title {
   font-family: var(--cardarena-serif);
-  font-weight: 500;
-  font-size: 1.6rem;
+  font-weight: 600;
+  font-size: 1.7rem;
   margin: 0 0 8px;
   color: var(--cardarena-primary);
+  letter-spacing: 0.12em;
 }
 .ca-overlay-sub {
-  margin: 0 0 16px;
+  margin: 0 0 18px;
   color: var(--cardarena-muted);
   font-size: 0.9rem;
 }
@@ -414,69 +664,25 @@
 @media (max-width: 640px) {
   #cardarena-app {
     padding: 10px;
+    border: none;
+    box-shadow: none;
   }
   .ca-card {
-    width: 104px;
+    width: 128px;
+    min-height: 168px;
+    padding: 8px 9px 8px;
+  }
+  .ca-card-star {
+    width: 60px;
+    height: 60px;
+  }
+  .ca-card-name {
+    font-size: 0.92rem;
+  }
+  .ca-card-kv {
+    font-size: 1rem;
   }
   .ca-minion {
     min-width: 60px;
   }
-}
-
-/* ===== 复古藏书/版画装饰 ===== */
-/* 书页面板：外框 + 内侧细线（版画双线描边）+ 泛黄纸面 */
-.ca-roster, .ca-board, .ca-hand, .ca-log,
-.ca-hero, .ca-minion, .ca-card, .ca-overlay-box, .ca-setup-role {
-  box-shadow: inset 0 0 0 1px var(--cardarena-ink);
-  background-image: linear-gradient(180deg, rgba(255, 252, 240, 0.55), rgba(138, 106, 59, 0.06));
-}
-[data-theme="dark"] .ca-roster, [data-theme="dark"] .ca-board,
-[data-theme="dark"] .ca-hand, [data-theme="dark"] .ca-log,
-[data-theme="dark"] .ca-hero, [data-theme="dark"] .ca-minion,
-[data-theme="dark"] .ca-card, [data-theme="dark"] .ca-overlay-box,
-[data-theme="dark"] .ca-setup-role {
-  background-image: linear-gradient(180deg, rgba(232, 217, 184, 0.06), rgba(0, 0, 0, 0.10));
-}
-/* 随从/卡牌右上角小方印（卷轴印） */
-.ca-card::after, .ca-minion::after {
-  content: '';
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  width: 14px;
-  height: 14px;
-  border: 1px solid var(--cardarena-primary);
-  opacity: 0.5;
-}
-.ca-minion::after {
-  top: 5px;
-  right: 5px;
-  width: 10px;
-  height: 10px;
-}
-/* 卡牌/随从悬浮：纸张抬起 */
-.ca-card:hover:not(.disabled), .ca-minion:hover:not(.disabled) {
-  box-shadow: inset 0 0 0 1px var(--cardarena-ink), 0 3px 8px rgba(59, 43, 30, 0.20);
-}
-/* 古籍回纹分隔：区标签加字距 */
-.ca-board-label, .ca-hand-label, .ca-roster-label, .ca-log-label {
-  letter-spacing: 0.18em;
-}
-/* 印章式目标高亮 */
-.targetable {
-  outline: 2px solid var(--cardarena-target);
-  box-shadow: inset 0 0 0 1px var(--cardarena-ink), 0 0 0 4px rgba(184, 134, 11, 0.20);
-}
-/* 按钮 hover 填充用纸白 */
-.ca-btn-primary:hover:not(:disabled) {
-  background: var(--cardarena-primary);
-  color: #f7efdd;
-}
-/* 结算遮罩更偏暖墨色 */
-.ca-overlay {
-  background: rgba(35, 25, 12, 0.62);
-}
-/* 出战角色区（玩家）保留朱砂描边，内线弱化 */
-.ca-hero-player {
-  box-shadow: inset 0 0 0 1px var(--cardarena-ink), 0 0 0 1px var(--cardarena-primary);
 }

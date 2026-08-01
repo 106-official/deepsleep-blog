@@ -21,22 +21,49 @@
     max-width: 920px;
     margin: 0 auto;
     padding: 16px 16px 0;
+    position: relative;
   }
   .ca-page-header h1 {
     font-family: var(--cardarena-serif, 'Noto Serif SC', 'Songti SC', 'SimSun', Georgia, serif);
     font-weight: 600;
-    font-size: 1.8rem;
+    font-size: 1.9rem;
     margin: 0 0 6px;
-    color: var(--cardarena-primary, #8c2f1f);
-    letter-spacing: 0.1em;
+    color: var(--cardarena-gold, #c9a227);
+    letter-spacing: 0.14em;
     display: inline-block;
-    padding-bottom: 4px;
-    border-bottom: 2px solid var(--cardarena-primary, #8c2f1f);
+    padding-bottom: 6px;
+    position: relative;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35);
+  }
+  [data-theme="dark"] .ca-page-header h1 {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  }
+  /* 标题双金线 + 中心菱形 */
+  .ca-page-header h1::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--cardarena-gold, #c9a227), var(--cardarena-gold-dark, #8a6a2f), var(--cardarena-gold, #c9a227));
+  }
+  .ca-page-header h1::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -5px;
+    width: 8px;
+    height: 8px;
+    transform: translateX(-50%) rotate(45deg);
+    background: var(--cardarena-crimson, #7a1626);
+    border: 1px solid var(--cardarena-gold, #c9a227);
   }
   .ca-page-sub {
     margin: 0;
-    color: var(--cardarena-muted, #718096);
+    color: var(--cardarena-muted, #7a6848);
     font-size: 0.9rem;
+    letter-spacing: 0.04em;
   }
 </style>
 {{ end }}

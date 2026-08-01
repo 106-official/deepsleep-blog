@@ -4,8 +4,8 @@
 > **执行时间**: 2026-07-30 ~ 2026-07-31
 > **目标站点**: https://deepsleep.fun/learn/cpa/
 > **源资料**: 4TB 网盘资源（已下载到本地 `D:\CPA备考全套\`）
-> **当前阶段**: 阶段A 已完成
-> **状态**: ✅ 86 章教材已上线，六科体量达标
+> **当前阶段**: 阶段B 已完成
+> **状态**: ✅ 86 章教材 + 阶段B 习题整合已上线（550题进 92 章同步练习 + 历年真题 78 页）
 > **配套文档**: `learn-section.md`（learn 板块技术架构）
 
 ---
@@ -37,6 +37,8 @@
 | 06-economic-law 经济法 | 12 | ~495KB | 41.2 | ✅ 达标 |
 | 07-tax-law 税法 | 14 | ~319KB | 22.8 | ✅ 达标 |
 | **合计** | **86** | **~2.35MB** | **27.4** | ✅ |
+
+> **阶段B 追加成果**（2026-08-01）：六科 92 章追加「## 7. 同步练习」（《必刷550题》1500+ 题）；新增 09-exams 历年真题板块（2013-2025 × 6 科 = 78 页全文真题）。详见第 7.5 节。
 
 ---
 
@@ -110,7 +112,10 @@ blog-static/content/learn/cpa/
 ├── 05-strategy/                 # 公司战略与风险管理（8 章）
 ├── 06-economic-law/             # 经济法（12 章）
 ├── 07-tax-law/                  # 税法（14 章）
-└── 08-comprehensive.md          # 综合阶段（占位）
+├── 08-comprehensive.md          # 综合阶段（占位）
+└── 09-exams/                    # 历年真题 2013-2025（六科 78 页，阶段B 新增）
+    ├── _index.md                #   真题板块首页
+    └── 2013-exam/ ... 2025-exam/  #   13 个年份目录（每页含 6 个科目真题）
 ```
 
 ### 3.2 文件命名规则
@@ -432,6 +437,68 @@ feat(learn): 精化补全财管/战略两科教材内容 (阶段A)
 |--------|------|--------|--------|
 | 2f15ff1 | CPA 六科 86 章教材内容蒸馏（基线） | 86 | +33717 / -1023 |
 | e20ce84 | 精化补全财管/战略两科（阶段A） | 21 | +6848 / -608 |
+| 637dd42 | 阶段B：历年真题板块 + 550题同步练习 | 215 | +73248 / -1593 |
+
+### 7.5 阶段B 执行过程（已完成，2026-08-01）
+
+#### 7.5.1 方案（用户确认）
+
+> **必刷550题** → 整合进各章节作为「## 7. 同步练习」小节
+> **历年真题**（2013-2025 全部）→ 单开「09 历年真题」章节，位于 08 综合阶段之后
+> **不标注题目来源**
+
+#### 7.5.2 题源提取
+
+| 步骤 | 脚本 | 输入 | 输出 |
+|------|------|------|------|
+| 真题提取 | `docs/cpa-source/extract_exams.py` | `1、CPA注册会计师（历年真题）（2013-2025）\` 143 个 PDF | `docs/cpa-source/exams/{科目}/{年份}_{题目\|答案\|全卷}_{一\|二}.txt`（gitignore） |
+| 550题切分 | `docs/cpa-source/split_550.py` | `8、CPA注册会计师（必刷550题）\` 6 个 PDF | `docs/cpa-source/exercises/{科目}/NN-标题_{题目\|答案}.txt`（gitignore） |
+| 章节映射 | `docs/cpa-source/chapter_map_550.json` | 550 章节号 ↔ 现有 md slug | 6 科映射字典（含审计错位、财管合并、税法错位、答案缺失标注） |
+
+**关键识别逻辑**（split_550.py）：三类"第X章"标题区分 —— 目录区（lookahead 检测"历年分值/本章答案"）/ 题目区 / 答案区（"参考答案/答案速查"）。
+
+#### 7.5.3 真题板块生成（09-exams）
+
+- `gen_exam_boards.py`：生成 `_index.md`（weight: 9）+ 13 个年份目录（2013-exam ~ 2025-exam），每页含 6 科全文真题页（`accounting.md` / `audit.md` / `fm.md` / `strategy.md` / `economic-law.md` / `tax-law.md`）
+- 每页结构：`## 一、单项选择题` / `## 二、多项选择题` / `## 三、简答题` / `## 四、综合题`（按科目题型），题目完整 + `**参考答案与解析**`
+- **learn.html 修复**：侧边栏嵌套 section 判断从 `eq .CurrentSection.RelPermalink` 改为 `strings.HasPrefix`（否则 09-exams 年份子页无法自动展开）
+
+#### 7.5.4 550题整合（sub-agent 并行）
+
+- 4 个 sub-agent 并发处理：会计（21-29 章）、审计（20-22/24 章）、战略（03 补答案 + 04/07/08 + 去重）、经济法（04 去重 + 06-12）
+- 92 章全部补齐「## 7. 同步练习」：题目编号连续、答案随附（`**练习答案**` 段），不标注来源
+- 会计 1-7/16-29 章 550 原书缺答案 → 练习答案段标注"答案缺失，可参考09历年真题板块"
+
+#### 7.5.5 阶段B 成果与问题修复
+
+| 项 | 说明 |
+|----|------|
+| 真题 | 2013-2025 × 6 科 = 78 页全文真题 |
+| 同步练习 | 92 章 × 平均 16-28 题 ≈ 1500+ 题 |
+| 去重 | 经济法 04（x4 重复）、战略 05（x3 重复）重复小节清理为单一完整小节 |
+| 映射 | 审计编号错位（md-02 职业道德 ↔ 550-22）、财管 19→15 章合并、税法 10-14 章错位逐章人工梳理 |
+| 验证 | `hugo --gc` 350 页无 error（仅已知 languageCode 弃用警告）；`check_sync_exercises.py` 全科校验通过 |
+
+#### 7.5.6 提交与部署
+
+```powershell
+cd "c:\Users\26516\Desktop\n8n\blog-static"
+git commit -F "...\cpa_stageB_commit.txt"   # commit 637dd42, 215 files, +73248/-1593
+git -c http.proxy=http://127.0.0.1:65532 push origin main
+# bc15e58..637dd42 main -> main（GitHub Actions 自动部署）
+```
+
+Commit message：
+
+```
+feat(learn): CPA 阶段B 历年真题板块 + 550题同步练习整合
+
+- 新增 09-exams 历年真题板块：2013-2025 六科 78 页全文真题（题目+答案结构化）
+- 六科章节同步练习整合《必刷550题》1500+ 题（不标注来源）
+- learn.html 侧边栏支持嵌套 section 自动展开（09-exams 年份子页）
+- 提交 docs/cpa-source 提取脚本与章节映射表（真题/习题中间文本已 gitignore）
+- community.js API_BASE 迁移腾讯云 SCF（此前遗留改动）
+```
 
 ---
 
@@ -497,20 +564,13 @@ Select-String -Path "c:\Users\26516\Desktop\n8n\blog-static\public\learn\cpa\04-
 
 ## 📐 9. 后续阶段规划
 
-### 9.1 阶段B：习题整合（待启动）
+### 9.1 阶段B：习题整合（已完成，见 7.5 节）
 
-**目标**：在现有教材基础上，把历年真题/轻一/必刷550题的题目结构化进各章节。
+**成果**：
+1. 历年真题（2013-2025）→ 单开「09 历年真题」章节（78 页全文真题）
+2. 必刷550题 → 整合进各章节「## 7. 同步练习」（92 章 1500+ 题）
 
-**做法**：
-1. 用 `extract_cpa_pdfs.py`（已存在于 `C:\Users\26516\AppData\Local\Temp\`）提取真题 PDF
-2. 按章节切分题目
-3. 用 sub-agent 把题目结构化进各章节的「💡 典型例题」段落
-4. 不重写正文，只增强习题
-
-**源资料**：
-- `1、CPA注册会计师（历年真题）（2013-2025）`
-- `3、CPA注册会计师（轻一）（2026）`
-- `8、CPA注册会计师（必刷550题）`
+**执行记录**：详见 7.5 节（脚本、映射、sub-agent 分工、修复项、commit 637dd42）。
 
 ### 9.2 阶段C：全面精化（可选）
 
@@ -635,7 +695,15 @@ git config core.autocrlf false
 
 | 文件 | 用途 | 位置 |
 |------|------|------|
-| `extract_cpa_pdfs.py` | PDF 批量提取文本 | `C:\Users\26516\AppData\Local\Temp\` |
+| `split_chapters.py` | JC 教材按章节切分（v4，目录序列 + 标题匹配） | `docs/cpa-source/` |
+| `extract_exams.py` | 历年真题 143 PDF 批量提取（题目/答案/全卷 + 一/二套分类） | `docs/cpa-source/` |
+| `split_550.py` | 必刷550题按章切分（题目/答案区分） | `docs/cpa-source/` |
+| `chapter_map_550.json` | 550 章节号 ↔ 现有 md slug 映射表（阶段B 核心数据） | `docs/cpa-source/` |
+| `gen_exam_boards.py` | 09-exams 板块骨架 + 13 年份页生成 | `docs/cpa-source/` |
+| `check_sync_exercises.py` | 同步练习小节完整性校验（重复/缺失/答案） | `docs/cpa-source/` |
+| `probe_550*.py` / `list_mapping.py` | 题源格式探针与章节对照排查 | `docs/cpa-source/` |
+
+> 中间文本产物（`textbooks/`、`exams/`、`exercises/`、`past-papers/`）已被 `.gitignore` 排除，不入库。
 
 #### extract_cpa_pdfs.py 关键逻辑
 
@@ -688,8 +756,8 @@ def process_pdf(pdf_path: Path, manifest: list):
 ```
 请阅读 c:\Users\26516\Desktop\n8n\blog-static\docs\CPA-教材蒸馏-项目文档.md
 和 c:\Users\26516\Desktop\n8n\blog-static\docs\learn-section.md
-然后帮我继续 CPA 教材蒸馏工作（阶段B / 阶段C / 阶段D）。
-当前进度：阶段A 已完成（commit e20ce84），86 章已上线。
+然后帮我继续 CPA 教材蒸馏工作（阶段C / 阶段D）。
+当前进度：阶段A + 阶段B 已完成（commit 637dd42），86 章教材 + 92 章同步练习 + 78 页历年真题已上线。
 源资料在 D:\CPA备考全套\
 ```
 
@@ -697,10 +765,10 @@ def process_pdf(pdf_path: Path, manifest: list):
 
 新对话开始时，先确认以下状态：
 
-- [ ] `cd c:\Users\26516\Desktop\n8n\blog-static; git log --oneline -3` → 看到 `e20ce84` 在最上
+- [ ] `cd c:\Users\26516\Desktop\n8n\blog-static; git log --oneline -3` → 看到 `637dd42` 在最上
 - [ ] `git status` → clean（无未提交改动）
 - [ ] 各科体量检查（见 8.1 节脚本）
-- [ ] `hugo --gc` → 225 pages, 无 error
+- [ ] `hugo --gc` → 350 pages, 无 error
 - [ ] `D:\CPA备考全套\cpa注册会计师2026备考\2、CPA注册会计师（JC）（2026版）\` 存在且有 6 个 PDF
 
 ### 12.3 扩展新章节
@@ -732,11 +800,11 @@ def process_pdf(pdf_path: Path, manifest: list):
 
 - CPA learn section uses two-level nested structure: subject folders contain chapter .md files
 - Sidebar uses Hugo $cpa.Sections + native <details> for collapsible navigation
-- Current subject auto-expanded via `eq .CurrentSection.RelPermalink`
+- Current subject auto-expanded via `strings.HasPrefix` (09-exams 嵌套年份子页需前缀匹配，`eq` 会失效)
 - CPA chapter front matter must include: title, layout:"learn", cert, subject, weight, difficulty, exam_weight, hours, keywords
-- 六段式结构规范：章节定位 / 考情分析 / 知识框架 / 核心精讲 / 典型例题 / 记忆口诀
+- 六段式结构规范：章节定位 / 考情分析 / 知识框架 / 核心精讲 / 典型例题 / 记忆口诀 + 同步练习（阶段B 起第 7 段「## 7. 同步练习」）
 - 范本章节：02-accounting/13-revenue.md
-- 阶段A 完成（commit e20ce84）：86 章已上线，财管/战略已精化补全
+- 阶段A 完成（commit e20ce84）：86 章教材；阶段B 完成（commit 637dd42）：92 章同步练习 + 09-exams 78 页真题
 
 ---
 
@@ -748,6 +816,7 @@ def process_pdf(pdf_path: Path, manifest: list):
 | 2026-07-31 | v2.0 | CPA 六科 86 章教材蒸馏（commit 2f15ff1） |
 | 2026-07-31 | v2.1 | 阶段A：财管/战略精化补全（commit e20ce84） |
 | 2026-07-31 | v2.1-doc | 本文档创建 |
+| 2026-08-01 | v2.2 | 阶段B：历年真题板块 + 550题同步练习整合（commit 637dd42） |
 
 ---
 
@@ -767,4 +836,4 @@ def process_pdf(pdf_path: Path, manifest: list):
 
 > 本文档为 CPA 教材蒸馏补充的全过程记录，供新对话快速接续工作。
 > 配套 `learn-section.md`（技术架构）使用。
-> 最后更新：2026-07-31，阶段A 完成。
+> 最后更新：2026-08-01，阶段A + 阶段B 完成。

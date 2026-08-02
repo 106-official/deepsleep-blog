@@ -536,6 +536,11 @@
       var hp = el('span', 'ca-roster-chip-hp', role.health + '/' + role.maxHealth);
       chip.appendChild(nm);
       chip.appendChild(hp);
+      // 卡池剩余数徽章（每角色独立卡池，显示剩余/总数）
+      var poolCount = role.deck ? role.deck.length : 0;
+      var pool = el('span', 'ca-roster-chip-pool' + (poolCount === 0 ? ' empty' : ''), String(poolCount));
+      pool.title = '卡池剩余 ' + poolCount + ' 张';
+      chip.appendChild(pool);
       // 玩家方可点击候场存活角色主动换人
       if (sideName === 'player' && role.alive && i !== side.activeIndex) {
         chip.classList.add('swappable');
@@ -544,6 +549,15 @@
           chip.addEventListener('click', function () {
             pendingAction = { type: 'swap', roleIndex: idx };
             window.CardArena.swapRole(idx);
+          });
+        })(i);
+      }
+      // 玩家方点击卡池徽章查看该角色剩余卡牌（阻止冒泡避免触发换人）
+      if (sideName === 'player' && role.alive) {
+        (function (idx) {
+          pool.addEventListener('click', function (e) {
+            e.stopPropagation();
+            showPoolModal('player', idx);
           });
         })(i);
       }
@@ -575,6 +589,19 @@
     hero.appendChild(stats);
     if (sideName === 'player') hero.appendChild(mana);
     hero.appendChild(passive);
+    // 卡池指示器（玩家方可点击查看剩余卡牌）：每角色独立卡池，剩余张数随抽牌递减、换人保留
+    if (sideName === 'player') {
+      var poolCount = role.deck ? role.deck.length : 0;
+      var poolBtn = el('div', 'ca-hero-pool' + (poolCount === 0 ? ' empty' : ''), '卡池 ' + poolCount + '/12');
+      poolBtn.title = '点击查看卡池剩余卡牌';
+      (function (idx) {
+        poolBtn.addEventListener('click', function (e) {
+          e.stopPropagation();   // 阻止冒泡触发英雄选为攻击者
+          showPoolModal('player', idx);
+        });
+      })(side.activeIndex);
+      hero.appendChild(poolBtn);
+    }
     // 右上角八角星水印
     hero.appendChild(el('span', 'ca-hero-star'));
     return hero;
@@ -781,6 +808,70 @@
         return;
       }
     });
+  }
+
+  // ===== 卡池详情弹窗（苏丹宫廷风）=====
+  // 显示指定角色卡池中剩余可抽的卡牌（按卡牌 id 聚合计数）
+  function showPoolModal(sideName, roleIndex) {
+    var s = window.CardArena.getState();
+    if (!s) return;
+    var side = sideName === 'enemy' ? s.enemy : s.player;
+    var role = side.roster[roleIndex];
+    if (!role) return;
+    var pool = role.deck || [];
+    // 按 cardId 聚合计数
+    var counts = {};
+    pool.forEach(function (cid) { counts[cid] = (counts[cid] || 0) + 1; });
+
+    var overlay = el('div', 'ca-pool-overlay');
+    var modal = el('div', 'ca-pool-modal');
+    // 标题：角色名 · 卡池 X/12
+    var title = el('div', 'ca-pool-modal-title');
+    title.appendChild(el('span', 'ca-pool-modal-name', role.name));
+    title.appendChild(el('span', 'ca-pool-modal-count', '卡池 ' + pool.length + '/12'));
+    modal.appendChild(title);
+    var sub = el('div', 'ca-pool-modal-sub', '剩余可抽卡牌（卡池为空时无法再抽）');
+    modal.appendChild(sub);
+
+    var grid = el('div', 'ca-pool-grid');
+    if (pool.length === 0) {
+      grid.appendChild(el('div', 'ca-pool-empty', '卡池已空'));
+    } else {
+      Object.keys(counts).forEach(function (cid) {
+        var c = DATA.CARDS.find(function (x) { return x.id === cid; });
+        if (!c) return;
+        var tier = cardTier(c);
+        var card = el('div', 'ca-pool-card ca-card-tier-' + tier);
+        // 费用宝石
+        var cost = el('div', 'ca-pool-card-cost', String(c.cost));
+        card.appendChild(cost);
+        // 品级缎带
+        card.appendChild(el('div', 'ca-pool-card-band', tierEn(tier)));
+        // 名称
+        card.appendChild(el('div', 'ca-pool-card-name', c.name));
+        // 类型/数值
+        if (c.type === 'minion') {
+          card.appendChild(el('div', 'ca-pool-card-kv', c.attack + ' / ' + c.health));
+        } else {
+          card.appendChild(el('div', 'ca-pool-card-type', '法术'));
+        }
+        // 描述
+        card.appendChild(el('div', 'ca-pool-card-desc', c.desc));
+        // 数量徽章
+        if (counts[cid] > 1) card.appendChild(el('span', 'ca-pool-card-count', '×' + counts[cid]));
+        grid.appendChild(card);
+      });
+    }
+    modal.appendChild(grid);
+
+    var close = el('button', 'ca-btn ca-pool-close', '关闭');
+    close.addEventListener('click', function () { overlay.remove(); });
+    modal.appendChild(close);
+
+    overlay.appendChild(modal);
+    // 点击遮罩关闭
+    overlay.addEventListener('click', function (e) { if (e.target === overlay) overlay.remove(); });
+    app.appendChild(overlay);
   }
 
   // ===== 结束结算 =====

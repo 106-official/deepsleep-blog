@@ -82,9 +82,11 @@
 }
 .ca-setup-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
-  gap: 16px;
-  margin-bottom: 22px;
+  /* 大屏适配：minmax(150px) + max-width 680px 限制总宽，避免卡片过大/页面过高导致上下滚动 */
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 12px;
+  margin: 0 auto 16px;
+  max-width: 680px;
 }
 /* 角色卡（苏丹宫廷风 + 双面翻转选卡） */
 .ca-setup-role {
@@ -748,6 +750,28 @@
 .ca-roster-chip-hp {
   color: var(--cardarena-muted);
 }
+/* 卡池剩余数徽章（金色宝石胶囊；空时变灰红） */
+.ca-roster-chip-pool {
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: #2a1a08;
+  background: linear-gradient(180deg, var(--cardarena-gold-light), var(--cardarena-gold));
+  border: 1px solid var(--cardarena-gold-dark);
+  border-radius: 8px;
+  padding: 0 5px;
+  min-width: 16px;
+  text-align: center;
+  line-height: 14px;
+  letter-spacing: 0.02em;
+}
+.ca-roster-chip-pool.empty {
+  background: rgba(122, 22, 38, 0.18);
+  color: var(--cardarena-muted);
+  border-color: var(--cardarena-muted);
+}
+/* 玩家方存活角色徽章可点击查看卡池 */
+.ca-roster-player .ca-roster-chip:not(.dead) .ca-roster-chip-pool { cursor: pointer; transition: filter 0.15s; }
+.ca-roster-player .ca-roster-chip:not(.dead) .ca-roster-chip-pool:hover { filter: brightness(1.18); }
 /* ===== 英雄（出战角色）：半透明状态面板，无边框（游戏王战场风） ===== */
 .ca-zone {
   display: flex;
@@ -819,6 +843,30 @@
   font-size: 0.8rem;
   color: var(--cardarena-muted);
   margin-top: 2px;
+}
+/* 卡池指示器（hero 面板内，玩家方可点击）：金色缎带胶囊，点击弹出卡池详情 */
+.ca-hero-pool {
+  margin-top: 5px;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  font-weight: 600;
+  color: #2a1a08;
+  background: linear-gradient(180deg, rgba(237, 212, 138, 0.7), rgba(201, 162, 39, 0.55));
+  border: 1px solid var(--cardarena-gold-dark);
+  border-radius: 10px;
+  padding: 3px 10px;
+  cursor: pointer;
+  text-align: center;
+  position: relative;
+  z-index: 2;
+  transition: filter 0.15s, transform 0.15s;
+  align-self: center;
+}
+.ca-hero-pool:hover { filter: brightness(1.14); transform: translateY(-1px); }
+.ca-hero-pool.empty {
+  color: var(--cardarena-muted);
+  background: rgba(122, 22, 38, 0.14);
+  border-color: var(--cardarena-muted);
 }
 
 /* ===== 随从区：无框，半透明战场底色区分敌我（游戏王战场分区 + 月圆之夜沉浸） ===== */
@@ -1231,6 +1279,152 @@
   color: var(--cardarena-muted);
   font-size: 0.9rem;
 }
+
+/* ===== 卡池详情弹窗（苏丹宫廷风羊皮纸面板） ===== */
+.ca-pool-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 5, 3, 0.74);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+}
+.ca-pool-modal {
+  max-width: 560px;
+  width: 100%;
+  max-height: 86vh;
+  overflow-y: auto;
+  border: 1px solid var(--cardarena-gold-dark);
+  border-radius: 6px;
+  padding: 18px 16px 14px;
+  box-sizing: border-box;
+  box-shadow: inset 0 0 0 1px rgba(212, 175, 55, 0.5), inset 0 0 0 5px rgba(212, 175, 55, 0.18), 0 14px 44px rgba(0, 0, 0, 0.55);
+  background-image:
+    radial-gradient(circle at 50% 0%, rgba(212, 175, 55, 0.14), transparent 60%),
+    var(--cardarena-pattern),
+    linear-gradient(165deg, #fdf6e3 0%, #f0e2bd 55%, #e8d5a6 100%);
+}
+[data-theme="dark"] .ca-pool-modal {
+  background-image:
+    radial-gradient(circle at 50% 0%, rgba(212, 175, 55, 0.10), transparent 60%),
+    var(--cardarena-pattern-dark),
+    linear-gradient(160deg, #1d100c 0%, #2b1612 50%, #0d0806 100%);
+}
+.ca-pool-modal-title {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 2px;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.4);
+  padding-bottom: 8px;
+}
+.ca-pool-modal-name {
+  font-family: var(--cardarena-serif);
+  font-weight: 600;
+  font-size: 1.22rem;
+  color: var(--cardarena-primary);
+  letter-spacing: 0.08em;
+}
+.ca-pool-modal-count {
+  font-size: 0.82rem;
+  color: var(--cardarena-gold-dark);
+  letter-spacing: 0.1em;
+  font-weight: 600;
+}
+[data-theme="dark"] .ca-pool-modal-count { color: var(--cardarena-gold); }
+.ca-pool-modal-sub {
+  text-align: center;
+  font-size: 0.72rem;
+  color: var(--cardarena-muted);
+  margin: 6px 0 12px;
+}
+.ca-pool-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.ca-pool-card {
+  position: relative;
+  border: 1px solid var(--ca-tier-color, var(--cardarena-gold));
+  border-radius: 5px;
+  padding: 6px 6px 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  min-height: 0;
+  box-shadow: inset 0 0 0 1px rgba(212, 175, 55, 0.3), 0 2px 6px rgba(0, 0, 0, 0.15);
+  background-image: linear-gradient(160deg, #fdf6e3, #e8d5a6);
+}
+[data-theme="dark"] .ca-pool-card {
+  background-image: linear-gradient(160deg, #1d100c, #0d0806);
+  box-shadow: inset 0 0 0 1px rgba(212, 175, 55, 0.22), 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+.ca-pool-card-cost {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, var(--cardarena-gold-light), var(--cardarena-gold) 60%, var(--cardarena-gold-dark));
+  color: #2a1a08;
+  font-size: 0.68rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--cardarena-gold-dark);
+}
+.ca-pool-card-band {
+  font-size: 0.54rem;
+  letter-spacing: 0.3em;
+  color: var(--ca-tier-color, var(--cardarena-gold));
+  margin: 3px 0 2px;
+}
+.ca-pool-card-name {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--cardarena-text);
+  margin-bottom: 2px;
+}
+.ca-pool-card-kv, .ca-pool-card-type {
+  font-size: 0.68rem;
+  color: var(--cardarena-crimson);
+  font-weight: 700;
+  margin-bottom: 3px;
+}
+.ca-pool-card-desc {
+  font-size: 0.6rem;
+  line-height: 1.3;
+  color: var(--cardarena-muted);
+}
+.ca-pool-card-count {
+  position: absolute;
+  top: 3px;
+  right: 4px;
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: #fff;
+  background: var(--cardarena-crimson);
+  border-radius: 8px;
+  padding: 0 5px;
+  line-height: 14px;
+}
+.ca-pool-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 28px 12px;
+  color: var(--cardarena-muted);
+  font-size: 0.92rem;
+  letter-spacing: 0.06em;
+}
+.ca-pool-close { display: block; margin: 0 auto; }
 
 /* ===== 移动端 ===== */
 @media (max-width: 640px) {

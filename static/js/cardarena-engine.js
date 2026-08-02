@@ -26,7 +26,8 @@
       return {
         id: def.id, name: def.name, intro: def.intro,
         maxHealth: def.maxHealth, health: def.maxHealth,
-        attack: def.attack, passive: def.passive || null, alive: true
+        attack: def.attack, passive: def.passive || null, alive: true,
+        deck: buildDeck(roleId)   // 每个角色独立卡池（12 张），对局开始即构建，换人/阵亡切换不重置（保留剩余张数）
       };
     });
     return {
@@ -35,7 +36,7 @@
       mana: CONFIG.manaStart,
       maxMana: CONFIG.manaMax,
       hand: [],
-      deck: [],
+      deck: roles[0].deck,        // 指向当前出战角色的卡池（抽牌消耗此数组，换人时切换引用）
       board: [],
       roleAttacked: false
     };
@@ -194,7 +195,7 @@
     side.activeIndex = next;
     side.roleAttacked = false;
     side.hand = [];
-    side.deck = buildDeck(activeRole(side).id);
+    side.deck = activeRole(side).deck;   // 切换到新角色卡池（保留该角色剩余张数，不重置）
     drawCards(side, CONFIG.startingHand);
     side.mana = CONFIG.manaMax;
     addLog(activeRole(side).name + ' 上场');
@@ -362,10 +363,9 @@
         enemy: makeSide(enemyRoster),
         logs: []
       };
-      state.player.deck = buildDeck(activeRole(state.player).id);
+      // makeSide 已为每个角色构建独立卡池，side.deck 指向当前出战角色卡池；抽起始手牌即消耗该卡池
       drawCards(state.player, CONFIG.startingHand);
       state.player.mana = CONFIG.manaStart;
-      state.enemy.deck = buildDeck(activeRole(state.enemy).id);
       drawCards(state.enemy, CONFIG.startingHand);
       state.enemy.mana = CONFIG.manaStart;
       addLog('对局开始：玩家先手');
@@ -479,7 +479,7 @@
       state.player.activeIndex = roleIndex;
       state.player.roleAttacked = false;
       state.player.hand = [];
-      state.player.deck = buildDeck(role.id);
+      state.player.deck = role.deck;   // 切换到该角色卡池（保留剩余张数，不重置）
       drawCards(state.player, CONFIG.startingHand);
       state.player.mana = CONFIG.manaMax;
       addLog('主动换人：' + role.name + ' 上场（法力回满）');

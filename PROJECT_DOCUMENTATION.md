@@ -1,8 +1,8 @@
 # DeepSleep Blog - 项目技术文档
 
 > **最后更新**: 2026-08-03
-> **版本**: v5.14
-> **状态**: ✅ 生产就绪 | 评论系统正常运行 (Neon PostgreSQL) | 💬 社区系统已上线 | 👤 全局个人中心 | 📝 文章板块整合 (learn 风格 sidebar) | 🌗 主题切换圆形扩散动画 | 🐟 SleepTown 首页 sidebar 改造 | 🎮 交互式自我介绍 (/play/me/) | 🃏 CardArena 卡牌对战 (/play/cardarena/) | 👑 CardArena 苏丹宫廷风卡牌样式 | ⚔️ CardArena 极繁深化 | 🎴 CardArena 对战页去框化重构（月圆之夜×游戏王）
+> **版本**: v5.15
+> **状态**: ✅ 生产就绪 | 评论系统正常运行 (Neon PostgreSQL) | 💬 社区系统已上线 | 👤 全局个人中心 | 📝 文章板块整合 (learn 风格 sidebar) | 🌗 主题切换圆形扩散动画 | 🐟 SleepTown 首页 sidebar 改造 | 🎮 交互式自我介绍 (/play/me/) | 🃏 CardArena 卡牌对战 (/play/cardarena/) | 👑 CardArena 苏丹宫廷风卡牌样式 | ⚔️ CardArena 极繁深化 | 🎴 CardArena 对战页去框化+二维布局 | 🃏 CardArena 每角色独立卡池系统
 
 ---
 
@@ -1683,6 +1683,58 @@ Hugo 的 partial 查找是精确匹配文件名，找不到 `extend_head.html` �
 | `PROJECT_DOCUMENTATION.md` | 更新日志 v5.14 补充条目 |
 
 **验证**：CSS 大括号配平；本地 hugo 构建错误仅来自预存的未跟踪 scratch 文件（`_jscheck.js` 等，非本次改动，不入库不影响 GitHub Actions 生产构建）；布局逻辑：桌面双列 + 日志侧栏 + 英雄|随从并排，移动单列堆叠。
+
+---
+
+### v5.15 (2026-08-03) - CardArena 每角色独立卡池系统 + 选卡屏大屏适配
+
+**背景**：原引擎 `side.deck` 是单一牌库，每次换人(`swapRole`)/阵亡切换(`checkRoleDeath`)都 `buildDeck()` 重建 → 切回原角色时卡池被重置为满 12 张，无法体现「卡池消耗」策略。用户需求：每角色独立卡池，记录剩余张数，换人不重置；战斗中可点击查看剩余可抽卡牌；卡池空则无法抽牌。另需选卡屏大屏适配（防上下滚动）。
+
+**新增功能 / 修复**:
+
+- ✅ **引擎：每角色独立卡池**（`cardarena-engine.js`）—— 核心改造：
+  | 函数 | 原逻辑 | 新逻辑 |
+  |------|--------|--------|
+  | `makeSide` | role 无 deck，side.deck=[] | 每角色 `deck: buildDeck(roleId)`（12 张），`side.deck = roles[0].deck`（引用当前出战角色卡池） |
+  | `start` | `side.deck = buildDeck(activeRole.id)` 重建 | 删除重建，直接 `drawCards`（makeSide 已构建） |
+  | `swapRole` | `side.deck = buildDeck(role.id)` 重建 | `side.deck = role.deck`（切换引用，保留剩余张数） |
+  | `checkRoleDeath` | `side.deck = buildDeck(activeRole.id)` 重建 | `side.deck = activeRole(side).deck`（切换引用） |
+  - 关键机制：`side.deck` 是引用（指向 `role.deck` 数组），`drawCards` 的 `pop()` 直接消耗该角色的卡池数组；换人只换引用不重建 → 切回原角色延续上次剩余张数
+  - 卡池为空时 `drawCards` 已有 `if (side.deck.length === 0) break` 逻辑，天然支持「空池无法抽牌」
+
+- ✅ **UI：三处卡池展示**（`cardarena-ui.js`）：
+  1. **roster chip 金色宝石徽章**：每角色 chip 加 `.ca-roster-chip-pool` 显示剩余数（空池加 `.empty` 变灰红）；玩家方存活角色徽章可点击 → `showPoolModal`（`stopPropagation` 防触发换人）
+  2. **hero 面板卡池指示器**：玩家方 hero 加 `.ca-hero-pool`「卡池 X/12」可点击胶囊（`stopPropagation` 防触发英雄选攻击者）→ `showPoolModal`
+  3. **showPoolModal 苏丹风弹窗**：点击查看指定角色剩余可抽卡牌
+     - 按 cardId 聚合计数（同牌多张显示 ×N 徽章）
+     - 每张：费用宝石 + 品级缎带(tierEn) + 名称 + 攻/血或法术 + 描述 + 数量徽章
+     - 品级色复用 `.ca-card-tier-gold/silver/bronze/stone`（`--ca-tier-color`）
+     - 空池显示「卡池已空」；点击遮罩或关闭按钮关闭
+
+- ✅ **CSS：卡池元素苏丹主题**（`cardarena.css`）：
+  - `.ca-roster-chip-pool`：金色宝石胶囊（gold-light→gold 渐变 + gold-dark 描边），空池灰红
+  - `.ca-hero-pool`：金色缎带胶囊（hover brightness+translateY 微动），空池灰红
+  - `.ca-pool-overlay/modal/grid/card`：羊皮纸面板（pattern + 双层金描边 inset shadow + 暗色主题适配）、品级色卡牌、费用宝石、数量红徽章
+  - 弹窗 `position:fixed; z-index:1000` 覆盖全屏，`max-height:86vh; overflow-y:auto` 滚动
+
+- ✅ **选卡屏大屏适配**：`.ca-setup-grid` `minmax(190px)→minmax(150px)` + `max-width:680px` 居中 + gap 16→12px → 卡片从 220px 缩至 170px，2 行高度 602→466px，防大屏上下滚动
+
+**技术要点**:
+- `buildDeck` 是函数声明（hoisted），可在 `makeSide` 中调用（虽定义在其后）
+- `side.deck` 引用机制：JS 对象引用传递，`pop()` 修改原数组，换人只换引用 → 每角色卡池状态独立保留
+- `stopPropagation` 解决 pool 按钮点击冒泡触发 attacker-selectable（英雄）/ swappable（chip）的冲突
+- 敌方 chip 也显示卡池数（不可点击），增加策略信息；玩家方可点击查看任意存活角色卡池
+
+**Files Modified**:
+| 文件 | 变更 |
+|------|------|
+| `static/js/cardarena-engine.js` | makeSide 每角色 deck + side.deck 引用；start/swapRole/checkRoleDeath 改引用不重建 |
+| `static/js/cardarena-ui.js` | buildRosterBar 加卡池徽章；buildHeroView 加卡池指示器；新增 showPoolModal 弹窗 |
+| `static/css/cardarena.css` | .ca-setup-grid 大屏适配；.ca-roster-chip-pool/.ca-hero-pool 徽章指示器；.ca-pool-* 弹窗苏丹主题 |
+| `PROJECT_CONTEXT.md` | 版本号 v5.14→v5.15、功能清单 v5.15、版本演进表 v5.15 |
+| `PROJECT_DOCUMENTATION.md` | 版本号 v5.14→v5.15、更新日志 v5.15 条目 |
+
+**验证**：`node --check` 三个 JS 文件语法 OK；CSS 大括号配平（423/423）；`hugo --destination public_test` EXIT 0（移除预存 scratch 文件后）；卡池逻辑：start 抽 3 → 首角色 9 张，换人切角色 B（12→抽 3=9），切回 A 仍 9 张（不重置），抽牌持续消耗至 0 则无法再抽。
 
 ---
 

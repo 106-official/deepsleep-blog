@@ -1,7 +1,7 @@
 # DeepSleep Blog 项目上下文 - 快速上手指南
 
 > **生成时间**: 2026-07-30
-> **当前版本**: v5.14
+> **当前版本**: v5.15
 > **最后更新**: 2026-08-03
 
 ---
@@ -44,7 +44,7 @@
 
 ---
 
-## 🎯 当前核心功能清单 (v5.14)
+## 🎯 当前核心功能清单 (v5.15)
 
 ### 已实现功能
 
@@ -64,6 +64,7 @@
 - [x] CardArena 极繁深化 — 舞台四角纹章 + 珠串边线 + 分区面板金珠内框 + 三层八珠光环徽章；随从卡 112×150 统一长方形极繁样式（品级缎带/八角星徽/菱形宝石数值框/关键词分隔）；出战区英文宫衔 + 八角星水印；战斗特效系统（伤害飘字/受击闪光/金色冲击波/死亡化灰烬/换人 3D 幽灵卡翻飞/召唤翻转入场/抽牌 3D 翻入，引擎零改动、UI 状态快照对比驱动、特效挂载 body 不受 AI 多轮渲染清除）；随从关键词中文化；八角星徽彩色渐变 SVG 立体化（mask 单色→background-image 23 元素渐变+描边+宝石珠+高光，明暗两套）；四角纹章四方向旋转贴合；移动端 ≤640px 横向滚动优化（手牌/随从/角色牌区 overflow-x + 光环装饰弱化隐藏）⭐ v5.13
 - [x] CardArena 对战页面去框化重构（月圆之夜×游戏王融合） — 角色卡构图修复（英文宫衔缎带 0.62→0.5rem + 徽记区/星徽/数值框/被动文案全链路压缩，统一 3/4 卡面零溢出）；四角纹章移至背景层（z-index 3→0 + opacity 0.9→0.12 + mask 88→64px，纯背景水印不遮挡开始按钮/已选显示，#ca-start/#ca-count 加半透明底板 + z-index:2 双保险）；分区去框（roster/board/hand/log/hero 移除 border + inset box-shadow + ::before/::after 内框与四角金珠，改用底色微差/分隔金线/留白区分：敌方随从区暗红渐变、我方随从区金绿渐变、日志仅上下金线、手牌半透明金底、英雄半透明状态面板）；开始按钮与已选计数加半透明底板确保背景纹章之上可读 ⭐ v5.14
 - [x] CardArena 对战页二维战场布局重构 — `.ca-layout` flex-column→CSS Grid（grid-template-areas 重排，DOM 不动）；桌面端≥900px 主战场+日志侧栏双列（日志跨 zone-enemy/zone-player 两行，左侧金线分隔 + 内部滚动，不再占整行长条）；zone 内部 flex-column→flex-row（英雄面板 172px | 随从战场 flex:1 并排，DOM 顺序天然镜像对峙：敌方 hero|board / 我方 board|hero）；窄英雄面板内容居中（宫衔去侧线、星水印居中淡显、法力居中）；移动端<900px 单列堆叠保持原序 ⭐ v5.14 补充
+- [x] CardArena 每角色独立卡池系统 — 引擎 makeSide 为每个角色构建独立 12 张卡池（role.deck），side.deck 引用当前出战角色卡池，抽牌消耗该数组；换人(swapRole)/阵亡切换(checkRoleDeath)只切换引用不重建，保留每角色剩余张数；UI 三处展示：roster chip 金色宝石徽章显示剩余数、hero 面板「卡池 X/12」可点击指示器、点击弹出苏丹风卡池详情弹窗（按 cardId 聚合计数、品级缎带+费用宝石+数量徽章、空池提示）；卡池为空时无法抽牌（drawCards 已有 break 逻辑）；setup 选卡屏大屏适配（grid minmax 190→150px + max-width 680px，压缩卡片高度防上下滚动）⭐ v5.15
 - [x] CPA 阶段B 习题整合 — 六科 92 章「## 7. 同步练习」整合《必刷550题》1500+ 题 + 09 历年真题板块（2013-2025 × 6 科 = 78 页全文真题，单开 /learn/cpa/09-exams/）⭐ v5.11
 
 #### 💬 交互功能
@@ -315,7 +316,8 @@ git config --global https.proxy http://127.0.0.1:65532
 | **v5.12** | 2026-08-02 | CardArena 苏丹宫廷风卡牌样式升级（参考《苏丹的游戏》：黑金暗夜/浅金羊皮纸双主题随博客切换，四品级金/银/铜/石 × 八角星徽 mask 绘制 + 四角卷草纹 + 圆形宝石费用 + 品级缎带 + 攻血金线分隔；8 角色新增宫衔 title 展示）→ 同日追加：角色选卡卡牌化 + 翻转闪光；再追加：极繁主义卡牌升级（中央徽记去汉字改纯几何三层星徽组、宫衔/品级缎带英文化、放射暗纹/双线角花/宝石框装饰、移除 flip-bounce 动画修复翻面跳帧、浅色缎带对比度修复） |
 | **v5.13** | 2026-08-02 | CardArena 极繁深化（舞台四角纹章 + 珠串边线 + 分区面板金珠内框 + 徽章三层八珠光环；随从卡 112×150 统一长方形极繁样式 + 出战区英文宫衔/八角星水印；战斗特效系统：伤害飘字/受击闪光/冲击波/攻击者前倾/死亡化灰烬/换人 3D 幽灵卡翻飞/召唤翻转入场/抽牌 3D 翻入，UI 状态快照对比驱动、特效挂载 body 防 AI 多轮渲染清除；随从关键词中文化；修复 2 个致命 Bug（minions 字段不存在 / ns.hero 不存在）+ AI 攻击已死目标；**v5.13 补充**：抽牌 3D 翻入特效 + 抽牌不生效修复（handLimit 5→7/牌库 6→12 翻倍）+ 八角星徽彩色渐变 SVG 立体化（mask 单色平面→23 元素彩色渐变+描边+宝石珠+高光，明暗两套）+ 四角纹章四方向旋转贴合（tl/tr/bl/br rotate 0/90/270/180）+ 抽牌落点精准（DOMRect 数组，与屏幕大小无关）+ 移动端 ≤640px 横向滚动优化（手牌/随从/角色牌区 overflow-x + 光环装饰弱化隐藏，根因：v5.13 极繁样式覆盖原移动端规则） |
 | **v5.14** | 2026-08-03 | CardArena 对战页面去框化重构（月圆之夜×游戏王融合）：①角色卡构图修复——英文宫衔缎带 0.62→0.5rem、徽记区 min-height 80→56px、外/内八角星 86/52→64/40px、角色名 1.12→1rem、简介 0.72→0.66rem、数值框 0.8→0.72rem、被动 0.68→0.62rem，全链路压缩确保 3/4 卡面统一大小后零溢出；②四角纹章移至背景层——z-index 3→0、opacity 0.9→0.12（深色 0.10）、mask 88→64px，加 `.ca-stage > *{z-index:1}` 确保内容在纹章之上，#ca-start/#ca-count 加半透明底板 + z-index:2 双保险，绝不遮挡开始按钮和已选显示；③分区去框——roster/board/hand/log/hero 移除 border + inset box-shadow + ::before/::after 内框与四角金珠，借鉴月圆之夜无框沉浸 + 游戏王战场分区：敌方随从区暗红渐变(ca-board-enemy)、我方随从区金绿渐变(ca-board-player)、日志仅上下分隔金线、手牌半透明金底、英雄半透明状态面板(overflow:hidden 顶金线)；④卡牌本身保留卡牌感(.ca-card/.ca-minion 不动)，仅容器去框 |
-| **v5.14 补充** | 2026-08-03 | CardArena 对战页二维战场布局重构——`.ca-layout` flex-column→CSS Grid（grid-template-areas 重排，DOM 零改动）；桌面端≥900px 双列：主战场(1fr) + 日志侧栏(210px)，日志 grid-area 跨 zone-enemy/zone-player 两行（左侧金线分隔 + 内部 flex 滚动，不再占整行长条）；zone 内部 flex-column→flex-row，英雄面板 flex:0 0 172px + 随从战场 flex:1 并排（DOM 顺序天然镜像对峙：敌方 hero\|board / 我方 board\|hero）；窄英雄面板内容居中（宫衔去侧线/星水印居中淡显 0.07/法力居中）；移动端<900px 单列堆叠保持原序；解决「每个区域都是长条方块」的视觉单调 |
+| **v5.14 补充** | 2026-08-03 | CardArena 对战页二维战场布局重构——`.ca-layout` flex-column→CSS Grid（grid-template-areas 重排，DOM 零改动）；桌面端≥900px 双列：主战场(1fr) + 日志侧栏(210px)，日志 grid-area 跨 zone-enemy/zone-player 两行（左侧金线分隔 + 内部 flex 滚动，不再占整行长条）；zone 内部 flex-column→flex-row，英雄面板 flex:0 0 172px + 随从战场 flex:1 并排（DOM 顺序天然镜像对峙：敌方 hero\|board / 我方 board\|hero）；窄英雄面板内容居中（宫衔去侧线/星水印居中淡显 0.07/法力居中）；移动端<900px 单列堆叠保持原序；解决「每个区域都是长条方块」的视觉单调；**bug 修复**：zone flex-direction 级联 bug（媒体查询 row 被基础 column 同特异性源序覆盖，改 .ca-layout .ca-zone 提升特异性 0,2,0）+ 移动端 grid 溢出（1fr→minmax(0,1fr) 防 min-width:auto 撑爆） |
+| **v5.15** | 2026-08-03 | CardArena 每角色独立卡池系统——引擎 makeSide 为每个角色构建独立 12 张卡池（role.deck，buildDeck 6 牌×2），side.deck 引用当前出战角色卡池（抽牌 pop 消耗该数组）；swapRole/checkRoleDeath 只切换 side.deck 引用不重建 buildDeck，保留每角色剩余张数（换人再切回仍延续上次剩余）；UI 三处卡池展示：roster chip 金色宝石徽章（剩余数，空池变灰红）+ hero 面板「卡池 X/12」可点击指示器（stopPropagation 防触发英雄选攻击者）+ showPoolModal 苏丹风弹窗（按 cardId 聚合计数、品级缎带 tierEn+费用宝石+数量徽章×N+空池提示，点击遮罩/关闭按钮关闭）；卡池为空 drawCards break 无法抽牌；setup 选卡屏大屏适配（.ca-setup-grid minmax 190→150px + max-width 680px 居中，压缩卡片高度防上下滚动） |
 
 ---
 

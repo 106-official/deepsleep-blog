@@ -37,6 +37,19 @@ slug: "learn"
     </div>
     <span class="learn-card-btn">查看路径 →</span>
   </a>
+  <a href="/learn/network-protocols/" class="learn-card learn-card-proto">
+    <div class="learn-card-icon">🌐</div>
+    <div class="learn-card-cert">NET</div>
+    <h2 class="learn-card-title">网络协议</h2>
+    <p class="learn-card-en">Network Protocols</p>
+    <div class="learn-card-meta">
+      <span>30 个常用协议</span>
+      <span>OSI 分层</span>
+      <span>原理 + 实战</span>
+    </div>
+    <span class="learn-card-btn">查看路径 →</span>
+  </a>
+
 </div>
 
 <div class="learn-home-notice">

@@ -1,0 +1,72 @@
+---
+title: "802.1X — 基于端口的网络访问控制"
+description: "在接入端口上做入网身份认证 / 数据链路层 / 无端口（EAPOL EtherType 0x888E）/ IEEE 802.1X-2020"
+layout: "learn"
+category: "network-protocols"
+layer: "数据链路层"
+weight: 1
+rfc: "IEEE 802.1X-2020（相关：RFC 3748 EAP、RFC 2865 RADIUS、RFC 5216 EAP-TLS）"
+port: "无（EAPOL EtherType 0x888E）；后端 RADIUS 用 UDP 1812/1813"
+keywords: ["802.1X", "EAPOL", "EAP", "RADIUS", "端口认证", "NAC", "supplicant", "authenticator", "EAP-TLS", "PEAP"]
+ShowToc: true
+TocOpen: true
+---
+
+## 1. 协议定位
+
+| 项目 | 信息 |
+|------|------|
+| 所属层 | 数据链路层（作用于二层接入端口，认证通过前不放行任何业务流量） |
+| 英文全称 | IEEE 802.1X — Port-Based Network Access Control（基于端口的网络访问控制） |
+| 主要标准 | **IEEE 802.1X-2020**（历版：2001 / 2004 / 2010）；配套 **RFC 3748**（EAP）、**RFC 2865/2866**（RADIUS 认证/计费）、**RFC 3579**（RADIUS 承载 EAP）、**RFC 5216**（EAP-TLS） |
+| 端口 | **协议本身无端口**。EAPOL 直接跑在以太网帧上，**EtherType = 0x888E**；后端 Authenticator ↔ RADIUS 服务器使用 **UDP 1812（认证）/ 1813（计费）**（旧端口 1645/1646） |
+| 封装于 | 以太网帧（有线）/ 802.11 数据帧（无线）；EAP 报文封装进 EAPOL，再由认证者转封装进 RADIUS 属性 |
+| 典型应用 | 企业有线接入认证、企业 Wi-Fi（WPA2/WPA3-Enterprise）、校园网/园区网准入、零信任 NAC、动态 VLAN 下发、访客网络隔离 |
+
+## 2. 一句话理解
+
+**802.1X 是"网络端口上的门禁刷卡机"**：交换机端口默认是一堵墙，只留一个小窗口（只放行 EAPOL 认证报文）；你把凭据递进去，后台 RADIUS 服务器验完身份说 OK，这堵墙才整个打开，让你的数据流通行。
+
+## 3. 它解决什么问题
+
+传统二层接入是"**插上网线就能上网**"，带来一系列问题：
+
+1. **无身份边界**：任何人拿到一根网线或找到一个空闲网口，就能接入内网，扫描、嗅探、横向移动。
+2. **MAC 认证不可靠**：靠 MAC 地址白名单做准入极易被伪造（`ip link set eth0 address ...` 一条命令即可）。
+3. **认证太晚**：如果依赖 VPN、门户 Portal 或应用层登录，攻击者在认证之前**已经在二层网络里**，可以发起 ARP 欺骗、DHCP 假冒等攻击。
+4. **策略无法随人走**：员工换工位/换设备后，VLAN、ACL、QoS 需要手工重配。
+
+802.1X 把认证**提前到二层链路建立阶段**，实现"**先认证、后入网**"：
+
+- 认证前，端口处于**非授权状态**，除 EAPOL 外一切帧（含 ARP、DHCP、IP）全部丢弃；
+- 认证通过后端口转为**授权状态**，并可由 RADIUS **动态下发 VLAN、ACL、QoS、会话超时**等策略，实现"策略跟着人走"。
+
+## 4. 核心特征
+
+- **三角色架构**：Supplicant（申请者）、Authenticator（认证者）、Authentication Server（认证服务器），职责严格分离。
+- **认证者是"哑代理"**：交换机/AP **不判断**凭据对错，只做 EAPOL ↔ RADIUS 的报文中继与端口状态控制，因此升级认证方式无需改造网络设备。
+- **EAP 可扩展**：802.1X 本身不定义如何验证身份，而是承载 EAP。换成 EAP-TLS（证书）、PEAP-MSCHAPv2（域账号）、EAP-TTLS、EAP-SIM 等只是换"里子"。
+- **双向受控端口模型**：每个物理端口在逻辑上分为**受控端口（Controlled Port）**与**非受控端口（Uncontrolled Port）**，后者永远只通 EAPOL。
+- **可下发动态策略**：RADIUS Access-Accept 中携带 `Tunnel-Private-Group-ID`（动态 VLAN）、`Filter-Id`（ACL）、`Session-Timeout` 等属性。
+- **无线场景强绑定**：WPA2/WPA3-Enterprise 就是 802.1X + EAP，认证成功后由 EAP 会话导出 **MSK/PMK**，再经四次握手生成加密密钥。
+- **802.1X-2010 起支持 MACsec**：可在认证之后为链路提供逐帧加密（MKA 密钥协商）。
+
+## 5. 与其他协议的关系
+
+| 相关协议 | 关系说明 |
+|---------|---------|
+| **EAP（RFC 3748）** | 802.1X **承载**的认证框架本身。EAP 定义 Request/Response/Success/Failure 四类报文与协商流程 |
+| **EAPOL** | EAP over LAN，802.1X 定义的**二层封装**（EtherType 0x888E），负责把 EAP 从终端送到接入设备 |
+| **RADIUS（RFC 2865 / 3579）** | 认证者与认证服务器之间的后端协议，把 EAP 报文塞进 `EAP-Message` 属性转发；也可用 **Diameter** 或 **TACACS+**（后者更多用于设备管理登录） |
+| **802.11i / WPA2-WPA3 Enterprise** | 无线场景直接采用 802.1X 作为认证框架，EAP 成功后导出 PMK 供四次握手使用 |
+| **MACsec（802.1AE）+ MKA（802.1X-2010）** | 认证成功后可继续协商密钥，为二层帧提供加密与完整性保护 |
+| **DHCP / ARP** | 认证**未通过前一律被端口丢弃**——"网线插上却拿不到 IP"是 802.1X 环境最典型的现象 |
+| **DHCP Snooping / DAI / Port-Security** | 同属接入层安全，但它们校验"报文内容合法性"，802.1X 校验"人/设备身份"，通常叠加部署 |
+| **Portal / Web 认证** | 应用层准入方案，认证前已能拿 IP，安全性弱于 802.1X，常作为访客网络的补充或降级手段 |
+
+## 6. 本目录学习路线
+
+1. **[01-原理与报文](./01-原理与报文.md)** — 三角色分工、受控/非受控端口模型、EAPOL 帧格式与 5 种类型、EAP 四类报文、完整认证时序（含 RADIUS 转换）、常见 EAP 方法对比、动态 VLAN 与 MAB 机制。
+2. **[02-实战与排错](./02-实战与排错.md)** — Wireshark 抓 EAPOL/RADIUS，`wpa_supplicant` 客户端配置、交换机与 FreeRADIUS 配置、"拿不到 IP""认证反复失败""证书过期"等故障排查。
+
+> **学习建议**：802.1X 的难点不在报文格式，而在**三方之间两段不同协议（EAPOL / RADIUS）的拼接**。学习时始终用"EAP 是内容、EAPOL 与 RADIUS 是两段不同的运输车"这个模型去理解，就不会被绕晕。

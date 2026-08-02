@@ -16,7 +16,7 @@
           <span class="stagemode-logo-icon"></span>
           <span>SleepTown 鱼塘推理</span>
         </div>
-        <p class="stagemode-version">v3.4.0 · 深夜渔港 Noir · 第3章"深水区"</p>
+        <p class="stagemode-version">v3.4.1 · 深夜渔港 Noir · 第3章"深水区"</p>
       </div>
       <nav class="stagemode-nav">
         <!-- 游戏模式 -->
@@ -171,7 +171,7 @@
     <div class="rules-modal-overlay" onclick="closeRulesModal()"></div>
     <div class="rules-modal-content">
       <button class="rules-modal-close" onclick="closeRulesModal()" aria-label="关闭">×</button>
-      <h2 class="rules-modal-title">游戏规则 v3.4.0</h2>
+      <h2 class="rules-modal-title">游戏规则 v3.4.1</h2>
 
       <div class="rules-section-setup">
         <h4> 重要：伪装机制 (v2.1.1.2更新)</h4>
@@ -569,7 +569,7 @@
   <!-- 规则弹窗 -->
   <div id="rules-modal" class="modal-overlay" style="display:none">
     <div class="modal-content rules-content">
-      <h2> SleepTown 完整规则 v3.4.0</h2>
+      <h2> SleepTown 完整规则 v3.4.1</h2>
 
       <div class="rules-section">
         <h3> 角色介绍（十二种角色）</h3>
@@ -1078,6 +1078,7 @@ function maybeShowRoleIntro(stageId) {
     return '<div class="' + cls + '">'
       + '<h4>' + getRoleAvatar(r) + ' ' + getRoleName(r) + '（' + (meta.faction || '') + '）</h4>'
       + '<p>' + (meta.desc || '（暂无机制说明）') + '</p>'
+      + '<p class="role-intro-tip"><span class="role-intro-tip-label">玩法 / 应对</span> ' + (meta.tip || '') + '</p>'
       + '</div>';
   }).join('');
 
@@ -1176,18 +1177,18 @@ function backToModeSelection() {
 
 // ==================== 首页 sidebar 鱼图鉴 (v5.9) ====================
 const FISH_ROLES = {
-  slacker:    { name: '摆烂D',   faction: '豪鱼阵营', factionClass: 'good',  icon: '', badge: '',    desc: '普通的好鱼，翻开后无事发生。' },
-  detective:  { name: '侦探D',   faction: '豪鱼阵营', factionClass: 'good',  icon: '', badge: '',    desc: '告诉你一条<strong>真实坏鱼</strong>的编号。' },
-  judge:      { name: '法官D',   faction: '豪鱼阵营', factionClass: 'good',  icon: '', badge: '',    desc: '宣判一只<strong>非豪鱼</strong>的编号。' },
-  gossip:     { name: '八卦鱼',   faction: '豪鱼阵营', factionClass: 'good',  icon: '', badge: '',    desc: '检查相邻号码，有非好鱼回复<strong>"有瓜吃！"</strong>，没有则<strong>"并没有瓜..."</strong>' },
-  sleepwalker:{ name: '梦游D',   faction: '豪鱼阵营', factionClass: 'good',  icon: '', badge: 'NEW', desc: '翻开后提供<strong>3个号码</strong>，其中一只是坏鱼或中立！' },
-  coroner:    { name: '验尸官',   faction: '豪鱼阵营', factionClass: 'good',  icon: '', badge: 'NEW', desc: '翻开后验尸：随机揭示一只<strong>已死亡</strong>鱼的真实身份，从尸检中还原真相。' },
-  mage:       { name: '法师D',   faction: '中立阵营', factionClass: 'neutral', icon: '', badge: 'NEW', desc: '每晚令一只鱼的特性<strong>失效</strong>！问询时告知昨晚影响了谁。' },
-  trickster:  { name: '恶作剧D', faction: '中立阵营', factionClass: 'neutral', icon: '', badge: '',    desc: '翻开会<strong>减少一次</strong>问询机会！（v2.1.1.1修改）' },
-  orca:       { name: '虎鲸',     faction: '中立阵营', factionClass: 'neutral', icon: '', badge: '',    desc: '<strong>每夜晚</strong>都会随机杀死一条其他的鱼（不分阵营）！' },
-  phantom:    { name: '幽灵',     faction: '中立阵营', factionClass: 'neutral', icon: '', badge: 'NEW', desc: '翻开后当夜会<strong>额外带走一条随机的鱼</strong>（不分阵营），制造混乱。' },
-  evil:       { name: '邪恶D',   faction: '坏鱼阵营', factionClass: 'evil',  icon: '', badge: '',    desc: '每晚会杀死一只豪鱼。被翻开时会<strong>完美伪装</strong>成其他角色。' },
-  martyr:     { name: '殉道D',   faction: '坏鱼阵营', factionClass: 'evil',  icon: '', badge: 'NEW', desc: '<strong>死亡后</strong>会立即杀死一只好鱼作为报复！同样会伪装。' },
+  slacker:    { name: '摆烂D',   faction: '豪鱼阵营', factionClass: 'good',  icon: '', badge: '',    desc: '普通的好鱼，翻开后无事发生。', tip: '你只是无名好鱼，翻错也别慌。流放阶段优先采信侦探与法官的线索，别凭直觉下刀；保命即是贡献。' },
+  detective:  { name: '侦探D',   faction: '豪鱼阵营', factionClass: 'good',  icon: '', badge: '',    desc: '告诉你一条<strong>真实坏鱼</strong>的编号。', tip: '你是好鱼方的灯塔。记下你指向的号码，白天主动报点；若被流放，务必在出局前把线索说清，别带进坟里。' },
+  judge:      { name: '法官D',   faction: '豪鱼阵营', factionClass: 'good',  icon: '', badge: '',    desc: '宣判一只<strong>非豪鱼</strong>的编号。', tip: '你给出的号码一定不是好鱼（坏或中立）。把你的指认和侦探的坏鱼编号取交集，能极快缩小凶手范围。' },
+  gossip:     { name: '八卦鱼',   faction: '豪鱼阵营', factionClass: 'good',  icon: '', badge: '',    desc: '检查相邻号码，有非好鱼回复<strong>"有瓜吃！"</strong>，没有则<strong>"并没有瓜..."</strong>', tip: '你只能看邻居，信息有限却能验证"夹心"排布。若回报"有瓜吃"，说明左右必有坏鱼或中立，可据此往两侧推断。' },
+  sleepwalker:{ name: '梦游D',   faction: '豪鱼阵营', factionClass: 'good',  icon: '', badge: 'NEW', desc: '翻开后提供<strong>3个号码</strong>，其中一只是坏鱼或中立！', tip: '你给出的三个号码里藏着一个威胁。把它当作"嫌疑池"，结合法官与侦探的结论逐步排除，别单独轻信某号。' },
+  coroner:    { name: '验尸官',   faction: '豪鱼阵营', factionClass: 'good',  icon: '', badge: 'NEW', desc: '翻开后验尸：随机揭示一只<strong>已死亡</strong>鱼的真实身份，从尸检中还原真相。', tip: '尸体不会说谎。优先验死得蹊跷的好鱼或疑案，往往能翻出被伪装掩盖的真相；流放阶段前验尸最值。' },
+  mage:       { name: '法师D',   faction: '中立阵营', factionClass: 'neutral', icon: '', badge: 'NEW', desc: '每晚令一只鱼的特性<strong>失效</strong>！问询时告知昨晚影响了谁。', tip: '你是搅局者。把"失效"用在虎鲸或邪恶D身上能救场，也能故意放开制造混沌——用得巧妙才是高手，别无脑封自己人。' },
+  trickster:  { name: '恶作剧D', faction: '中立阵营', factionClass: 'neutral', icon: '', badge: '',    desc: '翻开会<strong>减少一次</strong>问询机会！（v2.1.1.1修改）', tip: '你翻开会剥夺一次问询，拖慢好鱼节奏。好鱼若发现问询变少，立刻怀疑身边有你；你则要藏好，别过早暴露身份。' },
+  orca:       { name: '虎鲸',     faction: '中立阵营', factionClass: 'neutral', icon: '', badge: '',    desc: '<strong>每夜晚</strong>都会随机杀死一条其他的鱼（不分阵营）！', tip: '你无视阵营随机杀人，人人自危。好鱼别把"夜里有死鱼"都算在邪恶D头上；你则利用混乱掩盖自己的真实意图。' },
+  phantom:    { name: '幽灵',     faction: '中立阵营', factionClass: 'neutral', icon: '', badge: 'NEW', desc: '翻开后当夜会<strong>额外带走一条随机的鱼</strong>（不分阵营），制造混乱。', tip: '你制造一次性的混乱。好鱼方要意识到某夜可能"多死一条"，别被额外尸体误导判断；你则趁乱脱身。' },
+  evil:       { name: '邪恶D',   faction: '坏鱼阵营', factionClass: 'evil',  icon: '', badge: '',    desc: '每晚会杀死一只豪鱼。被翻开时会<strong>完美伪装</strong>成其他角色。', tip: '你兼具击杀与伪装。白天伪装成无害好鱼混在人群，专挑信息核心（侦探/法官）下手；好鱼要警惕"完美无害"的鱼。' },
+  martyr:     { name: '殉道D',   faction: '坏鱼阵营', factionClass: 'evil',  icon: '', badge: 'NEW', desc: '<strong>死亡后</strong>会立即杀死一只好鱼作为报复！同样会伪装。', tip: '你死了也要拉垫背。好鱼流放你之前，先确认当晚还有谁会死、能否承受报复；必要时留你到夜杀解决。' },
 };
 
 // ==================== 阵营分类（单一真相源，由 FISH_ROLES 派生）====================
@@ -1213,7 +1214,8 @@ function switchFishRole(roleId) {
     ${role.badge ? `<span class="new-badge">${role.badge}</span>` : ''}
     <span class="fish-faction-badge faction-${role.factionClass}">${role.faction}</span>
   `;
-  document.getElementById('fish-detail-body').innerHTML = `<p class="fish-detail-desc">${role.desc}</p>`;
+  document.getElementById('fish-detail-body').innerHTML = `<p class="fish-detail-desc">${role.desc}</p>`
+    + (role.tip ? `<p class="fish-detail-tip"><span class="fish-detail-tip-label">玩法 / 应对</span> ${role.tip}</p>` : '');
   // 更新 sidebar active
   document.querySelectorAll('#stagemode-sidebar-home .stagemode-nav-link').forEach(l => l.classList.remove('active'));
   const link = document.querySelector(`#stagemode-sidebar-home [data-fish="${roleId}"]`);
@@ -3289,6 +3291,28 @@ function resetGame() {
 .role-intro-list .role-card { margin: 0; }
 .role-intro-list .role-card h4 { font-size: 1.02rem; }
 .role-intro-list .role-card p { font-size: 0.88rem; }
+.role-intro-tip {
+  margin: 0.35rem 0 0; padding: 0.5rem 0.7rem;
+  font-size: 0.82rem; line-height: 1.6; color: var(--st-ink-soft);
+  background: linear-gradient(180deg, rgba(196,164,86,0.10), rgba(196,164,86,0.04));
+  border-left: 2px solid var(--st-lamp); border-radius: 0 6px 6px 0;
+}
+.role-intro-tip-label {
+  display: inline-block; margin-right: 0.35rem; padding: 0.05rem 0.45rem;
+  font-size: 0.7rem; letter-spacing: 0.04em; color: var(--st-lamp);
+  border: 1px solid var(--st-lamp); border-radius: 999px;
+}
+.fish-detail-tip {
+  margin: 1rem 0 0; padding: 0.7rem 0.9rem;
+  font-size: 0.9rem; line-height: 1.7; color: var(--st-ink-soft);
+  background: linear-gradient(180deg, rgba(196,164,86,0.10), rgba(196,164,86,0.04));
+  border-left: 2px solid var(--st-lamp); border-radius: 0 6px 6px 0;
+}
+.fish-detail-tip-label {
+  display: inline-block; margin-right: 0.4rem; padding: 0.08rem 0.5rem;
+  font-size: 0.74rem; letter-spacing: 0.04em; color: var(--st-lamp);
+  border: 1px solid var(--st-lamp); border-radius: 999px;
+}
 
 /* ---------- 10. 规则弹窗内容 ---------- */
 .rules-modal {

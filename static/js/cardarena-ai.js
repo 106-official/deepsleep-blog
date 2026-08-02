@@ -164,9 +164,10 @@
   function buildDeckAI(roleId) {
     var def = DATA.ROLE_POOL.find(function (r) { return r.id === roleId; });
     var deck = [];
+    // 每张牌放 2 份（12 张），与引擎 buildDeck 保持一致，避免抽牌类效果提前失效
     def.deck.forEach(function (cid) {
       var card = getCard(cid);
-      if (card) deck.push(card.id);
+      if (card) deck.push(card.id, card.id);
     });
     for (var i = deck.length - 1; i > 0; i--) {
       var j = Math.floor(Math.random() * (i + 1));

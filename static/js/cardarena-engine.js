@@ -59,9 +59,10 @@
   function buildDeck(roleId) {
     var def = DATA.ROLE_POOL.find(function (r) { return r.id === roleId; });
     var deck = [];
+    // 每张牌放 2 份（12 张），避免牌库过早抽空导致抽牌类效果失效
     def.deck.forEach(function (cid) {
       var card = DATA.CARDS.find(function (c) { return c.id === cid; });
-      if (card) deck.push(card.id);
+      if (card) deck.push(card.id, card.id);
     });
     return shuffle(deck);
   }

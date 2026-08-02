@@ -4,7 +4,7 @@ window.CARDARENA_DATA = (function () {
 
   // 全局配置
   const GAME_CONFIG = {
-    handLimit: 5,
+    handLimit: 7,
     manaMax: 5,
     manaStart: 3,
     manaRegen: 2,

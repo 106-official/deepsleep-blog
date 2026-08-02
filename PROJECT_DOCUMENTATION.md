@@ -1327,6 +1327,99 @@ Hugo 的 partial 查找是精确匹配文件名，找不到 `extend_head.html` �
 
 ---
 
+## 📚 Bug Fix Q&A: CardArena 抽牌效果不生效（2026-08-02）
+
+### ❓ Problem: 抽两张牌的卡牌不生效，使用后没有多两张牌
+
+**Symptoms**:
+- 「抽牌术」/「占卜」等抽牌法术打出后，手牌数量没有明显增加
+- 预言家（r3，被动每回合多抽 1 张）游玩时最明显——手牌极易顶满，抽牌法术完全失效
+- 中后期所有抽牌效果全部失效（牌库抽空）
+
+**Environment Context**:
+- Date: 2026-08-02
+- Affected Component: CardArena 卡牌对战（`/play/cardarena/`）· 数值配置
+- 相关文件：`static/js/cardarena-data.js` / `static/js/cardarena-engine.js` / `static/js/cardarena-ai.js`
+
+---
+
+### 🔍 Root Cause Analysis
+
+**Technical Root Cause**:
+两个数值配置问题叠加导致抽牌效果「看着像 bug」：
+1. **手牌上限仅 5**（`GAME_CONFIG.handLimit: 5`）：手牌满 5 张时打出抽 2 张法术，流程为「打出扣 1 张 → 抽 2 张」→ 第 2 张被 `drawCards` 的 `hand.length >= handLimit` 拦截，净增 0 张。预言家被动每回合多抽 1，两回合内必然顶满 5 张。
+2. **牌库仅 6 张**（每角色 6 种卡各 1 份）：起手抽 3 + 每回合抽 1，第 3 回合牌库即抽空；`drawCards` 遇到 `deck.length === 0` 直接 break，此后所有抽牌（含亡语抽牌/被动）永久失效。
+
+**Discovery Method**:
+- 用户实测反馈 → 静态代码审查 `playCard` → `applyEffect('draw')` → `drawCards` 全链路
+- 浏览器控制台直接操作引擎状态复现：满手牌时抽牌法术净增 0 张
+
+**Why It Failed**:
+引擎逻辑本身正确（`playCard` 先 splice 再 `applyEffect` 抽牌），失败在**数值边界**：手牌上限太紧 + 牌库太小，正常对局中必然触发拦截条件，使抽牌法术退化为无效牌。
+
+---
+
+### ✅ Solution: 提高手牌上限至 7 + 牌库翻倍至 12 张
+
+**Fix Applied**:
+1. **手牌上限 5 → 7**（`cardarena-data.js` `GAME_CONFIG.handLimit`）：预留抽牌空间，手牌 6 张以下打出抽 2 张都能完整抽进
+   - Before: `handLimit: 5`
+   - After: `handLimit: 7`
+2. **牌库每张牌 2 份（6 → 12 张）**（`cardarena-engine.js` `buildDeck` + `cardarena-ai.js` `buildDeckAI`）：两处组牌逻辑同步 `deck.push(card.id, card.id)`，避免抽牌效果提前因牌库耗尽失效
+
+**Files Modified**:
+- [`cardarena-data.js`](file:///c:/Users/26516/Desktop/n8n/blog-static/static/js/cardarena-data.js): `handLimit: 5 → 7`
+- [`cardarena-engine.js`](file:///c:/Users/26516/Desktop/n8n/blog-static/static/js/cardarena-engine.js): `buildDeck` 每张牌 push 2 份
+- [`cardarena-ai.js`](file:///c:/Users/26516/Desktop/n8n/blog-static/static/js/cardarena-ai.js): `buildDeckAI` 每张牌 push 2 份（与引擎保持一致）
+
+---
+
+### 🧪 Verification
+
+**Test Results**（浏览器子代理实测，http://localhost:1315/play/cardarena/）:
+- ✅ 配置检查：`GAME_CONFIG.handLimit = 7`
+- ✅ 开局牌库：牌库 + 手牌合计 12 张（修复前 6 张），每张卡均出现 2 次
+- ✅ 手牌 3 张时打「抽牌术」：3 → 4（打 1 抽 2 净 +1，抽牌正常触发）
+- ✅ 手牌 6 张时打「抽牌术」：6 → 7（新上限 7 下完整抽进 2 张，不再被卡）
+- ✅ 无引擎 JS 错误
+
+**Rollback Plan**:
+如需回滚：`handLimit` 改回 5，`deck.push(card.id, card.id)` 改回 `deck.push(card.id)`（引擎与 AI 两处）。
+
+---
+
+### 💡 Prevention & Best Practices
+
+**To Prevent Recurrence**:
+1. 新增抽牌类效果前，先核对 `handLimit` 与牌库规模：抽牌价值 = 可抽牌数 × 牌库剩余量，两者任一过小都会让抽牌退化为无效牌
+2. 引擎 `drawCards` 的边界分支（牌库空/手牌满）改动需在 `cardarena-engine.js` 与 `cardarena-ai.js` **两处同步**（AI 直接操作 side 状态对象）
+
+**Related Documentation**:
+- v5.13 更新日志（CardArena 极繁深化章节）
+- CardArena 设计文档：`docs/superpowers/specs/2026-08-02-cardarena-sultan-card-design.md`
+
+---
+
+### 📊 Impact Summary
+
+| Metric | Value |
+|--------|-------|
+| **Severity** | 🟡 High（核心玩法数值问题，非崩溃） |
+| **Downtime** | 无 |
+| **Users Affected** | 使用抽牌卡/预言家的玩家 |
+| **Time to Fix** | ~20 分钟（含验证） |
+| **Complexity** | Low（3 处数值/循环改动） |
+
+---
+
+**🎓 Key Learnings**:
+> 抽牌类效果「不生效」不一定是逻辑 bug，先检查数值边界（手牌上限 + 牌库规模）。引擎与 AI 两套组牌逻辑必须同步修改，否则 AI 与玩家体验不一致。
+
+**🔗 Related Issues**:
+- v5.13 迭代中修复的 `analyzeFx` 两个致命 Bug（同为浏览器实测发现）
+
+---
+
 ## 📝 更新日志
 
 ### v5.12 (2026-08-02) - CardArena 苏丹宫廷风卡牌样式

@@ -16,7 +16,7 @@
           <span class="stagemode-logo-icon"></span>
           <span>SleepTown 鱼塘推理</span>
         </div>
-        <p class="stagemode-version">v3.3.0 · 深夜渔港 Noir · 第3章"深水区"</p>
+        <p class="stagemode-version">v3.4.0 · 深夜渔港 Noir · 第3章"深水区"</p>
       </div>
       <nav class="stagemode-nav">
         <!-- 游戏模式 -->
@@ -171,7 +171,7 @@
     <div class="rules-modal-overlay" onclick="closeRulesModal()"></div>
     <div class="rules-modal-content">
       <button class="rules-modal-close" onclick="closeRulesModal()" aria-label="关闭">×</button>
-      <h2 class="rules-modal-title">游戏规则 v3.3.0</h2>
+      <h2 class="rules-modal-title">游戏规则 v3.4.0</h2>
 
       <div class="rules-section-setup">
         <h4> 重要：伪装机制 (v2.1.1.2更新)</h4>
@@ -569,7 +569,7 @@
   <!-- 规则弹窗 -->
   <div id="rules-modal" class="modal-overlay" style="display:none">
     <div class="modal-content rules-content">
-      <h2> SleepTown 完整规则 v3.3.0</h2>
+      <h2> SleepTown 完整规则 v3.4.0</h2>
 
       <div class="rules-section">
         <h3> 角色介绍（十二种角色）</h3>
@@ -648,6 +648,17 @@
       </div>
 
       <button onclick="closeModal('rules-modal')" class="close-rules-btn">了解了！</button>
+    </div>
+  </div>
+
+  <!-- 首登场角色机制介绍弹窗 -->
+  <div id="role-intro-modal" class="modal-overlay" style="display:none">
+    <div class="modal-content role-intro-content">
+      <p class="role-intro-stage" id="role-intro-stage"></p>
+      <h2 class="role-intro-title">新鱼登场 · 机制简报</h2>
+      <p class="role-intro-sub">本关首次出现以下角色，先看清它们的底细：</p>
+      <div class="role-intro-list" id="role-intro-list"></div>
+      <button onclick="closeModal('role-intro-modal')" class="close-rules-btn">开始了 →</button>
     </div>
   </div>
 </div>
@@ -1033,6 +1044,48 @@ const stageConfigs = {
   }
 };
 
+// 关卡顺序（全局：供「下一关」与「首登场角色」共用，单一真相源）
+const stageOrder = ['1-1', '1-2', '1-3', '1-4', '1-5', '1-6', '1-7', '1-8', '2-1', '2-2', '2-3', '3-1', '3-2'];
+
+// 首登场关卡：每个角色第一次出现在哪个关卡（由 stageOrder × stageConfigs 推导）
+const ROLE_FIRST_STAGE = (function () {
+  const map = {};
+  stageOrder.forEach(function (sid) {
+    const cfg = stageConfigs[sid];
+    if (!cfg) return;
+    cfg.roles.forEach(function (r) {
+      if (!(r in map)) map[r] = sid;
+    });
+  });
+  return map;
+})();
+
+// 进入关卡时，若该关含「首次登场」的角色，弹出机制介绍弹窗
+function maybeShowRoleIntro(stageId) {
+  const cfg = stageConfigs[stageId];
+  if (!cfg) return;
+
+  // 本关去重后的角色中，哪些是「第一次登场」
+  const debuts = [...new Set(cfg.roles)].filter(function (r) {
+    return ROLE_FIRST_STAGE[r] === stageId;
+  });
+  if (debuts.length === 0) return;
+
+  const list = document.getElementById('role-intro-list');
+  list.innerHTML = debuts.map(function (r) {
+    const meta = FISH_ROLES[r] || {};
+    const cls = 'role-card ' + (meta.factionClass ? meta.factionClass + '-role' : 'neutral-role');
+    return '<div class="' + cls + '">'
+      + '<h4>' + getRoleAvatar(r) + ' ' + getRoleName(r) + '（' + (meta.faction || '') + '）</h4>'
+      + '<p>' + (meta.desc || '（暂无机制说明）') + '</p>'
+      + '</div>';
+  }).join('');
+
+  const stageName = cfg.name || stageId;
+  document.getElementById('role-intro-stage').textContent = '第 ' + stageId + ' 关 · ' + stageName;
+  document.getElementById('role-intro-modal').style.display = 'flex';
+}
+
 function startStageGame(stageId) {
   const config = stageConfigs[stageId];
   
@@ -1059,6 +1112,9 @@ function startStageGame(stageId) {
 
   // 使用固定角色列表初始化游戏
   initializeStageGame(config);
+
+  // 首登场角色机制介绍（若有本关初次出现的角色）
+  maybeShowRoleIntro(stageId);
 }
 
 function initializeStageGame(config) {
@@ -2308,7 +2364,6 @@ function showRulesModal() {
 
 // 获取下一关的ID
 function getNextStageId(currentStageId) {
-  const stageOrder = ['1-1', '1-2', '1-3', '1-4', '1-5', '1-6', '1-7', '1-8', '2-1', '2-2', '2-3', '3-1', '3-2'];
   const currentIndex = stageOrder.indexOf(currentStageId);
   if (currentIndex !== -1 && currentIndex < stageOrder.length - 1) {
     return stageOrder[currentIndex + 1];
@@ -3217,6 +3272,23 @@ function resetGame() {
   transition: all 0.16s ease;
 }
 .close-rules-btn:hover { filter: brightness(1.05); transform: translateY(-1px); }
+
+/* ---------- 9b. 首登场角色机制弹窗 ---------- */
+.role-intro-content { max-width: 600px; }
+.role-intro-stage {
+  font-family: var(--st-typewriter); color: var(--st-lamp-strong);
+  letter-spacing: 0.08em; font-size: 0.82rem; text-transform: uppercase;
+  margin: 0 0 0.3rem;
+}
+.role-intro-title {
+  font-family: var(--st-serif); color: var(--st-lamp);
+  font-size: 1.7rem; letter-spacing: 0.04em; margin: 0 0 0.4rem;
+}
+.role-intro-sub { color: var(--st-ink-soft); margin: 0 0 1.1rem; font-size: 0.9rem; line-height: 1.7; }
+.role-intro-list { display: flex; flex-direction: column; gap: 0.1rem; }
+.role-intro-list .role-card { margin: 0; }
+.role-intro-list .role-card h4 { font-size: 1.02rem; }
+.role-intro-list .role-card p { font-size: 0.88rem; }
 
 /* ---------- 10. 规则弹窗内容 ---------- */
 .rules-modal {

@@ -98,7 +98,8 @@
   --ca-tier-bright: var(--ca-tier-bronze-bright);
   display: flex;
   flex-direction: column;
-  align-items: center;
+  /* 不用 align-items:center —— .ca-role-art 无内联内容（星徽全 absolute），center 会使其宽度塌缩为 0（纹章压成一条线）；用默认 stretch 让 art 撑满宽度，文字靠 text-align:center、stats 靠自身 justify-content:center 居中 */
+  align-items: stretch;
   text-align: center;
   padding: 16px 11px 10px;
   border-radius: 10px;

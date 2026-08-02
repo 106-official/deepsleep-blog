@@ -6,9 +6,6 @@ slug: "learn"
 
 <div class="learn-home-hero">
   <h1 class="learn-home-title">📚 学习路径</h1>
-  <p class="learn-home-subtitle">财会证书系统化学习指南</p>
-  <div class="learn-home-divider"></div>
-  <p class="learn-home-desc">从零基础到持证会计师，按科目拆解、按阶段规划、按章节梳理。每一份路径都基于真实备考经验整理，避开弯路。</p>
 </div>
 
 <div class="learn-cards">
@@ -60,7 +57,7 @@ slug: "learn"
 <style>
 .learn-home-hero {
   text-align: center;
-  padding: 4rem 1.5rem 3rem;
+  padding: 3rem 1.5rem 2rem;
   max-width: 800px;
   margin: 0 auto;
 }
@@ -69,25 +66,7 @@ slug: "learn"
   font-size: clamp(2rem, 5vw, 3rem);
   font-weight: 700;
   color: var(--color-text-primary, #2d2d2d);
-  margin: 0 0 0.5rem;
-}
-.learn-home-subtitle {
-  font-size: 1.1rem;
-  color: var(--color-accent, #D4AF37);
-  letter-spacing: 0.1em;
-  margin: 0 0 1rem;
-}
-.learn-home-divider {
-  width: 60px;
-  height: 3px;
-  background: linear-gradient(90deg, var(--color-accent, #D4AF37), var(--color-accent-light, #F4E5B2));
-  margin: 0 auto 1.5rem;
-  border-radius: 2px;
-}
-.learn-home-desc {
-  color: var(--color-text-secondary, #666);
-  line-height: 1.8;
-  font-size: 0.95rem;
+  margin: 0;
 }
 .learn-cards {
   display: grid;

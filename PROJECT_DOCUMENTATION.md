@@ -1644,6 +1644,48 @@ Hugo 的 partial 查找是精确匹配文件名，找不到 `extend_head.html` �
 
 ---
 
+### v5.14 补充（同日追加）- 对战页二维战场布局重构
+
+**背景**：v5.14 去框化后，所有区域仍是垂直堆叠的「整宽长条」（`.ca-layout` flex-direction:column），角色牌区/随从区/日志区/手牌区视觉单调。需引入二维布局打破长条感。
+
+**重构方案**（纯 CSS Grid，DOM 零改动）:
+
+- ✅ **`.ca-layout` flex-column → CSS Grid**：用 `grid-template-areas` 重排子元素，不受 DOM 顺序限制
+  - 移动端（<900px）：单列堆叠，顺序与 DOM 一致（roster-enemy→zone-enemy→log→zone-player→roster-player→hand→actions）
+  - 桌面端（≥900px）：双列 `minmax(0,1fr) 210px`，主战场在左、日志侧栏在右
+    ```
+    "roster-enemy  roster-enemy"
+    "zone-enemy    log"          ← 日志跨 zone-enemy/zone-player 两行
+    "zone-player   log"
+    "roster-player roster-player"
+    "hand          hand"
+    "actions       actions"
+    ```
+- ✅ **日志侧栏化**：日志不再占整行长条，改为右侧侧栏跨越两个 zone 行；左侧金线分隔 + 半透明面板底 + 内部 `flex:1; overflow-y:auto` 滚动（日志多时不撑高战场）
+- ✅ **zone 内部 flex-column → flex-row**（游戏王对峙风）：英雄面板与随从战场并排
+  - `.ca-zone .ca-hero { flex: 0 0 172px }` 固定窄面板
+  - `.ca-zone .ca-board { flex: 1; min-width: 0 }` 战场填充剩余
+  - DOM 顺序天然形成镜像：zone-enemy = hero|board（敌方英雄在左）、zone-player = board|hero（我方英雄在右）→ 对角线对峙
+- ✅ **窄英雄面板适配**（172px）：内容居中（text-align:center）、英文宫衔去左右渐隐金线（::before/::after display:none）、八角星水印改居中淡显（opacity 0.07）、法力宝石居中、角色名 1.15→1.02rem
+- ✅ **移动端保持原序**：<900px 回退单列堆叠，zone 仍 flex-column（英雄/随从上下堆叠），不影响小屏体验
+
+**设计要点**:
+- roster/hand/actions 保持整宽（chips 与卡牌天然横排，整宽合理）
+- 仅中间核心战场（zone×2 + log）二维化，打破「全长条」单调
+- 日志侧栏让主战场连续（敌方 zone 与我方 zone 纵向相邻，不被日志隔开），强化上下对峙感
+- 英雄|随从并排让每个 zone 从「纵向长条」变「横向战场面板」
+
+**Files Modified**:
+| 文件 | 变更 |
+|------|------|
+| `static/css/cardarena.css` | `.ca-layout` flex→grid + grid-template-areas；桌面 @media(≥900px) 双列+日志侧栏+zone flex-row+窄英雄面板适配（纯 CSS，唯一改动文件） |
+| `PROJECT_CONTEXT.md` | 功能清单 v5.14 补充条目、版本演进表 v5.14 补充 |
+| `PROJECT_DOCUMENTATION.md` | 更新日志 v5.14 补充条目 |
+
+**验证**：CSS 大括号配平；本地 hugo 构建错误仅来自预存的未跟踪 scratch 文件（`_jscheck.js` 等，非本次改动，不入库不影响 GitHub Actions 生产构建）；布局逻辑：桌面双列 + 日志侧栏 + 英雄|随从并排，移动单列堆叠。
+
+---
+
 ### v5.11 (2026-08-01) - CPA 阶段B 习题整合（历年真题板块 + 550题同步练习）
 
 **新增功能**:

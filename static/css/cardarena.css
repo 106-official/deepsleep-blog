@@ -594,10 +594,89 @@
 }
 
 /* ===== 对局布局 ===== */
+/* ===== 对战布局：CSS Grid 二维战场（桌面主战场+日志侧栏，移动单列堆叠） ===== */
 .ca-layout {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+  display: grid;
+  gap: 10px;
+  /* 默认（移动端）：单列堆叠，顺序与 DOM 一致 */
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    "roster-enemy"
+    "zone-enemy"
+    "log"
+    "zone-player"
+    "roster-player"
+    "hand"
+    "actions";
+}
+.ca-roster-enemy { grid-area: roster-enemy; }
+.ca-zone-enemy { grid-area: zone-enemy; }
+.ca-log { grid-area: log; }
+.ca-zone-player { grid-area: zone-player; }
+.ca-roster-player { grid-area: roster-player; }
+.ca-hand { grid-area: hand; }
+.ca-actions { grid-area: actions; }
+
+/* 桌面端（≥900px）：主战场 + 日志侧栏，打破「全长条」单调 */
+@media (min-width: 900px) {
+  .ca-layout {
+    grid-template-columns: minmax(0, 1fr) 210px;
+    grid-template-areas:
+      "roster-enemy  roster-enemy"
+      "zone-enemy    log"
+      "zone-player   log"
+      "roster-player roster-player"
+      "hand          hand"
+      "actions       actions";
+  }
+  /* zone 内部：英雄面板 | 随从战场 横向并排（游戏王对峙风）
+     DOM 顺序天然形成镜像：zone-enemy=hero|board，zone-player=board|hero */
+  .ca-zone {
+    flex-direction: row;
+    align-items: stretch;
+    gap: 10px;
+  }
+  .ca-zone .ca-hero {
+    flex: 0 0 172px;
+    max-width: 172px;
+  }
+  .ca-zone .ca-board {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  /* 窄英雄面板：内容居中，英文宫衔去侧线，星水印改居中淡背景 */
+  .ca-zone .ca-hero { text-align: center; }
+  .ca-zone .ca-hero-name { font-size: 1.02rem; }
+  .ca-zone .ca-hero-en { text-align: center; }
+  .ca-zone .ca-hero-en::before, .ca-zone .ca-hero-en::after { display: none; }
+  .ca-zone .ca-hero-mana { justify-content: center; }
+  .ca-zone .ca-hero-star {
+    right: 50%;
+    top: 50%;
+    transform: translate(50%, -50%);
+    opacity: 0.07;
+  }
+  /* 日志侧栏：跨越两 zone 行，内部滚动 */
+  .ca-log {
+    display: flex;
+    flex-direction: column;
+    border: none;
+    border-left: 1px solid rgba(212, 175, 55, 0.25);
+    border-radius: 0;
+    padding: 6px 4px 6px 10px;
+    background: linear-gradient(180deg, rgba(251, 243, 223, 0.35), rgba(122, 22, 38, 0.04));
+    overflow: hidden;
+  }
+  [data-theme="dark"] .ca-log {
+    border-left-color: rgba(232, 198, 74, 0.22);
+    background: linear-gradient(180deg, rgba(43, 22, 18, 0.40), rgba(74, 14, 24, 0.12));
+  }
+  .ca-log .ca-log-list {
+    flex: 1;
+    min-height: 0;
+    max-height: none;
+    overflow-y: auto;
+  }
 }
 /* 区标签：阿拉伯双线分隔 */
 .ca-roster-label, .ca-board-label, .ca-hand-label, .ca-log-label {

@@ -70,7 +70,7 @@ NFS（1984 年，Sun）用一个关键思路解决了它：**不发明新的文�
 
 ## 本目录学习路线
 
-1. **[01-原理与报文](01-原理与报文.md)** — ONC RPC/XDR 分层、文件句柄机制、v3 的 22 个过程、v4 的 COMPOUND 与状态模型、挂载流程时序图、租约与委托、WRITE 的三种稳定性语义与 COMMIT。
-2. **[02-实战与排错](02-实战与排错.md)** — `mount` / `showmount` / `rpcinfo` / `exportfs` / `nfsstat` 实操，`/etc/exports` 完整选项详解，Wireshark 观察 RPC+NFS 两层结构，`Permission denied` / `Stale file handle` / 进程 D 状态 hang 死 / UID 错乱 / 性能调优等排错，以及与 SMB 的详细对比。
+1. **[01-原理与报文](01-原理与报文/)** — ONC RPC/XDR 分层、文件句柄机制、v3 的 22 个过程、v4 的 COMPOUND 与状态模型、挂载流程时序图、租约与委托、WRITE 的三种稳定性语义与 COMMIT。
+2. **[02-实战与排错](02-实战与排错/)** — `mount` / `showmount` / `rpcinfo` / `exportfs` / `nfsstat` 实操，`/etc/exports` 完整选项详解，Wireshark 观察 RPC+NFS 两层结构，`Permission denied` / `Stale file handle` / 进程 D 状态 hang 死 / UID 错乱 / 性能调优等排错，以及与 SMB 的详细对比。
 
 > **学习建议**：NFS 的坑几乎全部集中在**三件事**上——① `no_root_squash` / UID 映射导致的权限问题；② `hard` vs `soft` 挂载导致的进程 hang 死；③ v3 的动态端口穿不过防火墙。建议直接从 **NFSv4** 学起（单端口、无 rpcbind、有状态），把 v3 当作"需要兼容的历史包袱"来理解。

@@ -78,7 +78,7 @@ TocOpen: true
 
 ## 本目录学习路线
 
-1. **[01-原理与报文](01-原理与报文.md)** — NetBIOS 与 Direct Hosting 的封装差异、SMB2 的 64 字节头部逐字段解析、19 个命令、Session/Tree/File 三层状态、协商与认证时序、Oplock/Lease 缓存机制、信用流控、签名与加密算法。
-2. **[02-实战与排错](02-实战与排错.md)** — `smbclient` / `mount.cifs` / `net use` / `Get-SmbConnection` 实操，`smb.conf` 配置，Wireshark 观察协商降级与 NTLM 挑战响应，`STATUS_ACCESS_DENIED` / `STATUS_LOGON_FAILURE` / 版本协商失败 / 性能问题排错，SMB1 与 EternalBlue 的安全加固，以及与 NFS 的详细对比。
+1. **[01-原理与报文](01-原理与报文/)** — NetBIOS 与 Direct Hosting 的封装差异、SMB2 的 64 字节头部逐字段解析、19 个命令、Session/Tree/File 三层状态、协商与认证时序、Oplock/Lease 缓存机制、信用流控、签名与加密算法。
+2. **[02-实战与排错](02-实战与排错/)** — `smbclient` / `mount.cifs` / `net use` / `Get-SmbConnection` 实操，`smb.conf` 配置，Wireshark 观察协商降级与 NTLM 挑战响应，`STATUS_ACCESS_DENIED` / `STATUS_LOGON_FAILURE` / 版本协商失败 / 性能问题排错，SMB1 与 EternalBlue 的安全加固，以及与 NFS 的详细对比。
 
 > **学习建议**：SMB 的复杂度主要来自**历史包袱**（SMB1 vs SMB2+、NetBIOS vs 445、NTLM vs Kerberos）。建议**只学 SMB2/3**，把 SMB1 当作"必须禁用的历史遗留"来认识。动手时用 `smbclient -L //host -m SMB3` 和 Wireshark 的 `smb2` 过滤式，从 NEGOTIATE → SESSION_SETUP → TREE_CONNECT → CREATE → READ 这条主线走一遍即可掌握。

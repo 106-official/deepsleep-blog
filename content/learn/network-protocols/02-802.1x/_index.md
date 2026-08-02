@@ -4,7 +4,7 @@ description: "在接入端口上做入网身份认证 / 数据链路层 / 无端
 layout: "learn"
 category: "network-protocols"
 layer: "数据链路层"
-weight: 1
+weight: 2
 rfc: "IEEE 802.1X-2020（相关：RFC 3748 EAP、RFC 2865 RADIUS、RFC 5216 EAP-TLS）"
 port: "无（EAPOL EtherType 0x888E）；后端 RADIUS 用 UDP 1812/1813"
 keywords: ["802.1X", "EAPOL", "EAP", "RADIUS", "端口认证", "NAC", "supplicant", "authenticator", "EAP-TLS", "PEAP"]
@@ -66,7 +66,7 @@ TocOpen: true
 
 ## 6. 本目录学习路线
 
-1. **[01-原理与报文](./01-原理与报文.md)** — 三角色分工、受控/非受控端口模型、EAPOL 帧格式与 5 种类型、EAP 四类报文、完整认证时序（含 RADIUS 转换）、常见 EAP 方法对比、动态 VLAN 与 MAB 机制。
-2. **[02-实战与排错](./02-实战与排错.md)** — Wireshark 抓 EAPOL/RADIUS，`wpa_supplicant` 客户端配置、交换机与 FreeRADIUS 配置、"拿不到 IP""认证反复失败""证书过期"等故障排查。
+1. **[01-原理与报文](01-原理与报文/)** — 三角色分工、受控/非受控端口模型、EAPOL 帧格式与 5 种类型、EAP 四类报文、完整认证时序（含 RADIUS 转换）、常见 EAP 方法对比、动态 VLAN 与 MAB 机制。
+2. **[02-实战与排错](02-实战与排错/)** — Wireshark 抓 EAPOL/RADIUS，`wpa_supplicant` 客户端配置、交换机与 FreeRADIUS 配置、"拿不到 IP""认证反复失败""证书过期"等故障排查。
 
 > **学习建议**：802.1X 的难点不在报文格式，而在**三方之间两段不同协议（EAPOL / RADIUS）的拼接**。学习时始终用"EAP 是内容、EAPOL 与 RADIUS 是两段不同的运输车"这个模型去理解，就不会被绕晕。

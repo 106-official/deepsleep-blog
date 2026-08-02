@@ -79,7 +79,7 @@ graph TD
 
 ## 6. 本目录学习路线
 
-1. **[01-原理与报文](01-原理与报文.md)** — 48 字节 NTP 报文逐字段拆解（LI/VN/Mode/Stratum/Poll/Precision/Root Delay/Root Dispersion/Reference ID/四时间戳）、offset 与 delay 推导、时钟纪律算法（PLL/FLL）、选择-聚类-合并三步、闰秒与 Era 问题，配时序图与知识框架图。
-2. **[02-实战与排错](02-实战与排错.md)** — Wireshark 过滤 `ntp`、`chronyc`/`ntpq`/`timedatectl`/`w32tm` 全套命令、`chrony.conf` 与 `ntp.conf` 配置、"时间不同步/offset 抖动/服务器 unreachable/容器时间漂移"排错、NTP vs chrony vs ntpd vs systemd-timesyncd vs PTP 对比与面试题。
+1. **[01-原理与报文](01-原理与报文/)** — 48 字节 NTP 报文逐字段拆解（LI/VN/Mode/Stratum/Poll/Precision/Root Delay/Root Dispersion/Reference ID/四时间戳）、offset 与 delay 推导、时钟纪律算法（PLL/FLL）、选择-聚类-合并三步、闰秒与 Era 问题，配时序图与知识框架图。
+2. **[02-实战与排错](02-实战与排错/)** — Wireshark 过滤 `ntp`、`chronyc`/`ntpq`/`timedatectl`/`w32tm` 全套命令、`chrony.conf` 与 `ntp.conf` 配置、"时间不同步/offset 抖动/服务器 unreachable/容器时间漂移"排错、NTP vs chrony vs ntpd vs systemd-timesyncd vs PTP 对比与面试题。
 
 > 学习建议：先把**四时间戳公式手推一遍**（假设网络对称），再理解为什么 NTP 要用多个源做统计过滤，最后动手看一次 `chronyc sourcestats` 的输出——NTP 的核心就通了。

@@ -56,7 +56,7 @@ TocOpen: true
 
 ## 6. 本目录学习路线
 
-1. **[01-原理与报文](01-原理与报文.md)** — 封装/解封装流程、GRE 头部逐比特拆解（C/K/S 标志、Protocol Type）、建隧时序图、MTU 与递归路由机制。
-2. **[02-实战与排错](02-实战与排错.md)** — Wireshark `gre` 过滤、Linux `ip tunnel` 实操、隧道不通/MTU 黑洞/递归路由排查、与 IPSec/VXLAN 对比与面试速查。
+1. **[01-原理与报文](01-原理与报文/)** — 封装/解封装流程、GRE 头部逐比特拆解（C/K/S 标志、Protocol Type）、建隧时序图、MTU 与递归路由机制。
+2. **[02-实战与排错](02-实战与排错/)** — Wireshark `gre` 过滤、Linux `ip tunnel` 实操、隧道不通/MTU 黑洞/递归路由排查、与 IPSec/VXLAN 对比与面试速查。
 
 > 建议：先在两台 Linux 虚机手搭一条 GRE 隧道，用 `tcpdump -i eth0 proto gre` 看外层封装，再回头读头部字段。

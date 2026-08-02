@@ -4,7 +4,7 @@ description: "管理主机与路由器之间的 IPv4 组播成员关系 / 网络
 layout: "learn"
 category: "network-protocols"
 layer: "网络层"
-weight: 1
+weight: 5
 rfc: "RFC 1112（v1）/ RFC 2236（v2）/ RFC 3376（v3）"
 port: "无（IP Protocol = 2）"
 keywords: ["IGMP", "组播", "multicast", "组成员管理", "IGMPv3", "源过滤", "IGMP Snooping", "PIM", "SSM", "RFC 3376"]
@@ -64,7 +64,7 @@ IGMP 正是运行在**主机 ↔ 本网段第一跳组播路由器**之间的这
 
 ## 6. 本目录学习路线
 
-1. **[01-原理与报文](./01-原理与报文.md)** — 组播地址规划与 MAC 映射规则、IGMPv1/v2/v3 报文格式逐字段、查询器选举、加入/离开完整时序（mermaid）、v3 的 INCLUDE/EXCLUDE 源过滤与组记录类型、三版本对比、关键定时器。
-2. **[02-实战与排错](./02-实战与排错.md)** — Wireshark 过滤式、`ip maddr` / `netstat -g` / `smcroute` / `iperf` 组播测试、IGMP Snooping 配置、"收不到组播流""组播风暴""离开后仍持续转发"等故障排查。
+1. **[01-原理与报文](01-原理与报文/)** — 组播地址规划与 MAC 映射规则、IGMPv1/v2/v3 报文格式逐字段、查询器选举、加入/离开完整时序（mermaid）、v3 的 INCLUDE/EXCLUDE 源过滤与组记录类型、三版本对比、关键定时器。
+2. **[02-实战与排错](02-实战与排错/)** — Wireshark 过滤式、`ip maddr` / `netstat -g` / `smcroute` / `iperf` 组播测试、IGMP Snooping 配置、"收不到组播流""组播风暴""离开后仍持续转发"等故障排查。
 
 > **学习建议**：组播的排障链条比单播长得多——**应用是否 join → 主机是否发出 IGMP 报告 → 交换机 Snooping 是否学到端口 → 路由器是否建立组成员 → PIM 是否向上游 Join 到源**。学习时务必按这条链路逐段验证，任何一环断了现象都是"收不到流"。

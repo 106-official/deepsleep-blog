@@ -4,7 +4,7 @@ description: "为主机寻址并让数据包跨网络路由转发 / 网络层 / 
 layout: "learn"
 category: "network-protocols"
 layer: "网络层"
-weight: 1
+weight: 3
 rfc: "RFC 791（IPv4）/ RFC 8200（IPv6）"
 port: "无（EtherType 0x0800 IPv4、0x86DD IPv6）"
 keywords: ["IP", "网际协议", "IPv4", "IPv6", "子网掩码", "CIDR", "分片", "TTL", "路由", "NAT", "RFC 791", "RFC 8200"]
@@ -64,7 +64,7 @@ TocOpen: true
 
 ## 6. 本目录学习路线
 
-1. **[01-原理与报文](./01-原理与报文.md)** — IPv4 头部 20 字节逐字段详解、地址分类与 CIDR 子网划分、路由查表与最长前缀匹配、分片与重组机制、TTL、IPv6 头部与扩展头、IPv4/IPv6 全面对比。
-2. **[02-实战与排错](./02-实战与排错.md)** — Wireshark 过滤式、`ip` / `ping` / `traceroute` / `mtr` / `tcpdump` 实操，MTU 黑洞、路由回程不对称、地址冲突、TTL 耗尽等典型故障排查。
+1. **[01-原理与报文](01-原理与报文/)** — IPv4 头部 20 字节逐字段详解、地址分类与 CIDR 子网划分、路由查表与最长前缀匹配、分片与重组机制、TTL、IPv6 头部与扩展头、IPv4/IPv6 全面对比。
+2. **[02-实战与排错](02-实战与排错/)** — Wireshark 过滤式、`ip` / `ping` / `traceroute` / `mtr` / `tcpdump` 实操，MTU 黑洞、路由回程不对称、地址冲突、TTL 耗尽等典型故障排查。
 
 > **学习建议**：IP 是承上启下的枢纽。建议先彻底吃透**"掩码 → 网段判断 → 路由决策 → 下一跳 → ARP 解析"**这条主线，这是所有网络排错的思维骨架；之后再攻分片与 PMTUD（生产环境疑难杂症的高发区）和 IPv6。

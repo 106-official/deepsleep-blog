@@ -53,5 +53,5 @@ TocOpen: true
 
 ## 6. 本目录学习路线
 
-1. **[01-原理与报文](01-原理与报文.md)** — 记录协议与四类子协议、握手全流程时序（ClientHello→Finished）、记录头字段、密钥派生与 MAC-then-Encrypt、知识框架。
-2. **[02-实战与排错](02-实战与排错.md)** — Wireshark `ssl`/`tls` 解密观察、openssl s_client 实测、POODLE/证书错误/握手失败排查、SSL 与 TLS 对比与面试速查。
+1. **[01-原理与报文](01-原理与报文/)** — 记录协议与四类子协议、握手全流程时序（ClientHello→Finished）、记录头字段、密钥派生与 MAC-then-Encrypt、知识框架。
+2. **[02-实战与排错](02-实战与排错/)** — Wireshark `ssl`/`tls` 解密观察、openssl s_client 实测、POODLE/证书错误/握手失败排查、SSL 与 TLS 对比与面试速查。

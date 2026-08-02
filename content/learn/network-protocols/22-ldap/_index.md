@@ -76,7 +76,7 @@ LDAP 的解法：
 
 ## 本目录学习路线
 
-1. **[01-原理与报文](01-原理与报文.md)** — 目录信息树与 DN/RDN 命名、Schema 与 objectClass、LDAPMessage 报文结构、十种操作的字段、SearchRequest 的 scope 与过滤器语法、Bind 认证流程与 StartTLS 升级。
-2. **[02-实战与排错](02-实战与排错.md)** — `ldapsearch` / `ldapadd` / `ldapmodify` / `ldappasswd` 实操，LDIF 文件编写，Wireshark 观察明文 Simple Bind 的风险，`invalidCredentials` / `noSuchObject` / `sizeLimitExceeded` / referral 等错误码排查，与 AD 对接的坑，以及与 SQL、Kerberos 的对比。
+1. **[01-原理与报文](01-原理与报文/)** — 目录信息树与 DN/RDN 命名、Schema 与 objectClass、LDAPMessage 报文结构、十种操作的字段、SearchRequest 的 scope 与过滤器语法、Bind 认证流程与 StartTLS 升级。
+2. **[02-实战与排错](02-实战与排错/)** — `ldapsearch` / `ldapadd` / `ldapmodify` / `ldappasswd` 实操，LDIF 文件编写，Wireshark 观察明文 Simple Bind 的风险，`invalidCredentials` / `noSuchObject` / `sizeLimitExceeded` / referral 等错误码排查，与 AD 对接的坑，以及与 SQL、Kerberos 的对比。
 
 > **学习建议**：LDAP 的最大门槛是**"树 + 过滤器"的心智模型**。建议用 Docker 起一个 OpenLDAP（`docker run -p 389:389 osixia/openldap`），亲手 `ldapadd` 几个条目，再用不同 scope（base / one / sub）搜同一个 Base DN，立刻就能看懂 scope 的差别。搞懂后再看 AD，会发现只是 objectClass 名字换成了 `user` / `group` 而已。

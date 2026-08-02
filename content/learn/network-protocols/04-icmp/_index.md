@@ -4,7 +4,7 @@ description: "为 IP 提供差错报告与网络诊断 / 网络层 / 无端口�
 layout: "learn"
 category: "network-protocols"
 layer: "网络层"
-weight: 1
+weight: 4
 rfc: "RFC 792（ICMPv4）/ RFC 4443（ICMPv6）"
 port: "无（IP Protocol = 1，ICMPv6 = 58）"
 keywords: ["ICMP", "ping", "traceroute", "目的不可达", "TTL超时", "重定向", "Type Code", "RFC 792", "ICMPv6"]
@@ -62,7 +62,7 @@ IP 是**尽力而为**的：包被丢弃时不通知任何人。这在实际网�
 
 ## 6. 本目录学习路线
 
-1. **[01-原理与报文](./01-原理与报文.md)** — ICMP 报文通用格式、完整 Type/Code 对照表、差错报文为何携带原始 IP 头+8 字节、ping 与 traceroute 的报文级原理（含 mermaid 时序）、PMTUD、重定向、抑制规则、ICMPv6 差异。
-2. **[02-实战与排错](./02-实战与排错.md)** — Wireshark 过滤式、`ping` / `traceroute` / `mtr` / `hping3` / `tcpdump` 实操、"ping 不通""能 ping 不能连""大包不通"等故障排查与 ICMP 安全策略建议。
+1. **[01-原理与报文](01-原理与报文/)** — ICMP 报文通用格式、完整 Type/Code 对照表、差错报文为何携带原始 IP 头+8 字节、ping 与 traceroute 的报文级原理（含 mermaid 时序）、PMTUD、重定向、抑制规则、ICMPv6 差异。
+2. **[02-实战与排错](02-实战与排错/)** — Wireshark 过滤式、`ping` / `traceroute` / `mtr` / `hping3` / `tcpdump` 实操、"ping 不通""能 ping 不能连""大包不通"等故障排查与 ICMP 安全策略建议。
 
 > **学习建议**：ICMP 的报文格式极简，真正的价值在于**把 Type/Code 与故障现象建立条件反射**。看到 `Type 3 Code 1` 立刻想到"路由器 ARP 不到目标主机"，看到 `Type 3 Code 4` 立刻想到"MTU 问题"，看到 `Type 11 Code 0` 立刻想到"环路或 traceroute"——这套映射是网络排错的核心肌肉记忆。

@@ -57,7 +57,7 @@ POP3 的"下载即搬走"模型在多设备时代彻底失效：手机收了信�
 
 ## 6. 本目录学习路线
 
-1. **[01-原理与报文](01-原理与报文.md)** — 四状态机、标签与三类响应、完整命令集、标志与 UID 体系、FETCH 数据项、IDLE 推送、会话时序图。
-2. **[02-实战与排错](02-实战与排错.md)** — Wireshark 过滤、openssl 手工完整会话、同步不一致/IDLE 掉线/UIDVALIDITY 变更排查、与 POP3 全面对比、面试题。
+1. **[01-原理与报文](01-原理与报文/)** — 四状态机、标签与三类响应、完整命令集、标志与 UID 体系、FETCH 数据项、IDLE 推送、会话时序图。
+2. **[02-实战与排错](02-实战与排错/)** — Wireshark 过滤、openssl 手工完整会话、同步不一致/IDLE 掉线/UIDVALIDITY 变更排查、与 POP3 全面对比、面试题。
 
 > 学习建议：先用 `openssl s_client -connect imap.qq.com:993` 敲一遍 `LOGIN → LIST → SELECT INBOX → UID FETCH → LOGOUT`，直观感受"标签 + 未标记响应"这套交互模型，再去理解 `FETCH` 复杂的数据项语法。

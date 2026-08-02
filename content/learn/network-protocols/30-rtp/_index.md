@@ -93,7 +93,7 @@ graph TD
 
 ## 6. 本目录学习路线
 
-1. **[01-原理与报文](01-原理与报文.md)** — RTP 12 字节固定头逐位拆解（V/P/X/CC/M/PT/序号/时间戳/SSRC/CSRC）、时间戳与采样率的换算、静态负载类型表、RTCP 五种包类型（SR/RR/SDES/BYE/APP）与反馈消息（NACK/PLI/FIR/REMB）、抖动计算公式、混音器与转换器模型，配 SIP+RTP 完整时序图与知识框架图。
-2. **[02-实战与排错](02-实战与排错.md)** — Wireshark 解码 RTP 与"播放音频流"、`ffmpeg`/`ffplay`/`gst-launch`/`sngrep`/`tcpdump` 命令、SDP 读法、"单向语音/杂音/花屏/唇音不同步/NAT 穿透失败"排错、RTP vs RTSP vs HLS vs SRT 对比与面试题。
+1. **[01-原理与报文](01-原理与报文/)** — RTP 12 字节固定头逐位拆解（V/P/X/CC/M/PT/序号/时间戳/SSRC/CSRC）、时间戳与采样率的换算、静态负载类型表、RTCP 五种包类型（SR/RR/SDES/BYE/APP）与反馈消息（NACK/PLI/FIR/REMB）、抖动计算公式、混音器与转换器模型，配 SIP+RTP 完整时序图与知识框架图。
+2. **[02-实战与排错](02-实战与排错/)** — Wireshark 解码 RTP 与"播放音频流"、`ffmpeg`/`ffplay`/`gst-launch`/`sngrep`/`tcpdump` 命令、SDP 读法、"单向语音/杂音/花屏/唇音不同步/NAT 穿透失败"排错、RTP vs RTSP vs HLS vs SRT 对比与面试题。
 
 > 学习建议：先牢记 **"序号解决乱序、时间戳解决抖动、SSRC 解决多源、PT 解决编码识别"** 这四句话，再理解 RTCP 为什么必不可少，RTP 就掌握了八成。

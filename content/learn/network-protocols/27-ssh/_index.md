@@ -73,7 +73,7 @@ graph TD
 
 ## 6. 本目录学习路线
 
-1. **[01-原理与报文](01-原理与报文.md)** — 版本交换字符串、二进制包格式（`packet_length`/`padding`/`payload`/`MAC`）、算法协商 `SSH_MSG_KEXINIT`、Curve25519 密钥交换与会话密钥派生、认证流程、通道生命周期，配完整握手时序图与知识框架图。
-2. **[02-实战与排错](02-实战与排错.md)** — Wireshark 过滤 `ssh`、`ssh/scp/sftp/ssh-keygen/ssh-copy-id/ssh-agent` 全套命令、三种端口转发实操、`sshd_config` 加固、"Permission denied (publickey)"/"Host key verification failed"/连接慢等经典故障排查、与 Telnet/TLS/VPN 对比与面试题。
+1. **[01-原理与报文](01-原理与报文/)** — 版本交换字符串、二进制包格式（`packet_length`/`padding`/`payload`/`MAC`）、算法协商 `SSH_MSG_KEXINIT`、Curve25519 密钥交换与会话密钥派生、认证流程、通道生命周期，配完整握手时序图与知识框架图。
+2. **[02-实战与排错](02-实战与排错/)** — Wireshark 过滤 `ssh`、`ssh/scp/sftp/ssh-keygen/ssh-copy-id/ssh-agent` 全套命令、三种端口转发实操、`sshd_config` 加固、"Permission denied (publickey)"/"Host key verification failed"/连接慢等经典故障排查、与 Telnet/TLS/VPN 对比与面试题。
 
 > 学习建议：先把 **"传输层 → 认证 → 连接"三层**在脑子里分清楚，再动手做一遍 **公钥登录 + 三种端口转发**，SSH 就基本吃透了。

@@ -13,10 +13,10 @@
     <aside class="stagemode-sidebar" id="stagemode-sidebar-home">
       <div class="stagemode-sidebar-header">
         <div class="stagemode-logo">
-          <span class="stagemode-logo-icon">🐟</span>
+          <span class="stagemode-logo-icon"></span>
           <span>SleepTown 鱼塘推理</span>
         </div>
-        <p class="stagemode-version">v2.2.2.0 · 深夜渔港 Noir · 第2章"殉道士"</p>
+        <p class="stagemode-version">v3.3.0 · 深夜渔港 Noir · 第3章"深水区"</p>
       </div>
       <nav class="stagemode-nav">
         <!-- 游戏模式 -->
@@ -46,24 +46,29 @@
             <span>豪鱼阵营</span>
           </div>
           <a href="javascript:void(0)" class="stagemode-nav-link" data-fish="slacker" onclick="switchFishRole('slacker')">
-            <span class="stagemode-nav-num">🐟</span>
+            <span class="stagemode-nav-num"></span>
             <span class="stagemode-nav-text">摆烂D</span>
           </a>
           <a href="javascript:void(0)" class="stagemode-nav-link" data-fish="detective" onclick="switchFishRole('detective')">
-            <span class="stagemode-nav-num">🔍</span>
+            <span class="stagemode-nav-num"></span>
             <span class="stagemode-nav-text">侦探D</span>
           </a>
           <a href="javascript:void(0)" class="stagemode-nav-link" data-fish="judge" onclick="switchFishRole('judge')">
-            <span class="stagemode-nav-num">⚖️</span>
+            <span class="stagemode-nav-num"></span>
             <span class="stagemode-nav-text">法官D</span>
           </a>
           <a href="javascript:void(0)" class="stagemode-nav-link" data-fish="gossip" onclick="switchFishRole('gossip')">
-            <span class="stagemode-nav-num">📰</span>
+            <span class="stagemode-nav-num"></span>
             <span class="stagemode-nav-text">八卦鱼</span>
           </a>
           <a href="javascript:void(0)" class="stagemode-nav-link" data-fish="sleepwalker" onclick="switchFishRole('sleepwalker')">
-            <span class="stagemode-nav-num">💤</span>
+            <span class="stagemode-nav-num"></span>
             <span class="stagemode-nav-text">梦游D</span>
+            <span class="stagemode-nav-diff">NEW</span>
+          </a>
+          <a href="javascript:void(0)" class="stagemode-nav-link" data-fish="coroner" onclick="switchFishRole('coroner')">
+            <span class="stagemode-nav-num"></span>
+            <span class="stagemode-nav-text">验尸官</span>
             <span class="stagemode-nav-diff">NEW</span>
           </a>
         </div>
@@ -75,17 +80,22 @@
             <span>中立阵营</span>
           </div>
           <a href="javascript:void(0)" class="stagemode-nav-link" data-fish="mage" onclick="switchFishRole('mage')">
-            <span class="stagemode-nav-num">🧙</span>
+            <span class="stagemode-nav-num"></span>
             <span class="stagemode-nav-text">法师D</span>
             <span class="stagemode-nav-diff">NEW</span>
           </a>
-          <a href="javascript:void(0)" class="stagemode-nav-link" data-fish="prankster" onclick="switchFishRole('prankster')">
-            <span class="stagemode-nav-num">🎭</span>
+          <a href="javascript:void(0)" class="stagemode-nav-link" data-fish="trickster" onclick="switchFishRole('trickster')">
+            <span class="stagemode-nav-num"></span>
             <span class="stagemode-nav-text">恶作剧D</span>
           </a>
           <a href="javascript:void(0)" class="stagemode-nav-link" data-fish="orca" onclick="switchFishRole('orca')">
-            <span class="stagemode-nav-num">🐋</span>
+            <span class="stagemode-nav-num"></span>
             <span class="stagemode-nav-text">虎鲸</span>
+          </a>
+          <a href="javascript:void(0)" class="stagemode-nav-link" data-fish="phantom" onclick="switchFishRole('phantom')">
+            <span class="stagemode-nav-num"></span>
+            <span class="stagemode-nav-text">幽灵</span>
+            <span class="stagemode-nav-diff">NEW</span>
           </a>
         </div>
 
@@ -96,11 +106,11 @@
             <span>坏鱼阵营</span>
           </div>
           <a href="javascript:void(0)" class="stagemode-nav-link" data-fish="evil" onclick="switchFishRole('evil')">
-            <span class="stagemode-nav-num">😈</span>
+            <span class="stagemode-nav-num"></span>
             <span class="stagemode-nav-text">邪恶D</span>
           </a>
           <a href="javascript:void(0)" class="stagemode-nav-link" data-fish="martyr" onclick="switchFishRole('martyr')">
-            <span class="stagemode-nav-num">💀</span>
+            <span class="stagemode-nav-num"></span>
             <span class="stagemode-nav-text">殉道D</span>
             <span class="stagemode-nav-diff">NEW</span>
           </a>
@@ -113,7 +123,7 @@
             <span>其他</span>
           </div>
           <a href="javascript:void(0)" class="stagemode-nav-link" data-action="rules" onclick="openRulesModal()">
-            <span class="stagemode-nav-num">📖</span>
+            <span class="stagemode-nav-num"></span>
             <span class="stagemode-nav-text">游戏规则</span>
           </a>
         </div>
@@ -126,7 +136,7 @@
       <section class="home-view active" id="home-view-modes">
         <header class="home-hero">
           <h1>SleepTown 鱼塘推理</h1>
-          <p class="home-subtitle">CASE FILE №2 · 殉道士篇章 · 深海渔港十角色 · 自由 / 关卡双模式</p>
+          <p class="home-subtitle">CASE FILE №3 · 深水区 · 深海渔港十二角色 · 自由 / 关卡双模式</p>
         </header>
         <div class="home-mode-buttons">
           <button class="home-mode-btn primary" onclick="showFreeModeSetup()">
@@ -161,10 +171,10 @@
     <div class="rules-modal-overlay" onclick="closeRulesModal()"></div>
     <div class="rules-modal-content">
       <button class="rules-modal-close" onclick="closeRulesModal()" aria-label="关闭">×</button>
-      <h2 class="rules-modal-title">游戏规则 v2.2.2.0</h2>
+      <h2 class="rules-modal-title">游戏规则 v3.3.0</h2>
 
       <div class="rules-section-setup">
-        <h4>⚠️ 重要：伪装机制 (v2.1.1.2更新)</h4>
+        <h4> 重要：伪装机制 (v2.1.1.2更新)</h4>
         <p><strong>所有坏鱼阵营角色被翻开时，都会完美伪装：</strong></p>
         <ul>
           <li><strong>邪恶D</strong> 和 <strong>殉道D</strong> 都会伪装</li>
@@ -174,11 +184,11 @@
           <li><strong>没有任何标记可以区分真假</strong></li>
           <li>只有在游戏结束时才会揭示真相</li>
         </ul>
-        <p class="warning-text">⚠️ 这意味着你看到的任何信息都可能是假的！多问几个人交叉验证！</p>
+        <p class="warning-text"> 这意味着你看到的任何信息都可能是假的！多问几个人交叉验证！</p>
       </div>
 
       <div class="rules-section-setup">
-        <h4>☀️ 白天 - 问询机制</h4>
+        <h4> 白天 - 问询机制</h4>
         <ol>
           <li>你有 <strong>3 次问询机会</strong></li>
           <li>点击任意鱼进行"问询"</li>
@@ -189,7 +199,7 @@
       </div>
 
       <div class="rules-section-setup">
-        <h4>⚖️ 流放阶段</h4>
+        <h4 data-role="judge"> 流放阶段</h4>
         <ol>
           <li>在流放模式中选择一只可疑的鱼进行流放</li>
           <li>被流放的鱼会揭示真实身份并淘汰</li>
@@ -198,7 +208,7 @@
       </div>
 
       <div class="rules-section-setup">
-        <h4>🌙 夜晚阶段</h4>
+        <h4> 夜晚阶段</h4>
         <ol>
           <li>坏鱼杀死一只豪鱼</li>
           <li>虎鲸额外杀死一条随机的鱼</li>
@@ -207,12 +217,12 @@
       </div>
 
       <div class="rules-section-setup">
-        <h4>🏆 胜利条件</h4>
+        <h4> 胜利条件</h4>
         <div class="win-condition-setup">
-          <strong>✅ 豪鱼胜利</strong>: 所有坏鱼都被淘汰<br>
+          <strong> 豪鱼胜利</strong>: 所有坏鱼都被淘汰<br>
         </div>
         <div class="lose-condition-setup">
-          <strong>❌ 失败条件</strong>:<br>
+          <strong> 失败条件</strong>:<br>
           • 所有豪鱼都被淘汰（死亡/流放）<br>
           • 或：豪鱼 + 中立阵营 ≤ 坏鱼阵营数量<br>
         </div>
@@ -228,7 +238,7 @@
 
       <!-- 鱼数量配置 -->
       <div class="config-section">
-        <h3>🐟 鱼的数量</h3>
+        <h3> 鱼的数量</h3>
         <div class="fish-count-config">
           <label for="fish-count">选择参与游戏的鱼数量：</label>
           <div class="count-selector">
@@ -236,87 +246,95 @@
             <input type="number" id="fish-count" min="6" max="20" value="10" class="fish-count-input" onchange="validateCount()">
             <button onclick="adjustCount(1)" class="count-btn plus-btn">+</button>
           </div>
-          <p class="hint">💡 范围：6-20只鱼，推荐10-15只</p>
+          <p class="hint"> 范围：6-20只鱼，推荐10-15只</p>
         </div>
       </div>
 
       <!-- 角色配置 -->
       <div class="config-section">
-        <h3>🎭 角色配置</h3>
+        <h3> 角色配置</h3>
         <p class="section-desc">选择每个阵营中参与游戏的角色（每阵营至少选1种）</p>
 
         <div class="role-config-container">
           <!-- 豪鱼阵营 -->
           <div class="role-faction-group good-faction-group">
-            <h4 class="faction-title">🌊 豪鱼阵营</h4>
+            <h4 class="faction-title"> 豪鱼阵营</h4>
             <div class="role-checkboxes-grid">
               <label class="role-checkbox-label">
                 <input type="checkbox" id="role-slacker" checked onchange="updateRoleSelection()">
-                <span>🐟 摆烂D</span>
+                <span> 摆烂D</span>
               </label>
               <label class="role-checkbox-label">
                 <input type="checkbox" id="role-detective" checked onchange="updateRoleSelection()">
-                <span>🔍 侦探D</span>
+                <span> 侦探D</span>
               </label>
               <label class="role-checkbox-label">
                 <input type="checkbox" id="role-judge" checked onchange="updateRoleSelection()">
-                <span>⚖️ 法官D</span>
+                <span> 法官D</span>
               </label>
               <label class="role-checkbox-label">
                 <input type="checkbox" id="role-gossip" checked onchange="updateRoleSelection()">
-                <span>📰 八卦鱼</span>
+                <span> 八卦鱼</span>
               </label>
               <label class="role-checkbox-label new-role">
                 <input type="checkbox" id="role-sleepwalker" onchange="updateRoleSelection()">
-                <span>💤 梦游D</span><span class="new-badge">NEW</span>
+                <span> 梦游D</span><span class="new-badge">NEW</span>
+              </label>
+              <label class="role-checkbox-label new-role">
+                <input type="checkbox" id="role-coroner" onchange="updateRoleSelection()">
+                <span> 验尸官</span><span class="new-badge">NEW</span>
               </label>
             </div>
           </div>
 
           <!-- 坏鱼阵营 -->
           <div class="role-faction-group evil-faction-group">
-            <h4 class="faction-title">😈 坏鱼阵营</h4>
+            <h4 class="faction-title"> 坏鱼阵营</h4>
             <div class="role-checkboxes-grid">
               <label class="role-checkbox-label">
                 <input type="checkbox" id="role-evil" checked onchange="updateRoleSelection()">
-                <span>😈 邪恶D</span>
+                <span> 邪恶D</span>
               </label>
               <label class="role-checkbox-label new-role">
                 <input type="checkbox" id="role-martyr" onchange="updateRoleSelection()">
-                <span>💀 殉道D</span><span class="new-badge">NEW</span>
+                <span> 殉道D</span><span class="new-badge">NEW</span>
               </label>
             </div>
           </div>
 
           <!-- 中立阵营 -->
           <div class="role-faction-group neutral-faction-group">
-            <h4 class="faction-title">⚖️ 中立阵营</h4>
+            <h4 class="faction-title"> 中立阵营</h4>
             <div class="role-checkboxes-grid">
               <label class="role-checkbox-label">
                 <input type="checkbox" id="role-trickster" checked onchange="updateRoleSelection()">
-                <span>🎭 恶作剧D</span>
+                <span> 恶作剧D</span>
               </label>
               <label class="role-checkbox-label">
                 <input type="checkbox" id="role-orca" checked onchange="updateRoleSelection()">
-                <span>🐋 虎鲸</span>
+                <span> 虎鲸</span>
               </label>
               <label class="role-checkbox-label">
                 <input type="checkbox" id="role-mage" onchange="updateRoleSelection()">
-                <span>🧙 法师D</span>
+                <span> 法师D</span>
+              </label>
+              <label class="role-checkbox-label new-role">
+                <input type="checkbox" id="role-phantom" onchange="updateRoleSelection()">
+                <span> 幽灵</span><span class="new-badge">NEW</span>
               </label>
             </div>
           </div>
         </div>
 
         <div id="role-warning" class="warning-message" style="display:none">
-          ⚠️ 请在每个阵营中至少选择一种角色！
+           请在每个阵营中至少选择一种角色！
         </div>
       </div>
 
       <!-- 高级选项（可选） -->
       <div class="config-section advanced-options">
         <h3 onclick="toggleAdvanced()" class="advanced-header">
-          ⚙️ 高级选项 <span id="advanced-toggle">展开 ▼</span>
+           高级选项 <span id="advanced-toggle">展开 ▼</span>
         </h3>
 
         <div id="advanced-content" style="display:none">
@@ -343,7 +361,7 @@
 
       <!-- 配置预览 -->
       <div class="config-preview">
-        <h4>📋 当前配置预览</h4>
+        <h4> 当前配置预览</h4>
         <div id="config-summary" class="summary-content">
           <p><strong>鱼数量：</strong> <span id="preview-count">10</span> 只</p>
           <p><strong>豪鱼阵营：</strong> <span id="preview-good-roles">摆烂D、侦探D、法官D、八卦鱼</span></p>
@@ -356,7 +374,7 @@
 
       <!-- 开始按钮 -->
       <button onclick="startFreeModeGame()" class="start-btn" id="start-game-btn">
-        🎮 开始自由模式游戏
+         开始自由模式游戏
       </button>
     </div>
   </div>
@@ -429,7 +447,7 @@
         <div class="stagemode-nav-group">
           <div class="stagemode-nav-group-title">
             <span>第2章 殉道士</span>
-            <span class="stagemode-nav-count">2</span>
+            <span class="stagemode-nav-count">3</span>
           </div>
           <a href="javascript:void(0)" class="stagemode-nav-link" data-stage="2-1" onclick="selectStage('2-1')">
             <span class="stagemode-nav-num">2-1</span>
@@ -440,6 +458,28 @@
             <span class="stagemode-nav-num">2-2</span>
             <span class="stagemode-nav-text">殉道士2.0</span>
             <span class="stagemode-nav-diff">中等</span>
+          </a>
+          <a href="javascript:void(0)" class="stagemode-nav-link" data-stage="2-3" onclick="selectStage('2-3')">
+            <span class="stagemode-nav-num">2-3</span>
+            <span class="stagemode-nav-text">验尸官的证词</span>
+            <span class="stagemode-nav-diff">简单</span>
+          </a>
+        </div>
+
+        <div class="stagemode-nav-group">
+          <div class="stagemode-nav-group-title">
+            <span>第3章 深水区</span>
+            <span class="stagemode-nav-count">2</span>
+          </div>
+          <a href="javascript:void(0)" class="stagemode-nav-link" data-stage="3-1" onclick="selectStage('3-1')">
+            <span class="stagemode-nav-num">3-1</span>
+            <span class="stagemode-nav-text">深水区</span>
+            <span class="stagemode-nav-diff">困难</span>
+          </a>
+          <a href="javascript:void(0)" class="stagemode-nav-link" data-stage="3-2" onclick="selectStage('3-2')">
+            <span class="stagemode-nav-num">3-2</span>
+            <span class="stagemode-nav-text">终末渔火</span>
+            <span class="stagemode-nav-diff">困难</span>
           </a>
         </div>
       </nav>
@@ -488,19 +528,19 @@
     <!-- 操作按钮 -->
     <div class="action-bar">
       <button id="btn-skip-inquiry" onclick="skipInquiry()" class="action-btn skip-btn" style="display:none">
-        ⏭️ 结束问询
+         结束问询
       </button>
       <button id="btn-exile" onclick="enterExileMode()" class="action-btn exile-btn" disabled>
-        ⚖️ 流放模式
+         流放模式
       </button>
       <button id="btn-skip-exile" onclick="skipExile()" class="action-btn skip-exile-btn" style="display:none">
-        🚫 跳过流放
+         跳过流放
       </button>
       <button onclick="showRulesModal()" class="action-btn info-btn">
-        📖 完整规则
+         完整规则
       </button>
       <button onclick="resetGame()" class="action-btn reset-btn">
-        🔄 重新开始
+         重新开始
       </button>
       <button onclick="goBackToSetup()" class="action-btn back-btn">
         ← 修改配置
@@ -518,8 +558,8 @@
       <div id="reveal-info" class="reveal-info"></div>
 
       <div class="result-actions">
-        <button onclick="resetGame()" class="play-again-btn">🔄 再来一局</button>
-        <button id="next-stage-btn" onclick="nextStage()" class="next-stage-btn" style="display:none">⏭️ 下一关 →</button>
+        <button onclick="resetGame()" class="play-again-btn"> 再来一局</button>
+        <button id="next-stage-btn" onclick="nextStage()" class="next-stage-btn" style="display:none"> 下一关 →</button>
         <button onclick="goBackToSetup()" class="back-btn">修改配置</button>
         <button onclick="backToModeSelection()" class="back-btn">返回模式选择</button>
       </div>
@@ -529,64 +569,79 @@
   <!-- 规则弹窗 -->
   <div id="rules-modal" class="modal-overlay" style="display:none">
     <div class="modal-content rules-content">
-      <h2>📜 SleepTown 完整规则 v2.2.2.0</h2>
+      <h2> SleepTown 完整规则 v3.3.0</h2>
 
       <div class="rules-section">
-        <h3>🎭 角色介绍（9种角色）</h3>
+        <h3> 角色介绍（十二种角色）</h3>
 
         <div class="role-card good-role">
-          <h4>🐟 摆烂D（豪鱼阵营）</h4>
+          <h4 data-role="slacker"> 摆烂D（豪鱼阵营）</h4>
           <p>普通的好鱼，翻开后无事发生。</p>
         </div>
 
         <div class="role-card detective-role">
-          <h4>🔍 侦探D（豪鱼阵营）</h4>
+          <h4 data-role="detective"> 侦探D（豪鱼阵营）</h4>
           <p>告诉你一条<strong>真实坏鱼</strong>的编号。</p>
         </div>
 
         <div class="role-card judge-role">
-          <h4>⚖️ 法官D（豪鱼阵营）</h4>
+          <h4 data-role="judge"> 法官D（豪鱼阵营）</h4>
           <p>宣判一只<strong>非豪鱼</strong>的编号。</p>
         </div>
 
         <div class="role-card gossip-role">
-          <h4>📰 八卦鱼（豪鱼阵营）</h4>
+          <h4 data-role="gossip"> 八卦鱼（豪鱼阵营）</h4>
           <p>检查相邻号码，有非好鱼回复<strong>"有瓜吃！"</strong>，没有则<strong>"并没有瓜..."</strong></p>
         </div>
 
         <div class="role-card sleepwalker-role new-role-card">
-          <h4>💤 梦游D（豪鱼阵营）<span class="new-badge">NEW</span></h4>
+          <h4 data-role="sleepwalker"> 梦游D（豪鱼阵营）<span class="new-badge">NEW</span></h4>
           <p>翻开及每次问询后提供<strong>3个号码</strong>，其中一只是坏鱼或中立！例如："3、5、8号中有一只不是豪鱼！"</p>
         </div>
 
+        <div class="role-card coroner-role new-role-card">
+          <h4 data-role="coroner"> 验尸官（豪鱼阵营）<span class="new-badge">NEW</span></h4>
+          <p>翻开后验尸：随机揭示一只<strong>已死亡</strong>鱼的真实身份，从尸检中还原真相。（若尚无尸体则无收获）</p>
+        </div>
+
         <div class="role-card evil-role">
-          <h4>😈 邪恶D（坏鱼阵营）</h4>
+          <h4 data-role="evil"> 邪恶D（坏鱼阵营）</h4>
           <p>每晚会杀死一只豪鱼。被翻开时会<strong>完美伪装成当前游戏中存在的其他角色</strong>。</p>
         </div>
 
         <div class="role-card martyr-role new-role-card">
-          <h4>💀 殉道D（坏鱼阵营）<span class="new-badge">NEW</span></h4>
+          <h4 data-role="martyr"> 殉道D（坏鱼阵营）<span class="new-badge">NEW</span></h4>
           <p><strong>死亡后（被流放或杀死）会立即杀死一只好鱼</strong>作为报复！同样会<strong>伪装成存在的角色</strong>。</p>
         </div>
 
         <div class="role-card neutral-role">
-          <h4>🎭 恶作剧D（中立阵营）</h4>
+          <h4 data-role="trickster"> 恶作剧D（中立阵营）</h4>
           <p>翻开后会<strong>减少一次</strong>问询机会！（v2.1.1.1修改：原为清空所有机会）</p>
         </div>
 
+        <div class="role-card mage-role">
+          <h4 data-role="mage"> 法师D（中立阵营）<span class="new-badge">NEW</span></h4>
+          <p>每晚令一只鱼的特性<strong>失效</strong>！问询时会告知昨晚影响了谁。</p>
+        </div>
+
         <div class="role-card orca-role">
-          <h4>🐋 虎鲸（中立阵营）</h4>
+          <h4 data-role="orca"> 虎鲸（中立阵营）</h4>
           <p><strong>每夜晚</strong>都会随机杀死一条其他的鱼（不分阵营）！</p>
+        </div>
+
+        <div class="role-card phantom-role new-role-card">
+          <h4 data-role="phantom"> 幽灵（中立阵营）<span class="new-badge">NEW</span></h4>
+          <p>翻开后当夜会<strong>额外带走一条随机的鱼</strong>（不分阵营），制造混乱。</p>
         </div>
       </div>
 
       <div class="rules-section">
-        <h3>🏆 胜利条件</h3>
+        <h3> 胜利条件</h3>
         <div class="win-condition">
-          <strong>✅ 豪鱼胜利</strong>: 所有坏鱼都被淘汰<br>
+          <strong> 豪鱼胜利</strong>: 所有坏鱼都被淘汰<br>
         </div>
         <div class="lose-condition">
-          <strong>❌ 失败条件</strong>:<br>
+          <strong> 失败条件</strong>:<br>
           • 所有豪鱼都被淘汰（死亡/流放）<br>
           • 或：豪鱼 + 中立阵营 ≤ 坏鱼阵营数量<br>
         </div>
@@ -615,7 +670,8 @@ let gameState = {
   },
   logs: [],
   inquiredThisDay: [],
-  mageTargetLastNight: null
+  mageTargetLastNight: null,
+  phantomTriggered: false
 };
 
 // ==================== 页面导航函数 ====================
@@ -638,9 +694,9 @@ const stageDetails = {
   '1-1': {
     desc: '5只侦探D vs 1只邪恶D<br>侦探D被翻开后会提示一只坏鱼的身份，<strong>但是会被坏鱼伪装！</strong><br>多问几名侦探可以减少错误的概率^-^',
     stats: [
-      { icon: '🐟', text: '6条鱼' },
-      { icon: '❓', text: '未知身份' },
-      { icon: '⚠️', text: '有伪装' }
+      { icon: '', text: '6条鱼' },
+      { icon: '', text: '未知身份' },
+      { icon: '', text: '有伪装' }
     ],
     difficulty: '入门',
     highlight: '伪装基础教学'
@@ -648,9 +704,9 @@ const stageDetails = {
   '1-2': {
     desc: '4只侦探D vs 1只恶作剧D vs 1只邪恶D<br><strong>恶作剧D：中立阵营，翻开会减少一次问询机会！</strong><br>需要在问询机会和获取信息之间做出权衡。',
     stats: [
-      { icon: '🐟', text: '6条鱼' },
-      { icon: '❓', text: '2种坏鱼' },
-      { icon: '⚠️', text: '问询干扰' }
+      { icon: '', text: '6条鱼' },
+      { icon: '', text: '2种坏鱼' },
+      { icon: '', text: '问询干扰' }
     ],
     difficulty: '简单',
     highlight: '问询干扰机制'
@@ -658,9 +714,9 @@ const stageDetails = {
   '1-3': {
     desc: '2只侦探D vs 2只摆烂D vs 1只恶作剧D vs 1只邪恶D<br><strong>摆烂D：豪鱼，但是因为太懒了并不能为你的推理提供任何帮助。</strong><br>当大量摆烂D出现时，会给推理造成很大的困扰。<br>如果信息不足以确认坏鱼，可以选择<strong>跳过流放</strong>来避免误伤好鱼^-^',
     stats: [
-      { icon: '🐟', text: '6条鱼' },
-      { icon: '❓', text: '2种坏鱼' },
-      { icon: '⚠️', text: '信息不足' }
+      { icon: '', text: '6条鱼' },
+      { icon: '', text: '2种坏鱼' },
+      { icon: '', text: '信息不足' }
     ],
     difficulty: '简单',
     highlight: '信息不足挑战'
@@ -668,9 +724,9 @@ const stageDetails = {
   '1-4': {
     desc: '4只侦探D vs 2只摆烂D vs 1只恶作剧D vs 2只邪恶D<br><strong>有时一局游戏会出现更多的坏鱼，但是每晚仍然只能杀死一只鱼，</strong><br>需要依靠有效信息将它们一一找出来。',
     stats: [
-      { icon: '🐟', text: '9条鱼' },
-      { icon: '❓', text: '双邪恶D' },
-      { icon: '⚠️', text: '高难度推理' }
+      { icon: '', text: '9条鱼' },
+      { icon: '', text: '双邪恶D' },
+      { icon: '', text: '高难度推理' }
     ],
     difficulty: '中等',
     highlight: '多坏鱼配合'
@@ -678,9 +734,9 @@ const stageDetails = {
   '1-5': {
     desc: '1只法官D vs 2只侦探D vs 1只摆烂D vs 1只恶作剧D vs 1只邪恶D<br><strong>法官D：公布一个非好鱼身份的编号，如果你相信法官的判罚，就可以大胆流放。</strong><br>结合法官的宣判和侦探的信息，快速锁定目标！',
     stats: [
-      { icon: '🐟', text: '6条鱼' },
-      { icon: '⚖️', text: '法官助力' },
-      { icon: '🔍', text: '信息交叉' }
+      { icon: '', text: '6条鱼' },
+      { icon: '', text: '法官助力' },
+      { icon: '', text: '信息交叉' }
     ],
     difficulty: '简单',
     highlight: '法官宣判机制'
@@ -688,9 +744,9 @@ const stageDetails = {
   '1-6': {
     desc: '5只梦游D vs 1只邪恶D<br><strong>梦游D：会随机梦到三个编号，三个编号中会有一只非好鱼身份。</strong><br>合理利用梦游D的推断可以帮助你缩小范围，<br>或者通过交叉推断确认高频出现的编号鱼^-^',
     stats: [
-      { icon: '🐟', text: '6条鱼' },
-      { icon: '💤', text: '全梦游阵容' },
-      { icon: '❓', text: '4次问询' }
+      { icon: '', text: '6条鱼' },
+      { icon: '', text: '全梦游阵容' },
+      { icon: '', text: '4次问询' }
     ],
     difficulty: '简单',
     highlight: '梦游推断机制'
@@ -698,9 +754,9 @@ const stageDetails = {
   '1-7': {
     desc: '5只八卦D vs 1只邪恶D<br><strong>八卦D：对自己相邻编号的鱼很感兴趣。</strong><br>如果相邻编号有非好鱼角色，八卦D会回复<strong>"有瓜吃！"</strong><br>相反则失望地说<strong>"并没有瓜..."</strong>',
     stats: [
-      { icon: '🐟', text: '6条鱼' },
-      { icon: '📰', text: '全八卦阵容' },
-      { icon: '🔍', text: '相邻检测' }
+      { icon: '', text: '6条鱼' },
+      { icon: '', text: '全八卦阵容' },
+      { icon: '', text: '相邻检测' }
     ],
     difficulty: '简单',
     highlight: '相邻检测机制'
@@ -708,9 +764,9 @@ const stageDetails = {
   '1-8': {
     desc: '12条鱼的大混战！<br><strong>虎鲸：不速之客的到来似乎影响到了原本的生态——它会无差别的攻击所有鱼！</strong><br>包含：摆烂、侦探、法官、梦游、八卦、恶作剧、邪恶、虎鲸<br>多种角色交织，每夜都可能发生意外！',
     stats: [
-      { icon: '🐟', text: '12条鱼' },
-      { icon: '🐋', text: '虎鲸登场' },
-      { icon: '⚠️', text: '混战模式' }
+      { icon: '', text: '12条鱼' },
+      { icon: '', text: '虎鲸登场' },
+      { icon: '', text: '混战模式' }
     ],
     difficulty: '中等',
     highlight: '虎鲸混战'
@@ -718,9 +774,9 @@ const stageDetails = {
   '2-1': {
     desc: '6只侦探D vs 1只邪恶D vs 1只殉道D<br><strong>殉道D：更具威胁性的坏鱼，被流放后会淘汰一只好鱼！</strong><br>虽然只有1个邪恶D，但流放错误会付出双倍代价！<br>充分利用6个侦探D的信息，精准定位目标！',
     stats: [
-      { icon: '🐟', text: '8条鱼' },
-      { icon: '🔍', text: '全侦探阵容' },
-      { icon: '💀', text: '殉道威胁' }
+      { icon: '', text: '8条鱼' },
+      { icon: '', text: '全侦探阵容' },
+      { icon: '', text: '殉道威胁' }
     ],
     difficulty: '简单',
     highlight: '殉道D登场'
@@ -728,12 +784,42 @@ const stageDetails = {
   '2-2': {
     desc: '10条鱼的混战！包含：侦探、法官、虎鲸、摆烂、梦游、恶作剧、<strong>双殉道D</strong><br><strong>更具随机性的破坏，会很大程度上干扰玩家决策。</strong><br>——其实盲砍一个也不是不可以？',
     stats: [
-      { icon: '🐟', text: '10条鱼' },
-      { icon: '💀💀', text: '双殉道D' },
-      { icon: '🐋', text: '虎鲸乱入' }
+      { icon: '', text: '10条鱼' },
+      { icon: '', text: '双殉道D' },
+      { icon: '', text: '虎鲸乱入' }
     ],
     difficulty: '中等',
     highlight: '双殉道混战'
+  },
+  '2-3': {
+    desc: '2只验尸官 vs 2只侦探D vs 2只摆烂D vs 邪恶D vs 殉道D<br><strong>验尸官：翻开一只尸体，揭示其真实身份。</strong><br>配合殉道D的威胁，谨慎问询避免误伤好鱼。',
+    stats: [
+      { icon: '', text: '8条鱼' },
+      { icon: '', text: '验尸官登场' },
+      { icon: '', text: '4次问询' }
+    ],
+    difficulty: '简单',
+    highlight: '验尸还原机制'
+  },
+  '3-1': {
+    desc: '10条鱼的全机制混战！<br><strong>验尸官与幽灵首次同台。</strong><br>包含：侦探、法官、八卦、梦游、摆烂、恶作剧、邪恶、殉道、虎鲸<br>每夜都有未知的危险，幽灵会额外带走一条鱼！',
+    stats: [
+      { icon: '', text: '10条鱼' },
+      { icon: '', text: '验尸官+幽灵' },
+      { icon: '', text: '深水区' }
+    ],
+    difficulty: '困难',
+    highlight: '全机制混战'
+  },
+  '3-2': {
+    desc: '12条鱼的终章！<br><strong>双邪恶D + 殉道D + 幽灵 + 虎鲸 + 验尸官</strong>同台。<br>信息支离破碎，凶案接连不断——唯有冷静的推理能照亮归途。',
+    stats: [
+      { icon: '', text: '12条鱼' },
+      { icon: '', text: '终章混战' },
+      { icon: '', text: '极难推理' }
+    ],
+    difficulty: '困难',
+    highlight: 'SleepTown 终章'
   }
 };
 
@@ -824,7 +910,7 @@ function closeStagemodeSidebar() {
 (function initSidebarBadges() {
   document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.stagemode-nav-link[data-fish]').forEach(function(link) {
-      const role = link.getAttribute('data-fish') === 'prankster' ? 'trickster' : link.getAttribute('data-fish');
+      const role = link.getAttribute('data-fish');
       const num = link.querySelector('.stagemode-nav-num');
       if (num) {
         num.innerHTML = getRoleAvatar(role).replace('<svg ', '<svg style="width:18px;height:18px;vertical-align:-4px" ');
@@ -920,6 +1006,30 @@ const stageConfigs = {
     roles: ['detective', 'detective', 'judge', 'orca', 'slacker', 'slacker', 'sleepwalker', 'trickster', 'martyr', 'martyr'],
     inquiriesPerDay: 3,
     difficulty: 'normal'
+  },
+  '2-3': {
+    name: '验尸官的证词',
+    description: '2只验尸官 vs 2只侦探D vs 2只摆烂D vs 邪恶D vs 殉道D。验尸官能从尸体中还原真相，配合殉道D的威胁，谨慎问询避免误伤好鱼。',
+    fishCount: 8,
+    roles: ['coroner', 'coroner', 'detective', 'detective', 'slacker', 'slacker', 'evil', 'martyr'],
+    inquiriesPerDay: 4,
+    difficulty: 'easy'
+  },
+  '3-1': {
+    name: '深水区',
+    description: '全新机制的混战：验尸官登场，幽灵潜行。包含侦探、法官、八卦、梦游、摆烂、恶作剧、邪恶、殉道、虎鲸——每夜都有未知的危险。',
+    fishCount: 10,
+    roles: ['coroner', 'detective', 'judge', 'gossip', 'sleepwalker', 'phantom', 'evil', 'martyr', 'trickster', 'orca'],
+    inquiriesPerDay: 3,
+    difficulty: 'hard'
+  },
+  '3-2': {
+    name: '终末渔火',
+    description: 'SleepTown 终章：双邪恶D + 殉道D + 幽灵 + 虎鲸 + 验尸官同台。信息支离破碎，凶案接连不断，唯有冷静的推理能照亮归途。',
+    fishCount: 12,
+    roles: ['coroner', 'coroner', 'detective', 'detective', 'judge', 'gossip', 'sleepwalker', 'phantom', 'evil', 'evil', 'martyr', 'orca'],
+    inquiriesPerDay: 4,
+    difficulty: 'hard'
   }
 };
 
@@ -936,9 +1046,9 @@ function startStageGame(stageId) {
   gameState.config = {
     fishCount: config.fishCount,
     roles: {
-      good: [...new Set(config.roles.filter(r => ['slacker', 'detective', 'judge', 'gossip', 'sleepwalker'].includes(r)))],
-      evil: [...new Set(config.roles.filter(r => ['evil', 'martyr'].includes(r)))],
-      neutral: [...new Set(config.roles.filter(r => ['trickster', 'orca'].includes(r)))]
+      good: [...new Set(config.roles.filter(isGood))],
+      evil: [...new Set(config.roles.filter(isEvil))],
+      neutral: [...new Set(config.roles.filter(isNeutral))]
     },
     inquiriesPerDay: config.inquiriesPerDay,
     difficulty: config.difficulty
@@ -977,17 +1087,18 @@ function initializeStageGame(config) {
     gameMode: 'inquiry',
     logs: [],
     inquiredThisDay: [],
-    mageTargetLastNight: null
+    mageTargetLastNight: null,
+    phantomTriggered: false
   };
 
   document.getElementById('game-log').innerHTML = '';
 
-  const evilCount = shuffledRoles.filter(r => ['evil', 'martyr'].includes(r)).length;
-  const goodActual = shuffledRoles.filter(r => ['slacker', 'detective', 'judge', 'gossip', 'sleepwalker'].includes(r)).length;
+  const evilCount = shuffledRoles.filter(isEvil).length;
+  const goodActual = shuffledRoles.filter(isGood).length;
 
-  addLog(`🏆 关卡 ${gameState.currentStage} 开始！共 ${totalCount} 条鱼 (${goodActual} 豪鱼 vs ${evilCount} 坏鱼)`, 'system');
-  addLog(`💡 关卡提示：${stageConfigs[gameState.currentStage].description}`, 'info');
-  addLog(`☀️ 白天第 1 轮 - 你有 ${config.inquiriesPerDay} 次问询机会`, 'day');
+  addLog(` 关卡 ${gameState.currentStage} 开始！共 ${totalCount} 条鱼 (${goodActual} 豪鱼 vs ${evilCount} 坏鱼)`, 'system');
+  addLog(` 关卡提示：${stageConfigs[gameState.currentStage].description}`, 'info');
+  addLog(` 白天第 1 轮 - 你有 ${config.inquiriesPerDay} 次问询机会`, 'day');
 
   updateStatusBar();
   renderFishes();
@@ -1009,17 +1120,29 @@ function backToModeSelection() {
 
 // ==================== 首页 sidebar 鱼图鉴 (v5.9) ====================
 const FISH_ROLES = {
-  slacker:    { name: '摆烂D',   faction: '豪鱼阵营', factionClass: 'good',  icon: '🐟', badge: '',    desc: '普通的好鱼，翻开后无事发生。' },
-  detective:  { name: '侦探D',   faction: '豪鱼阵营', factionClass: 'good',  icon: '🔍', badge: '',    desc: '告诉你一条<strong>真实坏鱼</strong>的编号。' },
-  judge:      { name: '法官D',   faction: '豪鱼阵营', factionClass: 'good',  icon: '⚖️', badge: '',    desc: '宣判一只<strong>非豪鱼</strong>的编号。' },
-  gossip:     { name: '八卦鱼',   faction: '豪鱼阵营', factionClass: 'good',  icon: '📰', badge: '',    desc: '检查相邻号码，有非好鱼回复<strong>"有瓜吃！"</strong>，没有则<strong>"并没有瓜..."</strong>' },
-  sleepwalker:{ name: '梦游D',   faction: '豪鱼阵营', factionClass: 'good',  icon: '💤', badge: 'NEW', desc: '翻开后提供<strong>3个号码</strong>，其中一只是坏鱼或中立！' },
-  mage:       { name: '法师D',   faction: '中立阵营', factionClass: 'neutral', icon: '🧙', badge: 'NEW', desc: '每晚令一只鱼的特性<strong>失效</strong>！问询时告知昨晚影响了谁。' },
-  prankster:  { name: '恶作剧D', faction: '中立阵营', factionClass: 'neutral', icon: '🎭', badge: '',    desc: '翻开会<strong>减少一次</strong>问询机会！（v2.1.1.1修改）' },
-  orca:       { name: '虎鲸',     faction: '中立阵营', factionClass: 'neutral', icon: '🐋', badge: '',    desc: '<strong>每夜晚</strong>都会随机杀死一条其他的鱼（不分阵营）！' },
-  evil:       { name: '邪恶D',   faction: '坏鱼阵营', factionClass: 'evil',  icon: '😈', badge: '',    desc: '每晚会杀死一只豪鱼。被翻开时会<strong>完美伪装</strong>成其他角色。' },
-  martyr:     { name: '殉道D',   faction: '坏鱼阵营', factionClass: 'evil',  icon: '💀', badge: 'NEW', desc: '<strong>死亡后</strong>会立即杀死一只好鱼作为报复！同样会伪装。' },
+  slacker:    { name: '摆烂D',   faction: '豪鱼阵营', factionClass: 'good',  icon: '', badge: '',    desc: '普通的好鱼，翻开后无事发生。' },
+  detective:  { name: '侦探D',   faction: '豪鱼阵营', factionClass: 'good',  icon: '', badge: '',    desc: '告诉你一条<strong>真实坏鱼</strong>的编号。' },
+  judge:      { name: '法官D',   faction: '豪鱼阵营', factionClass: 'good',  icon: '', badge: '',    desc: '宣判一只<strong>非豪鱼</strong>的编号。' },
+  gossip:     { name: '八卦鱼',   faction: '豪鱼阵营', factionClass: 'good',  icon: '', badge: '',    desc: '检查相邻号码，有非好鱼回复<strong>"有瓜吃！"</strong>，没有则<strong>"并没有瓜..."</strong>' },
+  sleepwalker:{ name: '梦游D',   faction: '豪鱼阵营', factionClass: 'good',  icon: '', badge: 'NEW', desc: '翻开后提供<strong>3个号码</strong>，其中一只是坏鱼或中立！' },
+  coroner:    { name: '验尸官',   faction: '豪鱼阵营', factionClass: 'good',  icon: '', badge: 'NEW', desc: '翻开后验尸：随机揭示一只<strong>已死亡</strong>鱼的真实身份，从尸检中还原真相。' },
+  mage:       { name: '法师D',   faction: '中立阵营', factionClass: 'neutral', icon: '', badge: 'NEW', desc: '每晚令一只鱼的特性<strong>失效</strong>！问询时告知昨晚影响了谁。' },
+  trickster:  { name: '恶作剧D', faction: '中立阵营', factionClass: 'neutral', icon: '', badge: '',    desc: '翻开会<strong>减少一次</strong>问询机会！（v2.1.1.1修改）' },
+  orca:       { name: '虎鲸',     faction: '中立阵营', factionClass: 'neutral', icon: '', badge: '',    desc: '<strong>每夜晚</strong>都会随机杀死一条其他的鱼（不分阵营）！' },
+  phantom:    { name: '幽灵',     faction: '中立阵营', factionClass: 'neutral', icon: '', badge: 'NEW', desc: '翻开后当夜会<strong>额外带走一条随机的鱼</strong>（不分阵营），制造混乱。' },
+  evil:       { name: '邪恶D',   faction: '坏鱼阵营', factionClass: 'evil',  icon: '', badge: '',    desc: '每晚会杀死一只豪鱼。被翻开时会<strong>完美伪装</strong>成其他角色。' },
+  martyr:     { name: '殉道D',   faction: '坏鱼阵营', factionClass: 'evil',  icon: '', badge: 'NEW', desc: '<strong>死亡后</strong>会立即杀死一只好鱼作为报复！同样会伪装。' },
 };
+
+// ==================== 阵营分类（单一真相源，由 FISH_ROLES 派生）====================
+const GOOD_ROLES = Object.keys(FISH_ROLES).filter(r => FISH_ROLES[r].factionClass === 'good');
+const EVIL_ROLES = Object.keys(FISH_ROLES).filter(r => FISH_ROLES[r].factionClass === 'evil');
+const NEUTRAL_ROLES = Object.keys(FISH_ROLES).filter(r => FISH_ROLES[r].factionClass === 'neutral');
+function isGood(r) { return GOOD_ROLES.includes(r); }
+function isEvil(r) { return EVIL_ROLES.includes(r); }
+function isNeutral(r) { return NEUTRAL_ROLES.includes(r); }
+function isNonGood(r) { return isEvil(r) || isNeutral(r); }
+function mageAffects(r) { return isGood(r) || r === 'mage'; }
 
 function switchFishRole(roleId) {
   const role = FISH_ROLES[roleId];
@@ -1141,9 +1264,9 @@ function quickStart() {
   const defaultConfig = {
     fishCount: 10,
     roles: {
-      good: ['slacker', 'detective', 'judge', 'gossip'],
+      good: ['slacker', 'detective', 'judge', 'gossip', 'coroner'],
       evil: ['evil'],
-      neutral: ['trickster', 'orca']
+      neutral: ['trickster', 'orca', 'phantom']
     },
     inquiriesPerDay: 3,
     difficulty: 'normal'
@@ -1182,7 +1305,8 @@ function updateRoleSelection() {
     document.getElementById('role-detective').checked ? '侦探D' : null,
     document.getElementById('role-judge').checked ? '法官D' : null,
     document.getElementById('role-gossip').checked ? '八卦鱼' : null,
-    document.getElementById('role-sleepwalker').checked ? '梦游D' : null
+    document.getElementById('role-sleepwalker').checked ? '梦游D' : null,
+    document.getElementById('role-coroner').checked ? '验尸官' : null
   ].filter(r => r !== null);
 
   // 坏鱼阵营角色
@@ -1195,7 +1319,8 @@ function updateRoleSelection() {
   const neutralRoles = [
     document.getElementById('role-trickster').checked ? '恶作剧D' : null,
     document.getElementById('role-orca').checked ? '虎鲸' : null,
-    document.getElementById('role-mage').checked ? '法师D' : null
+    document.getElementById('role-mage').checked ? '法师D' : null,
+    document.getElementById('role-phantom').checked ? '幽灵' : null
   ].filter(r => r !== null);
 
   const warning = document.getElementById('role-warning');
@@ -1238,6 +1363,7 @@ function updateConfigPreview() {
   if (document.getElementById('role-judge').checked) goodRolesList.push('法官D');
   if (document.getElementById('role-gossip').checked) goodRolesList.push('八卦鱼');
   if (document.getElementById('role-sleepwalker').checked) goodRolesList.push('梦游D');
+  if (document.getElementById('role-coroner').checked) goodRolesList.push('验尸官');
   document.getElementById('preview-good-roles').textContent = goodRolesList.join('、') || '未选择';
 
   // 坏鱼阵营角色
@@ -1251,6 +1377,7 @@ function updateConfigPreview() {
   if (document.getElementById('role-trickster').checked) neutralRolesList.push('恶作剧D');
   if (document.getElementById('role-orca').checked) neutralRolesList.push('虎鲸');
   if (document.getElementById('role-mage').checked) neutralRolesList.push('法师D');
+  if (document.getElementById('role-phantom').checked) neutralRolesList.push('幽灵');
   document.getElementById('preview-neutral-roles').textContent = neutralRolesList.join('、') || '未选择';
 
   document.getElementById('preview-inquiries').textContent = inquiries;
@@ -1327,17 +1454,18 @@ function initializeGame(config) {
     gameMode: 'inquiry',
     logs: [],
     inquiredThisDay: [],
-    mageTargetLastNight: null
+    mageTargetLastNight: null,
+    phantomTriggered: false
   };
 
   document.getElementById('game-log').innerHTML = '';
 
-  const evilCount = shuffledRoles.filter(r => ['evil', 'martyr'].includes(r)).length;
-  const neutralCount = shuffledRoles.filter(r => ['trickster', 'orca'].includes(r)).length;
-  const goodActual = shuffledRoles.filter(r => ['slacker', 'detective', 'judge', 'gossip', 'sleepwalker'].includes(r)).length;
+  const evilCount = shuffledRoles.filter(isEvil).length;
+  const neutralCount = shuffledRoles.filter(isNeutral).length;
+  const goodActual = shuffledRoles.filter(isGood).length;
 
-  addLog(`🎮 自由模式开始！共 ${totalCount} 条鱼 (${goodActual} 豪鱼 vs ${neutralCount} 中立 vs ${evilCount} 坏鱼)`, 'system');
-  addLog(`☀️ 白天第 1 轮 - 你有 ${config.inquiriesPerDay} 次问询机会`, 'day');
+  addLog(` 自由模式开始！共 ${totalCount} 条鱼 (${goodActual} 豪鱼 vs ${neutralCount} 中立 vs ${evilCount} 坏鱼)`, 'system');
+  addLog(` 白天第 1 轮 - 你有 ${config.inquiriesPerDay} 次问询机会`, 'day');
 
   updateStatusBar();
   renderFishes();
@@ -1482,12 +1610,12 @@ function updateStatusBar() {
 
   document.getElementById('inquiries-left').textContent = `${gameState.inquiriesLeft} 次`;
 
-  const aliveGood = gameState.fishes.filter(f => f.alive && ['slacker', 'detective', 'judge', 'gossip', 'sleepwalker'].includes(f.role)).length;
-  const aliveBadOrNeutral = gameState.fishes.filter(f => f.alive && ['evil', 'martyr', 'trickster', 'orca'].includes(f.role)).length;
+  const aliveGood = gameState.fishes.filter(f => f.alive && isGood(f.role)).length;
+  const aliveBadOrNeutral = gameState.fishes.filter(f => f.alive && isNonGood(f.role)).length;
 
   document.getElementById('good-fish-alive').textContent = aliveGood;
   document.getElementById('bad-fish-alive').textContent = gameState.phase === 'gameOver' ||
-    gameState.fishes.some(f => f.revealed && ['evil', 'martyr'].includes(f.role)) ? aliveBadOrNeutral : '?';
+    gameState.fishes.some(f => f.revealed && isEvil(f.role)) ? aliveBadOrNeutral : '?';
 
   if (gameState.phase === 'day' && gameState.gameMode === 'inquiry') {
     const skipInquiryBtn = document.getElementById('btn-skip-inquiry');
@@ -1513,7 +1641,7 @@ function renderFishes() {
         <div class="fish-avatar dead-avatar">${getRoleAvatar(fish.role)}</div>
         <div class="fish-number">#${index + 1}</div>
         <div class="fish-status">已牺牲</div>
-        <div class="fish-real-role">${getRoleEmoji(fish.role)} ${getRoleName(fish.role)}</div>
+        <div class="fish-real-role">${getRoleName(fish.role)}</div>
         <span class="fish-stamp dead">OUT</span>
       `;
     } else if (fish.revealed) {
@@ -1523,7 +1651,7 @@ function renderFishes() {
       let badgeHTML = '';
       if (!fish.disguisedAs && gameState.phase === 'gameOver') {
         if (['detective', 'judge', 'gossip'].includes(fish.role)) {
-          badgeHTML = `<div class="special-badge ${fish.role}-badge">${getRoleEmoji(fish.role)}${getRoleName(fish.role)}</div>`;
+          badgeHTML = `<div class="special-badge ${fish.role}-badge">${getRoleName(fish.role)}</div>`;
         } else if (fish.role === 'trickster') {
           badgeHTML = '<div class="trickster-badge">恶作剧</div>';
         } else if (fish.role === 'orca') {
@@ -1531,8 +1659,8 @@ function renderFishes() {
         }
       }
 
-      const isEvil = ['evil', 'martyr'].includes(fish.role) && !fish.disguisedAs;
-      const stamp = isEvil ? '<span class="fish-stamp evil">已定罪</span>'
+      const evilRevealed = isEvil(fish.role) && !fish.disguisedAs;
+      const stamp = evilRevealed ? '<span class="fish-stamp evil">已定罪</span>'
         : (gameState.phase === 'gameOver' ? '<span class="fish-stamp ok">已结案</span>' : '');
 
       fishCard.innerHTML = `
@@ -1540,7 +1668,7 @@ function renderFishes() {
         <div class="fish-number">#${index + 1}</div>
         <div class="fish-role-name">${getRoleName(displayRole)}</div>
         ${stamp}
-        <div class="fish-faction-tag ${isEvil ? 'evil' : (fish.disguisedAs ? 'disguised' : 'good')}">${isEvil ? '危险' : (fish.disguisedAs ? '可疑' : '可信')}</div>
+        <div class="fish-faction-tag ${evilRevealed ? 'evil' : (fish.disguisedAs ? 'disguised' : 'good')}">${evilRevealed ? '危险' : (fish.disguisedAs ? '可疑' : '可信')}</div>
         ${badgeHTML}
         <div class="fish-hint">${gameState.gameMode === 'inquiry' && gameState.inquiriesLeft > 0 ? '再次问询' : ''}</div>
       `;
@@ -1573,21 +1701,6 @@ function renderFishes() {
   });
 }
 
-function getRoleEmoji(role) {
-  switch(role) {
-    case 'slacker': return '🐟';
-    case 'detective': return '🔍';
-    case 'judge': return '⚖️';
-    case 'gossip': return '📰';
-    case 'sleepwalker': return '💤';
-    case 'mage': return '🧙';
-    case 'evil': return '😈';
-    case 'martyr': return '💀';
-    case 'trickster': return '🎭';
-    case 'orca': return '🐋';
-    default: return '❓';
-  }
-}
 
 function getRoleAvatar(role) {
   // Noir 侦探档案风 SVG 徽记：圆形底（随 currentColor 柔化）+ 线稿鱼形 + 角色特征
@@ -1632,6 +1745,12 @@ function getRoleAvatar(role) {
         + '<path d="M25 14 L28 5 L31 14"/>'
         + '<circle cx="18" cy="22" r="1.8" fill="currentColor" stroke="none"/>'
         + '<path d="M20 28 Q24 31 28 28" opacity="0.45"/>' + fin + '</svg>';
+    case 'coroner': // 验尸官：鱼 + 验尸标签（带十字）
+      return '<svg viewBox="0 0 48 48" class="role-svg">' + base + fishBody
+        + '<rect x="33" y="9" width="11" height="14" rx="2"/><path d="M38.5 13 V19 M35.5 16 H41.5"/>' + fin + '</svg>';
+    case 'phantom': // 幽灵：鱼 + 幽灵轮廓（波浪底）
+      return '<svg viewBox="0 0 48 48" class="role-svg">' + base + fishBody
+        + '<path d="M34 8 a6 6 0 0 1 12 0 V20 q-3 -3 -6 0 q-3 3 -6 0 Z"/>' + fin + '</svg>';
     default:
       return '<svg viewBox="0 0 48 48" class="role-svg">' + base + fishBody + fin + '</svg>';
   }
@@ -1649,6 +1768,8 @@ function getRoleName(role) {
     case 'martyr': return '殉道D';
     case 'trickster': return '恶作剧D';
     case 'orca': return '虎鲸';
+    case 'coroner': return '验尸官';
+    case 'phantom': return '幽灵';
     default: return '未知';
   }
 }
@@ -1667,7 +1788,7 @@ function inquireFish(index) {
   const fish = gameState.fishes[index];
 
   if (gameState.inquiredThisDay.includes(index)) {
-    addLog(`⚠️ #${index + 1} 号鱼今天已经被问询过了，每只鱼每天只能被问询一次`, 'warning');
+    addLog(` #${index + 1} 号鱼今天已经被问询过了，每只鱼每天只能被问询一次`, 'warning');
     return;
   }
 
@@ -1678,7 +1799,7 @@ function inquireFish(index) {
   gameState.inquiredThisDay.push(index);
   gameState.inquiriesLeft--;
 
-  addLog(`🔍 问询 #${index + 1} 号鱼...`, 'action');
+  addLog(` 问询 #${index + 1} 号鱼...`, 'action');
 
   setTimeout(() => {
     handleInquireResult(fish, index);
@@ -1689,7 +1810,7 @@ function inquireFish(index) {
     if (gameState.inquiriesLeft === 0) {
       document.getElementById('btn-exile').disabled = false;
       document.getElementById('btn-skip-inquiry').style.display = 'none';
-      addLog(`⚠️ 问询次数已用完！现在可以选择流放一只可疑的鱼，或跳过流放`, 'warning');
+      addLog(` 问询次数已用完！现在可以选择流放一只可疑的鱼，或跳过流放`, 'warning');
     } else if (gameState.inquiriesLeft < gameState.maxInquiriesPerDay) {
       document.getElementById('btn-skip-inquiry').style.display = 'inline-block';
     }
@@ -1701,34 +1822,34 @@ function inquireFish(index) {
 function handleInquireResult(fish, index) {
   // 检查是否被法师D影响（好鱼被影响的情况）
   if (gameState.mageTargetLastNight !== null && gameState.mageTargetLastNight === index &&
-      ['slacker', 'detective', 'judge', 'gossip', 'sleepwalker', 'mage'].includes(fish.role)) {
+      mageAffects(fish.role)) {
     // 该鱼昨晚被法师D影响，不输出原本信息
-    addLog(`✨ #${index + 1} 号是 **${getRoleEmoji(fish.role)}${getRoleName(fish.role)}**`, 'success');
-    addLog(`💤 #${index + 1} 号迷迷糊糊地说：**"生鱼忧患，死鱼安乐...睡过头了..."**`, 'magic');
+    addLog(` #${index + 1} 号是 **${getRoleName(fish.role)}**`, 'success');
+    addLog(` #${index + 1} 号迷迷糊糊地说：**"生鱼忧患，死鱼安乐...睡过头了..."**`, 'magic');
     return;  // 不触发原本的角色效果
   }
 
   // v2.1.1.2: 所有坏鱼阵营角色都会伪装
-  if (['evil', 'martyr'].includes(fish.role)) {
+  if (isEvil(fish.role)) {
     // 获取当前游戏中存在的所有非坏鱼角色
     const availableRoles = [...new Set(
       gameState.fishes
-        .filter(f => !['evil', 'martyr'].includes(f.role))
+        .filter(f => !isEvil(f.role))
         .map(f => f.role)
     )];
 
     if (availableRoles.length > 0) {
       fish.disguisedAs = availableRoles[Math.floor(Math.random() * availableRoles.length)];
 
-      addLog(`⚠️ #${index + 1} 号鱼是 **${getRoleEmoji(fish.disguisedAs)}${getRoleName(fish.disguisedAs)}**`, 'warning');
+      addLog(` #${index + 1} 号鱼是 **${getRoleName(fish.disguisedAs)}**`, 'warning');
       triggerRoleEffect(fish.disguisedAs, index, true);
     } else {
       // 如果没有可伪装的角色（极端情况），显示真实身份
-      addLog(`⚠️ #${index + 1} 号是 **${getRoleEmoji(fish.role)}${getRoleName(fish.role)}**`, 'warning');
+      addLog(` #${index + 1} 号是 **${getRoleName(fish.role)}**`, 'warning');
       triggerRoleEffect(fish.role, index, false);
     }
   } else {
-    addLog(`✨ #${index + 1} 号是 **${getRoleEmoji(fish.role)}${getRoleName(fish.role)}**`,
+    addLog(` #${index + 1} 号是 **${getRoleName(fish.role)}**`,
            ['slacker'].includes(fish.role) ? 'neutral' : 'success');
 
     triggerRoleEffect(fish.role, index, false);
@@ -1741,12 +1862,12 @@ function triggerRoleEffect(role, index, isDisguised) {
       // v2.1.1.1: 修改为减少一次问询次数
       if (gameState.inquiriesLeft > 0) {
         gameState.inquiriesLeft--;
-        addLog(`🎭 触发恶作剧效果！**你的问询机会减少了1次！** (剩余 ${gameState.inquiriesLeft} 次)`, 'trickster');
+        addLog(` 触发恶作剧效果！**你的问询机会减少了1次！** (剩余 ${gameState.inquiriesLeft} 次)`, 'trickster');
         
         if (gameState.inquiriesLeft === 0) {
           document.getElementById('btn-exile').disabled = false;
           document.getElementById('btn-skip-inquiry').style.display = 'none';
-          addLog(`⚠️ 问询次数已用完！现在可以选择流放一只可疑的鱼，或跳过流放`, 'warning');
+          addLog(` 问询次数已用完！现在可以选择流放一只可疑的鱼，或跳过流放`, 'warning');
         }
       }
       break;
@@ -1764,7 +1885,7 @@ function triggerRoleEffect(role, index, isDisguised) {
 
         // 确保至少有1个是真正的非豪鱼（让虚假信息看起来更真实）
         const realNonGood = gameState.fishes.filter(f =>
-          f.alive && ['evil', 'martyr', 'trickster', 'orca'].includes(f.role) && f.id !== index
+          f.alive && isNonGood(f.role) && f.id !== index
         );
 
         if (realNonGood.length > 0 && sleepwalkerTargets.length === 3) {
@@ -1776,7 +1897,7 @@ function triggerRoleEffect(role, index, isDisguised) {
       } else {
         // 真实的梦游D，选择坏鱼或中立角色
         sleepwalkerTargets = gameState.fishes
-          .filter(f => f.alive && ['evil', 'martyr', 'trickster', 'orca'].includes(f.role))
+          .filter(f => f.alive && isNonGood(f.role))
           .sort(() => Math.random() - 0.5)
           .slice(0, 3);
       }
@@ -1792,41 +1913,51 @@ function triggerRoleEffect(role, index, isDisguised) {
             break;
           }
         }
-        addLog(`💤 #${index + 1} 号在梦中呓语：**${targetNumbers.slice(0, 3).join('、')} 中有一只不是豪鱼！**`, 'clue');
+        addLog(` #${index + 1} 号在梦中呓语：**${targetNumbers.slice(0, 3).join('、')} 中有一只不是豪鱼！**`, 'clue');
       } else {
-        addLog(`💤 #${index + 1} 号在梦中翻了个身...什么也没梦见`, 'neutral');
+        addLog(` #${index + 1} 号在梦中翻了个身...什么也没梦见`, 'neutral');
+      }
+      break;
+
+    case 'coroner':
+      const deadFish = gameState.fishes.filter(f => !f.alive);
+      if (deadFish.length > 0) {
+        const corpse = deadFish[Math.floor(Math.random() * deadFish.length)];
+        addLog(` #${index + 1} 号验尸官翻检尸体：#${corpse.id + 1} 号生前是 **${getRoleName(corpse.role)}**！`, 'clue');
+      } else {
+        addLog(` #${index + 1} 号验尸官环顾停尸房——目前还没有可供验尸的尸体。`, 'neutral');
       }
       break;
 
     case 'detective':
       let targetPool;
       if (isDisguised) {
-        targetPool = gameState.fishes.filter(f => f.alive && !['evil', 'martyr', 'trickster', 'orca'].includes(f.role) && f.id !== index);
+        targetPool = gameState.fishes.filter(f => f.alive && isGood(f.role) && f.id !== index);
       } else {
-        targetPool = gameState.fishes.filter(f => f.alive && ['evil', 'martyr'].includes(f.role));
+        targetPool = gameState.fishes.filter(f => f.alive && isEvil(f.role));
       }
 
       if (targetPool.length > 0) {
         const target = targetPool[Math.floor(Math.random() * targetPool.length)];
-        addLog(`🗣️ #${index + 1} 号说：**#${target.id + 1} 号是坏鱼！**`, 'clue');
+        addLog(` #${index + 1} 号说：**#${target.id + 1} 号是坏鱼！**`, 'clue');
       } else {
-        addLog(`🗣️ #${index + 1} 号说：暂时没有发现...`, 'neutral');
+        addLog(` #${index + 1} 号说：暂时没有发现...`, 'neutral');
       }
       break;
 
     case 'judge':
       let judgeTargetPool;
       if (isDisguised) {
-        judgeTargetPool = gameState.fishes.filter(f => f.alive && !['evil', 'martyr', 'trickster', 'orca'].includes(f.role) && f.id !== index);
+        judgeTargetPool = gameState.fishes.filter(f => f.alive && isGood(f.role) && f.id !== index);
       } else {
-        judgeTargetPool = gameState.fishes.filter(f => f.alive && ['evil', 'martyr', 'trickster', 'orca'].includes(f.role) && f.id !== index);
+        judgeTargetPool = gameState.fishes.filter(f => f.alive && isNonGood(f.role) && f.id !== index);
       }
 
       if (judgeTargetPool.length > 0) {
         const judgeTarget = judgeTargetPool[Math.floor(Math.random() * judgeTargetPool.length)];
-        addLog(`⚖️ #${index + 1} 号宣判：**#${judgeTarget.id + 1} 号不是豪鱼！**`, 'clue');
+        addLog(` #${index + 1} 号宣判：**#${judgeTarget.id + 1} 号不是豪鱼！**`, 'clue');
       } else {
-        addLog(`⚖️ #${index + 1} 号宣判：暂时没有发现...`, 'neutral');
+        addLog(` #${index + 1} 号宣判：暂时没有发现...`, 'neutral');
       }
       break;
 
@@ -1834,51 +1965,56 @@ function triggerRoleEffect(role, index, isDisguised) {
       const adjacentIndices = getAdjacentFish(index);
       const adjacentFish = adjacentIndices.map(i => gameState.fishes[i]).filter(f => f.alive);
 
-      let hasNonGood = adjacentFish.some(f => ['evil', 'martyr', 'trickster', 'orca'].includes(f.role));
+      let hasNonGood = adjacentFish.some(f => isNonGood(f.role));
 
       if (isDisguised) {
         hasNonGood = !hasNonGood;
       }
 
       if (hasNonGood) {
-        addLog(`📰 #${index + 1} 号悄悄说：**"有瓜吃！** 🍉（相邻有情况）`, 'clue');
+        addLog(` #${index + 1} 号悄悄说：**"有瓜吃！** （相邻有情况）`, 'clue');
       } else {
-        addLog(`📰 #${index + 1} 号失望地说：**"并没有瓜..."** 😔`, 'neutral');
+        addLog(` #${index + 1} 号失望地说：**"并没有瓜..."** `, 'neutral');
       }
       break;
 
     case 'orca':
-      addLog(`🐋 #${index + 1} 号发出低沉的鸣叫...今晚要小心了！`, 'warning');
+      addLog(` #${index + 1} 号发出低沉的鸣叫...今晚要小心了！`, 'warning');
+      break;
+
+    case 'phantom':
+      gameState.phantomTriggered = true;
+      addLog(` #${index + 1} 号幽灵发出诡异的低语……今夜它将<strong>额外带走一条随机的鱼</strong>！`, 'death');
       break;
 
     case 'mage':
       // 法师D被问询时，告知昨晚影响了谁
       if (gameState.mageTargetLastNight !== null) {
         const targetFish = gameState.fishes[gameState.mageTargetLastNight];
-        const targetRoleName = getRoleEmoji(targetFish.role) + getRoleName(targetFish.role);
-        addLog(`🧙 #${index + 1} 号法师低语：**"昨晚我对 #${gameState.mageTargetLastNight + 1} 号（${targetRoleName}) 施加了魔法..."**`, 'magic');
+        const targetRoleName = getRoleName(targetFish.role);
+        addLog(` #${index + 1} 号法师低语：**"昨晚我对 #${gameState.mageTargetLastNight + 1} 号（${targetRoleName}) 施加了魔法..."**`, 'magic');
 
         // 说明魔法效果
-        if (['evil', 'martyr'].includes(targetFish.role)) {
-          addLog(`🧙 法师继续说：**"它本想作恶，但我的魔法压制了它的力量，今夜无人伤亡。"**`, 'magic');
+        if (isEvil(targetFish.role)) {
+          addLog(` 法师继续说：**"它本想作恶，但我的魔法压制了它的力量，今夜无人伤亡。"**`, 'magic');
         } else {
-          addLog(`🧙 法师继续说：**"它似乎睡得很沉，今天可能无法正常回应你了..."**`, 'magic');
+          addLog(` 法师继续说：**"它似乎睡得很沉，今天可能无法正常回应你了..."**`, 'magic');
         }
       } else {
-        addLog(`🧙 #${index + 1} 号法师摇摇头：**"昨夜月色朦胧，我没有施展魔法..."**`, 'neutral');
+        addLog(` #${index + 1} 号法师摇摇头：**"昨夜月色朦胧，我没有施展魔法..."**`, 'neutral');
       }
       break;
 
     case 'martyr':
       // 殉道D被翻开时显示伪装效果（实际触发在死亡时）
       if (!isDisguised) {
-        addLog(`💀 #${index + 1} 号眼神阴冷...它似乎在策划着什么...`, 'warning');
+        addLog(` #${index + 1} 号眼神阴冷...它似乎在策划着什么...`, 'warning');
       }
       break;
 
     case 'slacker':
     default:
-      addLog(`😴 #${index + 1} 号是一条普通的摆烂D，什么也没发生`, 'neutral');
+      addLog(` #${index + 1} 号是一条普通的摆烂D，什么也没发生`, 'neutral');
       break;
   }
 }
@@ -1890,7 +2026,7 @@ function enterExileMode() {
   }
 
   gameState.gameMode = 'exile';
-  addLog(`⚖️ 进入流放模式 - 选择一只鱼进行流放`, 'system');
+  addLog(` 进入流放模式 - 选择一只鱼进行流放`, 'system');
   updateStatusBar();
   renderFishes();
 
@@ -1905,16 +2041,16 @@ function skipInquiry() {
   const remaining = gameState.inquiriesLeft;
   gameState.inquiriesLeft = 0;
 
-  addLog(`⏭️ 你选择提前结束问询（剩余 ${remaining} 次机会未使用）`, 'warning');
+  addLog(` 你选择提前结束问询（剩余 ${remaining} 次机会未使用）`, 'warning');
   document.getElementById('btn-skip-inquiry').style.display = 'none';
   document.getElementById('btn-exile').disabled = false;
-  addLog(`⚠️ 现在可以选择流放一只可疑的鱼，或跳过流放`, 'warning');
+  addLog(` 现在可以选择流放一只可疑的鱼，或跳过流放`, 'warning');
 
   updateStatusBar();
 }
 
 function skipExile() {
-  addLog(`🚫 你选择本轮不流放任何鱼`, 'neutral');
+  addLog(` 你选择本轮不流放任何鱼`, 'neutral');
   document.getElementById('btn-skip-exile').style.display = 'none';
 
   if (!checkGameEnd()) {
@@ -1929,28 +2065,26 @@ function exileFish(index) {
   fish.alive = false;
   fish.revealed = true;
 
-  addLog(`⚖️ 流放 #${index + 1} 号鱼...`, 'action');
+  addLog(` 流放 #${index + 1} 号鱼...`, 'action');
 
   setTimeout(() => {
     const realRole = fish.role;
     const wasDisguised = !!fish.disguisedAs;
 
-    if (realRole === 'evil') {
-      addLog(`🎉 太棒了！#${index + 1} 号确实是 **😈邪恶D（坏鱼）**！${wasDisguised ? ' 它伪装成了其他角色！' : ''}`, 'success');
-    } else if (realRole === 'martyr') {
+    if (realRole === 'martyr') {
       // 殉道D死亡效果：立即杀死一只好鱼
-      addLog(`💀 #${index + 1} 号是 **💀殉道D（坏鱼）**！${wasDisguised ? '（伪装的）' : ''}`, 'warning');
-      addLog(`⚠️ 殉道D的诅咒发动！它临死前拉了一只豪鱼陪葬...`, 'death');
-      
+      addLog(` #${index + 1} 号是 **殉道D（坏鱼）**！${wasDisguised ? '（伪装的）' : ''}`, 'warning');
+      addLog(` 殉道D的诅咒发动！它临死前拉了一只豪鱼陪葬...`, 'death');
+
       setTimeout(() => {
         triggerMartyrDeathEffect(index);
       }, 500);
-    } else if (realRole === 'trickster') {
-      addLog(`😐 #${index + 1} 号是 **🎭恶作剧D（中立）**${wasDisguised ? '（伪装的）' : ''}`, 'neutral');
-    } else if (realRole === 'orca') {
-      addLog(`😤 #${index + 1} 号是 **🐋虎鲸（中立）**${wasDisguised ? '（伪装的）' : ''}，至少它不会再杀人了`, 'neutral');
-    } else if (['slacker', 'detective', 'judge', 'gossip', 'sleepwalker'].includes(realRole)) {
-      addLog(`😢 遗憾...#${index + 1} 号是 **${getRoleEmoji(realRole)}${getRoleName(realRole)}（豪鱼）**${wasDisguised ? '（它是伪装的！）' : ''}，被误杀了`, 'error');
+    } else if (isEvil(realRole)) {
+      addLog(` 太棒了！#${index + 1} 号确实是 **${getRoleName(realRole)}（坏鱼）**！${wasDisguised ? ' 它伪装成了其他角色！' : ''}`, 'success');
+    } else if (isNeutral(realRole)) {
+      addLog(` #${index + 1} 号是 **${getRoleName(realRole)}（中立）**${wasDisguised ? '（伪装的）' : ''}${realRole === 'orca' ? '，至少它不会再杀人了' : ''}`, 'neutral');
+    } else {
+      addLog(` 遗憾...#${index + 1} 号是 **${getRoleName(realRole)}（豪鱼）**${wasDisguised ? '（它是伪装的！）' : ''}，被误杀了`, 'error');
     }
 
     // 如果不是殉道D或殉道D效果已处理完
@@ -1965,16 +2099,16 @@ function exileFish(index) {
 // 殉道D死亡效果函数
 function triggerMartyrDeathEffect(martyrIndex) {
   const aliveGoodFish = gameState.fishes.filter(f => 
-    f.alive && ['slacker', 'detective', 'judge', 'gossip', 'sleepwalker'].includes(f.role)
+    f.alive && isGood(f.role)
   );
 
   if (aliveGoodFish.length > 0) {
     const victim = aliveGoodFish[Math.floor(Math.random() * aliveGoodFish.length)];
     victim.alive = false;
     
-    addLog(`💀 #${victim.id + 1} 号被殉道D的诅咒波及！它是 **${getRoleEmoji(victim.role)}${getRoleName(victim.role)}（豪鱼）**`, 'death');
+    addLog(` #${victim.id + 1} 号被殉道D的诅咒波及！它是 **${getRoleName(victim.role)}（豪鱼）**`, 'death');
   } else {
-    addLog(`💀 幸运的是，场上已经没有可以被殉道D带走的豪鱼了...`, 'neutral');
+    addLog(` 幸运的是，场上已经没有可以被殉道D带走的豪鱼了...`, 'neutral');
   }
 
   // 延迟后检查游戏结束并进入夜晚
@@ -1990,7 +2124,7 @@ function startNightPhase() {
   gameState.gameMode = 'inquiry';
   gameState.inquiriesLeft = gameState.config.inquiriesPerDay;
 
-  addLog(`🌙 夜晚降临...`, 'night');
+  addLog(` 夜晚降临...`, 'night');
   updateStatusBar();
   renderFishes();
 
@@ -2005,25 +2139,25 @@ function startNightPhase() {
       const mageTarget = aliveTargets[Math.floor(Math.random() * aliveTargets.length)];
       gameState.mageTargetLastNight = mageTarget.id;
 
-      addLog(`🧙 月光下，#${mageTarget.id + 1} 号鱼被神秘的魔法笼罩...`, 'night');
+      addLog(` 月光下，#${mageTarget.id + 1} 号鱼被神秘的魔法笼罩...`, 'night');
 
       // 检查目标是坏鱼还是好鱼
-      if (['evil', 'martyr'].includes(mageTarget.role)) {
+      if (isEvil(mageTarget.role)) {
         // 目标是坏鱼：今晚不会有任何鱼被坏鱼淘汰
-        addLog(`✨ 奇迹！法师的魔法压制了邪恶力量，今夜平安无事！`, 'magic');
+        addLog(` 奇迹！法师的魔法压制了邪恶力量，今夜平安无事！`, 'magic');
         // 清空victims数组，阻止坏鱼和虎鲸的攻击（虎鲸也被魔法影响）
         victims.length = 0;
       } else {
         // 目标是好鱼：第二天问询时该鱼会回复特殊信息
-        addLog(`🌙 #${mageTarget.id + 1} 号鱼似乎睡得很沉...`, 'night');
+        addLog(` #${mageTarget.id + 1} 号鱼似乎睡得很沉...`, 'night');
       }
     } else {
       gameState.mageTargetLastNight = null;
     }
 
     // 坏鱼（邪恶D和殉道D）杀人 - 只有当法师D没有阻止时才执行
-    const aliveEvilFish = gameState.fishes.filter(f => f.alive && ['evil', 'martyr'].includes(f.role));
-    const aliveGoodFish = gameState.fishes.filter(f => f.alive && ['slacker', 'detective', 'judge', 'gossip', 'sleepwalker'].includes(f.role));
+    const aliveEvilFish = gameState.fishes.filter(f => f.alive && isEvil(f.role));
+    const aliveGoodFish = gameState.fishes.filter(f => f.alive && isGood(f.role));
 
     if (aliveEvilFish.length > 0 && aliveGoodFish.length > 0 && victims.length === 0) {
       const victim = aliveGoodFish[Math.floor(Math.random() * aliveGoodFish.length)];
@@ -2041,18 +2175,28 @@ function startNightPhase() {
       }
     }
 
+    // 幽灵：被问询当夜额外带走一条随机的鱼（不分阵营）
+    if (gameState.phantomTriggered) {
+      gameState.phantomTriggered = false;
+      const phantomPool = gameState.fishes.filter(f => f.alive && !victims.some(v => v.fish.id === f.id));
+      if (phantomPool.length > 0) {
+        const extraVictim = phantomPool[Math.floor(Math.random() * phantomPool.length)];
+        victims.push({ fish: extraVictim, killer: '幽灵' });
+      }
+    }
+
     if (victims.length > 0) {
       setTimeout(() => {
         victims.forEach(victim => {
           victim.fish.alive = false;
-          addLog(`💀 夜深了...#${victim.fish.id + 1} 号鱼被 **${victim.killer}** 杀害了！它是 **${getRoleEmoji(victim.fish.role)}${getRoleName(victim.fish.role)}**`, 'death');
+          addLog(` 夜深了...#${victim.fish.id + 1} 号鱼被 **${victim.killer}** 杀害了！它是 **${getRoleName(victim.fish.role)}**`, 'death');
         });
 
         gameState.day++;
         gameState.phase = 'day';
         gameState.inquiredThisDay = [];
 
-        addLog(`☀️ 白天第 ${gameState.day} 轮 - 你有 ${gameState.config.inquiriesPerDay} 次新的问询机会`, 'day');
+        addLog(` 白天第 ${gameState.day} 轮 - 你有 ${gameState.config.inquiriesPerDay} 次新的问询机会`, 'day');
 
         updateStatusBar();
         renderFishes();
@@ -2063,7 +2207,7 @@ function startNightPhase() {
       gameState.phase = 'day';
       gameState.inquiredThisDay = [];
 
-      addLog(`☀️ 白天第 ${gameState.day} 轮 - 今夜平安无事`, 'day');
+      addLog(` 白天第 ${gameState.day} 轮 - 今夜平安无事`, 'day');
 
       updateStatusBar();
       renderFishes();
@@ -2073,9 +2217,9 @@ function startNightPhase() {
 }
 
 function checkGameEnd() {
-  const aliveGood = gameState.fishes.filter(f => f.alive && ['slacker', 'detective', 'judge', 'gossip', 'sleepwalker'].includes(f.role)).length;
-  const aliveEvil = gameState.fishes.filter(f => f.alive && ['evil', 'martyr'].includes(f.role)).length;
-  const aliveNeutral = gameState.fishes.filter(f => f.alive && ['trickster', 'orca', 'mage'].includes(f.role)).length;
+  const aliveGood = gameState.fishes.filter(f => f.alive && isGood(f.role)).length;
+  const aliveEvil = gameState.fishes.filter(f => f.alive && isEvil(f.role)).length;
+  const aliveNeutral = gameState.fishes.filter(f => f.alive && isNeutral(f.role)).length;
 
   if (aliveEvil === 0) {
     endGame(true);
@@ -2111,7 +2255,7 @@ function endGame(playerWins) {
   const revealInfo = document.getElementById('reveal-info');
 
   if (playerWins) {
-    icon.textContent = '🎉';
+    icon.textContent = '';
     title.textContent = '豪鱼胜利！';
     message.textContent = '你是豪人！成功找出了所有威胁，SleepTown 再次恢复了宁静！';
     modal.className = 'modal-overlay win-modal';
@@ -2121,11 +2265,11 @@ function endGame(playerWins) {
       const nextStageId = getNextStageId(gameState.currentStage);
       if (nextStageId) {
         document.getElementById('next-stage-btn').style.display = 'inline-block';
-        document.getElementById('next-stage-btn').textContent = `⏭️ 下一关（${nextStageId}）→`;
+        document.getElementById('next-stage-btn').textContent = ` 下一关（${nextStageId}）→`;
       }
     }
   } else {
-    icon.textContent = '💀';
+    icon.textContent = '';
     title.textContent = '失败！';
     message.textContent = '混乱占据了上风，SleepTown 陷入了黑暗...';
     modal.className = 'modal-overlay lose-modal';
@@ -2134,19 +2278,19 @@ function endGame(playerWins) {
     document.getElementById('next-stage-btn').style.display = 'none';
   }
 
-  let revealHTML = '<h3>📋 所有鱼的真相</h3><div class="truth-grid">';
+  let revealHTML = '<h3> 所有鱼的真相</h3><div class="truth-grid">';
   gameState.fishes.forEach((fish, index) => {
     let bgColor = 'good-truth';
-    if (fish.role === 'evil') bgColor = 'evil-truth';
-    else if (['trickster', 'orca'].includes(fish.role)) bgColor = 'neutral-truth';
+    if (isEvil(fish.role)) bgColor = 'evil-truth';
+    else if (isNeutral(fish.role)) bgColor = 'neutral-truth';
 
     const disguiseInfo = fish.disguisedAs ? ` (伪装成${getRoleName(fish.disguisedAs)})` : '';
 
     revealHTML += `
       <div class="truth-item ${bgColor}">
         <span>#${index + 1}</span>
-        <span>${getRoleEmoji(fish.role)} ${getRoleName(fish.role)}${disguiseInfo}</span>
-        <span>${fish.alive ? '✅ 存活' : '💀 死亡'}</span>
+        <span>${getRoleName(fish.role)}${disguiseInfo}</span>
+        <span>${fish.alive ? ' 存活' : ' 死亡'}</span>
       </div>
     `;
   });
@@ -2164,7 +2308,7 @@ function showRulesModal() {
 
 // 获取下一关的ID
 function getNextStageId(currentStageId) {
-  const stageOrder = ['1-1', '1-2', '1-3', '1-4', '1-5', '1-6', '1-7', '1-8', '2-1', '2-2'];
+  const stageOrder = ['1-1', '1-2', '1-3', '1-4', '1-5', '1-6', '1-7', '1-8', '2-1', '2-2', '2-3', '3-1', '3-2'];
   const currentIndex = stageOrder.indexOf(currentStageId);
   if (currentIndex !== -1 && currentIndex < stageOrder.length - 1) {
     return stageOrder[currentIndex + 1];
@@ -2213,7 +2357,8 @@ function resetGame() {
     mode: 'freemode',
     config: {},
     gameMode: 'inquiry',
-    logs: []
+    logs: [],
+    phantomTriggered: false
   };
 
   document.getElementById('freemode-setup').style.display = 'block';
@@ -2226,29 +2371,18 @@ function resetGame() {
 
 /* ========== Noir：配置角色勾选 + 规则卡标题 的 emoji → SVG 徽记（去 AI 味） ========== */
 (function paintRoleEmblems() {
-  const roleEmoji = {
-    '🐟': 'slacker', '🔍': 'detective', '⚖️': 'judge', '📰': 'gossip',
-    '💤': 'sleepwalker', '🧙': 'mage', '🎭': 'trickster', '🐋': 'orca',
-    '😈': 'evil', '💀': 'martyr'
-  };
   document.querySelectorAll('.role-checkbox-label').forEach(function (label) {
     const input = label.querySelector('input[type="checkbox"]');
     const m = input && (input.id || '').match(/^role-(.+)$/);
     if (!m) return;
     const nameSpan = label.querySelector('span:first-of-type:not(.new-badge)');
     if (!nameSpan) return;
-    const chars = Array.from(nameSpan.textContent);
-    if (roleEmoji[chars[0]]) {
-      const name = chars.slice(1).join('').replace(/^\s+/, '');
-      nameSpan.innerHTML = getRoleAvatar(m[1]) + ' ' + name;
-    }
+    nameSpan.insertAdjacentHTML('afterbegin', getRoleAvatar(m[1]) + ' ');
   });
   document.querySelectorAll('.role-card h4').forEach(function (h) {
-    const chars = Array.from(h.textContent);
-    if (roleEmoji[chars[0]]) {
-      const rest = chars.slice(1).join('').replace(/^\s+/, '');
-      h.innerHTML = getRoleAvatar(roleEmoji[chars[0]]) + ' ' + rest;
-    }
+    const role = h.getAttribute('data-role');
+    if (!role) return;
+    h.insertAdjacentHTML('afterbegin', getRoleAvatar(role) + ' ');
   });
 })();
 </script>

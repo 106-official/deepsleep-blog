@@ -64,7 +64,7 @@ SNMP 用三个关键抽象一次性解决了这个问题：
 
 ## 本目录学习路线
 
-1. **[01-原理与报文](01-原理与报文.md)** — 先搞清 MIB 树与 OID 寻址、SNMP 报文的三段式结构（version / community / PDU）、六种 PDU 的字段差异、getnext 如何实现"遍历"、v3 的 USM 认证加密流程。
-2. **[02-实战与排错](02-实战与排错.md)** — 用 `snmpwalk` / `snmpget` / `snmptrap` 动手采集，Wireshark 观察明文 community 的风险，处理"超时无响应""OID 不存在""Trap 收不到"等典型故障，以及与 NETCONF、NetFlow 的选型对比。
+1. **[01-原理与报文](01-原理与报文/)** — 先搞清 MIB 树与 OID 寻址、SNMP 报文的三段式结构（version / community / PDU）、六种 PDU 的字段差异、getnext 如何实现"遍历"、v3 的 USM 认证加密流程。
+2. **[02-实战与排错](02-实战与排错/)** — 用 `snmpwalk` / `snmpget` / `snmptrap` 动手采集，Wireshark 观察明文 community 的风险，处理"超时无响应""OID 不存在""Trap 收不到"等典型故障，以及与 NETCONF、NetFlow 的选型对比。
 
 > **学习建议**：SNMP 的难点不在协议报文（结构很简单），而在 **MIB 树的心智模型**。务必先用 `snmpwalk` 把一台真实设备（或本机 `net-snmp`）的 `1.3.6.1.2.1.2.2`（接口表）走一遍，看到"表格是如何用 OID 后缀展开成行"，后面一切就通了。

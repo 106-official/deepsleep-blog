@@ -14,7 +14,14 @@
       </a>
     </div>
     <nav class="learn-nav">
+      {{- /* 当前所在证书板块：用于侧边栏过滤（仅显示当前板块，/learn/ 首页显示全部） */ -}}
+      {{- $rel := .RelPermalink -}}
+      {{- $activeCert := "" -}}
+      {{- if hasPrefix $rel "/learn/cpa/" }}{{ $activeCert = "cpa" }}{{ end -}}
+      {{- if hasPrefix $rel "/learn/acca/" }}{{ $activeCert = "acca" }}{{ end -}}
+      {{- if hasPrefix $rel "/learn/network-protocols/" }}{{ $activeCert = "net" }}{{ end -}}
       {{- /* ============= CPA ============= */ -}}
+      {{- if or (eq $activeCert "") (eq $activeCert "cpa") -}}
       {{- $cpa := .Site.GetPage "/learn/cpa" -}}
       {{- if $cpa -}}
       <div class="learn-nav-group learn-nav-cert">
@@ -52,8 +59,10 @@
         {{- end -}}
       </div>
       {{- end -}}
+      {{- end -}}
 
       {{- /* ============= ACCA ============= */ -}}
+      {{- if or (eq $activeCert "") (eq $activeCert "acca") -}}
       {{- $acca := .Site.GetPage "/learn/acca" -}}
       {{- if $acca -}}
       <div class="learn-nav-group learn-nav-cert">
@@ -68,6 +77,40 @@
         {{- end -}}
       </div>
       {{- end -}}
+      {{- end -}}
+
+      {{- /* ============= NET ============= */ -}}
+      {{- if or (eq $activeCert "") (eq $activeCert "net") -}}
+      {{- $net := .Site.GetPage "/learn/network-protocols" -}}
+      {{- if $net -}}
+      <div class="learn-nav-group learn-nav-cert">
+        <a href="{{ $net.Permalink }}" class="learn-nav-group-title {{ if eq $activeCert "net" }}current{{ end }}">
+          <span>NET · 网络协议</span>
+        </a>
+        {{- range $net.Sections.ByParam "weight" -}}
+        {{- $isCurrentSubject := or (eq $.CurrentSection.RelPermalink .RelPermalink) (strings.HasPrefix $.CurrentSection.RelPermalink .RelPermalink) -}}
+        <details class="learn-nav-subject"{{ if $isCurrentSubject }} open{{ end }}>
+          <summary class="learn-nav-subject-title {{ if $isCurrentSubject }}current{{ end }}">
+            <span class="learn-nav-num">{{ printf "%02d" .Params.weight }}</span>
+            <span class="learn-nav-subject-text">{{ .Title }}</span>
+          </summary>
+          <div class="learn-nav-chapters">
+            <a href="{{ .Permalink }}" class="learn-nav-link learn-nav-overview {{ if eq $.Permalink .Permalink }}active{{ end }}">
+              <span class="learn-nav-text">协议概览</span>
+            </a>
+            {{- range $i, $p := (sort .Pages "Path") -}}
+            <a href="{{ $p.Permalink }}" class="learn-nav-link {{ if eq $.Permalink $p.Permalink }}active{{ end }}">
+              <span class="learn-nav-num">{{ printf "%02d" (add $i 1) }}</span>
+              <span class="learn-nav-text">{{ $p.Title }}</span>
+            </a>
+            {{- end -}}
+          </div>
+        </details>
+        {{- end -}}
+      </div>
+      {{- end -}}
+      {{- end -}}
+
     </nav>
   </aside>
 

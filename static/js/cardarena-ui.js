@@ -211,6 +211,7 @@
     return {
       activeIndex: side.activeIndex,
       hero: r ? { health: r.health, alive: r.alive, id: r.id, name: r.name, attack: r.attack, maxHealth: r.maxHealth } : null,
+      hand: side.hand.slice(),
       minions: side.board.filter(function (m) { return m.health > 0; }).map(function (m) {
         return { uid: m.uid, health: m.health };
       })
@@ -235,13 +236,29 @@
     return rects;
   }
 
+  // 计算手牌中「净新增」的牌数（按 id 计数值对比，正确处理重复牌）
+  function gainedCards(oldHand, newHand) {
+    var oldC = {}, newC = {}, gained = 0;
+    (oldHand || []).forEach(function (id) { oldC[id] = (oldC[id] || 0) + 1; });
+    (newHand || []).forEach(function (id) {
+      newC[id] = (newC[id] || 0) + 1;
+      if (newC[id] > (oldC[id] || 0)) gained++;
+    });
+    return gained;
+  }
+
   // 对比前后状态，产出特效清单
   function analyzeFx(s, prev, rects) {
-    var fx = { dmg: [], heal: [], deaths: [], summons: [], swap: null, attacker: null };
+    var fx = { dmg: [], heal: [], deaths: [], summons: [], swap: null, draw: null, attacker: null };
     if (!prev) return fx;
     ['player', 'enemy'].forEach(function (sn) {
       var ns = s[sn];
       var ps = prev[sn];
+      // ---- 抽牌（手牌净新增；换人时跳过，避免与幽灵卡重叠）----
+      if (!fx.swap) {
+        var gained = gainedCards(ps.hand, ns.hand);
+        if (gained > 0) fx.draw = { side: sn, count: gained };
+      }
       // ---- 随从（引擎状态用 board 字段，快照用 minions 字段）----
       var cur = {}, old = {};
       (ns.board || []).forEach(function (m) { if (m.health > 0) cur[m.uid] = m.health; });
@@ -342,6 +359,13 @@
     });
     // 换人 3D 幽灵卡翻飞
     if (fx.swap) playGhostSwap(fx.swap);
+    // 抽牌：幻影牌从界面右侧 3D 翻入手牌区
+    if (fx.draw && fx.draw.side === 'player' && fx.draw.count > 0) {
+      var handCards = app.querySelectorAll('.ca-hand-cards .ca-card');
+      if (handCards.length > 0) {
+        playDrawFx(fx.draw.count, handCards[handCards.length - 1].getBoundingClientRect());
+      }
+    }
   }
 
   // 伤害/治疗飘字（fixed 定位到 body，不受重渲染影响）
@@ -446,6 +470,46 @@
       sp.style.setProperty('--sdy', Math.round(Math.sin(ang) * dist) + 'px');
       document.body.appendChild(sp);
       (function (n2) { setTimeout(function () { n2.remove(); }, 800); })(sp);
+    }
+  }
+
+  // 抽牌：幻影牌从界面右侧 3D 翻转到手牌区（卡背朝外 → 正面落地，立体感）
+  function playDrawFx(count, lastCardRect) {
+    var n = Math.min(count, 3);
+    for (var i = 0; i < n; i++) {
+      var ghost = el('div', 'ca-draw-ghost');
+      var front = el('div', 'ca-draw-face ca-draw-front');
+      front.appendChild(el('div', 'ca-draw-band', 'GOLD'));
+      front.appendChild(el('div', 'ca-draw-star'));
+      var back = el('div', 'ca-draw-face ca-draw-back');
+      back.appendChild(el('div', 'ca-draw-mark', 'ON DUTY'));
+      ghost.appendChild(front);
+      ghost.appendChild(back);
+      document.body.appendChild(ghost);
+
+      // 起点：视口右侧中部，多张时纵向错落成扇形
+      var startX = window.innerWidth + 30 + i * 26;
+      var startY = window.innerHeight * (0.28 + i * 0.10) + (Math.random() * 20 - 10);
+      // 终点：手牌区最后一张（抽到的牌）的位置，多张时依次向左
+      var endX = Math.round(lastCardRect.right - 34 - i * 84);
+      var endY = Math.round(lastCardRect.top + lastCardRect.height / 2 - 48);
+      var dx = endX - startX;
+      var dy = endY - startY;
+      ghost.style.left = startX + 'px';
+      ghost.style.top = startY + 'px';
+
+      var anim = ghost.animate([
+        { transform: 'perspective(700px) translate(0px, 0px) rotateY(120deg) rotateZ(9deg) scale(1)', opacity: 0.95, offset: 0 },
+        { transform: 'perspective(700px) translate(' + Math.round(dx * 0.72) + 'px, ' + Math.round(dy * 0.55 - 42) + 'px) rotateY(62deg) rotateZ(0deg) scale(1.08)', opacity: 1, offset: 0.62 },
+        { transform: 'perspective(700px) translate(' + Math.round(dx) + 'px, ' + Math.round(dy) + 'px) rotateY(0deg) rotateZ(0deg) scale(0.96)', opacity: 0, offset: 1 }
+      ], { duration: 780, delay: i * 110, easing: 'cubic-bezier(0.22, 1, 0.36, 1)', fill: 'forwards' });
+      (function (g) {
+        anim.onfinish = function () { g.remove(); };
+      })(ghost);
+      // 落地金尘
+      (function (x, y, d) {
+        setTimeout(function () { burstSparks(x, y, 5); }, 780 + d);
+      })(endX, endY, i * 110);
     }
   }
 

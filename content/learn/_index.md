@@ -91,10 +91,10 @@ slug: "learn"
 }
 .learn-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 2rem;
-  max-width: 900px;
-  margin: 2rem auto 4rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  max-width: 860px;
+  margin: 2rem auto 3rem;
   padding: 0 1.5rem;
 }
 .learn-card {
@@ -102,7 +102,7 @@ slug: "learn"
   flex-direction: column;
   align-items: center;
   gap: 0.5rem;
-  padding: 3rem 2rem;
+  padding: 2rem 1.5rem;
   background: var(--color-bg-secondary, #fff);
   border: 2px solid var(--color-border, #e0e0e0);
   border-radius: 16px;
@@ -121,12 +121,12 @@ slug: "learn"
 }
 .learn-card:hover {
   border-color: var(--color-accent, #D4AF37);
-  transform: translateY(-6px);
+  transform: translateY(-3px);
   box-shadow: 0 12px 32px rgba(212,175,55,0.2);
 }
 .learn-card:hover::before { opacity: 1; }
 .learn-card-icon {
-  font-size: 3rem;
+  font-size: 2.4rem;
   position: relative;
   z-index: 1;
 }
@@ -141,7 +141,7 @@ slug: "learn"
 }
 .learn-card-title {
   font-family: 'Playfair Display', Georgia, serif;
-  font-size: 1.6rem;
+  font-size: 1.35rem;
   color: var(--color-text-primary, #2d2d2d);
   margin: 0.3rem 0 0;
   position: relative;
@@ -160,7 +160,7 @@ slug: "learn"
   flex-wrap: wrap;
   justify-content: center;
   gap: 0.5rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   position: relative;
   z-index: 1;
 }
@@ -173,11 +173,11 @@ slug: "learn"
   color: var(--color-text-secondary, #666);
 }
 .learn-card-btn {
-  padding: 0.6rem 1.5rem;
+  padding: 0.5rem 1.2rem;
   background: linear-gradient(135deg, var(--color-accent, #D4AF37), var(--color-accent-light, #F4E5B2));
   color: #000;
   border-radius: 100px;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 600;
   position: relative;
   z-index: 1;

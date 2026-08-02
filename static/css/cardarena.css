@@ -66,6 +66,7 @@
 }
 
 /* ===== 开始界面 ===== */
+.ca-setup { text-align: center; }
 .ca-setup-title {
   font-family: var(--cardarena-serif);
   font-weight: 600;
@@ -83,7 +84,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
   gap: 16px;
-  margin-bottom: 16px;
+  margin-bottom: 22px;
 }
 /* 角色卡（苏丹宫廷风 + 双面翻转选卡） */
 .ca-setup-role {
@@ -123,7 +124,7 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  padding: 12px 11px 10px;
+  padding: 10px 10px 8px;
   overflow: hidden;
 }
 /* 正面：黑金暗夜（深色主题）+ 放射光芒暗纹 */
@@ -278,15 +279,15 @@
   background: var(--ca-tier-color, var(--cardarena-gold));
   opacity: 0.6;
 }
-/* 品级缎带（英文宽字距 + 两侧菱形） */
+/* 品级缎带（英文宽字距 + 两侧菱形）—— 缩小字号避免遮挡 */
 .ca-role-band {
   text-align: center;
-  font-size: 0.62rem;
+  font-size: 0.5rem;
   font-family: 'Playfair Display', 'Times New Roman', serif;
-  letter-spacing: 0.42em;
-  text-indent: 0.42em;
+  letter-spacing: 0.32em;
+  text-indent: 0.32em;
   text-transform: uppercase;
-  padding: 9px 0 6px;
+  padding: 6px 0 4px;
   color: var(--ca-tier-bright, var(--cardarena-gold-light));
   position: relative;
   text-shadow: 0 0 8px rgba(232, 198, 74, 0.4);
@@ -309,12 +310,12 @@
   color: var(--ca-tier-color, var(--cardarena-gold-dark));
   text-shadow: none;
 }
-/* 中央徽记区：纯几何八角星组（无汉字，极繁） */
+/* 中央徽记区：纯几何八角星组（无汉字，极繁）—— 压缩高度避免溢出 */
 .ca-role-art {
   flex: 1;
-  margin: 8px 0;
+  margin: 5px 0;
   border-radius: 6px;
-  min-height: 80px;
+  min-height: 56px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -337,13 +338,13 @@
   -webkit-mask-image: radial-gradient(circle at 50% 50%, black 30%, transparent 78%);
   mask-image: radial-gradient(circle at 50% 50%, black 30%, transparent 78%);
 }
-/* 外八角星（大，放射） */
+/* 外八角星（大，放射）—— 缩小以匹配压缩后的徽记区 */
 .ca-role-star-outer {
   position: absolute;
   left: 50%;
   top: 50%;
-  width: 86px;
-  height: 86px;
+  width: 64px;
+  height: 64px;
   transform: translate(-50%, -50%);
   background-image: var(--ca-bg-star);
   background-repeat: no-repeat;
@@ -357,8 +358,8 @@
   position: absolute;
   left: 50%;
   top: 50%;
-  width: 52px;
-  height: 52px;
+  width: 40px;
+  height: 40px;
   transform: translate(-50%, -50%) rotate(22.5deg);
   -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cg fill='%23000'%3E%3Crect x='45' y='45' width='70' height='70'/%3E%3Crect x='45' y='45' width='70' height='70' transform='rotate(45 80 80)'/%3E%3Ccircle cx='80' cy='80' r='9'/%3E%3C/g%3E%3C/svg%3E");
   mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cg fill='%23000'%3E%3Crect x='45' y='45' width='70' height='70'/%3E%3Crect x='45' y='45' width='70' height='70' transform='rotate(45 80 80)'/%3E%3Ccircle cx='80' cy='80' r='9'/%3E%3C/g%3E%3C/svg%3E");
@@ -399,14 +400,14 @@
 .ca-role-back .ca-role-gem { transform: translate(-50%, -50%) rotate(45deg); }
 .ca-role-back-name { position: absolute; left: 0; right: 0; top: 68%; }
 .ca-role-back-mark { position: absolute; left: 0; right: 0; top: 78%; }
-/* 角色名 / 描述 / 属性 */
+/* 角色名 / 描述 / 属性 —— 压缩字号与间距确保 3/4 卡面不溢出 */
 .ca-setup-role-name {
   font-family: var(--cardarena-serif);
   font-weight: 600;
-  font-size: 1.12rem;
-  letter-spacing: 0.16em;
+  font-size: 1rem;
+  letter-spacing: 0.14em;
   text-align: center;
-  margin: 2px 0 1px;
+  margin: 1px 0 0;
   color: var(--cardarena-gold-light);
   text-shadow: 0 0 10px rgba(232, 198, 74, 0.35);
   position: relative;
@@ -426,20 +427,20 @@
 .ca-setup-role-name::after { right: 14%; margin-top: -5px; }
 :root:not([data-theme="dark"]) .ca-setup-role-name { color: #7a2a14; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5); }
 .ca-setup-role-intro {
-  font-size: 0.72rem;
-  line-height: 1.45;
+  font-size: 0.66rem;
+  line-height: 1.32;
   text-align: center;
   color: #b3966a;
 }
 :root:not([data-theme="dark"]) .ca-setup-role-intro { color: #6b5633; }
 /* 数值宝石框（生命 ❤ / 攻击 ⚔） */
 .ca-role-stats {
-  margin-top: 9px;
-  padding-top: 6px;
+  margin-top: 6px;
+  padding-top: 4px;
   position: relative;
   display: flex;
   justify-content: center;
-  gap: 16px;
+  gap: 14px;
 }
 .ca-role-stats::before {
   content: '';
@@ -452,8 +453,8 @@
 }
 .ca-role-stat {
   position: relative;
-  padding: 5px 14px;
-  font-size: 0.8rem;
+  padding: 4px 12px;
+  font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.06em;
   color: var(--ca-tier-bright, var(--cardarena-gold-light));
@@ -480,9 +481,9 @@
 }
 :root:not([data-theme="dark"]) .ca-role-stat { color: #8a5a14; }
 .ca-setup-role-passive {
-  font-size: 0.68rem;
+  font-size: 0.62rem;
   text-align: center;
-  margin-top: 8px;
+  margin-top: 5px;
   color: var(--cardarena-muted);
   position: relative;
 }
@@ -554,14 +555,42 @@
   cursor: not-allowed;
 }
 .ca-btn-primary {
-  border-color: var(--cardarena-primary);
+  border: 1px solid var(--cardarena-primary);
   color: var(--cardarena-primary);
-  background: linear-gradient(180deg, rgba(212, 175, 55, 0.10), rgba(122, 22, 38, 0.08));
+  background: linear-gradient(180deg, rgba(251, 243, 223, 0.92), rgba(212, 175, 55, 0.18));
+  box-shadow: 0 2px 8px rgba(122, 22, 38, 0.15);
+}
+[data-theme="dark"] .ca-btn-primary {
+  background: linear-gradient(180deg, rgba(43, 22, 18, 0.92), rgba(212, 175, 55, 0.18));
+  color: var(--cardarena-gold);
+  border-color: var(--cardarena-gold);
 }
 .ca-btn-primary:hover:not(:disabled) {
   background: linear-gradient(180deg, var(--cardarena-gold), var(--cardarena-gold-dark));
   color: #fdf6e3;
   border-color: var(--cardarena-gold-dark);
+}
+/* 开始界面按钮与计数：半透明底板，确保在背景纹章之上清晰可读 */
+#ca-start {
+  position: relative;
+  z-index: 2;
+  padding: 9px 28px;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+}
+#ca-count {
+  position: relative;
+  z-index: 2;
+  display: inline-block;
+  padding: 4px 14px;
+  margin-top: 10px;
+  background: rgba(251, 243, 223, 0.7);
+  border-radius: 12px;
+  font-weight: 600;
+}
+[data-theme="dark"] #ca-count {
+  background: rgba(43, 22, 18, 0.7);
 }
 
 /* ===== 对局布局 ===== */
@@ -593,20 +622,21 @@
 .ca-hand-label::before, .ca-log-label::before {
   flex: 0 0 24px;
 }
+/* 角色牌区：无框沉浸式，仅靠标签分隔线 + 留白区分（月圆之夜风） */
 .ca-roster {
   display: flex;
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
-  padding: 8px;
-  border: 1px solid var(--cardarena-border);
-  border-radius: 2px;
-  background: var(--cardarena-panel);
-  box-shadow: inset 0 0 0 1px var(--cardarena-ink);
-  background-image: linear-gradient(180deg, rgba(255, 250, 230, 0.5), rgba(163, 134, 63, 0.06));
+  padding: 6px 4px;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  background-image: none;
 }
 [data-theme="dark"] .ca-roster {
-  background-image: linear-gradient(180deg, rgba(232, 220, 190, 0.05), rgba(0, 0, 0, 0.12));
+  background-image: none;
 }
 .ca-roster-chip {
   display: inline-flex;
@@ -638,36 +668,42 @@
 .ca-roster-chip-hp {
   color: var(--cardarena-muted);
 }
-/* ===== 英雄（出战角色）===== */
+/* ===== 英雄（出战角色）：半透明状态面板，无边框（游戏王战场风） ===== */
 .ca-zone {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 .ca-hero {
-  border: 1px solid var(--cardarena-border);
-  border-radius: 2px;
-  padding: 10px 12px;
-  background: linear-gradient(180deg, var(--cardarena-panel), rgba(122, 22, 38, 0.10));
-  box-shadow: inset 0 0 0 1px var(--cardarena-ink);
+  border: none;
+  border-radius: 8px;
+  padding: 10px 14px;
+  background: linear-gradient(180deg, rgba(251, 243, 223, 0.55), rgba(122, 22, 38, 0.08));
+  box-shadow: none;
   position: relative;
+  overflow: hidden;
+}
+[data-theme="dark"] .ca-hero {
+  background: linear-gradient(180deg, rgba(43, 22, 18, 0.55), rgba(74, 14, 24, 0.20));
 }
 .ca-hero::before {
   content: '';
   position: absolute;
-  left: 8px;
-  right: 8px;
+  left: 12px;
+  right: 12px;
   top: 3px;
   height: 1px;
   background: linear-gradient(90deg, transparent, var(--cardarena-gold), transparent);
+  opacity: 0.6;
 }
 .ca-hero-player {
-  border-color: var(--cardarena-gold-dark);
-  background: linear-gradient(180deg, rgba(212, 175, 55, 0.10), rgba(122, 22, 38, 0.16));
-  box-shadow: inset 0 0 0 1px var(--cardarena-gold-dark);
+  border: none;
+  background: linear-gradient(180deg, rgba(212, 175, 55, 0.14), rgba(122, 22, 38, 0.10));
+  box-shadow: inset 0 1px 0 rgba(212, 175, 55, 0.35);
 }
 [data-theme="dark"] .ca-hero-player {
-  background: linear-gradient(180deg, rgba(212, 175, 55, 0.14), rgba(74, 14, 24, 0.30));
+  background: linear-gradient(180deg, rgba(212, 175, 55, 0.12), rgba(74, 14, 24, 0.24));
+  box-shadow: inset 0 1px 0 rgba(232, 198, 74, 0.30);
 }
 .ca-hero-name {
   font-family: var(--cardarena-serif);
@@ -705,16 +741,32 @@
   margin-top: 2px;
 }
 
-/* ===== 随从区 ===== */
+/* ===== 随从区：无框，半透明战场底色区分敌我（游戏王战场分区 + 月圆之夜沉浸） ===== */
 .ca-board {
   display: flex;
   align-items: flex-start;
   gap: 8px;
   flex-wrap: wrap;
   min-height: 64px;
-  padding: 8px;
-  border: 1px dashed var(--cardarena-border);
-  border-radius: 2px;
+  padding: 10px 10px 12px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(180deg, rgba(122, 22, 38, 0.06), rgba(163, 134, 63, 0.04));
+}
+[data-theme="dark"] .ca-board {
+  background: linear-gradient(180deg, rgba(74, 14, 24, 0.18), rgba(0, 0, 0, 0.10));
+}
+.ca-board-enemy {
+  background: linear-gradient(180deg, rgba(122, 22, 38, 0.10), rgba(163, 134, 63, 0.03));
+}
+[data-theme="dark"] .ca-board-enemy {
+  background: linear-gradient(180deg, rgba(140, 34, 51, 0.22), rgba(0, 0, 0, 0.12));
+}
+.ca-board-player {
+  background: linear-gradient(180deg, rgba(212, 175, 55, 0.08), rgba(61, 90, 58, 0.06));
+}
+[data-theme="dark"] .ca-board-player {
+  background: linear-gradient(180deg, rgba(232, 198, 74, 0.10), rgba(61, 90, 58, 0.10));
 }
 .ca-board-label {
   width: 100%;
@@ -767,13 +819,19 @@
   cursor: crosshair;
 }
 
-/* ===== 日志 ===== */
+/* ===== 日志：无框，仅上下分隔金线（沉浸式留白） ===== */
 .ca-log {
-  border: 1px solid var(--cardarena-border);
-  border-radius: 2px;
-  padding: 8px;
-  background: var(--cardarena-panel);
-  box-shadow: inset 0 0 0 1px var(--cardarena-ink);
+  border: none;
+  border-top: 1px solid rgba(212, 175, 55, 0.25);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.25);
+  border-radius: 0;
+  padding: 6px 4px;
+  background: transparent;
+  box-shadow: none;
+}
+[data-theme="dark"] .ca-log {
+  border-top-color: rgba(232, 198, 74, 0.22);
+  border-bottom-color: rgba(232, 198, 74, 0.22);
 }
 .ca-log-label {
   margin-bottom: 4px;
@@ -788,13 +846,16 @@
   line-height: 1.5;
 }
 
-/* ===== 手牌 ===== */
+/* ===== 手牌：无框，半透明底色衬托卡牌（卡牌本身保留卡牌感） ===== */
 .ca-hand {
-  border: 1px solid var(--cardarena-border);
-  border-radius: 2px;
-  padding: 8px;
-  background: var(--cardarena-panel);
-  box-shadow: inset 0 0 0 1px var(--cardarena-ink);
+  border: none;
+  border-radius: 8px;
+  padding: 8px 8px 10px;
+  background: linear-gradient(180deg, rgba(212, 175, 55, 0.06), rgba(122, 22, 38, 0.04));
+  box-shadow: none;
+}
+[data-theme="dark"] .ca-hand {
+  background: linear-gradient(180deg, rgba(232, 198, 74, 0.06), rgba(74, 14, 24, 0.12));
 }
 .ca-hand-label {
   margin-bottom: 6px;
@@ -1148,36 +1209,37 @@
   to { transform: translate(-50%, -50%) rotate(360deg); }
 }
 
-/* ---- 舞台外框：四角纹章 + 边线珠串 ---- */
+/* ---- 舞台外框：四角纹章 + 边线珠串（移至背景层，不遮挡交互元素）---- */
 .ca-stage {
   position: relative;
   max-width: 968px;
   margin: 0 auto;
   padding: 10px 10px 6px;
 }
+/* 四角纹章：z-index 0 + 极低 opacity，纯背景水印，绝不遮挡开始按钮和已选显示 */
 .ca-stage::before {
   content: '';
   position: absolute;
   inset: 0;
   pointer-events: none;
-  z-index: 3;
+  z-index: 0;
   background: var(--cardarena-gold);
   -webkit-mask-image: var(--ca-mask-corner-tl), var(--ca-mask-corner-tr), var(--ca-mask-corner-bl), var(--ca-mask-corner-br);
-  -webkit-mask-size: 88px 88px, 88px 88px, 88px 88px, 88px 88px;
+  -webkit-mask-size: 64px 64px, 64px 64px, 64px 64px, 64px 64px;
   -webkit-mask-position: 2px 2px, calc(100% - 2px) 2px, 2px calc(100% - 2px), calc(100% - 2px) calc(100% - 2px);
   -webkit-mask-repeat: no-repeat;
   mask-image: var(--ca-mask-corner-tl), var(--ca-mask-corner-tr), var(--ca-mask-corner-bl), var(--ca-mask-corner-br);
-  mask-size: 88px 88px, 88px 88px, 88px 88px, 88px 88px;
+  mask-size: 64px 64px, 64px 64px, 64px 64px, 64px 64px;
   mask-position: 2px 2px, calc(100% - 2px) 2px, 2px calc(100% - 2px), calc(100% - 2px) calc(100% - 2px);
   mask-repeat: no-repeat;
-  opacity: 0.9;
+  opacity: 0.12;
 }
 .ca-stage::after {
   content: '';
   position: absolute;
   inset: 12px;
   pointer-events: none;
-  z-index: 3;
+  z-index: 0;
   background-image:
     repeating-linear-gradient(90deg, transparent 0 11px, var(--cardarena-ink) 11px 13px),
     repeating-linear-gradient(90deg, transparent 0 11px, var(--cardarena-ink) 11px 13px),
@@ -1186,9 +1248,11 @@
   background-size: calc(100% - 60px) 1px, calc(100% - 60px) 1px, 1px calc(100% - 60px), 1px calc(100% - 60px);
   background-position: 30px 0, 30px 100%, 0 30px, 100% 30px;
   background-repeat: no-repeat;
-  opacity: 0.4;
+  opacity: 0.18;
 }
-[data-theme="dark"] .ca-stage::before { background: var(--cardarena-gold-light); opacity: 0.8; }
+[data-theme="dark"] .ca-stage::before { background: var(--cardarena-gold-light); opacity: 0.10; }
+/* 确保舞台内所有真实内容（标题 + app）位于纹章之上 */
+.ca-stage > * { position: relative; z-index: 1; }
 
 /* ---- 分区标签中心菱形 ---- */
 .ca-label-gem {
@@ -1202,46 +1266,15 @@
 }
 [data-theme="dark"] .ca-label-gem { background: var(--cardarena-gold-light); }
 
-/* ---- 分区面板：细线内框 + 四角金珠 ---- */
+/* ---- 分区面板：移除内框与四角金珠，改用底色微差/分隔线/留白区分（去框化） ---- */
 .ca-roster, .ca-board, .ca-hand, .ca-log {
   position: relative;
 }
-.ca-roster::before, .ca-board::before, .ca-hand::before, .ca-log::before {
-  content: '';
-  position: absolute;
-  inset: 4px;
-  pointer-events: none;
-  border: 1px solid var(--cardarena-ink);
-  border-radius: 1px;
-  background-image:
-    radial-gradient(circle at 7px 7px, var(--cardarena-gold) 1.5px, transparent 2.3px),
-    radial-gradient(circle at calc(100% - 7px) 7px, var(--cardarena-gold) 1.5px, transparent 2.3px),
-    radial-gradient(circle at 7px calc(100% - 7px), var(--cardarena-gold) 1.5px, transparent 2.3px),
-    radial-gradient(circle at calc(100% - 7px) calc(100% - 7px), var(--cardarena-gold) 1.5px, transparent 2.3px);
-  background-repeat: no-repeat;
-  opacity: 0.7;
-}
-.ca-board::before { border-style: dashed; }
-[data-theme="dark"] .ca-roster::before, [data-theme="dark"] .ca-board::before,
-[data-theme="dark"] .ca-hand::before, [data-theme="dark"] .ca-log::before {
-  border-color: rgba(212, 175, 55, 0.30);
-}
-/* 随从区升级：实线金框 + 暗纹底 */
+/* 原 ::before 内框 + 四角金珠已移除：避免「所有区域都是框」的拥挤感 */
 .ca-board {
   align-items: center;
   gap: 10px;
-  min-height: 172px;
-  padding: 12px;
-  border: 1px solid var(--cardarena-border);
-  border-radius: 2px;
-  background:
-    linear-gradient(180deg, rgba(255, 250, 230, 0.35), rgba(163, 134, 63, 0.05)),
-    radial-gradient(circle at 50% 40%, rgba(212, 175, 55, 0.06), transparent 60%);
-}
-[data-theme="dark"] .ca-board {
-  background:
-    linear-gradient(180deg, rgba(232, 220, 190, 0.04), rgba(0, 0, 0, 0.10)),
-    radial-gradient(circle at 50% 40%, rgba(212, 175, 55, 0.05), transparent 60%);
+  min-height: 168px;
 }
 
 /* ---- 徽章光环层：外珠环 + 双圆环（角色卡 / 手牌卡通用） ---- */
@@ -1426,25 +1459,11 @@
   background: linear-gradient(90deg, transparent, var(--ca-tier-color, var(--cardarena-gold)), transparent);
 }
 
-/* ---- 出战角色区繁化 ---- */
+/* ---- 出战角色区：移除 ::after 内框与四角金珠（去框化，保留光环圣徽与英文宫衔） ---- */
 .ca-hero {
   overflow: visible;
 }
-.ca-hero::after {
-  content: '';
-  position: absolute;
-  inset: 4px;
-  pointer-events: none;
-  border: 1px solid var(--cardarena-ink);
-  border-radius: 1px;
-  background-image:
-    radial-gradient(circle at 7px 7px, var(--cardarena-gold) 1.5px, transparent 2.3px),
-    radial-gradient(circle at calc(100% - 7px) 7px, var(--cardarena-gold) 1.5px, transparent 2.3px),
-    radial-gradient(circle at 7px calc(100% - 7px), var(--cardarena-gold) 1.5px, transparent 2.3px),
-    radial-gradient(circle at calc(100% - 7px) calc(100% - 7px), var(--cardarena-gold) 1.5px, transparent 2.3px);
-  background-repeat: no-repeat;
-  opacity: 0.7;
-}
+/* 原 ::after 内框 + 四角金珠已移除：避免角色状态面板成为「框中框」 */
 .ca-hero-en {
   font-family: 'Playfair Display', 'Times New Roman', serif;
   font-size: 0.62rem;
@@ -1798,9 +1817,8 @@
   .ca-stage::before { opacity: 0; }              /* 舞台四角纹章隐藏，避免边角拥挤 */
   .ca-header-ornament { display: none; }          /* 标题装饰条带隐藏 */
 
-  /* 分区面板：压缩 padding，隐藏内框/四角金珠装饰 */
+  /* 分区面板：压缩 padding（去框化后无需隐藏内框，已无 ::before） */
   .ca-roster, .ca-board, .ca-hand, .ca-log { padding: 5px; gap: 4px; }
-  .ca-roster::before, .ca-board::before, .ca-hand::before, .ca-log::before { display: none; }
   .ca-roster-label, .ca-board-label, .ca-hand-label, .ca-log-label { font-size: 0.72rem; margin-bottom: 2px; }
 
   /* 角色牌区：横向滚动，不换行挤占垂直空间 */
@@ -1850,6 +1868,12 @@
   .ca-setup-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
   .ca-setup-title { font-size: 1.2rem; }
   .ca-setup-sub { font-size: 0.78rem; margin-bottom: 10px; }
-  .ca-role-star-outer { width: 60px; height: 60px; }
-  .ca-role-star-inner { width: 38px; height: 38px; }
+  .ca-role-star-outer { width: 50px; height: 50px; }
+  .ca-role-star-inner { width: 30px; height: 30px; }
+  .ca-role-art { min-height: 44px; margin: 4px 0; }
+  .ca-role-band { font-size: 0.42rem; padding: 4px 0 3px; }
+  .ca-setup-role-name { font-size: 0.86rem; }
+  .ca-setup-role-intro { font-size: 0.58rem; line-height: 1.28; }
+  .ca-role-stat { padding: 3px 9px; font-size: 0.64rem; }
+  .ca-setup-role-passive { font-size: 0.54rem; margin-top: 3px; }
 }

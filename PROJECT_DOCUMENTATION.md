@@ -1,8 +1,8 @@
 # DeepSleep Blog - 项目技术文档
 
-> **最后更新**: 2026-08-02
-> **版本**: v5.13
-> **状态**: ✅ 生产就绪 | 评论系统正常运行 (Neon PostgreSQL) | 💬 社区系统已上线 | 👤 全局个人中心 | 📝 文章板块整合 (learn 风格 sidebar) | 🌗 主题切换圆形扩散动画 | 🐟 SleepTown 首页 sidebar 改造 | 🎮 交互式自我介绍 (/play/me/) | 🃏 CardArena 卡牌对战 (/play/cardarena/) | 👑 CardArena 苏丹宫廷风卡牌样式 | ⚔️ CardArena 极繁深化（界面繁化 + 战斗特效 + 随从卡）
+> **最后更新**: 2026-08-03
+> **版本**: v5.14
+> **状态**: ✅ 生产就绪 | 评论系统正常运行 (Neon PostgreSQL) | 💬 社区系统已上线 | 👤 全局个人中心 | 📝 文章板块整合 (learn 风格 sidebar) | 🌗 主题切换圆形扩散动画 | 🐟 SleepTown 首页 sidebar 改造 | 🎮 交互式自我介绍 (/play/me/) | 🃏 CardArena 卡牌对战 (/play/cardarena/) | 👑 CardArena 苏丹宫廷风卡牌样式 | ⚔️ CardArena 极繁深化 | 🎴 CardArena 对战页去框化重构（月圆之夜×游戏王）
 
 ---
 
@@ -1585,6 +1585,62 @@ Hugo 的 partial 查找是精确匹配文件名，找不到 `extend_head.html` �
 | `PROJECT_CONTEXT.md` | 版本演进表 v5.13 补充 |
 
 **验证**：`hugo --gc` 350 页 0 error；移动端 375px 视口手牌/角色牌/随从区横向滚动正常，卡牌缩小可读，装饰弱化不再拥挤。
+
+---
+
+### v5.14 (2026-08-03) - CardArena 对战页面去框化重构（月圆之夜×游戏王融合）
+
+**背景**：v5.13 极繁深化后出现三个问题——①角色卡统一 3/4 大小后部分文字被遮挡；②舞台四角纹章 z-index:3 + opacity:0.9 严重遮挡「开始对战」按钮和「已选 X/6」显示；③随从区/角色卡/手牌区/日志区全部是「框中框」（border + inset box-shadow + ::before 内框 + 四角金珠），视觉拥挤、缺乏沉浸感。
+
+**新增功能 / 修复**:
+
+- ✅ **角色卡构图修复**（统一 3/4 卡面零溢出）—— 全链路压缩字号与间距：
+  | 元素 | 原值 | 新值 | 说明 |
+  |------|------|------|------|
+  | `.ca-role-band`（英文宫衔缎带） | 0.62rem / padding 9px 6px | 0.5rem / 6px 4px | 字号大幅缩小，letter-spacing 0.42→0.32em |
+  | `.ca-role-art`（徽记区） | min-height 80px / margin 8px | min-height 56px / margin 5px | 压缩中央徽记区高度 |
+  | `.ca-role-star-outer/inner` | 86px / 52px | 64px / 40px | 八角星等比缩小匹配徽记区 |
+  | `.ca-setup-role-name` | 1.12rem / margin 2px | 1rem / margin 1px | 角色名缩小 |
+  | `.ca-setup-role-intro` | 0.72rem / line-height 1.45 | 0.66rem / line-height 1.32 | 简介压缩避免双行溢出 |
+  | `.ca-role-stat`（数值框） | 0.8rem / padding 5px 14px | 0.72rem / padding 4px 12px | ❤⚔ 数值框缩小 |
+  | `.ca-setup-role-passive` | 0.68rem / margin 8px | 0.62rem / margin 5px | 被动文案压缩 |
+  | `.ca-role-face` padding | 12px 11px 10px | 10px 10px 8px | 卡面内边距收紧 |
+  - 移动端同步等比缩小（星徽 50/30px、徽记 44px、缎带 0.42rem 等）
+
+- ✅ **四角纹章移至背景层**（不遮挡开始按钮和已选显示）：
+  - `.ca-stage::before`：`z-index: 3→0`、`opacity: 0.9→0.12`（深色 0.10）、`mask-size: 88px→64px`（纹章缩小更贴角）
+  - `.ca-stage::after`（珠串边线）：`z-index: 3→0`、`opacity: 0.4→0.18`
+  - 新增 `.ca-stage > * { position: relative; z-index: 1; }` 确保标题与 app 内容在纹章之上
+  - `#ca-start`（开始按钮）+ `#ca-count`（已选计数）加半透明底板 + `z-index: 2` 双保险，背景纹章之上清晰可读
+  - `#ca-count` 改 `display: inline-block` + 胶囊圆角 + 半透明背景
+
+- ✅ **分区去框化**（月圆之夜无框沉浸 + 游戏王战场分区融合）—— 移除所有容器框，仅卡牌本身保留卡牌感：
+  | 区域 | 原样式（框） | 新样式（去框） |
+  |------|------|------|
+  | `.ca-roster`（角色牌区） | border + inset shadow + 渐变背景 | transparent / 无框，chips 自由浮动，仅标签分隔线 |
+  | `.ca-board`（随从区） | border + ::before 内框 + 四角金珠 | 无框 + 半透明战场底色：敌方 `.ca-board-enemy` 暗红渐变、我方 `.ca-board-player` 金绿渐变，border-radius 8px |
+  | `.ca-hand`（手牌区） | border + inset shadow | 无框 + 半透明金底渐变，border-radius 8px |
+  | `.ca-log`（日志区） | border + inset shadow | 无框 + 仅上下分隔金线（border-top/bottom），透明背景 |
+  | `.ca-hero`（出战角色） | border + inset shadow + ::after 内框金珠 | 无框 + 半透明状态面板渐变 + 顶金线，overflow:visible 保留光环 |
+  - `.ca-card`（手牌卡）和 `.ca-minion`（随从卡）**不动**——卡牌本身保留极繁卡牌感，仅容器去框
+  - `targetable` 高亮 outline 保留（功能性指示，非装饰框）
+
+**设计思路**（月圆之夜 × 游戏王融合）:
+- **月圆之夜**：无边框沉浸式，卡牌浮于纹理化背景之上，靠背景色微差与留白区分区域
+- **游戏王**：清晰的战场分区（敌我对峙），半透明面板承载角色状态
+- 融合后：容器去框 + 底色微差区分敌我战场 + 卡牌保留卡牌感 + 四角纹章纯背景水印 + 交互元素半透明底板确保可读
+
+**技术变更**:
+- `cardarena.css`：角色卡 8 处字号/间距压缩；`.ca-stage::before/::after` z-index+opacity+mask-size 调整 + `.ca-stage > *` 层级规则；roster/board/hand/log/hero 移除 border+inset box-shadow+::before/::after 内框金珠；新增 `.ca-board-enemy/.ca-board-player` 敌我底色区分；`#ca-start/#ca-count` 半透明底板；移动端同步调整
+
+**Files Modified**:
+| 文件 | 变更 |
+|------|------|
+| `static/css/cardarena.css` | 角色卡构图修复 + 四角纹章背景层化 + 分区去框化（唯一改动文件，纯 CSS） |
+| `PROJECT_CONTEXT.md` | 版本号 v5.13→v5.14、功能清单 v5.14 条目、版本演进表 v5.14 |
+| `PROJECT_DOCUMENTATION.md` | 版本号 v5.13→v5.14、更新日志 v5.14 条目 |
+
+**验证**：`hugo` 构建无 error；角色卡 3/4 卡面文字零溢出；四角纹章降为背景水印不遮挡按钮/计数；对战页 roster/board/hand/log/hero 无框化，敌我随从区底色微差区分，卡牌保留卡牌感。
 
 ---
 

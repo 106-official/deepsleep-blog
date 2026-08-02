@@ -114,7 +114,7 @@ async function loadPosts(page = 1, category = '') {
   try {
     const data = await api(`/posts?page=${page}&limit=${POSTS_PER_PAGE}&category=${category}`);
     if (!data.posts || data.posts.length === 0) {
-      container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📝</div><p>还没有帖子，来发第一篇吧！</p></div>`;
+      container.innerHTML = `<div class="empty-state"><p>还没有帖子，来发第一篇吧！</p></div>`;
       renderPagination(0, page);
       return;
     }
@@ -134,9 +134,9 @@ async function loadPosts(page = 1, category = '') {
         <div class="post-title">${escHtml(p.title)}</div>
         <div class="post-content">${escHtml(p.contentFull.length > 500 ? p.contentFull.substring(0, 500) + '...' : p.contentFull)}</div>
         <div class="post-meta">
-          <span>👁 ${p.viewCount}</span>
-          <span>❤️ ${p.likeCount}</span>
-          <span>💬 ${p.commentCount}</span>
+          <span>浏览 ${p.viewCount}</span>
+          <span>点赞 ${p.likeCount}</span>
+          <span>评论 ${p.commentCount}</span>
         </div>
       </div>
     `).join('');

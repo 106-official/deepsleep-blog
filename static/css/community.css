@@ -36,21 +36,23 @@
 .profile-btn {
   padding: 8px 20px !important;
   font-size: 0.95rem !important;
-  border-radius: 8px;
-  transition: all 0.2s;
+  border-radius: 2px;
+  transition: background 0.15s, color 0.15s;
 }
 .profile-btn:hover {
   background: var(--color-primary, #D4AF37) !important;
   color: #000 !important;
-  transform: translateY(-1px);
+  transform: none;
 }
 
 /* Auth Box */
 .auth-box {
   background: var(--color-bg, #fff);
-  border-radius: 12px;
+  border: 1px solid var(--color-border, #e2e2e2);
+  border-left: 3px solid var(--color-primary, #D4AF37);
+  border-radius: 2px;
   padding: 2rem;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  box-shadow: none;
   max-width: 420px;
   margin: 3rem auto;
 }
@@ -63,7 +65,7 @@
   display: flex;
   gap: 0;
   margin-bottom: 1.5rem;
-  border-bottom: 2px solid #eee;
+  border-bottom: 2px solid var(--color-border, #eee);
 }
 .auth-tab {
   flex: 1;
@@ -72,7 +74,7 @@
   cursor: pointer;
   font-weight: 500;
   color: #888;
-  transition: all 0.2s;
+  transition: color 0.15s, border-color 0.15s;
   border-bottom: 2px solid transparent;
   margin-bottom: -2px;
 }
@@ -97,18 +99,18 @@
 .c-form-input {
   width: 100%;
   padding: 10px 14px;
-  border: 1.5px solid #ddd;
-  border-radius: 8px;
+  border: 1px solid var(--color-border, #ddd);
+  border-radius: 2px;
   font-size: 0.95rem;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: border-color 0.15s;
   background: var(--color-bg, #fff);
   color: var(--color-text, #333);
   box-sizing: border-box;
 }
 .c-form-input:focus {
   outline: none;
-  border-color: var(--color-primary, #D4AF37);
-  box-shadow: 0 0 0 3px rgba(212,175,55,0.15);
+  border: 1px solid var(--color-primary, #D4AF37);
+  box-shadow: none;
 }
 .c-btn {
   display: inline-flex;
@@ -116,11 +118,11 @@
   justify-content: center;
   padding: 10px 24px;
   border: none;
-  border-radius: 8px;
+  border-radius: 2px;
   font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: background 0.15s, color 0.15s;
   text-decoration: none;
 }
 .c-btn-primary {
@@ -130,11 +132,11 @@
 }
 .c-btn-primary:hover {
   opacity: 0.9;
-  transform: translateY(-1px);
+  transform: none;
 }
 .c-btn-secondary {
   background: transparent;
-  border: 1.5px solid #ddd;
+  border: 1px solid var(--color-border, #ddd);
   color: #666;
 }
 .c-btn-secondary:hover {
@@ -142,19 +144,21 @@
   color: var(--color-primary, #D4AF37);
 }
 .c-error {
-  background: #fef2f2;
+  background: var(--color-bg, #fff);
   color: #dc2626;
+  border: 1px solid #dc2626;
   padding: 10px 14px;
-  border-radius: 8px;
+  border-radius: 2px;
   font-size: 0.9rem;
   margin-bottom: 1rem;
   display: none;
 }
 .c-success {
-  background: #f0fdf4;
+  background: var(--color-bg, #fff);
   color: #16a34a;
+  border: 1px solid #16a34a;
   padding: 10px 14px;
-  border-radius: 8px;
+  border-radius: 2px;
   font-size: 0.9rem;
   margin-bottom: 1rem;
   display: none;
@@ -163,16 +167,15 @@
 /* Post Card */
 .post-card {
   background: var(--color-bg, #fff);
-  border-radius: 12px;
+  border: 1px solid var(--color-border, #e2e2e2);
+  border-radius: 2px;
   padding: 1.5rem;
   margin-bottom: 1.25rem;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: none;
+  transition: border-color 0.15s;
   border-left: 3px solid transparent;
 }
 .post-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 24px rgba(0,0,0,0.1);
   border-left-color: var(--color-primary, #D4AF37);
 }
 .post-card-header {
@@ -227,10 +230,11 @@
 }
 .post-category {
   display: inline-block;
-  background: rgba(212,175,55,0.15);
+  background: rgba(212,175,55,0.12);
   color: #b8941f;
+  border: 1px solid rgba(212,175,55,0.4);
   padding: 2px 10px;
-  border-radius: 20px;
+  border-radius: 2px;
   font-size: 0.78rem;
   font-weight: 500;
 }
@@ -238,9 +242,11 @@
 /* Write Post */
 .write-post-box {
   background: var(--color-bg, #fff);
-  border-radius: 12px;
+  border: 1px solid var(--color-border, #e2e2e2);
+  border-left: 3px solid var(--color-primary, #D4AF37);
+  border-radius: 2px;
   padding: 1.5rem;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  box-shadow: none;
   margin-bottom: 2rem;
 }
 .write-post-box h3 {
@@ -266,13 +272,13 @@ select.c-form-input {
 }
 .pagination button {
   padding: 8px 16px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
+  border: 1px solid var(--color-border, #ddd);
+  border-radius: 2px;
   background: var(--color-bg, #fff);
   color: var(--color-text, #333);
   cursor: pointer;
   font-size: 0.9rem;
-  transition: all 0.2s;
+  transition: border-color 0.15s, color 0.15s;
 }
 .pagination button:hover:not(:disabled) {
   border-color: var(--color-primary, #D4AF37);
@@ -293,10 +299,6 @@ select.c-form-input {
   text-align: center;
   padding: 4rem 2rem;
   color: #999;
-}
-.empty-state-icon {
-  font-size: 3rem;
-  margin-bottom: 1rem;
 }
 .empty-state p {
   font-size: 1rem;
@@ -321,9 +323,11 @@ select.c-form-input {
 /* Profile Edit */
 .profile-edit-box {
   background: var(--color-bg, #fff);
-  border-radius: 12px;
+  border: 1px solid var(--color-border, #e2e2e2);
+  border-left: 3px solid var(--color-primary, #D4AF37);
+  border-radius: 2px;
   padding: 2rem;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  box-shadow: none;
   max-width: 520px;
   margin: 2rem auto;
 }
@@ -351,7 +355,11 @@ select.c-form-input {
 [data-theme="dark"] .write-post-box,
 [data-theme="dark"] .profile-edit-box {
   background: #1e1e1e;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  border-color: #3a3a3a;
+  box-shadow: none;
+}
+[data-theme="dark"] .pagination button {
+  border-color: #3a3a3a;
 }
 [data-theme="dark"] .c-form-input {
   background: #222;

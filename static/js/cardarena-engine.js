@@ -24,7 +24,7 @@
     var roles = roster.map(function (roleId) {
       var def = DATA.ROLE_POOL.find(function (r) { return r.id === roleId; });
       return {
-        id: def.id, name: def.name, intro: def.intro,
+        id: def.id, name: def.name, intro: def.intro, titleEn: def.titleEn || '',
         maxHealth: def.maxHealth, health: def.maxHealth,
         attack: def.attack, passive: def.passive || null, alive: true,
         deck: buildDeck(roleId)   // 每个角色独立卡池（12 张），对局开始即构建，换人/阵亡切换不重置（保留剩余张数）
@@ -363,14 +363,26 @@
         enemy: makeSide(enemyRoster),
         logs: []
       };
-      // makeSide 已为每个角色构建独立卡池，side.deck 指向当前出战角色卡池；抽起始手牌即消耗该卡池
-      drawCards(state.player, CONFIG.startingHand);
-      state.player.mana = CONFIG.manaStart;
+      // 敌方默认首发（activeIndex=0），抽起始手牌；玩家待选首发角色
       drawCards(state.enemy, CONFIG.startingHand);
       state.enemy.mana = CONFIG.manaStart;
-      addLog('对局开始：玩家先手');
+      state.phase = 'select-first';   // 玩家选择首发角色阶段（不自动开始回合）
+      addLog('对局开始：请选择首发角色');
       emit('update', null);
-      beginTurn(state.player);
+    },
+    // 选择首发角色（select-first 阶段 → 玩家先手回合开始）
+    selectFirstRole: function (roleIndex) {
+      if (state.phase !== 'select-first') return false;
+      var role = state.player.roster[roleIndex];
+      if (!role || !role.alive) return false;
+      state.player.activeIndex = roleIndex;
+      state.player.deck = role.deck;   // 切换到所选角色的卡池
+      drawCards(state.player, CONFIG.startingHand);
+      state.player.mana = CONFIG.manaStart;
+      addLog(role.name + ' 出战（玩家先手）');
+      emit('update', null);
+      beginTurn(state.player);   // phase → 'player_turn'，玩家先手回合开始
+      return true;
     },
 
     getState: function () { return state; },

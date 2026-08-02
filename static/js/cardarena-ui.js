@@ -166,9 +166,25 @@
 
   function startGame() {
     if (chosenRoles.length !== 6) return;
-    var pool = DATA.ROLE_POOL.map(function (r) { return r.id; });
-    var aiRoster = shuffle(pool).slice(0, 6);
-    window.CardArena.start(chosenRoles.slice(), aiRoster);
+    var startBtn = app.querySelector('#ca-start');
+    if (startBtn) { startBtn.disabled = true; startBtn.textContent = '出征…'; }
+    // 未被选择的卡牌化为灰烬消失；选中的卡牌亮起
+    var allCards = app.querySelectorAll('.ca-setup-role');
+    allCards.forEach(function (c) {
+      if (chosenRoles.indexOf(c.dataset.role) !== -1) {
+        c.classList.add('ca-chosen');          // 选中卡牌亮起上浮
+      } else {
+        var rect = c.getBoundingClientRect();
+        playAshes(rect.left + rect.width / 2, rect.top + rect.height / 2);  // 灰烬粒子
+        c.classList.add('ca-fading');          // 卡牌淡出退场
+      }
+    });
+    // 灰烬动画结束后进入对战（选首发阶段）
+    setTimeout(function () {
+      var pool = DATA.ROLE_POOL.map(function (r) { return r.id; });
+      var aiRoster = shuffle(pool).slice(0, 6);
+      window.CardArena.start(chosenRoles.slice(), aiRoster);
+    }, 760);
   }
 
   function shuffle(arr) {
@@ -180,12 +196,54 @@
     return a;
   }
 
+  // ===== 选首发阶段：从 6 张出战卡牌中选 1 张首发 =====
+  function renderSelectFirst(s) {
+    app.innerHTML = '';
+    var box = el('div', 'ca-setup ca-select-first');
+    box.appendChild(el('h2', 'ca-setup-title', '选择首发角色'));
+    box.appendChild(el('p', 'ca-setup-sub', '从 6 张出战卡牌中选择 1 张首发，选择后进入玩家先手回合'));
+    var grid = el('div', 'ca-setup-grid ca-first-grid');
+    s.player.roster.forEach(function (role, i) {
+      var tier = heroTier(role);
+      var card = el('button', 'ca-first-card tier-' + tier);
+      card.dataset.role = role.id;
+      // 顶饰金线
+      var topline = el('span', 'ca-role-topline');
+      topline.appendChild(el('b', null));
+      card.appendChild(topline);
+      // 品级缎带
+      card.appendChild(el('div', 'ca-role-band', role.titleEn || ''));
+      var art = el('div', 'ca-role-art');
+      art.appendChild(el('span', 'ca-role-star-outer'));
+      art.appendChild(el('span', 'ca-role-star-inner'));
+      art.appendChild(el('span', 'ca-role-gem'));
+      card.appendChild(art);
+      card.appendChild(el('div', 'ca-setup-role-name', role.name));
+      card.appendChild(el('div', 'ca-setup-role-intro', role.intro));
+      var stats = el('div', 'ca-role-stats');
+      stats.appendChild(el('span', 'ca-role-stat ca-role-stat-hp', '\u2764 ' + role.maxHealth));
+      stats.appendChild(el('span', 'ca-role-stat ca-role-stat-atk', '\u2694 ' + role.attack));
+      card.appendChild(stats);
+      card.appendChild(el('div', 'ca-setup-role-passive', '被动: ' + (role.passive ? describePassive(role.passive) : '无')));
+      (function (idx) {
+        card.addEventListener('click', function () {
+          window.CardArena.selectFirstRole(idx);
+        });
+      })(i);
+      grid.appendChild(card);
+    });
+    box.appendChild(grid);
+    app.appendChild(box);
+  }
+
   // ===== 对局界面：整体渲染 =====
   function renderAll() {
     var s = window.CardArena.getState();
     if (!s) return;
     // 对局已结束：结算弹窗已由 showGameOver 渲染，跳过重建以免清掉 overlay
     if (s.phase === 'gameover') return;
+    // 选首发阶段：渲染首发选择屏，等待玩家点选第一张出战卡牌
+    if (s.phase === 'select-first') { renderSelectFirst(s); return; }
     // 特效分析：清空前捕获旧 DOM 位置，再对比前后状态
     var oldRects = captureRects();
     var fx = analyzeFx(s, prevState, oldRects);

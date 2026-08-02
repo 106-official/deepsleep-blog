@@ -88,6 +88,47 @@
   margin: 0 auto 16px;
   max-width: 680px;
 }
+/* ===== 选首发屏 ===== */
+.ca-first-grid {
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  max-width: 720px;
+}
+.ca-first-card {
+  --ca-tier-color: var(--ca-tier-bronze);
+  --ca-tier-bright: var(--ca-tier-bronze-bright);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 16px 11px 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  color: var(--cardarena-text);
+  font-family: inherit;
+  font-weight: 400;
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 3 / 4;
+  border: 1px solid var(--ca-tier-color, var(--cardarena-gold));
+  background: linear-gradient(160deg, #0d0806 0%, #1d100c 48%, #0a0504 100%);
+  box-shadow: inset 0 0 0 1px rgba(212, 175, 55, 0.55), inset 0 0 0 6px rgba(212, 175, 55, 0.20), inset 0 0 26px rgba(212, 175, 55, 0.10), 0 10px 22px rgba(0, 0, 0, 0.5);
+  transition: transform 0.22s ease, box-shadow 0.22s ease, filter 0.22s ease;
+}
+:root:not([data-theme="dark"]) .ca-first-card {
+  background: linear-gradient(165deg, #fdf6e3 0%, #f0e2bd 55%, #e8d5a6 100%);
+  box-shadow: inset 0 0 0 1px rgba(163, 134, 63, 0.5), inset 0 0 0 6px rgba(163, 134, 63, 0.18), inset 0 0 22px rgba(163, 134, 63, 0.18), 0 8px 18px rgba(90, 70, 30, 0.25);
+}
+.ca-first-card:hover {
+  transform: translateY(-9px);
+  filter: brightness(1.13);
+  border-color: var(--cardarena-gold);
+}
+[data-theme="dark"] .ca-first-card:hover {
+  box-shadow: inset 0 0 0 1px rgba(212, 175, 55, 0.85), inset 0 0 32px rgba(212, 175, 55, 0.22), 0 14px 28px rgba(0, 0, 0, 0.55);
+}
+:root:not([data-theme="dark"]) .ca-first-card:hover {
+  box-shadow: inset 0 0 0 1px rgba(163, 134, 63, 0.9), inset 0 0 28px rgba(212, 175, 55, 0.3), 0 14px 26px rgba(90, 70, 30, 0.4);
+}
 /* 角色卡（苏丹宫廷风 + 双面翻转选卡） */
 .ca-setup-role {
   display: block;
@@ -115,7 +156,51 @@
   will-change: transform;
 }
 .ca-setup-role.selected .ca-role-inner {
-  transform: rotateY(180deg);
+  /* 选中不翻转（保留正面可见），改为上浮 + 金光 */
+  transform: translateY(-7px);
+}
+.ca-setup-role.selected .ca-role-front {
+  border-color: var(--cardarena-gold);
+  box-shadow: inset 0 0 0 1px rgba(212, 175, 55, 0.85), inset 0 0 0 5px transparent, inset 0 0 0 6px rgba(212, 175, 55, 0.35), inset 0 0 32px rgba(212, 175, 55, 0.22), 0 14px 28px rgba(0, 0, 0, 0.55);
+}
+:root:not([data-theme="dark"]) .ca-setup-role.selected .ca-role-front {
+  box-shadow: inset 0 0 0 1px rgba(163, 134, 63, 0.9), inset 0 0 0 5px transparent, inset 0 0 0 6px rgba(163, 134, 63, 0.3), inset 0 0 28px rgba(212, 175, 55, 0.3), 0 14px 26px rgba(90, 70, 30, 0.4);
+}
+/* 选中勾记徽章（右上角金色圆形 ✓） */
+.ca-setup-role.selected .ca-role-front::after {
+  content: '✓';
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, var(--cardarena-gold-light), var(--cardarena-gold) 60%, var(--cardarena-gold-dark));
+  color: #2a1a08;
+  font-size: 0.8rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--cardarena-gold-dark);
+  z-index: 4;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+}
+/* 开战时：未选中的卡牌化为灰烬淡出退场 */
+.ca-setup-role.ca-fading {
+  animation: ca-ashes-fade 0.72s cubic-bezier(0.4, 0, 0.6, 1) forwards;
+  pointer-events: none;
+}
+@keyframes ca-ashes-fade {
+  0% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+  60% { opacity: 0.5; transform: translateY(10px) scale(0.92); filter: blur(2px) grayscale(0.6); }
+  100% { opacity: 0; transform: translateY(24px) scale(0.8); filter: blur(5px) grayscale(1); }
+}
+/* 开战时：选中的卡牌亮起上浮（保留显示） */
+.ca-setup-role.ca-chosen {
+  transform: translateY(-10px);
+  filter: brightness(1.12) drop-shadow(0 0 10px rgba(212, 175, 55, 0.5));
+  transition: transform 0.4s ease, filter 0.4s ease;
 }
 .ca-role-face {
   position: absolute;
@@ -491,10 +576,10 @@
 }
 /* 角色卡品级（战力 = 生命 + 攻击） */
 .ca-setup-role { --ca-tier-color: var(--ca-tier-bronze); --ca-tier-bright: var(--ca-tier-bronze-bright); --ca-tier-glow: rgba(160, 118, 47, 0.12); }
-.ca-setup-role.tier-gold   { --ca-tier-color: var(--ca-tier-gold);   --ca-tier-bright: var(--ca-tier-gold-bright);   --ca-tier-glow: rgba(232, 198, 74, 0.16); }
-.ca-setup-role.tier-silver { --ca-tier-color: var(--ca-tier-silver); --ca-tier-bright: var(--ca-tier-silver-bright); --ca-tier-glow: rgba(195, 199, 208, 0.12); }
-.ca-setup-role.tier-bronze { --ca-tier-color: var(--ca-tier-bronze); --ca-tier-bright: var(--ca-tier-bronze-bright); --ca-tier-glow: rgba(192, 138, 79, 0.12); }
-.ca-setup-role.tier-stone  { --ca-tier-color: var(--ca-tier-stone);  --ca-tier-bright: var(--ca-tier-stone-bright);  --ca-tier-glow: rgba(143, 138, 132, 0.10); }
+.ca-setup-role.tier-gold,   .ca-first-card.tier-gold   { --ca-tier-color: var(--ca-tier-gold);   --ca-tier-bright: var(--ca-tier-gold-bright);   --ca-tier-glow: rgba(232, 198, 74, 0.16); }
+.ca-setup-role.tier-silver, .ca-first-card.tier-silver { --ca-tier-color: var(--ca-tier-silver); --ca-tier-bright: var(--ca-tier-silver-bright); --ca-tier-glow: rgba(195, 199, 208, 0.12); }
+.ca-setup-role.tier-bronze, .ca-first-card.tier-bronze { --ca-tier-color: var(--ca-tier-bronze); --ca-tier-bright: var(--ca-tier-bronze-bright); --ca-tier-glow: rgba(192, 138, 79, 0.12); }
+.ca-setup-role.tier-stone,  .ca-first-card.tier-stone  { --ca-tier-color: var(--ca-tier-stone);  --ca-tier-bright: var(--ca-tier-stone-bright);  --ca-tier-glow: rgba(143, 138, 132, 0.10); }
 /* 选中翻转闪光特效 */
 .ca-role-shine {
   position: absolute;

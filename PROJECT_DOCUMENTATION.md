@@ -1,8 +1,8 @@
 # DeepSleep Blog - 项目技术文档
 
 > **最后更新**: 2026-08-03
-> **版本**: v5.15
-> **状态**: ✅ 生产就绪 | 评论系统正常运行 (Neon PostgreSQL) | 💬 社区系统已上线 | 👤 全局个人中心 | 📝 文章板块整合 (learn 风格 sidebar) | 🌗 主题切换圆形扩散动画 | 🐟 SleepTown 首页 sidebar 改造 | 🎮 交互式自我介绍 (/play/me/) | 🃏 CardArena 卡牌对战 (/play/cardarena/) | 👑 CardArena 苏丹宫廷风卡牌样式 | ⚔️ CardArena 极繁深化 | 🎴 CardArena 对战页去框化+二维布局 | 🃏 CardArena 每角色独立卡池系统
+> **版本**: v5.16
+> **状态**: ✅ 生产就绪 | 评论系统正常运行 (Neon PostgreSQL) | 💬 社区系统已上线 | 👤 全局个人中心 | 📝 文章板块整合 (learn 风格 sidebar) | 🌗 主题切换圆形扩散动画 | 🐟 SleepTown 首页 sidebar 改造 | 🎮 交互式自我介绍 (/play/me/) | 🃏 CardArena 卡牌对战 (/play/cardarena/) | 👑 CardArena 苏丹宫廷风卡牌样式 | ⚔️ CardArena 极繁深化 | 🎴 CardArena 对战页去框化+二维布局 | 🃏 CardArena 每角色独立卡池 | ✨ CardArena 选卡特效+选首发阶段
 
 ---
 
@@ -1735,6 +1735,61 @@ Hugo 的 partial 查找是精确匹配文件名，找不到 `extend_head.html` �
 | `PROJECT_DOCUMENTATION.md` | 版本号 v5.14→v5.15、更新日志 v5.15 条目 |
 
 **验证**：`node --check` 三个 JS 文件语法 OK；CSS 大括号配平（423/423）；`hugo --destination public_test` EXIT 0（移除预存 scratch 文件后）；卡池逻辑：start 抽 3 → 首角色 9 张，换人切角色 B（12→抽 3=9），切回 A 仍 9 张（不重置），抽牌持续消耗至 0 则无法再抽。
+
+---
+
+### v5.16 (2026-08-03) - CardArena 选卡特效重做 + 选首发阶段
+
+**背景**：原选卡选中后 `rotateY(180deg)` 翻到「ON DUTY」背面，正面角色信息被隐藏（用户感知为「翻转后消失」）；且开战瞬间直接进入对战，首发角色由系统自动选 `activeIndex=0`，玩家无选择权。用户需求：①选中应「翻开」（保留正面可见+选中标记）；②开战时未选中的卡牌化为灰烬消失，动画结束后进入对战；③进入对战后玩家先选第一张出战卡牌，再开始玩家先手回合。
+
+**新增功能 / 修复**:
+
+- ✅ **选卡特效重做**（`cardarena.css` + `cardarena-ui.js`）：
+  - `.ca-setup-role.selected .ca-role-inner`：`rotateY(180deg)` → `translateY(-7px)`（不翻转，上浮）
+  - `.ca-setup-role.selected .ca-role-front`：加金光描边 box-shadow（inset 金线 + 金光内发光 + 外阴影）
+  - `.ca-setup-role.selected .ca-role-front::after`：右上角金色圆形 ✓ 勾记徽章（radial-gradient 宝石 + gold-dark 描边）
+  - 保留 `flipping` 闪光扫过（ca-role-shine-sweep）作为选中反馈；背面 `.ca-role-back` 仍存在但不再显示（backface-visibility:hidden，inner 不旋转）
+
+- ✅ **开战灰烬退场**（`cardarena-ui.js` startGame）：
+  - 点击「开始对战」→ 按钮禁用 + 文案「出征…」
+  - 未选中卡牌（2 张）：`playAshes(rect 中心)` 播放 22 粒灰烬 + puff + `.ca-fading`（ca-ashes-fade 0.72s：blur+grayscale+scale+translateY 淡出）
+  - 选中卡牌（6 张）：`.ca-chosen`（translateY(-10px) + brightness + drop-shadow 金光，0.4s 过渡）
+  - `setTimeout(760ms)` 后 `window.CardArena.start()`（灰烬动画结束→进入对战）
+
+- ✅ **引擎：选首发阶段**（`cardarena-engine.js`）—— 新增 phase 值 `'select-first'`：
+  | 函数 | 原逻辑 | 新逻辑 |
+  |------|--------|--------|
+  | `start` | makeSide both + drawCards(player)+mana + drawCards(enemy)+mana + beginTurn(player) | makeSide both + drawCards(enemy)+mana（敌方默认首发 activeIndex=0）+ `state.phase='select-first'` + emit；**不抽玩家手牌、不 beginTurn** |
+  | `selectFirstRole(idx)` | （新增） | phase 检查 → `player.activeIndex=idx` + `player.deck=role.deck` + drawCards(player,3) + mana + beginTurn(player)（phase→'player_turn'） |
+  - `makeSide` 新增 `titleEn: def.titleEn \|\| ''`（选首发屏显示英文宫衔缎带需要）
+  - 敌方首发：makeSide 默认 activeIndex=0（AI 随机 roster 的首张），抽起始手牌；玩家选首发后进入玩家先手
+
+- ✅ **UI：选首发屏**（`cardarena-ui.js`）：
+  - `renderAll` 加分支：`if (s.phase === 'select-first') { renderSelectFirst(s); return; }`
+  - `renderSelectFirst(s)`：渲染 6 张 `.ca-first-card tier-X`（复用 topline/band/art/stats/passive 元素），提示「从 6 张出战卡牌中选择 1 张首发」，点击 → `window.CardArena.selectFirstRole(idx)`
+  - `heroTier(role)` 计算品级（战力=maxHealth+attack），`tier-gold/silver/bronze/stone` 设 `--ca-tier-color`
+
+- ✅ **CSS：选首发屏样式**（`cardarena.css`）：
+  - `.ca-first-card`：aspect-ratio 3/4 + 苏丹风（黑金暗夜/浅金羊皮纸双主题）+ tier 色边框 + hover 上浮+金光
+  - `.ca-first-grid`：minmax(160px) + max-width 720px
+  - tier 色规则扩展：`.ca-setup-role.tier-gold` → `.ca-setup-role.tier-gold, .ca-first-card.tier-gold`（4 品级全扩展）
+
+**技术要点**:
+- 选中不翻转：CSS 改 `transform: rotateY(180deg)` → `translateY(-7px)`，背面仍存在但 inner 不旋转故隐藏；`::after` 勾记徽章需 `z-index:4`（在 topline/band 之上）
+- 灰烬退场：`playAshes` 挂载 body 不受 `app.innerHTML=''` 影响；`.ca-fading` 用 `forwards` 保留终态；760ms > 720ms 动画时长确保淡出完成
+- select-first 阶段：`start()` 不调 `beginTurn`，phase 由 `selectFirstRole` 末尾的 `beginTurn(player)` 推进到 `'player_turn'`；敌方 activeIndex=0 在 makeSide 默认设置
+- 选首发屏复用 setup 的子元素样式（.ca-role-topline/band/art/stats 等），仅 `.ca-first-card` 容器需新样式；tier 色变量 `--ca-tier-color` 由 `.ca-first-card.tier-X` 提供
+
+**Files Modified**:
+| 文件 | 变更 |
+|------|------|
+| `static/js/cardarena-engine.js` | makeSide 加 titleEn；start() 改 select-first 阶段；新增 selectFirstRole API |
+| `static/js/cardarena-ui.js` | renderAll 加 select-first 分支；新增 renderSelectFirst；startGame 改灰烬退场+延迟 start |
+| `static/css/cardarena.css` | selected 不翻转+勾记徽章；ca-fading/ca-chosen 动画；.ca-first-card/.ca-first-grid 选首发屏；tier 色规则扩展 .ca-first-card |
+| `PROJECT_CONTEXT.md` | 版本 v5.15→v5.16、功能清单 v5.16、版本演进表 v5.16 |
+| `PROJECT_DOCUMENTATION.md` | 版本 v5.15→v5.16、更新日志 v5.16 条目 |
+
+**验证**：`node --check` engine/ui 语法 OK；CSS 大括号配平（438/438）；`hugo --destination public_test` EXIT 0；流程：选 6（上浮+✓）→ 开始（未选中灰烬淡出+选中亮起）→ 760ms → 选首发屏 → 点 1 张 → 玩家先手回合。
 
 ---
 

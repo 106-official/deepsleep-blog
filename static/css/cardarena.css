@@ -598,8 +598,8 @@
 .ca-layout {
   display: grid;
   gap: 10px;
-  /* 默认（移动端）：单列堆叠，顺序与 DOM 一致 */
-  grid-template-columns: 1fr;
+  /* 默认（移动端）：单列堆叠，顺序与 DOM 一致；minmax(0,1fr) 防 grid item min-width:auto 撑爆窄屏 */
+  grid-template-columns: minmax(0, 1fr);
   grid-template-areas:
     "roster-enemy"
     "zone-enemy"
@@ -630,27 +630,28 @@
       "actions       actions";
   }
   /* zone 内部：英雄面板 | 随从战场 横向并排（游戏王对峙风）
-     DOM 顺序天然形成镜像：zone-enemy=hero|board，zone-player=board|hero */
-  .ca-zone {
+     DOM 顺序天然形成镜像：zone-enemy=hero|board，zone-player=board|hero
+     注意：用 .ca-layout .ca-zone 提升特异性(0,2,0)覆盖基础 .ca-zone column(0,1,0)，避免源序覆盖 */
+  .ca-layout .ca-zone {
     flex-direction: row;
     align-items: stretch;
     gap: 10px;
   }
-  .ca-zone .ca-hero {
+  .ca-layout .ca-zone .ca-hero {
     flex: 0 0 172px;
     max-width: 172px;
   }
-  .ca-zone .ca-board {
+  .ca-layout .ca-zone .ca-board {
     flex: 1 1 auto;
     min-width: 0;
   }
   /* 窄英雄面板：内容居中，英文宫衔去侧线，星水印改居中淡背景 */
-  .ca-zone .ca-hero { text-align: center; }
-  .ca-zone .ca-hero-name { font-size: 1.02rem; }
-  .ca-zone .ca-hero-en { text-align: center; }
-  .ca-zone .ca-hero-en::before, .ca-zone .ca-hero-en::after { display: none; }
-  .ca-zone .ca-hero-mana { justify-content: center; }
-  .ca-zone .ca-hero-star {
+  .ca-layout .ca-zone .ca-hero { text-align: center; }
+  .ca-layout .ca-zone .ca-hero-name { font-size: 1.02rem; }
+  .ca-layout .ca-zone .ca-hero-en { text-align: center; }
+  .ca-layout .ca-zone .ca-hero-en::before, .ca-layout .ca-zone .ca-hero-en::after { display: none; }
+  .ca-layout .ca-zone .ca-hero-mana { justify-content: center; }
+  .ca-layout .ca-zone .ca-hero-star {
     right: 50%;
     top: 50%;
     transform: translate(50%, -50%);

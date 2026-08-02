@@ -359,11 +359,16 @@
     });
     // 换人 3D 幽灵卡翻飞
     if (fx.swap) playGhostSwap(fx.swap);
-    // 抽牌：幻影牌从界面右侧 3D 翻入手牌区
+    // 抽牌：幻影牌从界面右侧 3D 翻入手牌区（终点 = 实际抽到的每张牌的位置）
     if (fx.draw && fx.draw.side === 'player' && fx.draw.count > 0) {
       var handCards = app.querySelectorAll('.ca-hand-cards .ca-card');
-      if (handCards.length > 0) {
-        playDrawFx(fx.draw.count, handCards[handCards.length - 1].getBoundingClientRect());
+      var n = Math.min(fx.draw.count, handCards.length);
+      if (n > 0) {
+        var targets = [];
+        for (var k = 0; k < n; k++) {
+          targets.push(handCards[handCards.length - 1 - k].getBoundingClientRect());
+        }
+        playDrawFx(targets);
       }
     }
   }
@@ -474,9 +479,11 @@
   }
 
   // 抽牌：幻影牌从界面右侧 3D 翻转到手牌区（卡背朝外 → 正面落地，立体感）
-  function playDrawFx(count, lastCardRect) {
-    var n = Math.min(count, 3);
+  // targets：抽到牌的 DOMRect 数组，每张幻影牌飞到对应位置，与屏幕大小/换行无关
+  function playDrawFx(targets) {
+    var n = targets.length;
     for (var i = 0; i < n; i++) {
+      var t = targets[i];
       var ghost = el('div', 'ca-draw-ghost');
       var front = el('div', 'ca-draw-face ca-draw-front');
       front.appendChild(el('div', 'ca-draw-band', 'GOLD'));
@@ -487,29 +494,31 @@
       ghost.appendChild(back);
       document.body.appendChild(ghost);
 
-      // 起点：视口右侧中部，多张时纵向错落成扇形
-      var startX = window.innerWidth + 30 + i * 26;
-      var startY = window.innerHeight * (0.28 + i * 0.10) + (Math.random() * 20 - 10);
-      // 终点：手牌区最后一张（抽到的牌）的位置，多张时依次向左
-      var endX = Math.round(lastCardRect.right - 34 - i * 84);
-      var endY = Math.round(lastCardRect.top + lastCardRect.height / 2 - 48);
+      // 起点：视口右侧，多张时以目标牌高度为基准上下错落成扇形
+      var startX = window.innerWidth + 24 + i * 30;
+      var startY = t.top + t.height / 2 + (i - (n - 1) / 2) * 46;
+      // 终点：对应那张牌的几何中心（84×118 幻影牌中心对齐，落点精准）
+      var endX = Math.round(t.left + t.width / 2);
+      var endY = Math.round(t.top + t.height / 2);
       var dx = endX - startX;
       var dy = endY - startY;
-      ghost.style.left = startX + 'px';
-      ghost.style.top = startY + 'px';
+      ghost.style.left = Math.round(startX - 42) + 'px';
+      ghost.style.top = Math.round(startY - 59) + 'px';
 
+      // 飞行全程高亮显眼，到达终点后淡出；中间点抬高形成抛物线弧线
       var anim = ghost.animate([
-        { transform: 'perspective(700px) translate(0px, 0px) rotateY(120deg) rotateZ(9deg) scale(1)', opacity: 0.95, offset: 0 },
-        { transform: 'perspective(700px) translate(' + Math.round(dx * 0.72) + 'px, ' + Math.round(dy * 0.55 - 42) + 'px) rotateY(62deg) rotateZ(0deg) scale(1.08)', opacity: 1, offset: 0.62 },
-        { transform: 'perspective(700px) translate(' + Math.round(dx) + 'px, ' + Math.round(dy) + 'px) rotateY(0deg) rotateZ(0deg) scale(0.96)', opacity: 0, offset: 1 }
-      ], { duration: 780, delay: i * 110, easing: 'cubic-bezier(0.22, 1, 0.36, 1)', fill: 'forwards' });
+        { transform: 'perspective(700px) translate(0px, 0px) rotateY(120deg) rotateZ(8deg) scale(1.06)', offset: 0 },
+        { transform: 'perspective(700px) translate(' + Math.round(dx * 0.7) + 'px, ' + Math.round(dy * 0.5 - 56) + 'px) rotateY(60deg) rotateZ(0deg) scale(1.12)', offset: 0.6 },
+        { transform: 'perspective(700px) translate(' + Math.round(dx) + 'px, ' + Math.round(dy) + 'px) rotateY(0deg) rotateZ(0deg) scale(1)', opacity: 1, offset: 0.88 },
+        { transform: 'perspective(700px) translate(' + Math.round(dx) + 'px, ' + Math.round(dy) + 'px) rotateY(0deg) rotateZ(0deg) scale(1)', opacity: 0, offset: 1 }
+      ], { duration: 760, delay: i * 100, easing: 'cubic-bezier(0.22, 1, 0.36, 1)', fill: 'forwards' });
       (function (g) {
         anim.onfinish = function () { g.remove(); };
       })(ghost);
       // 落地金尘
       (function (x, y, d) {
-        setTimeout(function () { burstSparks(x, y, 5); }, 780 + d);
-      })(endX, endY, i * 110);
+        setTimeout(function () { burstSparks(x, y, 8); }, 760 + d);
+      })(endX, endY, i * 100);
     }
   }
 

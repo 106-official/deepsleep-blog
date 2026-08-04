@@ -107,23 +107,22 @@ blog-static/
 ├── content/
 │   ├── play.md                    # 娱乐板块声明 (layout: play)
 │   └── play/
-│       └── sleeptown.md           # 游戏页面声明 (layout: sleeptown)
-│                                   # ⚠️ 只保留front matter，不要添加HTML内容！
+│       └── sleeptown.md           # ⭐ 主游戏页面 (layout: sleeptown，仅 front matter)
 ├── layouts/
 │   └── _default/
-│       ├── play.html             # 娱乐板块布局模板 (~150行)
-│       └── sleeptown.html        # ⭐ 核心文件：所有游戏逻辑 (~2800行)
-│                                   # 包含：HTML模板 + JavaScript + CSS
-│       └── sleeptown/
-│           └── freemode.html     # 备份文件（已弃用，不要使用）
-├── static/
-│   └── play/
-│       └── sleeptown/
-│           └── freemode.html     # 静态备份（已弃用）
+│       ├── play.html                      # 娱乐板块布局模板 (~150行)
+│       └── sleeptown.html                 # ⭐ 核心文件：单文件实现双模式 (~3894行，HTML+JS+CSS)
 ├── docs/
 │   └── SleepTown-项目文档.md     # 本文档
 └── hugo.toml                     # 导航菜单配置
 ```
+
+> 清理记录（2026-08-04）：原本存在的 Legacy 路由与原型文件已删除，不再构建/部署为孤儿页：
+> - `content/play/sleeptown/freemode.md`、`content/play/sleeptown/stagemode.md`（Legacy 路由页）
+> - `layouts/_default/sleeptown-freemode.html`（1619行）、`layouts/_default/sleeptown-stagemode.html`（437行）（Legacy 布局）
+> - `static/play/sleeptown/freemode.html`（60KB Legacy 静态快照）
+> - `sleeptown-splash-prototype.html`（432行 一次性 3D 闪屏原型）
+> - 空目录 `layouts/play/sleeptown/`、`layouts/_default/sleeptown/`
 
 ---
 
@@ -584,7 +583,7 @@ shuffleArray(array)       // Fisher-Yates洗牌算法
 addLog(message, type)     // 添加日志条目
 updateStatusBar()         // 更新状态栏显示
 renderFishes()            // 渲染鱼塘UI
-getRoleEmoji(role)        // 获取角色emoji图标
+getRoleAvatar(role)      // 获取角色 SVG 线稿徽记（design 稿曾拟更名 getRoleSvg，最终实现沿用 getRoleAvatar）
 getRoleName(role)         // 获取角色中文名称
 getAdjacentFish(index)    // 获取相邻鱼的索引（用于八卦鱼）
 triggerMartyrDeathEffect(martyrIndex)  // 殉道D死亡效果
@@ -644,7 +643,7 @@ gameState = {
 **症状**：页面显示空白或404
 
 **可能原因**：
-1. `content/play/sleeptown/freemode.md` 包含了HTML内容
+1. `content/play/sleeptown.md` 的 front matter 写错（例如误用 layout: sleeptown-freemode 等已删除的 Legacy 布局）
 2. front matter中 `type` 和 `layout` 字段冲突
 3. CSS语法错误导致模板解析失败
 

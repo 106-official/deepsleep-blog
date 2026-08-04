@@ -348,10 +348,77 @@
 
   function runEnemyTurn() {
     var ai = window.CARDARENA_AI;
-    setTimeout(function () {
-      if (ai) ai.runTurn(state.enemy, state.player);
-      endTurn(state.enemy);
-    }, 400);
+    if (!ai || typeof ai.runTurn !== 'function') { endTurn(state.enemy); return; }
+    // AI 回合改为生成器逐步驱动：每步先演出再执行，玩家才能看清出牌/攻击/换人
+    var gen = ai.runTurn(state.enemy, state.player);
+    setTimeout(function () { driveAi(gen); }, 400);
+  }
+
+  // 驱动 AI 生成器：每步交给 UI 播放动画，UI 在合适时机回调 apply/next
+  function driveAi(gen) {
+    var res = gen.next();
+    if (res.done) { endTurn(state.enemy); return; }
+    var action = res.value;
+    if (!action) { endTurn(state.enemy); return; }
+    var ui = window.CardArenaUI;
+    var apply = function () { applyAiAction(action); };
+    var next = function () {
+      if (state.phase === 'gameover') return;   // 对局已结束，停止驱动
+      driveAi(gen);
+    };
+    if (ui && typeof ui.playAiStep === 'function') {
+      ui.playAiStep(action, apply, next);
+    } else {
+      apply(); next();
+    }
+  }
+
+  // 按 AI 行动类型执行真实状态变更（与旧 AI 的同步逻辑等价，但拆到每步由 UI 驱动）
+  function applyAiAction(action) {
+    var enemy = state.enemy;
+    var engine = window.CardArena._internal;
+    if (!action) return;
+    if (action.type === 'play') {
+      var card = DATA.CARDS.find(function (c) { return c.id === action.cardId; });
+      if (!card || enemy.mana < card.cost) return;
+      if (card.type === 'minion') {
+        if (enemy.board.filter(function (m) { return m.health > 0; }).length >= CONFIG.minionLimit) return;
+        enemy.mana -= card.cost;
+        if (action.handIndex >= 0 && action.handIndex < enemy.hand.length) enemy.hand.splice(action.handIndex, 1);
+        engine.summonMinion(enemy, card.id);
+      } else {
+        var eff = card.effect;
+        if (!eff) {
+          enemy.mana -= card.cost;
+          if (action.handIndex >= 0 && action.handIndex < enemy.hand.length) enemy.hand.splice(action.handIndex, 1);
+          return;
+        }
+        if (eff.target === 'none') {
+          enemy.mana -= card.cost;
+          if (action.handIndex >= 0 && action.handIndex < enemy.hand.length) enemy.hand.splice(action.handIndex, 1);
+          engine.applyEffect(eff, enemy, null);
+        } else {
+          if (!action.target) return;
+          enemy.mana -= card.cost;
+          if (action.handIndex >= 0 && action.handIndex < enemy.hand.length) enemy.hand.splice(action.handIndex, 1);
+          engine.applyEffect(eff, enemy, action.target);
+        }
+      }
+    } else if (action.type === 'attack') {
+      engine.combat(enemy, action.attacker, action.target);
+    } else if (action.type === 'swap') {
+      var role = enemy.roster[action.roleIndex];
+      if (role && role.alive && action.roleIndex !== enemy.activeIndex) {
+        enemy.activeIndex = action.roleIndex;
+        enemy.roleAttacked = false;
+        enemy.hand = [];
+        enemy.deck = role.deck;            // 切到该角色卡池（保留剩余张数）
+        drawCards(enemy, CONFIG.startingHand);
+        enemy.mana = CONFIG.manaMax;
+        addLog(role.name + ' 上场（AI 换人）');
+        emit('update', null);
+      }
+    }
   }
 
   // ===== 公开 API =====

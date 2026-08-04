@@ -7,6 +7,25 @@
   var chosenRoles = [];       // 玩家选择的 6 个角色 id
   var prevState = null;       // 上一次渲染的状态快照（用于特效对比）
   var pendingAction = null;   // UI 发起的操作记录（攻击者等特效信息）
+  var wasFull = false;        // 上一次 toggleRole 时是否已选满 6 张（用于「集结完成」只触发一次）
+  var aiAttacker = null;      // AI 攻击时的前倾特效来源（区别于玩家的 pendingAction）
+  var vsShownThisGame = false; // 对阵报幕 VS 每局只播一次
+
+  // ===== 演出节奏：速度档位（正常 1x / 快速 2x），localStorage 持久化 =====
+  var SPEED_KEY = 'cardarena_speed';
+  function getSpeed() {
+    try { return localStorage.getItem(SPEED_KEY) === '2' ? 2 : 1; } catch (e) { return 1; }
+  }
+  function setSpeed(v) {
+    try { localStorage.setItem(SPEED_KEY, String(v)); } catch (e) {}
+  }
+  var reduceMotion = window.matchMedia &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // 演出时长换算：reduce-motion 近乎瞬发；快速档减半
+  function pace(ms) {
+    if (reduceMotion) return Math.min(ms, 60);
+    return getSpeed() === 2 ? Math.round(ms / 2) : ms;
+  }
 
   function el(tag, cls, text) {
     var node = document.createElement(tag);
@@ -162,11 +181,40 @@
     var count = app.querySelector('#ca-count');
     if (count) count.textContent = '已选 ' + chosenRoles.length + ' / 6';
     var startBtn = app.querySelector('#ca-start');
-    if (startBtn) startBtn.disabled = chosenRoles.length !== 6;
+    var full = chosenRoles.length === 6;
+    if (startBtn) startBtn.disabled = !full;
+    // 队伍集结完成：六张卡金线连结 + 计数器闪金（不阻塞操作）
+    if (full && !wasFull) playRosterComplete();
+    wasFull = full;
+  }
+
+  // 选满 6 张的仪式反馈：选中卡依次镀金脉冲 + 计数器闪金 + 开始按钮点亮
+  function playRosterComplete() {
+    var chosen = app.querySelectorAll('.ca-setup-role.selected');
+    chosen.forEach(function (c, i) {
+      c.style.setProperty('--ci', i);
+      c.classList.remove('ca-linked');
+      void c.offsetWidth;
+      c.classList.add('ca-linked');
+      setTimeout(function () { c.classList.remove('ca-linked'); }, 900);
+    });
+    var count = app.querySelector('#ca-count');
+    if (count) {
+      count.classList.remove('ca-count-full');
+      void count.offsetWidth;
+      count.classList.add('ca-count-full');
+    }
+    var btn = app.querySelector('#ca-start');
+    if (btn) {
+      btn.classList.remove('ca-btn-ready');
+      void btn.offsetWidth;
+      btn.classList.add('ca-btn-ready');
+    }
   }
 
   function startGame() {
     if (chosenRoles.length !== 6) return;
+    vsShownThisGame = false;   // 新对局：允许再次播放对阵报幕
     var startBtn = app.querySelector('#ca-start');
     if (startBtn) { startBtn.disabled = true; startBtn.textContent = '出征…'; }
     // 未被选择的卡牌化为灰烬消失；选中的卡牌亮起
@@ -180,12 +228,33 @@
         c.classList.add('ca-fading');          // 卡牌淡出退场
       }
     });
-    // 灰烬动画结束后进入对战（选首发阶段）
+    // 灰烬余韵 → 金色帷幕合拢 → 揭开选首发屏
     setTimeout(function () {
-      var pool = DATA.ROLE_POOL.map(function (r) { return r.id; });
-      var aiRoster = shuffle(pool).slice(0, 6);
-      window.CardArena.start(chosenRoles.slice(), aiRoster);
-    }, 760);
+      playCurtain(function () {
+        var pool = DATA.ROLE_POOL.map(function (r) { return r.id; });
+        var aiRoster = shuffle(pool).slice(0, 6);
+        window.CardArena.start(chosenRoles.slice(), aiRoster);
+      });
+    }, pace(760));
+  }
+
+  // 金色帷幕转场：上下两幅锦帘合拢遮住换屏瞬间，再向两侧揭开
+  function playCurtain(onCovered) {
+    var dur = pace(800);
+    var half = Math.round(dur / 2);
+    var wrap = el('div', 'ca-curtain');
+    wrap.style.setProperty('--cd', half + 'ms');
+    wrap.appendChild(el('span', 'ca-curtain-top'));
+    wrap.appendChild(el('span', 'ca-curtain-bottom'));
+    var seam = el('span', 'ca-curtain-seam');
+    wrap.appendChild(seam);
+    document.body.appendChild(wrap);
+    // 合拢完成 → 切换内容 → 揭开
+    setTimeout(function () {
+      if (onCovered) onCovered();
+      wrap.classList.add('ca-curtain-open');
+      setTimeout(function () { wrap.remove(); }, half + 120);
+    }, half);
   }
 
   function shuffle(arr) {
@@ -361,8 +430,9 @@
         }
       }
     });
-    // 攻击者前倾（仅玩家操作触发）
+    // 攻击者前倾：玩家操作触发，或 AI 逐步演出时由 aiAttacker 提供
     if (pendingAction && pendingAction.type === 'attack') fx.attacker = pendingAction.attacker;
+    if (!fx.attacker && aiAttacker) fx.attacker = aiAttacker;
     return fx;
   }
 
@@ -789,11 +859,21 @@
     var bar = el('div', 'ca-actions');
     var info = el('div', 'ca-actions-info',
       '第 ' + s.turn + ' 回合' + (s.phase === 'enemy_turn' ? ' · AI 行动中' : ' · 轮到玩家'));
+    // 速度开关：仅影响 AI 回合步进 / 开场转场的演出节奏（localStorage 持久化）
+    var fast = getSpeed() === 2;
+    var speedBtn = el('button', 'ca-speed' + (fast ? ' ca-speed-fast' : ''), fast ? '速度 2×' : '速度 1×');
+    speedBtn.id = 'ca-speed';
+    speedBtn.title = '切换 AI 演出速度';
+    speedBtn.addEventListener('click', function () {
+      setSpeed(fast ? 1 : 2);
+      renderAll();   // 重渲染以刷新按钮状态，后续步进节奏即时生效
+    });
     var endBtn = el('button', 'ca-btn', '结束回合');
     endBtn.id = 'ca-end-turn';
     if (s.phase === 'enemy_turn') endBtn.disabled = true;
     endBtn.addEventListener('click', function () { window.CardArena.endTurn(); });
     bar.appendChild(info);
+    bar.appendChild(speedBtn);
     bar.appendChild(endBtn);
     return bar;
   }
@@ -954,6 +1034,111 @@
     app.appendChild(overlay);
   }
 
+  // ===== AI 回合逐帧演出 =====
+  // 效果文案（兼容 card.effect.kind / role.passive.type）
+  function describeEffect(eff) {
+    if (!eff) return '';
+    var k = eff.kind || eff.type;
+    if (k === 'heal') return '回复 ' + eff.value + ' 点生命';
+    if (k === 'draw') return '抽 ' + eff.value + ' 张牌';
+    if (k === 'damage') return '造成 ' + eff.value + ' 点伤害';
+    if (k === 'buff') return '随从 +' + (eff.attack || 0) + '/+' + (eff.health || 0);
+    if (k === 'summon') return '召唤随从';
+    if (k === 'board_clear') return '清空敌方随从';
+    return '';
+  }
+
+  // 对阵报幕 VS：双方首发角色撞入中央，一局一次
+  function playVsReport(done) {
+    var s = window.CardArena.getState();
+    if (!s) { if (done) done(); return; }
+    var pRole = s.player.roster[s.player.activeIndex];
+    var eRole = s.enemy.roster[s.enemy.activeIndex];
+    var wrap = el('div', 'ca-vs');
+    wrap.style.setProperty('--vin', pace(520) + 'ms');
+    wrap.style.setProperty('--vd', pace(320) + 'ms');
+    var row = el('div', 'ca-vs-row');
+    function vsCard(sideLabel, role, cls) {
+      var c = el('div', 'ca-vs-card ' + cls);
+      c.appendChild(el('div', 'ca-vs-side', sideLabel));
+      c.appendChild(el('div', 'ca-vs-star'));
+      c.appendChild(el('div', 'ca-vs-name', role ? role.name : ''));
+      var stats = el('div', 'ca-vs-stats');
+      stats.appendChild(el('span', null, '⚔ ' + (role ? role.attack : 0)));
+      stats.appendChild(el('span', null, '♥ ' + (role ? role.maxHealth : 0)));
+      c.appendChild(stats);
+      return c;
+    }
+    row.appendChild(vsCard('我方首发', pRole, 'ca-vs-left'));
+    row.appendChild(el('div', 'ca-vs-mark', 'VS'));
+    row.appendChild(vsCard('敌方首发', eRole, 'ca-vs-right'));
+    wrap.appendChild(row);
+    wrap.appendChild(el('div', 'ca-vs-flash'));
+    document.body.appendChild(wrap);
+    void wrap.offsetWidth;
+    wrap.classList.add('ca-vs-in');
+    setTimeout(function () {
+      wrap.classList.remove('ca-vs-in');
+      wrap.classList.add('ca-vs-out');
+      setTimeout(function () { wrap.remove(); if (done) done(); }, pace(360));
+    }, pace(1700));
+  }
+
+  // AI 出牌：旋转展示该卡牌（敌方区上方偏中），展示完毕再执行效果
+  function showAiCard(cardId, action, done) {
+    var card = DATA.CARDS.find(function (c) { return c.id === cardId; });
+    if (!card) { if (done) done(); return; }
+    var node = el('div', 'ca-ai-card');
+    node.style.left = '50%';
+    node.style.top = '11%';
+    node.style.setProperty('--ad', pace(900) + 'ms');
+    node.appendChild(el('div', 'ca-ai-card-cost', String(card.cost)));
+    node.appendChild(el('div', 'ca-ai-card-kind', (card.type === 'minion' ? '随从' : '法术') + ' · 出牌'));
+    node.appendChild(el('div', 'ca-ai-card-name', card.name));
+    var txt = describeEffect(card.effect);
+    if (card.type === 'minion') txt = (card.attack + ' / ' + card.health) + (txt ? ' · ' + txt : '');
+    node.appendChild(el('div', 'ca-ai-card-text', txt || '召唤入场'));
+    document.body.appendChild(node);
+    void node.offsetWidth;
+    setTimeout(function () {
+      if (done) done();                 // 此刻执行出牌效果，战场随之更新
+      setTimeout(function () { node.remove(); }, pace(80));
+    }, pace(900));
+  }
+
+  // AI 换人：横幅提示（换人幽灵翻飞由引擎 fx.swap 负责）
+  function showAiSwap(action, done) {
+    var s = window.CardArena.getState();
+    var role = s && s.enemy.roster[action.roleIndex];
+    var banner = el('div', 'ca-ai-banner', '敌方换人 · ' + (role ? role.name : '新角色') + ' 上场');
+    banner.style.setProperty('--bd', pace(1000) + 'ms');
+    document.body.appendChild(banner);
+    void banner.offsetWidth;
+    setTimeout(function () { banner.remove(); if (done) done(); }, pace(1000));
+  }
+
+  // 引擎驱动 AI 生成器时回调：按行动类型播放对应演出，并在合适时机回调 apply / next
+  function playAiStep(action, apply, next) {
+    if (action.type === 'play') {
+      showAiCard(action.cardId, action, function () {
+        apply();
+        setTimeout(next, pace(140));
+      });
+    } else if (action.type === 'attack') {
+      aiAttacker = action.attacker;     // 让本次渲染的攻击者触发前倾 lunge
+      apply();                          // 执行攻击 → renderAll 播放 lunge
+      setTimeout(function () { aiAttacker = null; next(); }, pace(820));
+    } else if (action.type === 'swap') {
+      showAiSwap(action, function () {
+        apply();
+        setTimeout(next, pace(320));
+      });
+    }
+  }
+
+  // 暴露给引擎，用于驱动 AI 回合的逐帧演出
+  window.CardArenaUI = { playAiStep: playAiStep };
+
   // ===== 初始化 =====
   function init() {
     app = document.getElementById('cardarena-app');
@@ -973,8 +1158,18 @@
         window.removeEventListener('cardarena:splash-done', onDone);
         revealSetup();
       });
-      // 兜底：闪屏异常未派发 done 时，也确保选人界面出现，避免永久隐藏
-      setTimeout(revealSetup, 6000);
+      // 兜底：闪屏异常未派发 done 时确保选人界面出现，避免永久隐藏。
+      // 闪屏为「纯点击门」不会自动关闭，玩家可能长时间观赏，故仅在闪屏确实未正常显示时才兜底。
+      (function guard(tries) {
+        setTimeout(function () {
+          if (revealed) return;
+          var sp = document.getElementById('ca-splash');
+          var alive = sp && window.__CA_SPLASH_STARTED &&
+            sp.classList.contains('show') && !sp.classList.contains('gone');
+          if (alive) { if (tries < 40) guard(tries + 1); return; }  // 闪屏正常展示中，继续等玩家点击
+          revealSetup();
+        }, 3000);
+      })(0);
     } else {
       var enter = app.querySelector('.ca-setup');
       if (enter) enter.classList.add('ca-enter');
@@ -984,6 +1179,12 @@
     engine.on('phase', function (phase) {
       if (phase === 'choose_target' || phase === 'choose_attack_target') {
         applyTargetingMode();
+        return;
+      }
+      // 对局正式开始（玩家先手首回合）：先播「对阵报幕 VS」，再揭开战斗界面
+      if (phase === 'player_turn' && !vsShownThisGame) {
+        vsShownThisGame = true;
+        playVsReport(function () { renderAll(); });
       }
     });
     engine.on('gameover', showGameOver);

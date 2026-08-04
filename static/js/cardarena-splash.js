@@ -24,7 +24,6 @@ import * as THREE from 'three';
   let elapsed = 0, lastT = 0;
   let mouse = { x: 0, y: 0 }, parallax = { x: 0, y: 0 };
   let webglOK = true, started = false;
-  const AUTO = reduceMotion ? 1800 : 4500;
 
   function dismiss() {
     if (dismissed) return;
@@ -206,17 +205,29 @@ import * as THREE from 'three';
     requestAnimationFrame(function () {
       requestAnimationFrame(function () { splash.classList.add('show'); });
     });
-    if (willShow) setTimeout(dismiss, AUTO);
+    // 纯点击门：不自动淡出，由玩家点击任意处关闭
   }
 
-  const enterBtn = document.getElementById('ca-splash-enter');
-  const skipBtn = document.getElementById('ca-splash-skip');
+  // 「不再自动播放」复选框：阻止冒泡，否则点它会在勾选生效前触发闪屏关闭
+  const neverLabel = document.querySelector('.ca-splash-never');
   const neverBox = document.getElementById('ca-splash-never');
-  if (enterBtn) enterBtn.addEventListener('click', dismiss);
-  if (skipBtn) skipBtn.addEventListener('click', dismiss);
+  if (neverLabel) {
+    neverLabel.addEventListener('click', function (e) { e.stopPropagation(); });
+    neverLabel.addEventListener('pointerdown', function (e) { e.stopPropagation(); });
+  }
   if (neverBox) neverBox.addEventListener('change', function (e) {
+    e.stopPropagation();
     try { localStorage.setItem(SPLASH_KEY, e.target.checked ? '1' : '0'); } catch (err) {}
-    if (e.target.checked) dismiss();
+  });
+
+  // 点击任意处关闭（含键盘可达性：Enter / Space / Esc）
+  splash.addEventListener('click', dismiss);
+  window.addEventListener('keydown', function onKey(e) {
+    if (dismissed || !started) return;
+    if (e.key === 'Enter' || e.key === ' ' || e.key === 'Escape') {
+      e.preventDefault();
+      dismiss();
+    }
   });
 
   if (willShow) {

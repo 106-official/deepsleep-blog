@@ -20,8 +20,7 @@
         <div class="ca-splash-sub">苏丹宫廷 · 多角色轮换卡牌对战</div>
         <div class="ca-splash-tag">CARD·ARENA · 卡牌对战</div>
       </div>
-      <button class="ca-splash-skip" id="ca-splash-skip">跳过 ✕</button>
-      <button class="ca-splash-enter" id="ca-splash-enter">进入 →</button>
+      <div class="ca-splash-tap" id="ca-splash-tap">点击任意处继续</div>
       <label class="ca-splash-never">
         <input type="checkbox" id="ca-splash-never" /> 不再自动播放
       </label>
@@ -173,25 +172,25 @@
     border: 1px solid rgba(212,175,55,0.3); border-radius: 2px; padding: 0.28rem 0.7rem;
     background: color-mix(in srgb, #d4af37 6%, transparent);
   }
-  .ca-splash-enter {
-    position: absolute; right: 6%; bottom: 7%; z-index: 4;
-    font-family: 'Courier New', monospace; font-size: 0.95rem; letter-spacing: 0.18em;
-    color: #1c0f0c; background: linear-gradient(180deg, #f3dfa0, #d4af37);
-    border: none; border-radius: 3px; padding: 0.7rem 1.5rem; cursor: pointer;
-    box-shadow: 0 0 22px rgba(212,175,55,0.45);
-    opacity: 0; transition: opacity 0.8s ease 1s, transform 0.15s ease;
+  /* 点击门提示：1.2s 后浮现并持续呼吸 */
+  .ca-splash-tap {
+    position: absolute; left: 50%; bottom: 12%; transform: translateX(-50%); z-index: 4;
+    font-family: 'Courier New', monospace; font-size: 0.82rem; letter-spacing: 0.26em;
+    color: #e8c64a; text-shadow: 0 0 14px rgba(212,175,55,0.5);
+    padding: 0.5rem 1.4rem; border: 1px solid rgba(212,175,55,0.28); border-radius: 2px;
+    background: color-mix(in srgb, #d4af37 5%, transparent);
+    opacity: 0; pointer-events: none; white-space: nowrap;
+    transition: opacity 0.7s ease 1.2s;
   }
-  #ca-splash.show .ca-splash-enter { opacity: 1; }
-  .ca-splash-enter:hover { transform: translateY(-2px); filter: brightness(1.06); }
-  .ca-splash-skip {
-    position: absolute; top: 5%; right: 5%; z-index: 4;
-    font-family: 'Courier New', monospace; font-size: 0.8rem; letter-spacing: 0.12em;
-    color: #caa75a; background: transparent; border: 1px solid rgba(202,167,90,0.35);
-    border-radius: 3px; padding: 0.4rem 0.9rem; cursor: pointer;
-    opacity: 0; transition: opacity 0.8s ease 1s;
+  #ca-splash.show .ca-splash-tap { opacity: 1; }
+  #ca-splash.gone .ca-splash-tap { opacity: 0; transition: opacity 0.2s ease; }
+  @media (prefers-reduced-motion: no-preference) {
+    #ca-splash.show .ca-splash-tap { animation: caTapBreath 2.4s ease-in-out 1.9s infinite; }
   }
-  #ca-splash.show .ca-splash-skip { opacity: 1; }
-  .ca-splash-skip:hover { color: #f3dfa0; border-color: #d4af37; }
+  @keyframes caTapBreath {
+    0%, 100% { opacity: 0.55; box-shadow: 0 0 0 rgba(212,175,55,0); }
+    50%      { opacity: 1;    box-shadow: 0 0 18px rgba(212,175,55,0.25); }
+  }
   .ca-splash-never {
     position: absolute; left: 5%; bottom: 8%; z-index: 4;
     font-family: 'Courier New', monospace; font-size: 0.72rem; letter-spacing: 0.08em; color: #a88f5e;

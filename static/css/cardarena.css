@@ -2287,3 +2287,212 @@
     100% { opacity: 1; transform: translateX(-50%) scale(1) rotate(0); }
   }
 }
+
+
+/* ============================================================
+   v1.2.0 演出层：集结反馈 / 帷幕转场 / VS 报幕 / AI 回合逐步演出
+   ============================================================ */
+
+/* ---- 金色帷幕转场（body 浮层，免疫 renderAll 全量重建）---- */
+.ca-curtain { position: fixed; inset: 0; z-index: 9000; pointer-events: none; }
+.ca-curtain-top, .ca-curtain-bottom {
+  position: absolute; left: 0; right: 0; height: 50.5%;
+  background:
+    repeating-linear-gradient(90deg, rgba(212,175,55,0.10) 0 2px, transparent 2px 9px),
+    linear-gradient(180deg, #1c0f0c, #2a140d 60%, #0d0604);
+  box-shadow: 0 0 40px rgba(0,0,0,0.7);
+}
+.ca-curtain-top { top: 0; transform: translateY(-100%); }
+.ca-curtain-bottom { bottom: 0; transform: translateY(100%); }
+.ca-curtain-seam {
+  position: absolute; left: 0; right: 0; top: 50%; height: 2px; opacity: 0;
+  transform: translateY(-50%);
+  background: linear-gradient(90deg, transparent, var(--cardarena-gold-light, #eed48a), transparent);
+  box-shadow: 0 0 22px rgba(212,175,55,0.75);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .ca-curtain-top { animation: caCurtainDown var(--cd, 400ms) cubic-bezier(0.4,0,0.2,1) forwards; }
+  .ca-curtain-bottom { animation: caCurtainUp var(--cd, 400ms) cubic-bezier(0.4,0,0.2,1) forwards; }
+  .ca-curtain-seam { animation: caSeamFlash var(--cd, 400ms) ease-out var(--cd, 400ms) both; }
+  .ca-curtain-open .ca-curtain-top { animation: caCurtainUpOut var(--cd, 400ms) cubic-bezier(0.5,0,0.75,0) forwards; }
+  .ca-curtain-open .ca-curtain-bottom { animation: caCurtainDownOut var(--cd, 400ms) cubic-bezier(0.5,0,0.75,0) forwards; }
+}
+@keyframes caCurtainDown    { to { transform: translateY(0); } }
+@keyframes caCurtainUp      { to { transform: translateY(0); } }
+@keyframes caCurtainUpOut   { from { transform: translateY(0); } to { transform: translateY(-100%); } }
+@keyframes caCurtainDownOut { from { transform: translateY(0); } to { transform: translateY(100%); } }
+@keyframes caSeamFlash { 0% { opacity: 0; } 35% { opacity: 1; } 100% { opacity: 0; } }
+
+/* ---- 队伍集结完成：选中卡镀金脉冲 + 计数器闪金 + 按钮点亮 ---- */
+@media (prefers-reduced-motion: no-preference) {
+  .ca-setup-role.ca-linked { animation: caLinked 640ms cubic-bezier(0.22,1,0.36,1) calc(var(--ci, 0) * 65ms) both; }
+  .ca-count-full { animation: caCountFull 700ms ease-out both; }
+  .ca-btn-ready  { animation: caBtnReady 900ms ease-out both; }
+}
+@keyframes caLinked {
+  0%   { box-shadow: 0 0 0 0 rgba(212,175,55,0); }
+  40%  { box-shadow: 0 0 22px 5px rgba(212,175,55,0.55); filter: brightness(1.16); }
+  100% { box-shadow: 0 0 0 0 rgba(212,175,55,0); filter: none; }
+}
+@keyframes caCountFull {
+  0%   { transform: scale(1); }
+  35%  { color: var(--cardarena-gold-light, #eed48a); transform: scale(1.18); text-shadow: 0 0 16px rgba(212,175,55,0.8); }
+  100% { color: var(--cardarena-gold-light, #eed48a); transform: scale(1); text-shadow: 0 0 6px rgba(212,175,55,0.35); }
+}
+@keyframes caBtnReady {
+  0%   { box-shadow: 0 0 0 0 rgba(212,175,55,0.6); }
+  55%  { box-shadow: 0 0 0 12px rgba(212,175,55,0); }
+  100% { box-shadow: 0 0 0 0 rgba(212,175,55,0); }
+}
+
+/* ---- VS 对阵报幕（一局一次，双方首发卡撞入中央）---- */
+.ca-vs {
+  position: fixed; inset: 0; z-index: 9200; pointer-events: none;
+  display: flex; align-items: center; justify-content: center;
+  background:
+    radial-gradient(760px 420px at 50% 50%, rgba(212,175,55,0.16), transparent 62%),
+    rgba(6,3,2,0.82);
+  opacity: 0; transition: opacity 240ms ease;
+}
+.ca-vs.ca-vs-in { opacity: 1; }
+.ca-vs.ca-vs-out { opacity: 0; transition: opacity var(--vd, 320ms) ease; }
+.ca-vs-row { display: flex; align-items: center; gap: clamp(10px, 4vw, 54px); }
+.ca-vs-card {
+  width: clamp(120px, 17vw, 190px); padding: 0.7rem 0.6rem 0.85rem;
+  border: 1px solid var(--cardarena-gold-dark, #8a6a2f); border-radius: 4px;
+  background: linear-gradient(180deg, #240a0f, #52101b 52%, #190507);
+  box-shadow: 0 0 34px rgba(0,0,0,0.75), inset 0 0 0 1px rgba(212,175,55,0.22);
+  text-align: center; color: #f1e3c4;
+}
+.ca-vs-side {
+  font-family: 'Courier New', monospace; font-size: 0.6rem; letter-spacing: 0.24em;
+  color: #a88f5e; margin-bottom: 0.4rem;
+}
+.ca-vs-star {
+  width: 46px; height: 46px; margin: 0 auto 0.5rem; position: relative;
+}
+.ca-vs-star::before, .ca-vs-star::after {
+  content: ''; position: absolute; inset: 0;
+  border: 2px solid var(--cardarena-gold, #d4af37);
+  box-shadow: 0 0 14px rgba(212,175,55,0.5);
+}
+.ca-vs-star::after { transform: rotate(45deg); }
+.ca-vs-name {
+  font-family: var(--cardarena-serif, 'Noto Serif SC', Georgia, serif);
+  font-size: 1.02rem; letter-spacing: 0.08em; color: var(--cardarena-gold-light, #eed48a);
+}
+.ca-vs-stats {
+  margin-top: 0.4rem; font-size: 0.74rem; letter-spacing: 0.06em; color: #c8b48a;
+  display: flex; justify-content: center; gap: 0.7rem;
+}
+.ca-vs-mark {
+  font-family: Georgia, serif; font-size: clamp(1.8rem, 5vw, 3.2rem); font-weight: 700;
+  color: var(--cardarena-gold-light, #eed48a); letter-spacing: 0.06em;
+  text-shadow: 0 0 26px rgba(212,175,55,0.85); opacity: 0; transform: scale(2.2);
+}
+.ca-vs-flash {
+  position: absolute; left: 50%; top: 50%; width: 24px; height: 24px;
+  margin: -12px 0 0 -12px; border-radius: 50%; opacity: 0;
+  background: radial-gradient(circle, #fff6d8 0%, rgba(238,212,138,0.65) 38%, transparent 70%);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .ca-vs-in .ca-vs-card.ca-vs-left  { animation: caVsLeft  var(--vin, 520ms) cubic-bezier(0.16,1,0.3,1) both; }
+  .ca-vs-in .ca-vs-card.ca-vs-right { animation: caVsRight var(--vin, 520ms) cubic-bezier(0.16,1,0.3,1) both; }
+  .ca-vs-in .ca-vs-mark  { animation: caVsMark 460ms cubic-bezier(0.2,0.9,0.3,1) var(--vin, 520ms) both; }
+  .ca-vs-in .ca-vs-flash { animation: caVsFlash 620ms ease-out var(--vin, 520ms) both; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ca-vs-mark { opacity: 1; transform: none; }
+}
+@keyframes caVsLeft {
+  0%   { opacity: 0; transform: translateX(-62vw) rotate(-16deg); }
+  74%  { opacity: 1; transform: translateX(9px) rotate(2deg); }
+  100% { opacity: 1; transform: translateX(0) rotate(0); }
+}
+@keyframes caVsRight {
+  0%   { opacity: 0; transform: translateX(62vw) rotate(16deg); }
+  74%  { opacity: 1; transform: translateX(-9px) rotate(-2deg); }
+  100% { opacity: 1; transform: translateX(0) rotate(0); }
+}
+@keyframes caVsMark {
+  0%   { opacity: 0; transform: scale(2.2) rotate(-8deg); }
+  55%  { opacity: 1; transform: scale(0.9) rotate(3deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0); }
+}
+@keyframes caVsFlash {
+  0%   { opacity: 0; transform: scale(0.3); }
+  22%  { opacity: 0.95; }
+  100% { opacity: 0; transform: scale(26); }
+}
+
+/* ---- AI 回合逐步演出：卡牌旋转展示（敌方区上方偏中）---- */
+.ca-ai-card {
+  position: fixed; z-index: 9100; pointer-events: none;
+  width: 132px; margin-left: -66px; padding: 0.6rem 0.55rem 0.7rem;
+  border: 1px solid var(--cardarena-gold-dark, #8a6a2f); border-radius: 4px;
+  background: linear-gradient(180deg, #240a0f, #52101b 52%, #190507);
+  box-shadow: 0 0 30px rgba(0,0,0,0.72), inset 0 0 0 1px rgba(212,175,55,0.22);
+  text-align: center; color: #f1e3c4;
+  transform-style: preserve-3d; backface-visibility: hidden;
+}
+.ca-ai-card-kind {
+  font-family: 'Courier New', monospace; font-size: 0.56rem; letter-spacing: 0.2em;
+  color: #a88f5e; margin-bottom: 0.32rem;
+}
+.ca-ai-card-name {
+  font-family: var(--cardarena-serif, 'Noto Serif SC', Georgia, serif);
+  font-size: 0.92rem; letter-spacing: 0.05em; color: var(--cardarena-gold-light, #eed48a);
+}
+.ca-ai-card-text { margin-top: 0.32rem; font-size: 0.66rem; line-height: 1.4; color: #c8b48a; }
+.ca-ai-card-cost {
+  position: absolute; top: -9px; left: -9px; width: 22px; height: 22px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.72rem; font-weight: 700; color: #2a1a08;
+  background: radial-gradient(circle at 35% 30%, var(--cardarena-gold-light, #eed48a), var(--cardarena-gold, #d4af37) 60%, var(--cardarena-gold-dark, #8a6a2f));
+  border: 1px solid var(--cardarena-gold-dark, #8a6a2f);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .ca-ai-card { animation: caAiCard var(--ad, 900ms) cubic-bezier(0.22,1,0.36,1) both; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ca-ai-card { opacity: 0; }
+}
+@keyframes caAiCard {
+  0%   { opacity: 0; transform: perspective(760px) rotateY(-96deg) scale(0.62); }
+  26%  { opacity: 1; transform: perspective(760px) rotateY(0deg) scale(1.1); }
+  62%  { opacity: 1; transform: perspective(760px) rotateY(0deg) scale(1.02); }
+  100% { opacity: 0; transform: perspective(760px) rotateY(24deg) scale(0.82) translateY(-26px); }
+}
+
+/* AI 回合横幅：一次性提示进入敌方回合 */
+.ca-ai-banner {
+  position: fixed; left: 50%; top: 16%; transform: translateX(-50%); z-index: 9050;
+  pointer-events: none; padding: 0.42rem 1.5rem;
+  font-family: 'Courier New', monospace; font-size: 0.76rem; letter-spacing: 0.28em;
+  color: #f3dfa0; border: 1px solid rgba(212,175,55,0.34); border-radius: 2px;
+  background: linear-gradient(90deg, rgba(28,15,12,0), rgba(42,20,13,0.92) 22%, rgba(42,20,13,0.92) 78%, rgba(28,15,12,0));
+  text-shadow: 0 0 14px rgba(212,175,55,0.5); opacity: 0;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .ca-ai-banner { animation: caAiBanner var(--bd, 1000ms) ease-out both; }
+}
+@keyframes caAiBanner {
+  0%   { opacity: 0; transform: translateX(-50%) translateY(-14px); letter-spacing: 0.5em; }
+  22%  { opacity: 1; transform: translateX(-50%) translateY(0); letter-spacing: 0.28em; }
+  74%  { opacity: 1; }
+  100% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+}
+
+/* ---- 速度开关 ---- */
+.ca-speed {
+  font-family: 'Courier New', monospace; font-size: 0.7rem; letter-spacing: 0.1em;
+  color: #a88f5e; background: transparent;
+  border: 1px solid rgba(212,175,55,0.3); border-radius: 3px;
+  padding: 0.34rem 0.72rem; cursor: pointer; margin-right: 0.5rem;
+  transition: color 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+}
+.ca-speed:hover { color: #f3dfa0; border-color: var(--cardarena-gold, #d4af37); }
+.ca-speed.ca-speed-fast {
+  color: #2a1a08; border-color: var(--cardarena-gold-dark, #8a6a2f);
+  background: linear-gradient(180deg, var(--cardarena-gold-light, #eed48a), var(--cardarena-gold, #d4af37));
+}

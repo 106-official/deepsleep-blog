@@ -27,7 +27,7 @@ TocOpen: true
 
 **SMB 是"把 Windows 的文件系统 API 搬到网络上"的协议**——`CreateFile`、`ReadFile`、`WriteFile`、`FindFirstFile` 这些 Win32 调用，几乎一一对应 SMB2 的 `CREATE`、`READ`、`WRITE`、`QUERY_DIRECTORY` 命令。它不只共享文件，还共享打印机、命名管道（`IPC$`）和邮槽，**是 Windows 网络的"总线"**。
 
-## 💡 生活化类比
+## 生活化类比
 
 把 SMB 想象成**公司里的"内部物流 + 门禁 + 收发室"总台**：你（应用）不用关心货（文件）实际在哪个仓库，只要跟总台说"我要打开 3 号柜的蓝色文件夹"，总台就帮你办门禁卡（会话 SessionId）、开柜子（树连接 TreeId）、递出文件标签（FileId）。而且这个总台很"轴"——**只要有人正拿着文件看，别人想抢着改就会被拦下（强制锁 / ShareAccess）**，这点和 NFS 那种"随便看、最后才发现不一致"的松散风格完全不同。
 
@@ -91,7 +91,7 @@ TocOpen: true
 
 > **学习建议**：SMB 的复杂度主要来自**历史包袱**（SMB1 vs SMB2+、NetBIOS vs 445、NTLM vs Kerberos）。建议**只学 SMB2/3**，把 SMB1 当作"必须禁用的历史遗留"来认识。动手时用 `smbclient -L //host -m SMB3` 和 Wireshark 的 `smb2` 过滤式，从 NEGOTIATE → SESSION_SETUP → TREE_CONNECT → CREATE → READ 这条主线走一遍即可掌握。
 
-> **⚠️ 初学者最常踩的坑**：
+> **初学者最常踩的坑**：
 > 1. **把 SMB 当"只共享文件"的协议，忘了 `IPC$` 才是攻击面**——只要 445 开着且 `IPC$` 可访问，攻击者就能通过 `svcctl`/`samr`/`winreg` 等命名管道做服务控制、枚举用户、读注册表。仅仅关掉文件共享远远不够，445 绝不能出内网边界。
 > 2. **权限报错只查一层**——Windows/Samba 是**两层权限取交集**：共享级（TREE_CONNECT 检查）和 NTFS/POSIX 级（CREATE 检查）。`TREE_CONNECT` 就 `ACCESS_DENIED` 是共享级问题，连上了但 `CREATE` 才拒是文件系统权限问题（Samba 上还常是 SELinux 的 `samba_share_t` 上下文没设）。抓包一眼就能分。
 > 3. **为连老设备重新启用 SMB1**——Windows 10/11 默认不装 SMB1，连老 NAS 失败很常见，但**千万别为兼容而重开 SMB1**：它是 EternalBlue（MS17-010）等勒索软件的传播通道。正确做法是升级 NAS 固件、把老设备隔离到独立网段。

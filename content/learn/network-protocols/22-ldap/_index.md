@@ -27,7 +27,7 @@ TocOpen: true
 
 **LDAP 是"为『读多写少的树形数据』量身定做的查询协议"**——它把企业的组织架构、账号、组、设备、打印机组织成一棵可继承、可委派的树，然后提供一套极高效的"按条件搜子树"的操作。它不是数据库，是**目录**。
 
-## 💡 生活化类比
+## 生活化类比
 
 LDAP 就像一本全公司共用的**电子通讯录 + 门禁名册**。通讯录本身是按"公司 → 部门 → 小组 → 人"一层层排的，你查一个人，可以从整个公司范围找，也可以只在某个部门里找。
 
@@ -89,4 +89,4 @@ LDAP 的解法：
 
 > **学习建议**：LDAP 的最大门槛是**"树 + 过滤器"的心智模型**。建议用 Docker 起一个 OpenLDAP（`docker run -p 389:389 osixia/openldap`），亲手 `ldapadd` 几个条目，再用不同 scope（base / one / sub）搜同一个 Base DN，立刻就能看懂 scope 的差别。搞懂后再看 AD，会发现只是 objectClass 名字换成了 `user` / `group` 而已。
 >
-> ⚠️ 初学者最常踩的坑：① Bind 时填用户名而不是**完整 DN**（要写 `cn=admin,dc=example,dc=com`，不是 `admin`），结果一直报 `invalidCredentials(49)`；② scope 默认用了 `base` 或 `one`，搜不到深层条目还以为数据不存在——应用集成一律该用 `sub`；③ 忘了 **Simple Bind 传的是明文密码**，不加 StartTLS/LDAPS 就等于把口令裸奔在网上；④ AD 单次最多返回 **1000** 条，超了会返回**不完整**结果，必须用分页控制。
+> 初学者最常踩的坑：① Bind 时填用户名而不是**完整 DN**（要写 `cn=admin,dc=example,dc=com`，不是 `admin`），结果一直报 `invalidCredentials(49)`；② scope 默认用了 `base` 或 `one`，搜不到深层条目还以为数据不存在——应用集成一律该用 `sub`；③ 忘了 **Simple Bind 传的是明文密码**，不加 StartTLS/LDAPS 就等于把口令裸奔在网上；④ AD 单次最多返回 **1000** 条，超了会返回**不完整**结果，必须用分页控制。

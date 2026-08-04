@@ -1,0 +1,1269 @@
+{{ define "main" }}
+{{ $pageResources := where .Resources "ResourceType" "page" }}
+{{ $committeePages := sort (where $pageResources ".Params.group" "committee") ".Params.weight" }}
+{{ $servicePages := sort (where $pageResources ".Params.group" "service") ".Params.weight" }}
+{{ $lxAllPages := sort $pageResources ".Params.weight" }}
+
+<div class="tgw-page">
+  <!-- 移动端汉堡按钮 -->
+  <button class="tgw-menu-toggle" aria-label="打开导航">
+    <span class="tgw-toggle-bar"></span>
+    <span class="tgw-toggle-bar"></span>
+    <span class="tgw-toggle-bar"></span>
+  </button>
+  <div class="tgw-overlay" aria-hidden="true"></div>
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="tgw-sidebar" id="tgw-sidebar">
+    <!-- 精简 Hero 作为 sidebar header -->
+    <div class="tgw-sidebar-header">
+      <div class="tgw-sidebar-hero-bg"></div>
+      <div class="tgw-sidebar-hero">
+        <h1 class="tgw-sidebar-title">图书馆管理委员会</h1>
+        <div class="tgw-sidebar-divider"></div>
+        <p class="tgw-sidebar-motto">书香润心 · 服务立馆 · 协同共治 · 传承文化</p>
+      </div>
+    </div>
+
+    <nav class="tgw-nav">
+      <!-- 智能助手组：LLM 对话入口（默认 active） -->
+      <div class="tgw-nav-group">
+        <div class="tgw-nav-group-title"><span>智能助手</span></div>
+        <a class="tgw-nav-link active" data-view="chat" role="button" tabindex="0">
+          <span class="tgw-nav-text">图管委问答</span>
+        </a>
+      </div>
+
+      <!-- 校内组 -->
+      <div class="tgw-nav-group">
+        <div class="tgw-nav-group-title"><span>委员会</span></div>
+        {{ range $i, $p := $committeePages }}
+        <a class="tgw-nav-link" data-view="content" data-parent="committee" data-idx="{{ $i }}" role="button" tabindex="0">
+          <span class="tgw-nav-num">{{ printf "%02d" $i }}</span>
+          <span class="tgw-nav-text">{{ $p.Title }}</span>
+        </a>
+        {{ end }}
+      </div>
+
+      <!-- 校外组 -->
+      <div class="tgw-nav-group">
+        <div class="tgw-nav-group-title"><span>服务</span></div>
+        {{ range $i, $p := $servicePages }}
+        <a class="tgw-nav-link" data-view="content" data-parent="service" data-idx="{{ $i }}" role="button" tabindex="0">
+          <span class="tgw-nav-num">{{ printf "%02d" $i }}</span>
+          <span class="tgw-nav-text">{{ $p.Title }}</span>
+        </a>
+        {{ end }}
+      </div>
+    </nav>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <main class="tgw-main">
+    <!-- 视图1：LLM 对话（默认 active，全屏 flex 列） -->
+    <section class="tgw-view tgw-view-chat active" id="tgw-view-chat">
+      <div class="tgw-chat-header">
+        <div class="tgw-chat-title">
+          <span>图管委智能助手</span>
+        </div>
+      </div>
+      <div class="tgw-chat-suggest" id="tgw-chat-suggest">
+        <button class="tgw-chip" data-q="图书馆开放时间是？">图书馆开放时间是？</button>
+        <button class="tgw-chip" data-q="怎么借书还书？">怎么借书还书？</button>
+        <button class="tgw-chip" data-q="图管委招新怎么报名？">图管委招新怎么报名？</button>
+        <button class="tgw-chip" data-q="书丢了怎么办？">书丢了怎么办？</button>
+      </div>
+      <div class="tgw-chat-messages" id="tgw-chat-messages">
+        <div class="tgw-msg tgw-msg-bot">
+          <div class="tgw-msg-bubble">你好！我是图管委智能助手，基于本页全部图管委资料回答问题。试试上面的推荐问题，或直接提问~</div>
+        </div>
+      </div>
+      <div class="tgw-chat-input-row">
+        <textarea class="tgw-chat-input" id="tgw-chat-input" placeholder="输入你的问题…" rows="1"></textarea>
+        <button class="tgw-chat-send" id="tgw-chat-send" aria-label="发送" disabled>
+          <svg class="tgw-send-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="19" x2="12" y2="5"></line>
+            <polyline points="5 12 12 5 19 12"></polyline>
+          </svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- 视图2：避雷指南内容（默认隐藏） -->
+    <section class="tgw-view tgw-view-content" id="tgw-view-content">
+      <div class="tgw-content-body">
+        {{ range $i, $p := $committeePages }}
+        <div class="tgw-subcontent" data-parent="committee" data-idx="{{ $i }}">{{ $p.Content }}</div>
+        {{ end }}
+        {{ range $i, $p := $servicePages }}
+        <div class="tgw-subcontent" data-parent="service" data-idx="{{ $i }}">{{ $p.Content }}</div>
+        {{ end }}
+      </div>
+
+      <!-- 使用说明（保留原样） -->
+      <div class="tgw-notice">
+        <div class="tgw-notice-body">
+          <div class="tgw-notice-title">关于本页</div>
+          <p>本页面为图管委官网内容示例，具体开放时间、值班地点、联系方式以图书馆最新公告为准。</p>
+          <p>有问题欢迎使用左侧「图管委问答」，或直接到馆找值班同学当面交流。</p>
+        </div>
+        <div class="tgw-notice-contact">
+          <div><span class="tgw-notice-label">邮箱</span>【tgw@example.edu】</div>
+          <div><span class="tgw-notice-label">值班台</span>图书馆【楼层 / 位置】</div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- 隐藏的 LLM 上下文数据 -->
+<script type="application/json" id="tgw-context">
+{{ $sections := slice }}
+{{ range $lxAllPages }}
+  {{ $sections = $sections | append (dict "id" .File.BaseFileName "title" .Title "group" .Params.group "content" (plainify .Content)) }}
+{{ end }}
+{{ (dict "sections" $sections) | jsonify }}
+</script>
+
+<style>
+/* ============================================
+   图管委页面 - sidebar 布局 (墨绿书香风)
+   ============================================ */
+/* 变量定义在 :root 而非 .tgw-page，确保兄弟节点也能继承 */
+:root {
+  --tgw-gold: #3a6b5c;
+  --tgw-gold-light: #6fa390;
+  --tgw-gold-dark: #274e43;
+  --tgw-bg: #f4f1e6;
+  --tgw-card: #fffdf6;
+  --tgw-text: #2b2b26;
+  --tgw-text-secondary: #5c5a50;
+  --tgw-text-muted: #8a8678;
+  --tgw-border: #e2dccb;
+  --tgw-radius: 16px;
+  --tgw-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  --tgw-transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  /* sidebar 布局变量 */
+  --tgw-sidebar-width: 300px;
+  --tgw-main-max: 1440px;
+  --tgw-sidebar-bg: #ece5d3;
+  --tgw-sidebar-border: #ddd4be;
+}
+
+[data-theme="dark"] {
+  --tgw-bg: #16201c;
+  --tgw-card: #1e2a24;
+  --tgw-text: #e3e7df;
+  --tgw-text-secondary: #a9b3a8;
+  --tgw-text-muted: #74806f;
+  --tgw-border: #2c3a32;
+  --tgw-shadow: 0 4px 24px rgba(0,0,0,0.3);
+  --tgw-sidebar-bg: #1a241f;
+  --tgw-sidebar-border: #2a382f;
+}
+
+/* 突破 PaperMod 768px 限制 */
+.main:has(.tgw-page) {
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.tgw-page {
+  display: grid;
+  grid-template-columns: var(--tgw-sidebar-width) 1fr;
+  min-height: 100vh;
+  background: var(--tgw-bg);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* ========== SIDEBAR ========== */
+.tgw-sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  background: var(--tgw-sidebar-bg);
+  border-right: 1px solid var(--tgw-sidebar-border);
+  scrollbar-width: thin;
+}
+
+/* Sidebar Header - 精简 Hero */
+.tgw-sidebar-header {
+  position: relative;
+  padding: 1.6rem 1.2rem 1.2rem;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, #2f5d50 0%, #16302a 100%);
+  border-bottom: 1px solid var(--tgw-gold-dark);
+  overflow: hidden;
+}
+
+.tgw-sidebar-hero-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 30% 40%, rgba(58,107,92,0.16) 0%, transparent 60%),
+    radial-gradient(ellipse at 70% 60%, rgba(58,107,92,0.10) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.tgw-sidebar-hero {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+}
+
+.tgw-sidebar-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 0.5rem;
+  letter-spacing: 0.03em;
+  line-height: 1.3;
+}
+
+.tgw-sidebar-divider {
+  width: 40px;
+  height: 2px;
+  margin: 0 auto 0.5rem;
+  background: linear-gradient(90deg, var(--tgw-gold), var(--tgw-gold-light));
+  border-radius: 2px;
+}
+
+.tgw-sidebar-motto {
+  font-size: 0.62rem;
+  color: var(--tgw-gold);
+  letter-spacing: 0.08em;
+  margin: 0;
+  opacity: 0.9;
+  line-height: 1.6;
+}
+
+/* Sidebar Nav */
+.tgw-nav {
+  padding: 0 0.5rem 2rem;
+}
+
+.tgw-nav-group {
+  margin-bottom: 1.5rem;
+}
+
+.tgw-nav-group-title {
+  padding: 0.4rem 0.7rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--tgw-text-muted);
+}
+
+.tgw-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.55rem 0.7rem;
+  font-size: 0.88rem;
+  color: var(--tgw-text-secondary);
+  text-decoration: none;
+  border-radius: 6px;
+  border-left: 3px solid transparent;
+  cursor: pointer;
+  transition: all var(--tgw-transition);
+}
+
+.tgw-nav-link:hover {
+  color: var(--tgw-text);
+  background: rgba(58,107,92,0.06);
+  border-left-color: var(--tgw-gold-light);
+}
+
+.tgw-nav-link.active {
+  color: var(--tgw-gold-dark);
+  background: linear-gradient(90deg, rgba(58,107,92,0.12), transparent);
+  border-left-color: var(--tgw-gold);
+  font-weight: 600;
+}
+
+.tgw-nav-num {
+  font-size: 0.75rem;
+  color: var(--tgw-text-muted);
+  font-variant-numeric: tabular-nums;
+  min-width: 1.4em;
+}
+
+.tgw-nav-link.active .tgw-nav-num {
+  color: var(--tgw-gold-dark);
+}
+
+[data-theme="dark"] .tgw-nav-link.active {
+  color: var(--tgw-gold-light);
+}
+
+/* ========== MAIN ========== */
+.tgw-main {
+  max-width: var(--tgw-main-max);
+  width: 100%;
+  min-width: 0;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+/* ========== 视图切换 ========== */
+.tgw-view {
+  display: none;
+  animation: lxFadeIn 0.35s ease-out;
+}
+
+.tgw-view.active {
+  display: block;
+}
+
+@keyframes lxFadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ========== LLM 对话视图（全屏 flex，融入主界面） ========== */
+.tgw-view-chat.active {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 3rem);
+  background: transparent;
+  overflow: visible;
+}
+
+.tgw-chat-header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.4rem 0.2rem 0.8rem;
+  background: transparent;
+  color: var(--tgw-text);
+  border-bottom: 1px solid var(--tgw-border);
+  margin-bottom: 0.4rem;
+}
+
+.tgw-chat-title {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 600;
+  font-size: 0.98rem;
+}
+
+.tgw-chat-title-icon {
+  font-size: 1.1rem;
+}
+
+.tgw-chat-suggest {
+  flex-shrink: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  padding: 0.6rem 0.2rem;
+  background: transparent;
+  border-bottom: 1px solid var(--tgw-border);
+}
+
+.tgw-chip {
+  padding: 0.4rem 0.8rem;
+  background: var(--tgw-card);
+  color: var(--tgw-gold-dark);
+  border: 1px solid var(--tgw-gold-light);
+  border-radius: 999px;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: all var(--tgw-transition);
+}
+
+.tgw-chip:hover {
+  background: var(--tgw-gold);
+  color: #fff;
+}
+
+.tgw-chat-messages {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 0.8rem 0.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  background: transparent;
+}
+
+.tgw-msg {
+  display: flex;
+  max-width: 88%;
+}
+
+.tgw-msg-user {
+  align-self: flex-end;
+  justify-content: flex-end;
+}
+
+.tgw-msg-bot {
+  align-self: flex-start;
+}
+
+.tgw-msg-bubble {
+  padding: 0.65rem 0.95rem;
+  border-radius: 14px;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.tgw-msg-user .tgw-msg-bubble {
+  background: linear-gradient(135deg, var(--tgw-gold), var(--tgw-gold-dark));
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+
+.tgw-msg-bot .tgw-msg-bubble {
+  background: var(--tgw-card);
+  color: var(--tgw-text);
+  border: 1px solid var(--tgw-border);
+  border-bottom-left-radius: 4px;
+  /* bot 气泡用 <br> 控制换行，关闭 pre-wrap 避免双重换行 */
+  white-space: normal;
+}
+
+.tgw-msg-bot.loading .tgw-msg-bubble {
+  color: var(--tgw-text-muted);
+  font-style: italic;
+}
+
+/* Markdown 子元素样式 */
+.tgw-msg-bubble strong { font-weight: 700; }
+.tgw-msg-bubble code {
+  background: rgba(0,0,0,0.06);
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.88em;
+}
+.tgw-msg-bubble ul {
+  margin: 0.4em 0;
+  padding-left: 1.3em;
+}
+.tgw-msg-bubble li {
+  margin: 0.15em 0;
+}
+[data-theme="dark"] .tgw-msg-bubble code {
+  background: rgba(255,255,255,0.1);
+}
+
+.tgw-chat-input-row {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 0.2rem 0.2rem;
+  background: transparent;
+  border-top: 1px solid var(--tgw-border);
+}
+
+.tgw-chat-input {
+  flex: 1;
+  padding: 0.5rem 0.8rem;
+  background: var(--tgw-card);
+  color: var(--tgw-text);
+  border: 1px solid var(--tgw-border);
+  border-radius: 14px;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  font-family: inherit;
+  resize: none;
+  max-height: 100px;
+  outline: none;
+  transition: border-color var(--tgw-transition);
+}
+
+.tgw-chat-input:focus {
+  border-color: var(--tgw-gold);
+}
+
+/* 圆形 ↑ 箭头发送按钮：
+   - 默认（disabled / 无输入）：灰色背景 + 灰白色箭头
+   - 可发送（input 有内容）：白色背景 + 深色箭头 */
+.tgw-chat-send {
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--tgw-text-muted);
+  color: rgba(255, 255, 255, 0.7);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background var(--tgw-transition), color var(--tgw-transition), transform var(--tgw-transition);
+}
+
+.tgw-chat-send:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+/* 可发送状态（input 有内容且未在发送中）：白色背景 + 深色箭头 */
+.tgw-chat-send:not(:disabled) {
+  background: #ffffff;
+  color: var(--tgw-text);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] .tgw-chat-send:not(:disabled) {
+  background: #e8e8e8;
+  color: #1a1a1a;
+}
+
+.tgw-chat-send:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.tgw-send-icon {
+  display: block;
+}
+
+/* ========== 内容视图 ========== */
+.tgw-content-body {
+  background: var(--tgw-card);
+  border-radius: var(--tgw-radius);
+  padding: 2.5rem;
+  box-shadow: var(--tgw-shadow);
+  border: 1px solid var(--tgw-border);
+  line-height: 1.9;
+  color: var(--tgw-text);
+  margin-bottom: 1.5rem;
+}
+
+.tgw-subcontent {
+  display: none;
+  animation: lxFadeIn 0.35s ease-out;
+}
+
+.tgw-subcontent.active {
+  display: block;
+}
+
+/* 子内容排版样式（保留原样） */
+.tgw-subcontent h1 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 2rem;
+  color: var(--tgw-text);
+  margin: 0 0 0.5rem;
+  padding-bottom: 0.8rem;
+  border-bottom: 3px solid var(--tgw-gold-light);
+  display: inline-block;
+}
+
+.tgw-subcontent h2 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.5rem;
+  color: var(--tgw-text);
+  margin: 2rem 0 1rem;
+  padding-left: 0.8rem;
+  border-left: 4px solid var(--tgw-gold);
+}
+
+.tgw-subcontent h3 {
+  font-size: 1.2rem;
+  color: var(--tgw-text);
+  margin: 1.5rem 0 0.8rem;
+}
+
+.tgw-subcontent p {
+  margin-bottom: 1rem;
+  color: var(--tgw-text-secondary);
+}
+
+.tgw-subcontent hr {
+  border: none;
+  height: 2px;
+  background: linear-gradient(90deg, var(--tgw-gold-light), transparent);
+  margin: 2rem 0;
+}
+
+.tgw-subcontent em {
+  color: var(--tgw-gold-dark);
+  font-style: italic;
+}
+
+.tgw-subcontent ul,
+.tgw-subcontent ol {
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+  color: var(--tgw-text-secondary);
+}
+
+.tgw-subcontent li {
+  margin-bottom: 0.6rem;
+}
+
+.tgw-subcontent ul li::marker {
+  color: var(--tgw-gold);
+  font-weight: bold;
+}
+
+.tgw-subcontent img {
+  max-width: 100%;
+  border-radius: 12px;
+  box-shadow: var(--tgw-shadow);
+  margin: 1.5rem 0;
+}
+
+.tgw-subcontent a {
+  color: var(--tgw-gold-dark);
+  text-decoration: none;
+  border-bottom: 2px solid var(--tgw-gold-light);
+  transition: all 0.2s;
+}
+
+.tgw-subcontent a:hover {
+  background: var(--tgw-gold-light);
+  color: #000;
+  border-bottom-color: var(--tgw-gold);
+}
+
+.tgw-subcontent blockquote {
+  margin: 1.5rem 0;
+  padding: 1.2rem 1.5rem;
+  background: linear-gradient(135deg, var(--tgw-bg), #f5f5f5);
+  border-left: 5px solid var(--tgw-gold);
+  border-radius: 0 12px 12px 0;
+  color: var(--tgw-text-secondary);
+  font-style: italic;
+}
+
+[data-theme="dark"] .tgw-subcontent blockquote {
+  background: #2a2a2a;
+}
+
+.tgw-subcontent code {
+  background: #f5f5f5;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.9em;
+  color: var(--tgw-gold-dark);
+  border: 1px solid var(--tgw-border);
+}
+
+[data-theme="dark"] .tgw-subcontent code {
+  background: #333;
+}
+
+.tgw-subcontent pre {
+  margin: 1.5rem 0;
+  padding: 1.5rem;
+  background: #282c34;
+  border-radius: 12px;
+  overflow-x: auto;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05);
+}
+
+.tgw-subcontent pre code {
+  background: none;
+  padding: 0;
+  border: none;
+  color: #abb2bf;
+}
+
+/* 表格样式 */
+.tgw-subcontent table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.2rem 0;
+  font-size: 0.95rem;
+  display: block;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.tgw-subcontent table th,
+.tgw-subcontent table td {
+  padding: 0.7rem 1rem;
+  text-align: left;
+  border: 1px solid var(--tgw-border);
+  white-space: nowrap;
+}
+
+.tgw-subcontent table th {
+  background: linear-gradient(135deg, var(--tgw-gold), var(--tgw-gold-light));
+  color: #000;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.tgw-subcontent table td {
+  color: var(--tgw-text-secondary);
+  white-space: normal;
+  min-width: 0;
+}
+
+.tgw-subcontent table tr:nth-child(even) td {
+  background: var(--tgw-bg);
+}
+
+[data-theme="dark"] .tgw-subcontent table th {
+  background: linear-gradient(135deg, #2f5d50, #1f3d34);
+  color: #fff;
+}
+
+[data-theme="dark"] .tgw-subcontent table td {
+  color: #ccc;
+}
+
+/* ========== 使用说明 ========== */
+.tgw-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.2rem 1.5rem;
+  background: var(--tgw-card);
+  border: 1px solid var(--tgw-gold-light);
+  border-radius: var(--tgw-radius);
+  box-shadow: 0 2px 12px rgba(58,107,92,0.12);
+  line-height: 1.6;
+}
+
+[data-theme="dark"] .tgw-notice {
+  border-color: #555;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+}
+
+.tgw-notice-icon {
+  font-size: 1.8rem;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.tgw-notice-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.tgw-notice-title {
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--tgw-gold-dark);
+  margin-bottom: 0.4rem;
+}
+
+.tgw-notice-body p {
+  margin: 0 0 0.3rem;
+  font-size: 0.92rem;
+  color: var(--tgw-text-secondary);
+}
+
+.tgw-notice-body p:last-child {
+  margin-bottom: 0;
+}
+
+.tgw-notice-body a {
+  color: var(--tgw-gold-dark);
+  text-decoration: none;
+  border-bottom: 1px solid var(--tgw-gold-light);
+}
+
+.tgw-notice-heart {
+  white-space: nowrap;
+}
+
+.tgw-notice-contact {
+  flex-shrink: 0;
+  font-size: 0.88rem;
+  color: var(--tgw-text-secondary);
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding-left: 1rem;
+  border-left: 1px solid var(--tgw-border);
+}
+
+.tgw-notice-contact a {
+  color: var(--tgw-text);
+  text-decoration: none;
+}
+
+.tgw-notice-label {
+  display: inline-block;
+  width: 2.2em;
+  font-weight: 600;
+  color: var(--tgw-gold-dark);
+  margin-right: 0.3rem;
+}
+
+/* ========== 移动端汉堡按钮 ========== */
+.tgw-menu-toggle {
+  display: none;
+  position: fixed;
+  top: 14px;
+  left: 14px;
+  z-index: 200;
+  width: 40px;
+  height: 40px;
+  background: var(--tgw-card);
+  border: 1px solid var(--tgw-border);
+  border-radius: 8px;
+  cursor: pointer;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.tgw-toggle-bar {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: var(--tgw-text);
+  border-radius: 1px;
+  transition: all var(--tgw-transition);
+}
+
+.tgw-menu-toggle.active .tgw-toggle-bar:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
+}
+.tgw-menu-toggle.active .tgw-toggle-bar:nth-child(2) {
+  opacity: 0;
+}
+.tgw-menu-toggle.active .tgw-toggle-bar:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg);
+}
+
+.tgw-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 150;
+}
+
+.tgw-overlay.active {
+  display: block;
+}
+
+/* ========== 移动端响应式 (≤1024px) ========== */
+@media (max-width: 1024px) {
+  .tgw-menu-toggle {
+    display: flex;
+  }
+
+  .tgw-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 160;
+    width: var(--tgw-sidebar-width);
+    max-width: 85vw;
+    transform: translateX(-100%);
+    transition: transform var(--tgw-transition);
+    box-shadow: 4px 0 24px rgba(0,0,0,0.15);
+  }
+
+  .tgw-sidebar.open {
+    transform: translateX(0);
+  }
+
+  .tgw-page {
+    grid-template-columns: 1fr;
+  }
+
+  .tgw-main {
+    padding: 4.5rem 1rem 1rem;
+  }
+
+  .tgw-view-chat.active {
+    height: calc(100vh - 5.5rem);
+  }
+}
+
+@media (max-width: 640px) {
+  .tgw-notice {
+    flex-wrap: wrap;
+    padding: 1rem;
+  }
+
+  .tgw-notice-contact {
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+    padding-left: 0;
+    padding-top: 0.8rem;
+    border-left: none;
+    border-top: 1px solid var(--tgw-border);
+  }
+
+  .tgw-content-body {
+    padding: 1.5rem;
+  }
+
+  .tgw-subcontent h1 {
+    font-size: 1.6rem;
+  }
+}
+</style>
+
+<!-- Script 1: Sidebar 抽屉 + 视图切换 -->
+<script>
+(function() {
+  'use strict';
+
+  var toggle = document.querySelector('.tgw-menu-toggle');
+  var sidebar = document.getElementById('tgw-sidebar');
+  var overlay = document.querySelector('.tgw-overlay');
+  var navLinks = document.querySelectorAll('.tgw-nav-link');
+  var chatView = document.getElementById('tgw-view-chat');
+  var contentView = document.getElementById('tgw-view-content');
+  var subcontents = document.querySelectorAll('.tgw-subcontent');
+
+  // === 抽屉开关 ===
+  function openSidebar() {
+    sidebar.classList.add('open');
+    overlay.classList.add('active');
+    toggle.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeSidebar() {
+    sidebar.classList.remove('open');
+    overlay.classList.remove('active');
+    toggle.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  toggle.addEventListener('click', function() {
+    if (sidebar.classList.contains('open')) {
+      closeSidebar();
+    } else {
+      openSidebar();
+    }
+  });
+
+  overlay.addEventListener('click', closeSidebar);
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && sidebar.classList.contains('open')) {
+      closeSidebar();
+    }
+  });
+
+  // === 视图切换 ===
+  function switchView(link) {
+    var view = link.dataset.view;
+    // 管理 active 高亮
+    navLinks.forEach(function(l) { l.classList.remove('active'); });
+    link.classList.add('active');
+
+    if (view === 'chat') {
+      // 显示对话视图，隐藏内容视图（messages DOM 不动 → 状态保留）
+      chatView.classList.add('active');
+      contentView.classList.remove('active');
+    } else {
+      // 显示内容视图，隐藏对话视图
+      chatView.classList.remove('active');
+      contentView.classList.add('active');
+      // 按 data-parent + data-idx 切换 subcontent
+      var parent = link.dataset.parent;
+      var idx = link.dataset.idx;
+      subcontents.forEach(function(c) {
+        c.classList.toggle('active', c.dataset.parent === parent && c.dataset.idx === idx);
+      });
+    }
+  }
+
+  navLinks.forEach(function(link) {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      switchView(link);
+      // 移动端选中后自动关闭抽屉
+      if (window.matchMedia('(max-width: 1024px)').matches) {
+        setTimeout(closeSidebar, 100);
+      }
+    });
+    // 键盘可访问
+    link.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        link.click();
+      }
+    });
+  });
+})();
+</script>
+
+<!-- Script 2: LLM 对话逻辑 -->
+<script>
+(function() {
+  'use strict';
+
+  var API_URL = 'https://1437998910-bf08hbldh2.ap-shanghai.tencentscf.com';
+  var suggest = document.getElementById('tgw-chat-suggest');
+  var messages = document.getElementById('tgw-chat-messages');
+  var input = document.getElementById('tgw-chat-input');
+  var sendBtn = document.getElementById('tgw-chat-send');
+
+  // 读取注入的 context（Hugo jsonify 输出可能被包成字符串，需两次 parse）
+  var contextData = null;
+  try {
+    var ctxEl = document.getElementById('tgw-context');
+    if (ctxEl) {
+      var raw = ctxEl.textContent.trim();
+      contextData = JSON.parse(raw);
+      if (typeof contextData === 'string') {
+        contextData = JSON.parse(contextData);
+      }
+    }
+  } catch (e) {
+    console.error('[tgw-chat] context parse failed', e);
+  }
+
+  function scrollToBottom() {
+    messages.scrollTop = messages.scrollHeight;
+  }
+
+  // 轻量 Markdown 渲染（仅用于 bot 回答，用户输入不渲染）
+  // 支持：**bold**、`code`、* item / - item 列表、换行
+  // 流式半截处理：** 或 ` 出现奇数次时临时补全闭合，让用户提前看到样式
+  function renderMarkdown(text) {
+    if (!text) return '';
+    // 1. 转义 HTML 防 XSS
+    var s = text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+
+    // 2. 流式半截补全：奇数个 ** 或 ` 时末尾补一个，临时闭合
+    if ((s.match(/\*\*/g) || []).length % 2 === 1) s += '**';
+    if ((s.match(/`/g) || []).length % 2 === 1) s += '`';
+
+    // 3. 行内代码 `code`
+    s = s.replace(/`([^`]+)`/g, '<code>$1</code>');
+    // 4. 粗体 **text**
+    s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+
+    // 5. 列表：连续 * 或 - 开头的行包裹为 <ul><li>
+    var lines = s.split('\n');
+    var out = [];
+    var inList = false;
+    for (var i = 0; i < lines.length; i++) {
+      var line = lines[i];
+      var m = line.match(/^\s*[\*\-]\s+(.*)$/);
+      if (m) {
+        if (!inList) { out.push('<ul>'); inList = true; }
+        out.push('<li>' + m[1] + '</li>');
+      } else {
+        if (inList) { out.push('</ul>'); inList = false; }
+        out.push(line);
+      }
+    }
+    if (inList) out.push('</ul>');
+
+    // 6. 列表标签紧贴，其他换行转 <br>，只清理列表标签紧贴的 <br>
+    s = out.join('\n')
+      .replace(/<\/li>\n<li>/g, '</li><li>')
+      .replace(/<ul>\n<li>/g, '<ul><li>')
+      .replace(/<\/li>\n<\/ul>/g, '</li></ul>')
+      .replace(/\n/g, '<br>');
+    s = s.replace(/<ul><br>/g, '<ul>')
+         .replace(/<br><\/ul>/g, '</ul>')
+         .replace(/<li><br>/g, '<li>')
+         .replace(/<br><\/li>/g, '</li>');
+    return s;
+  }
+
+  function appendMsg(role, text) {
+    var msg = document.createElement('div');
+    msg.className = 'tgw-msg tgw-msg-' + role;
+    var bubble = document.createElement('div');
+    bubble.className = 'tgw-msg-bubble';
+    // bot 回答渲染 Markdown，user 输入纯文本（安全）
+    if (role === 'bot') {
+      bubble.innerHTML = renderMarkdown(text);
+    } else {
+      bubble.textContent = text;
+    }
+    msg.appendChild(bubble);
+    messages.appendChild(msg);
+    scrollToBottom();
+    return bubble;
+  }
+
+  function appendLoadingMsg() {
+    var msg = document.createElement('div');
+    msg.className = 'tgw-msg tgw-msg-bot loading';
+    var bubble = document.createElement('div');
+    bubble.className = 'tgw-msg-bubble';
+    bubble.textContent = '正在思考…';
+    msg.appendChild(bubble);
+    messages.appendChild(msg);
+    scrollToBottom();
+    return { msg: msg, bubble: bubble };
+  }
+
+  var sending = false;
+  function send(question) {
+    if (sending || !question.trim()) return;
+    if (!contextData) {
+      appendMsg('bot', '上下文加载失败，请刷新页面后重试。');
+      return;
+    }
+
+    sending = true;
+    sendBtn.disabled = true;
+    input.value = '';
+    input.style.height = 'auto';
+
+    appendMsg('user', question);
+    var loading = appendLoadingMsg();
+    var loadingBubble = loading.bubble;
+    var loadingMsg = loading.msg;
+
+    // loading 计时器：显示已等待秒数
+    var waitSeconds = 0;
+    var waitTimer = setInterval(function() {
+      waitSeconds++;
+      if (loadingMsg.classList.contains('loading')) {
+        loadingBubble.textContent = '正在思考… (' + waitSeconds + 's)';
+      } else {
+        clearInterval(waitTimer);
+      }
+    }, 1000);
+
+    // 30 秒超时
+    var controller = new AbortController();
+    var timeoutId = setTimeout(function() { controller.abort(); }, 30000);
+
+    fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question: question, context: contextData }),
+      signal: controller.signal
+    }).then(function(resp) {
+      clearTimeout(timeoutId);
+
+      if (resp.status === 429) {
+        clearInterval(waitTimer);
+        loadingMsg.classList.remove('loading');
+        loadingBubble.textContent = '提问太频繁，请稍后再试。';
+        return;
+      }
+      if (resp.status === 503) {
+        clearInterval(waitTimer);
+        loadingMsg.classList.remove('loading');
+        loadingBubble.textContent = '助手暂时休息，请直接翻阅上方避雷指南。';
+        return;
+      }
+      if (!resp.ok) {
+        clearInterval(waitTimer);
+        loadingMsg.classList.remove('loading');
+        loadingBubble.textContent = '服务异常，请稍后再试。';
+        return;
+      }
+
+      // 替换 loading 气泡为真实回答气泡
+      clearInterval(waitTimer);
+      loadingMsg.classList.remove('loading');
+      loadingBubble.textContent = '';
+
+      var reader = resp.body.getReader();
+      var decoder = new TextDecoder();
+      var buffer = '';
+      var answerText = '';
+
+      function readChunk() {
+        return reader.read().then(function(result) {
+          if (result.done) {
+            if (!answerText) {
+              loadingBubble.textContent = '（未收到回复，请重试）';
+            }
+            return;
+          }
+          buffer += decoder.decode(result.value, { stream: true });
+          var lines = buffer.split('\n');
+          buffer = lines.pop();
+          for (var i = 0; i < lines.length; i++) {
+            var trimmed = lines[i].trim();
+            if (!trimmed.startsWith('data:')) continue;
+            var payload = trimmed.slice(5).trim();
+            if (!payload) continue;
+            try {
+              var obj = JSON.parse(payload);
+              if (obj.delta) {
+                answerText += obj.delta;
+                loadingBubble.innerHTML = renderMarkdown(answerText);
+                scrollToBottom();
+              }
+              if (obj.done) {
+                // 流结束
+              }
+              if (obj.error) {
+                answerText += (answerText ? '\n' : '') + '[流式中断]';
+                loadingBubble.innerHTML = renderMarkdown(answerText);
+              }
+            } catch (e) {}
+          }
+          return readChunk();
+        });
+      }
+
+      return readChunk();
+    }).catch(function(e) {
+      clearTimeout(timeoutId);
+      clearInterval(waitTimer);
+      console.error('[tgw-chat] send error', e);
+      loadingMsg.classList.remove('loading');
+      if (e.name === 'AbortError') {
+        loadingBubble.textContent = '请求超时（30s），请重试。';
+      } else {
+        loadingBubble.textContent = '网络异常，请检查连接后重试。';
+      }
+    }).finally(function() {
+      sending = false;
+      updateSendBtn();
+    });
+  }
+
+  // 同步发送按钮状态：发送中 → disabled；否则依 input 是否有内容
+  function updateSendBtn() {
+    if (sending) {
+      sendBtn.disabled = true;
+      return;
+    }
+    sendBtn.disabled = !input.value.trim();
+  }
+
+  // 发送按钮
+  sendBtn.addEventListener('click', function() { send(input.value); });
+  // 回车发送 / Shift+回车换行
+  input.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      send(input.value);
+    }
+  });
+  // 自适应高度 + 同步按钮可用状态
+  input.addEventListener('input', function() {
+    input.style.height = 'auto';
+    input.style.height = Math.min(input.scrollHeight, 100) + 'px';
+    updateSendBtn();
+  });
+  // 初始化按钮状态（初始 input 为空 → disabled）
+  updateSendBtn();
+
+  // 推荐问题 chips
+  suggest.addEventListener('click', function(e) {
+    var chip = e.target.closest('.tgw-chip');
+    if (chip) send(chip.dataset.q);
+  });
+})();
+</script>
+{{ end }}

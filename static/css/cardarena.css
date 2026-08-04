@@ -2237,3 +2237,53 @@
   .ca-role-stat { padding: 3px 9px; font-size: 0.64rem; }
   .ca-setup-role-passive { font-size: 0.54rem; margin-top: 3px; }
 }
+
+/* ============================================================
+   入场动效（苏丹宫廷「显影」母题）：选人界面 + 胜负结算
+   全部包在 prefers-reduced-motion: no-preference 内，尊重减弱动效偏好
+   ============================================================ */
+@media (prefers-reduced-motion: no-preference) {
+  /* 选人界面：闪屏关闭后整体「显影」入场，卡牌错峰上浮（--i 由 ui.js 注入） */
+  .ca-setup.ca-pre { opacity: 0; }
+  .ca-setup.ca-enter .ca-setup-title { animation: caFadeUp 0.6s cubic-bezier(0.2, 0.7, 0.3, 1) both; }
+  .ca-setup.ca-enter .ca-setup-sub { animation: caFadeUp 0.6s cubic-bezier(0.2, 0.7, 0.3, 1) 0.08s both; }
+  .ca-setup.ca-enter .ca-setup-grid .ca-setup-role {
+    animation: caCardIn 0.62s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+    animation-delay: calc(var(--i, 0) * 60ms + 140ms);
+  }
+  .ca-setup.ca-enter #ca-start,
+  .ca-setup.ca-enter .ca-setup-hint { animation: caFadeUp 0.6s cubic-bezier(0.2, 0.7, 0.3, 1) 0.5s both; }
+  @keyframes caFadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: none; }
+  }
+  @keyframes caCardIn {
+    from { opacity: 0; transform: translateY(22px) scale(0.94); filter: blur(4px); }
+    to   { opacity: 1; transform: none; filter: blur(0); }
+  }
+
+  /* 胜负结算：面板「显影」+ 金印章顿挫 */
+  .ca-overlay-box.ca-develop { animation: caDevelop 0.56s cubic-bezier(0.2, 0.7, 0.3, 1) both; }
+  @keyframes caDevelop {
+    from { opacity: 0; transform: scale(0.96) translateY(10px); filter: blur(8px) contrast(0.55); }
+    to   { opacity: 1; transform: none; filter: blur(0) contrast(1); }
+  }
+  .ca-overlay-seal {
+    position: absolute; left: 50%; top: -22px; transform: translateX(-50%);
+    width: 54px; height: 54px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--cardarena-serif); font-weight: 700; font-size: 1.4rem;
+    color: #2a1a08;
+    background: radial-gradient(circle at 35% 30%, var(--cardarena-gold-light), var(--cardarena-gold) 60%, var(--cardarena-gold-dark));
+    border: 1px solid var(--cardarena-gold-dark);
+    box-shadow: 0 0 0 3px var(--cardarena-bg), 0 2px 10px rgba(0, 0, 0, 0.5);
+    animation: caStamp 0.5s cubic-bezier(0.2, 0.8, 0.3, 1) 0.34s both;
+    z-index: 3;
+  }
+  .ca-overlay-seal.ca-seal-win { color: #1c2a16; }
+  @keyframes caStamp {
+    0%   { opacity: 0; transform: translateX(-50%) scale(1.5) rotate(-12deg); }
+    60%  { opacity: 1; transform: translateX(-50%) scale(0.94) rotate(4deg); }
+    100% { opacity: 1; transform: translateX(-50%) scale(1) rotate(0); }
+  }
+}

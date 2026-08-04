@@ -286,6 +286,27 @@ minion = {
 
 ---
 
+## 🎬 视觉动效层（开场闪屏 + 界面入场）
+
+CardArena 的动效分两层，分别对标 SleepTown 的「风灯 3D 开场」与「暗房显影」：
+
+### 1. 开场闪屏（金质卡牌扇阵，对标 SleepTown v3.5.0）
+
+- 进 `/play/cardarena/` 即播放约 4.5 秒电影感开场：中央多张华丽卡牌（深红卡面 + 鎏金八角星徽 + GOLD 缎带）在 3D 空间缓慢旋转扇开，金尘上浮，鼠标移动触发光影视差
+- 暖金光由暗到亮进场（`keyLight` + 卡面 `emissiveIntensity` 1.4s 渐亮）
+- 交互：右上「跳过 ✕」、右下「进入 →」随时淡出进选人界面；左下「不再自动播放」开关（`localStorage: cardarena_splash_never`，默认关）
+- 每帧渲染；标签页隐藏（`document.hidden`）即暂停；`DPR` 上限 2
+- 无 WebGL / Three.js 加载失败 → 降级纯 CSS 鎏金八角星徽呼吸（`#ca-splash-fallback`）；`prefers-reduced-motion` 时跳过 3D、缩短自动淡出至 1.8s
+- 自托管 `static/js/three.module.min.js`（与 SleepTown 同源，无第三方 CDN）；`#ca-splash` 默认 `pointer-events:none`，仅 `.show` 时拦截，避免遮挡首页
+
+**新增文件**：`static/js/cardarena-splash.js`（ESM，importmap 引入 `three`）；`layouts/_default/cardarena.html` 增加 `#ca-splash` 覆盖层 + `<style id="ca-splash-style">`（自包含深色暖金字面量，不重声明站点变量）
+
+### 2. 选人 / 胜负入场（显影，对标 SleepTown v3.6.0）
+
+- 闪屏关闭后选人界面「显影」入场：标题/副标题上浮，8 张角色卡按 `--i` 错峰（60ms）扇入（`caCardIn`）
+- 胜负结算弹窗面板「显影」（`caDevelop` blur+contrast 浮现）+ 顶部金印章「盖下顿挫」（`caStamp` scale 1.5→1 带回落，胜/败异色）
+- 全部包在 `@media (prefers-reduced-motion: no-preference)` 内；`ui.js` 通过 `cardarena:splash-done` 事件衔接闪屏与入场，并含 6s 兜底超时确保选人界面必现
+
 ## 📝 更新日志
 
 ### v1.0.0 (2026-08-01) - P0 核心对战
@@ -306,8 +327,20 @@ minion = {
 - 出牌双重触发（手牌独立监听与事件委托重复绑定 → 统一事件委托）
 - 玩家候场条缺失（renderAll 遗漏 buildRosterBar(player) → 补齐）
 
+### v1.1.0 (2026-08-04) - 视觉动效层（开场闪屏 + 界面入场）
+
+**新增功能**:
+- ✅ 开场 3D 闪屏（金质卡牌扇阵）：复用自托管 `three.module.min.js`，约 4.5s 电影感开场 + 跳过/进入/不再自动播放 + 无 WebGL 降级纯 CSS 金徽 + 尊重减弱动效
+- ✅ 选人界面「显影」入场（角色卡错峰扇入）+ 胜负结算面板显影 + 金印章顿挫
+- ✅ `ui.js` 通过 `cardarena:splash-done` 事件衔接闪屏与入场，含 6s 兜底超时确保选人界面必现
+
+**架构**:
+- 新增 `static/js/cardarena-splash.js`（ESM，importmap 引入 `three`）；`cardarena.html` 增加 `#ca-splash` 覆盖层 + 自包含 `<style id="ca-splash-style">`
+- `cardarena.css` 追加 `caCardIn / caDevelop / caStamp / caFadeUp` 关键帧（包在 `prefers-reduced-motion: no-preference`）
+- 与既有战斗动效层（抽牌飞牌/伤害飘字/灰烬/幽灵换人卡，v3.2–v3.3）共存无冲突
+
 ---
 
-*文档最后更新: 2026-08-01*
-*文档版本: P0 v1.0.0*
+*文档最后更新: 2026-08-04*
+*文档版本: P0 v1.1.0*
 *维护者: AI Assistant*

@@ -63,10 +63,11 @@
     box.appendChild(sub);
 
     var grid = el('div', 'ca-setup-grid');
-    DATA.ROLE_POOL.forEach(function (role) {
+    DATA.ROLE_POOL.forEach(function (role, i) {
       var tier = roleTier(role);
       var card = el('button', 'ca-setup-role tier-' + tier);
       card.dataset.role = role.id;
+      card.style.setProperty('--i', i);
 
       var inner = el('span', 'ca-role-inner');
 
@@ -935,7 +936,7 @@
   // ===== 结束结算 =====
   function showGameOver(result) {
     var overlay = el('div', 'ca-overlay');
-    var box = el('div', 'ca-overlay-box');
+    var box = el('div', 'ca-overlay-box ca-develop');
     var title = el('h2', 'ca-overlay-title', result.winner === 'player' ? '胜利' : '失败');
     var sub = el('p', 'ca-overlay-sub', result.winner === 'player' ? '对方 6 名角色已全部阵亡' : '我方 6 名角色已全部阵亡');
     var again = el('button', 'ca-btn ca-btn-primary', '再来一局');
@@ -944,9 +945,11 @@
       app.classList.remove('ca-targeting');
       renderSetup();
     });
+    var seal = el('div', 'ca-overlay-seal' + (result.winner === 'player' ? ' ca-seal-win' : ''), result.winner === 'player' ? '胜' : '败');
     box.appendChild(title);
     box.appendChild(sub);
     box.appendChild(again);
+    box.appendChild(seal);
     overlay.appendChild(box);
     app.appendChild(overlay);
   }
@@ -956,6 +959,26 @@
     app = document.getElementById('cardarena-app');
     if (!app) return;
     renderSetup();
+    // 开场闪屏协调：若闪屏将播放则先隐藏选人界面，待其关闭再播「显影」入场；否则直接入场
+    if (window.__CA_SPLASH_WILL_SHOW) {
+      var pre = app.querySelector('.ca-setup');
+      if (pre) pre.classList.add('ca-pre');
+      var revealed = false;
+      function revealSetup() {
+        if (revealed) return; revealed = true;
+        var s = app.querySelector('.ca-setup');
+        if (s) { s.classList.remove('ca-pre'); s.classList.add('ca-enter'); }
+      }
+      window.addEventListener('cardarena:splash-done', function onDone() {
+        window.removeEventListener('cardarena:splash-done', onDone);
+        revealSetup();
+      });
+      // 兜底：闪屏异常未派发 done 时，也确保选人界面出现，避免永久隐藏
+      setTimeout(revealSetup, 6000);
+    } else {
+      var enter = app.querySelector('.ca-setup');
+      if (enter) enter.classList.add('ca-enter');
+    }
     var engine = window.CardArena;
     engine.on('update', renderAll);
     engine.on('phase', function (phase) {

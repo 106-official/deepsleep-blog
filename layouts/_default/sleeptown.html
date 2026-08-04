@@ -117,7 +117,7 @@
           <span class="stagemode-logo-icon"></span>
           <span>SleepTown 鱼塘推理</span>
         </div>
-        <p class="stagemode-version">v3.5.0 · 深夜渔港 Noir · 第3章"深水区"</p>
+        <p class="stagemode-version">v3.6.0 · 深夜渔港 Noir · 第3章"深水区"</p>
       </div>
       <nav class="stagemode-nav">
         <!-- 游戏模式 -->
@@ -272,7 +272,7 @@
     <div class="rules-modal-overlay" onclick="closeRulesModal()"></div>
     <div class="rules-modal-content">
       <button class="rules-modal-close" onclick="closeRulesModal()" aria-label="关闭">×</button>
-      <h2 class="rules-modal-title">游戏规则 v3.5.0</h2>
+      <h2 class="rules-modal-title">游戏规则 v3.6.0</h2>
 
       <div class="rules-section-setup">
         <h4> 重要：伪装机制 (v2.1.1.2更新)</h4>
@@ -670,7 +670,7 @@
   <!-- 规则弹窗 -->
   <div id="rules-modal" class="modal-overlay" style="display:none">
     <div class="modal-content rules-content">
-      <h2> SleepTown 完整规则 v3.5.0</h2>
+      <h2> SleepTown 完整规则 v3.6.0</h2>
 
       <div class="rules-section">
         <h3> 角色介绍（十二种角色）</h3>
@@ -799,6 +799,9 @@ function showStageMode() {
   if (!gameState.currentStage || !document.querySelector('.stagemode-nav-link.active')) {
     selectStage('1-1');
   }
+  // v3.6.0：章节列表逐项入场（重新触发动画）
+  const __nav = document.querySelector('#stagemode-sidebar .stagemode-nav');
+  if (__nav) { __nav.classList.remove('stagger-in'); void __nav.offsetWidth; __nav.classList.add('stagger-in'); }
 }
 
 // ==================== 关卡详情数据（UI 展示用）====================
@@ -1750,6 +1753,7 @@ function shuffleArray(array) {
   return newArray;
 }
 
+let __stampLastLog = 0, __stampStagger = 0;
 function addLog(message, type = 'info') {
   const logDiv = document.getElementById('game-log');
   const logEntry = document.createElement('div');
@@ -1757,7 +1761,16 @@ function addLog(message, type = 'info') {
   const now = new Date();
   const ts = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
   logEntry.innerHTML = `<span class="log-time">[${ts}]</span> ${message}`;
-  logDiv.insertBefore(logEntry, logDiv.firstChild);
+
+  // v3.6.0：同批次日志自动错峰，逐条墨迹浮现（暗房显影母题）
+  const t = (window.performance && performance.now) ? performance.now() : Date.now();
+  if (t - __stampLastLog < 260) __stampStagger += 120; else __stampStagger = 0;
+  __stampLastLog = t;
+  const delay = __stampStagger;
+  logEntry.style.animationDelay = delay + 'ms';
+  if (delay > 0) setTimeout(() => logDiv.insertBefore(logEntry, logDiv.firstChild), delay);
+  else logDiv.insertBefore(logEntry, logDiv.firstChild);
+
   gameState.logs.push({ message, type, time: new Date() });
 }
 
@@ -1793,6 +1806,7 @@ function renderFishes() {
 
   gameState.fishes.forEach((fish, index) => {
     const fishCard = document.createElement('div');
+    fishCard.style.setProperty('--i', index);
 
     if (!fish.alive) {
       fishCard.className = `fish-card dead`;
@@ -1945,6 +1959,10 @@ function inquireFish(index) {
   if (!gameState.fishes[index].alive) return;
 
   const fish = gameState.fishes[index];
+
+  // v3.6.0：点卡光扫 + 下沉反馈
+  const __pond = document.getElementById('fish-pond');
+  if (__pond && __pond.children[index]) __pond.children[index].classList.add('inquiring');
 
   if (gameState.inquiredThisDay.includes(index)) {
     addLog(` #${index + 1} 号鱼今天已经被问询过了，每只鱼每天只能被问询一次`, 'warning');
@@ -2543,6 +2561,12 @@ function resetGame() {
     h.insertAdjacentHTML('afterbegin', getRoleAvatar(role) + ' ');
   });
 })();
+
+/* ========== v3.6.0：关卡侧栏列表项序号（驱动 stagger 入场） ========== */
+(function paintStageNavOrder() {
+  document.querySelectorAll('#stagemode-sidebar .stagemode-nav-link[data-stage]')
+    .forEach(function (el, i) { el.style.setProperty('--i', i); });
+})();
 </script>
 
 <style>
@@ -2592,6 +2616,7 @@ function resetGame() {
   --st-sidebar-width: 300px;
   --st-main-max: 1100px;
   --st-transition: 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  --st-ease: cubic-bezier(.2,.7,.3,1);
 }
 
 [data-theme="dark"] {
@@ -2768,12 +2793,13 @@ function resetGame() {
   font-family: var(--st-typewriter);
 }
 .stagemode-nav-link {
+  position: relative;
   display: flex; align-items: center; gap: 0.6rem;
   padding: 0.58rem 0.7rem;
   font-size: 0.88rem; color: var(--st-ink-soft);
   text-decoration: none; border-radius: 6px;
   border-left: 3px solid transparent;
-  transition: all var(--st-transition);
+  transition: color var(--st-transition), background var(--st-transition), border-color var(--st-transition);
   line-height: 1.35; cursor: pointer;
 }
 .stagemode-nav-link:hover {
@@ -2784,9 +2810,14 @@ function resetGame() {
 .stagemode-nav-link.active {
   color: var(--st-lamp-strong);
   background: linear-gradient(90deg, color-mix(in srgb, var(--st-lamp) 16%, transparent), transparent);
-  border-left-color: var(--st-lamp);
   font-weight: 600;
 }
+.stagemode-nav-link::before {
+  content: ""; position: absolute; left: -3px; top: 0; bottom: 0; width: 3px;
+  background: linear-gradient(180deg, var(--st-lamp), var(--st-lamp-strong));
+  transform: scaleY(0); transform-origin: top center;
+}
+.stagemode-nav-link.active::before { transform: scaleY(1); }
 .stagemode-nav-num {
   flex-shrink: 0;
   display: inline-flex; align-items: center; justify-content: center;
@@ -3042,7 +3073,6 @@ function resetGame() {
   border: 1px solid var(--st-border-solid);
   border-radius: 14px; padding: 1.8rem;
   box-shadow: var(--st-shadow); position: relative;
-  animation: stFadeIn 0.4s ease both;
 }
 .stagemode-card-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px dashed var(--st-border); flex-wrap: wrap; }
 .stagemode-card-num {
@@ -3138,7 +3168,6 @@ function resetGame() {
   padding: 1.6rem;
   margin-top: 1.5rem;
   box-shadow: var(--st-shadow);
-  animation: stFadeIn 0.4s ease both;
 }
 
 /* 黑色电影暗角：戏剧灯光氛围（仅游戏主面板，纯装饰，不挡交互） */
@@ -3187,7 +3216,7 @@ function resetGame() {
   color: var(--st-ink-soft);
 }
 [data-theme="dark"] .game-log { background: color-mix(in srgb, #000 35%, transparent); }
-.log-entry { padding: 0.4rem 0.3rem; border-bottom: 1px dashed var(--st-border); border-radius: 0; animation: logInk 0.35s ease both; }
+.log-entry { padding: 0.4rem 0.3rem; border-bottom: 1px dashed var(--st-border); border-radius: 0; }
 .log-entry:last-child { border-bottom: none; }
 @keyframes logInk { from { opacity: 0; transform: translateY(-4px); filter: blur(1px); } to { opacity: 1; transform: none; filter: none; } }
 .log-time { color: var(--st-ink-faint); margin-right: 0.4em; }
@@ -3219,7 +3248,6 @@ function resetGame() {
   color: var(--st-ink);
   text-align: center;
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-  animation: cardReveal 0.45s cubic-bezier(0.2,0.7,0.3,1) both;
 }
 @keyframes cardReveal {
   from { opacity: 0; transform: translateY(10px) scale(0.97); filter: blur(1.5px); }
@@ -3486,6 +3514,87 @@ function resetGame() {
   .stagemode-card { padding: 1.4rem 1.1rem; }
   .stagemode-card-title { font-size: 1.3rem; min-width: 100%; }
   .home-mode-btn { font-size: 1.05rem; padding: 0.95rem 1.1rem; }
+}
+
+/* =========================================================================
+   v3.6.0 · 动效层（暗房显影母题）
+   引导 + 反馈为主，装饰次之；单元素时长 ≤600ms；尊重 prefers-reduced-motion。
+   ========================================================================= */
+@media (prefers-reduced-motion: no-preference) {
+
+  /* 关卡选择：章节列表逐项入场（选中金线在 .active 上绘制） */
+  .stagemode-nav.stagger-in .stagemode-nav-link[data-stage] {
+    animation: stNavItemIn 0.5s var(--st-ease) both;
+    animation-delay: calc(var(--i, 0) * 45ms);
+    will-change: transform, opacity;
+  }
+  .stagemode-nav-link::before { transition: transform var(--st-ease) 0.4s; }
+
+  /* 关卡选择：详情卡暗房显影 + 金边浮现 */
+  .stagemode-card {
+    animation: stDevelop 0.52s var(--st-ease) both;
+    will-change: opacity, filter, transform;
+  }
+  .stagemode-card::after {
+    content: ""; position: absolute; inset: 0; border-radius: 14px;
+    pointer-events: none; border: 1px solid var(--st-lamp);
+    opacity: 0; animation: stGoldRing 0.6s var(--st-ease) 0.08s both;
+  }
+
+  /* 进入对局：面板暗房显影 */
+  .game-main { animation: stDevelop 0.5s var(--st-ease) both; will-change: opacity, filter, transform; }
+
+  /* 问询：点卡光扫 + 下沉 */
+  .fish-card.inquiring { animation: stCardSink 0.26s var(--st-ease) both; }
+  .fish-card.inquiring::after {
+    content: ""; position: absolute; inset: 0; border-radius: var(--st-radius);
+    pointer-events: none;
+    background: linear-gradient(105deg, transparent 32%, color-mix(in srgb, var(--st-lamp) 60%, transparent) 50%, transparent 68%);
+    background-size: 220% 100%;
+    animation: stScan 0.5s var(--st-ease);
+  }
+
+  /* 鱼卡：揭示时暗房显影（隐藏卡仅轻量淡入，避免每轮重渲染过度动效） */
+  .fish-card { animation: cardReveal 0.42s var(--st-ease) both; animation-delay: calc(var(--i, 0) * 32ms); }
+  .fish-card.revealed { animation: cardDevelop 0.5s var(--st-ease) both; animation-delay: calc(var(--i, 0) * 32ms); }
+
+  /* 印章：盖下顿挫（仅揭示类印章，待取证标签不动） */
+  .fish-stamp:not(.pending) { animation: stStamp 0.42s var(--st-ease) both; will-change: transform, opacity; }
+
+  /* 日志：新条目墨迹浮现（逐条延迟由 JS 控制） */
+  .log-entry { animation: logInk 0.35s var(--st-ease) both; }
+
+  @keyframes stNavItemIn {
+    from { opacity: 0; transform: translateX(-12px); filter: blur(2px); }
+    to { opacity: 1; transform: none; filter: none; }
+  }
+  @keyframes stDevelop {
+    from { opacity: 0; filter: blur(8px) contrast(.55); transform: translateY(8px) scale(.99); }
+    to { opacity: 1; filter: none; transform: none; }
+  }
+  @keyframes stGoldRing { from { opacity: 0; } to { opacity: .5; } }
+  @keyframes cardDevelop {
+    from { opacity: 0; filter: blur(8px) contrast(.55); transform: translateY(6px) scale(.98); }
+    to { opacity: 1; filter: none; transform: none; }
+  }
+  @keyframes stScan {
+    from { background-position: 130% 0; opacity: .9; }
+    to { background-position: -130% 0; opacity: 0; }
+  }
+  @keyframes stCardSink {
+    0% { transform: scale(1); }
+    45% { transform: scale(.97) translateY(3px); }
+    100% { transform: scale(1) translateY(0); }
+  }
+  @keyframes stStamp {
+    0% { transform: rotate(-8deg) scale(1.4); opacity: 0; }
+    60% { transform: rotate(-8deg) scale(.92); opacity: 1; }
+    100% { transform: rotate(-8deg) scale(1); opacity: .92; }
+  }
+  @keyframes logInk {
+    from { opacity: 0; transform: translateY(-6px); filter: blur(3px); }
+    to { opacity: 1; transform: none; filter: none; }
+  }
 }
 </style>
 

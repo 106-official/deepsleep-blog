@@ -27,7 +27,15 @@ TocOpen: true
 
 **LDAP 是"为『读多写少的树形数据』量身定做的查询协议"**——它把企业的组织架构、账号、组、设备、打印机组织成一棵可继承、可委派的树，然后提供一套极高效的"按条件搜子树"的操作。它不是数据库，是**目录**。
 
+## 💡 生活化类比
+
+LDAP 就像一本全公司共用的**电子通讯录 + 门禁名册**。通讯录本身是按"公司 → 部门 → 小组 → 人"一层层排的，你查一个人，可以从整个公司范围找，也可以只在某个部门里找。
+
+更妙的是，它还兼职看门人：你报上名字和暗号，它帮你核对一下对不对——对了就放行。于是邮箱、VPN、代码仓库这些系统都不用自己再养一本名册，统一来问这一本就行了。
+
 ## 它解决什么问题
+
+为什么没有它，网络就"缺了一块"：
 
 企业里有一类数据具有非常鲜明的共同特征：
 
@@ -49,16 +57,16 @@ LDAP 的解法：
 
 ## 核心特征
 
-- **DIT（Directory Information Tree，目录信息树）**：所有条目组成一棵树，根叫 **Base DN / Naming Context**（如 `dc=example,dc=com`）。
-- **Entry（条目）**：树上的一个节点，等于"一条记录"。由若干 **属性（Attribute）** 组成，每个属性可以有**多个值**。
-- **DN / RDN**：
+- **【树形骨架】DIT（Directory Information Tree，目录信息树）**：所有条目组成一棵树，根叫 **Base DN / Naming Context**（如 `dc=example,dc=com`）。
+- **【一条记录】Entry（条目）**：树上的一个节点，等于"一条记录"。由若干 **属性（Attribute）** 组成，每个属性可以有**多个值**。
+- **【唯一地址】DN / RDN**：
   - **RDN**（Relative Distinguished Name，相对可辨识名）：条目在**父节点下**的唯一名字，如 `cn=张三`。
   - **DN**（Distinguished Name，可辨识名）：从条目一路拼到根的完整路径，**全局唯一**，如 `cn=张三,ou=研发部,ou=用户,dc=example,dc=com`。**注意顺序是从叶到根，与文件路径相反**。
-- **objectClass**：条目的"类型"，决定必需属性（MUST）与可选属性（MAY）。可多重继承，如 `top` → `person` → `organizationalPerson` → `inetOrgPerson`。
-- **十种协议操作**：Bind / Unbind / Search / Modify / Add / Delete / ModifyDN / Compare / Abandon / Extended。**没有独立的 "Read" 操作，读单个条目也是用 Search（scope=base）**。
-- **强大的过滤器语法**（RFC 4515）：前缀（波兰）表示法，`(&(objectClass=user)(|(dept=A)(dept=B))(!(disabled=TRUE)))`。
-- **读写严重不对称**：为读优化，写入（尤其是多主复制）代价高。**不要把 LDAP 当业务数据库用**。
-- **BER 编码的 ASN.1**：与 SNMP、X.509 同源，抓包是二进制 TLV。
+- **【条目类型】objectClass**：条目的"类型"，决定必需属性（MUST）与可选属性（MAY）。可多重继承，如 `top` → `person` → `organizationalPerson` → `inetOrgPerson`。
+- **【操作集合】十种协议操作**：Bind / Unbind / Search / Modify / Add / Delete / ModifyDN / Compare / Abandon / Extended。**没有独立的 "Read" 操作，读单个条目也是用 Search（scope=base）**。
+- **【查询语法】强大的过滤器语法**（RFC 4515）：前缀（波兰）表示法，`(&(objectClass=user)(|(dept=A)(dept=B))(!(disabled=TRUE)))`。
+- **【读写失衡】读写严重不对称**：为读优化，写入（尤其是多主复制）代价高。**不要把 LDAP 当业务数据库用**。
+- **【二进制编码】BER 编码的 ASN.1**：与 SNMP、X.509 同源，抓包是二进制 TLV。
 
 ## 与其他协议的关系
 
@@ -80,3 +88,5 @@ LDAP 的解法：
 2. **[02-实战与排错](02-实战与排错/)** — `ldapsearch` / `ldapadd` / `ldapmodify` / `ldappasswd` 实操，LDIF 文件编写，Wireshark 观察明文 Simple Bind 的风险，`invalidCredentials` / `noSuchObject` / `sizeLimitExceeded` / referral 等错误码排查，与 AD 对接的坑，以及与 SQL、Kerberos 的对比。
 
 > **学习建议**：LDAP 的最大门槛是**"树 + 过滤器"的心智模型**。建议用 Docker 起一个 OpenLDAP（`docker run -p 389:389 osixia/openldap`），亲手 `ldapadd` 几个条目，再用不同 scope（base / one / sub）搜同一个 Base DN，立刻就能看懂 scope 的差别。搞懂后再看 AD，会发现只是 objectClass 名字换成了 `user` / `group` 而已。
+>
+> ⚠️ 初学者最常踩的坑：① Bind 时填用户名而不是**完整 DN**（要写 `cn=admin,dc=example,dc=com`，不是 `admin`），结果一直报 `invalidCredentials(49)`；② scope 默认用了 `base` 或 `one`，搜不到深层条目还以为数据不存在——应用集成一律该用 `sub`；③ 忘了 **Simple Bind 传的是明文密码**，不加 StartTLS/LDAPS 就等于把口令裸奔在网上；④ AD 单次最多返回 **1000** 条，超了会返回**不完整**结果，必须用分页控制。

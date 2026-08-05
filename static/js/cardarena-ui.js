@@ -10,6 +10,8 @@
   var wasFull = false;        // 上一次 toggleRole 时是否已选满 6 张（用于「集结完成」只触发一次）
   var aiAttacker = null;      // AI 攻击时的前倾特效来源（区别于玩家的 pendingAction）
   var vsShownThisGame = false; // 对阵报幕 VS 每局只播一次
+  var caDealt = false;         // 首次发牌错峰入场只播一次（renderAll 重建会重播，故用闸门）
+  var ambientReady = false;    // 环境层呼吸浮层只在 body 上建一次（不参与 renderAll 重建）
 
   // ===== 演出节奏：速度档位（正常 1x / 快速 2x），localStorage 持久化 =====
   var SPEED_KEY = 'cardarena_speed';
@@ -215,6 +217,7 @@
   function startGame() {
     if (chosenRoles.length !== 6) return;
     vsShownThisGame = false;   // 新对局：允许再次播放对阵报幕
+    caDealt = false;           // 新对局：允许再次播放发牌入场
     var startBtn = app.querySelector('#ca-start');
     if (startBtn) { startBtn.disabled = true; startBtn.textContent = '出征…'; }
     // 未被选择的卡牌化为灰烬消失；选中的卡牌亮起
@@ -328,6 +331,7 @@
     layout.appendChild(buildActionBar(s));
     app.appendChild(layout);
     applyFx(fx);
+    caDealt = true; // 首个战斗界面已渲染，关掉发牌入场闸门（后续重建不再重播）
     prevState = snapshot(s);
     pendingAction = null;
   }
@@ -439,6 +443,7 @@
   // 在渲染完成后播放特效
   function applyFx(fx) {
     if (!fx) return;
+    var heavyHit = false;
     // 攻击者前倾
     if (fx.attacker) {
       var atkEl = fx.attacker.kind === 'hero'
@@ -446,25 +451,29 @@
         : app.querySelector('.ca-minion[data-uid="' + fx.attacker.uid + '"]');
       if (atkEl) atkEl.classList.add('ca-lunge');
     }
-    // 伤害：飘字 + 受击闪光 + 冲击波
+    // 伤害：飘字分级 + 受击闪光强化 + (重击)震屏/hit-stop
     fx.dmg.forEach(function (d) {
       var el2 = d.kind === 'hero'
         ? app.querySelector('.ca-hero-' + d.side)
         : app.querySelector('.ca-minion[data-uid="' + d.uid + '"]');
       var rect = el2 ? el2.getBoundingClientRect() : d.rect;
       if (!rect) return;
-      playFloating(d.amount, rect, 'dmg');
+      var lethal = d.dead || isLethalDeath(fx, d);
+      var tier = lethal ? 'lethal' : (d.amount >= 5 ? 'heavy' : 'normal');
+      playFloating(d.amount, rect, 'dmg', tier);
       if (el2) {
-        el2.classList.remove('ca-hit');
+        el2.classList.remove('ca-hit', 'ca-hit--lethal');
         void el2.offsetWidth;
-        el2.classList.add('ca-hit');
+        el2.classList.add('ca-hit' + (lethal ? ' ca-hit--lethal' : ''));
         var imp = el('div', 'ca-fx ca-fx-impact');
         el2.appendChild(imp);
         setTimeout(function () { imp.remove(); }, 600);
+        if (tier !== 'normal') heavyHit = true;
       } else {
         playImpactAt(rect);
       }
     });
+    if (heavyHit && !reduceMotion) doShakeAndHitstop();
     // 治疗飘字
     fx.heal.forEach(function (h) {
       var el2 = h.kind === 'hero'
@@ -502,9 +511,31 @@
     }
   }
 
+  // 伤害是否为致命一击（目标在本次更新中死亡）
+  function isLethalDeath(fx, d) {
+    return fx.deaths.some(function (x) {
+      return x.side === d.side && x.kind === d.kind &&
+        (d.kind === 'hero' ? true : x.uid === d.uid);
+    });
+  }
+  // 重击：hit-stop 顿帧(冻结 70ms) + 随后震屏
+  function doShakeAndHitstop() {
+    if (reduceMotion) return;
+    app.classList.add('ca-hitstop');
+    setTimeout(function () {
+      app.classList.remove('ca-hitstop');
+      app.classList.remove('ca-shake');
+      void app.offsetWidth;
+      app.classList.add('ca-shake');
+      setTimeout(function () { app.classList.remove('ca-shake'); }, 430);
+    }, 70);
+  }
+
   // 伤害/治疗飘字（fixed 定位到 body，不受重渲染影响）
-  function playFloating(amount, rect, kind) {
-    var fx = el('div', 'ca-fx ca-fx-' + kind, (kind === 'dmg' ? '-' : '+') + amount);
+  function playFloating(amount, rect, kind, tier) {
+    var cls = 'ca-fx ca-fx-' + kind;
+    if (tier) cls += ' ca-fx-' + kind + '--' + tier;
+    var fx = el('div', cls, (kind === 'dmg' ? '-' : '+') + amount);
     fx.style.left = Math.round(rect.left + rect.width / 2) + 'px';
     fx.style.top = Math.round(rect.top + rect.height * 0.08) + 'px';
     document.body.appendChild(fx);
@@ -816,6 +847,8 @@
       if (!c) return;
       var cardEl = el('div', 'ca-card');
       cardEl.dataset.handIndex = i;
+      // 首次发牌错峰入场：仅第一场战斗的第一次 renderAll 加 .ca-card-deal + --i
+      if (!caDealt) { cardEl.classList.add('ca-card-deal'); cardEl.style.setProperty('--i', i); }
       if (c.cost > s.player.mana) cardEl.classList.add('disabled');
       // 苏丹卡品级（黄金/白银/青铜/岩石）
       var tier = cardTier(c);
@@ -1013,25 +1046,92 @@
     app.appendChild(overlay);
   }
 
-  // ===== 结束结算 =====
+  // ===== 结束结算（胜：王冠加冕 + 光柱；败：全屏碎裂 + 灰烬）=====
   function showGameOver(result) {
-    var overlay = el('div', 'ca-overlay');
-    var box = el('div', 'ca-overlay-box ca-develop');
-    var title = el('h2', 'ca-overlay-title', result.winner === 'player' ? '胜利' : '失败');
-    var sub = el('p', 'ca-overlay-sub', result.winner === 'player' ? '对方 6 名角色已全部阵亡' : '我方 6 名角色已全部阵亡');
+    var win = result.winner === 'player';
+    var s = window.CardArena.getState();
+    var overlay = el('div', 'ca-overlay' + (win ? ' ca-win' : ' ca-lose'));
+    var box = el('div', 'ca-overlay-box ca-develop' + (win ? ' ca-win-box' : ' ca-lose-box'));
+    if (win) {
+      var crown = el('div', 'ca-crown');
+      crown.innerHTML = '<svg viewBox="0 0 100 62" xmlns="http://www.w3.org/2000/svg">' +
+        '<defs><linearGradient id="caCrownG" x1="0" y1="0" x2="0" y2="1">' +
+        '<stop offset="0" stop-color="#ffe9a8"/><stop offset="0.5" stop-color="#e8c64a"/><stop offset="1" stop-color="#a87b2a"/>' +
+        '</linearGradient></defs>' +
+        '<path d="M8 54 L8 22 L27 39 L50 9 L73 39 L92 22 L92 54 Z" fill="url(#caCrownG)" stroke="#7a5a1e" stroke-width="2"/>' +
+        '<circle cx="50" cy="9" r="5" fill="#fff3c4"/><circle cx="27" cy="39" r="4" fill="#fff3c4"/><circle cx="73" cy="39" r="4" fill="#fff3c4"/>' +
+        '<rect x="8" y="51" width="84" height="9" rx="2" fill="#c8a23a"/></svg>';
+      box.appendChild(crown);
+      var beam = el('div', 'ca-lightbeam');
+      box.appendChild(beam);
+    } else {
+      box.appendChild(el('div', 'ca-shatter'));
+    }
+    var title = el('h2', 'ca-overlay-title', win ? '胜 · 苏丹加冕' : '败 · 王朝倾覆');
+    var sub = el('p', 'ca-overlay-sub', win ? '对方 6 名角色已全部阵亡' : '我方 6 名角色已全部阵亡');
+    box.appendChild(title);
+    box.appendChild(sub);
+    // 战报
+    if (s) {
+      var aliveP = s.player.roster.filter(function (r) { return r.alive; }).length;
+      var aliveE = s.enemy.roster.filter(function (r) { return r.alive; }).length;
+      var ph = s.player.roster[s.player.activeIndex];
+      var eh = s.enemy.roster[s.enemy.activeIndex];
+      var mvp = s.player.roster.filter(function (r) { return r.alive; })
+        .sort(function (a, b) { return (b.attack + b.health) - (a.attack + a.health); })[0];
+      var report = el('div', 'ca-gameover-report');
+      report.appendChild(row('对局回合', '第 ' + s.turn + ' 回合'));
+      report.appendChild(row('我方剩余', aliveP + ' / 6 名角色' + (ph ? ' · 出战 ' + ph.health + ' 血' : '')));
+      report.appendChild(row('敌方剩余', aliveE + ' / 6 名角色' + (eh ? ' · 出战 ' + eh.health + ' 血' : '')));
+      report.appendChild(row('本局 MVP', mvp ? mvp.name : '—'));
+      box.appendChild(report);
+    }
     var again = el('button', 'ca-btn ca-btn-primary', '再来一局');
     again.addEventListener('click', function () {
       chosenRoles = [];
       app.classList.remove('ca-targeting');
       renderSetup();
     });
-    var seal = el('div', 'ca-overlay-seal' + (result.winner === 'player' ? ' ca-seal-win' : ''), result.winner === 'player' ? '胜' : '败');
-    box.appendChild(title);
-    box.appendChild(sub);
     box.appendChild(again);
-    box.appendChild(seal);
     overlay.appendChild(box);
     app.appendChild(overlay);
+    // 触发入场演出（next frame 保证过渡可播放）
+    if (!reduceMotion) requestAnimationFrame(function () { box.classList.add('show'); });
+    else box.classList.add('show');
+    // 失败：中央灰烬飘落（纯 CSS/SVG，无素材）
+    if (!win && !reduceMotion) {
+      var cx = window.innerWidth / 2, cy = window.innerHeight / 2;
+      playAshes(cx, cy);
+      setTimeout(function () { playAshes(cx - 80, cy + 20); }, 120);
+      setTimeout(function () { playAshes(cx + 80, cy - 10); }, 220);
+    }
+  }
+  function row(k, v) {
+    var r = el('div', 'ca-report-row');
+    r.appendChild(el('span', null, k));
+    r.appendChild(el('b', null, v));
+    return r;
+  }
+
+  // 环境层呼吸：稳定父层(body)，不绑逐卡，规避 renderAll 重建导致的动画重置闪烁
+  function ensureAmbient() {
+    if (ambientReady) return;
+    ambientReady = true;
+    if (reduceMotion) return; // 降级：不播放常驻微动
+    var layer = el('div', 'ca-ambient');
+    layer.appendChild(el('div', 'ca-ambient-shimmer'));
+    for (var i = 0; i < 14; i++) {
+      var m = el('span', 'ca-mote');
+      m.style.left = (Math.random() * 100).toFixed(2) + '%';
+      m.style.top = (58 + Math.random() * 42).toFixed(2) + '%';
+      var sz = (3 + Math.random() * 3).toFixed(1);
+      m.style.width = sz + 'px';
+      m.style.height = sz + 'px';
+      m.style.animationDuration = (7 + Math.random() * 7).toFixed(1) + 's';
+      m.style.animationDelay = (-Math.random() * 12).toFixed(1) + 's';
+      layer.appendChild(m);
+    }
+    document.body.appendChild(layer);
   }
 
   // ===== AI 回合逐帧演出 =====
@@ -1143,6 +1243,7 @@
   function init() {
     app = document.getElementById('cardarena-app');
     if (!app) return;
+    ensureAmbient();
     renderSetup();
     // 开场闪屏协调：若闪屏将播放则先隐藏选人界面，待其关闭再播「显影」入场；否则直接入场
     if (window.__CA_SPLASH_WILL_SHOW) {

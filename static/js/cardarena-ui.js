@@ -36,6 +36,25 @@
     return node;
   }
 
+  // ===== 卡牌立绘（生图生成的图片卡）=====
+  function cardArtUrl(kind, id) {
+    var base = window.CARDARENA_IMG_BASE || '/images/cardarena/';
+    var fn = (kind === 'role' ? 'role-' : '') + id + '.png';
+    return base + fn;
+  }
+  // 把立绘以 <img> 铺进艺术区；加载失败自动移除，回落到占位星徽
+  function applyArt(container, kind, id) {
+    if (!container) return;
+    var img = document.createElement('img');
+    img.className = 'ca-art-img';
+    img.alt = '';
+    img.loading = 'lazy';
+    img.src = cardArtUrl(kind, id);
+    img.addEventListener('error', function () { if (img.parentNode) img.remove(); });
+    img.addEventListener('load', function () { container.classList.add('ca-has-art'); });
+    container.appendChild(img);
+  }
+
   function cardName(cardId) {
     var c = DATA.CARDS.find(function (x) { return x.id === cardId; });
     return c ? c.name : cardId;
@@ -108,6 +127,7 @@
       art.appendChild(el('span', 'ca-role-star-outer'));
       art.appendChild(el('span', 'ca-role-star-inner'));
       art.appendChild(el('span', 'ca-role-gem'));
+      applyArt(art, 'role', role.id);
       front.appendChild(art);
       front.appendChild(el('div', 'ca-setup-role-name', role.name));
       front.appendChild(el('div', 'ca-setup-role-intro', role.intro));
@@ -290,6 +310,7 @@
       art.appendChild(el('span', 'ca-role-star-outer'));
       art.appendChild(el('span', 'ca-role-star-inner'));
       art.appendChild(el('span', 'ca-role-gem'));
+      applyArt(art, 'role', role.id);
       card.appendChild(art);
       card.appendChild(el('div', 'ca-setup-role-name', role.name));
       card.appendChild(el('div', 'ca-setup-role-intro', role.intro));
@@ -623,12 +644,13 @@
       em.style.setProperty('--el', (Math.random() * 0.25).toFixed(2) + 's');
       burn.appendChild(em);
     }
-    // 自己家随从：金色余烬 + “阵亡”烙印
+    // 自己家随从：红色烙铁印章 + “阵亡”（带阵亡者之名，更像烙印）
     if (d.side === 'player') {
       var seal = el('div', 'ca-burn-seal');
       seal.style.setProperty('--bw', Math.round(bw) + 'px');
       seal.style.setProperty('--bh', Math.round(bh) + 'px');
-      seal.appendChild(el('span', null, '阵亡'));
+      seal.appendChild(el('span', 'ca-burn-seal-main', '阵亡'));
+      if (d.name) seal.appendChild(el('span', 'ca-burn-seal-sub', d.name));
       burn.appendChild(seal);
     }
     document.body.appendChild(burn);
@@ -824,8 +846,10 @@
       })(side.activeIndex);
       hero.appendChild(poolBtn);
     }
-    // 右上角八角星水印
-    hero.appendChild(el('span', 'ca-hero-star'));
+    // 右上角立绘（生成图片卡）
+    var hstar = el('span', 'ca-hero-star');
+    applyArt(hstar, 'role', role.id);
+    hero.appendChild(hstar);
     return hero;
   }
 
@@ -854,6 +878,7 @@
       // 徽记区：八角星徽
       var art = el('div', 'ca-minion-art');
       art.appendChild(el('div', 'ca-minion-star'));
+      applyArt(art, 'card', m.cardId);
       cell.appendChild(art);
       var nm = el('div', 'ca-minion-name', m.name);
       cell.appendChild(nm);
@@ -934,6 +959,7 @@
       // 中央八角星徽
       var art = el('div', 'ca-card-art');
       art.appendChild(el('div', 'ca-card-star'));
+      applyArt(art, 'card', c.id);
       cardEl.appendChild(art);
       var nm = el('div', 'ca-card-name', c.name);
       var body = el('div', 'ca-card-desc', c.desc);

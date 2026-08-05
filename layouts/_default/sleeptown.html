@@ -235,6 +235,7 @@
 
     <!-- MAIN -->
     <main class="stagemode-main stagemode-home-main">
+      <button id="st-top-back" class="st-top-back" onclick="stSmartBack()" aria-label="返回">←</button>
       <!-- 视图1：模式选择（默认 active） -->
       <section class="home-view active" id="home-view-modes">
         <header class="home-hero">
@@ -264,7 +265,6 @@
           <header class="fish-detail-header" id="fish-detail-header"></header>
           <div class="fish-detail-body" id="fish-detail-body"></div>
         </div>
-        <button class="back-to-modes-btn" onclick="backToModes()">← 返回模式选择</button>
       </section>
     </main>
   </div>
@@ -335,10 +335,7 @@
 
   <!-- 自由模式配置界面 -->
   <div id="freemode-setup" class="game-setup" style="display:none">
-    <div class="setup-container">
-      <!-- 返回按钮 -->
-      <button onclick="backToModeSelection()" class="back-to-selection-btn">← 返回模式选择</button>
-
+      <div class="setup-container">
       <!-- 鱼数量配置 -->
       <div class="config-section">
         <h3> 鱼的数量</h3>
@@ -497,7 +494,6 @@
           <span class="stagemode-logo-icon">†</span>
           <span>关卡模式</span>
         </a>
-        <button onclick="backToModeSelection()" class="stagemode-back-btn">← 返回模式选择</button>
       </div>
       <nav class="stagemode-nav">
         <div class="stagemode-nav-group">
@@ -645,9 +641,6 @@
       <button onclick="resetGame()" class="action-btn reset-btn">
          重新开始
       </button>
-      <button onclick="goBackToSetup()" class="action-btn back-btn">
-        ← 修改配置
-      </button>
     </div>
   </div>
 
@@ -666,7 +659,6 @@
         <button onclick="resetGame()" class="play-again-btn"> 再来一局</button>
         <button id="next-stage-btn" onclick="nextStage()" class="next-stage-btn" style="display:none"> 下一关 →</button>
         <button onclick="goBackToSetup()" class="back-btn">修改配置</button>
-        <button onclick="backToModeSelection()" class="back-btn">返回模式选择</button>
       </div>
     </div>
   </div>
@@ -2976,7 +2968,6 @@ function resetGame() {
 /* 角色详情档案卡 */
 .fish-detail-card {
   background: var(--st-paper);
-  border: 1px solid var(--st-border-solid);
   border-radius: var(--st-radius);
   padding: 1.6rem;
   box-shadow: var(--st-shadow);
@@ -2985,7 +2976,7 @@ function resetGame() {
 }
 .fish-detail-card::before {
   content: ""; position: absolute; inset: 6px;
-  border: 1px dashed var(--st-border); border-radius: var(--st-radius-sm);
+  border-radius: var(--st-radius-sm);
   pointer-events: none;
 }
 .fish-detail-header {
@@ -3004,7 +2995,6 @@ function resetGame() {
   max-width: 720px; margin: 1.5rem auto;
   padding: 2rem;
   background: var(--st-paper);
-  border: 1px solid var(--st-border-solid);
   border-radius: 14px;
   box-shadow: var(--st-shadow);
   position: relative;
@@ -3013,7 +3003,6 @@ function resetGame() {
   margin: 1.8rem 0;
   padding: 1.4rem;
   background: color-mix(in srgb, var(--st-surface) 70%, transparent);
-  border: 1px solid var(--st-border);
   border-left: 3px solid var(--st-lamp);
   border-radius: var(--st-radius);
   text-align: left;
@@ -3050,7 +3039,6 @@ function resetGame() {
 .role-config-container { display: grid; gap: 1.2rem; }
 .role-faction-group {
   padding: 1.1rem; border-radius: var(--st-radius);
-  border: 1px solid var(--st-border);
   background: color-mix(in srgb, var(--st-surface) 60%, transparent);
   transition: border-color 0.2s, transform 0.2s;
 }
@@ -3120,11 +3108,10 @@ function resetGame() {
 
 .stagemode-card {
   background: var(--st-paper);
-  border: 1px solid var(--st-border-solid);
   border-radius: 14px; padding: 1.8rem;
   box-shadow: var(--st-shadow); position: relative;
 }
-.stagemode-card-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px dashed var(--st-border); flex-wrap: wrap; }
+.stagemode-card-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid color-mix(in srgb, var(--st-border) 35%, transparent); flex-wrap: wrap; }
 .stagemode-card-num {
   display: inline-flex; align-items: center; justify-content: center;
   min-width: 50px; height: 38px; padding: 0 12px;
@@ -3396,6 +3383,21 @@ function resetGame() {
 .exile-btn:hover:not(:disabled), .skip-exile-btn:hover:not(:disabled) { border-color: var(--st-stamp-strong); }
 .info-btn, .reset-btn, .back-btn, .skip-btn { background: linear-gradient(180deg, var(--st-surface), var(--st-surface2)); color: var(--st-ink); }
 
+/* 减重：单一顶部返回控件（替代各屏重复的返回/关闭按钮，复用既有 back/close 逻辑） */
+.st-top-back {
+  position: fixed; top: 16px; right: 16px; z-index: 250;
+  width: 42px; height: 42px; border-radius: 50%;
+  display: none; align-items: center; justify-content: center;
+  font-size: 1.5rem; line-height: 1; color: var(--st-lamp);
+  background: color-mix(in srgb, var(--st-paper) 88%, transparent);
+  border: 1px solid var(--st-border-solid);
+  box-shadow: var(--st-shadow); cursor: pointer;
+  backdrop-filter: blur(2px);
+  transition: transform .16s ease, border-color .16s ease, filter .16s ease;
+}
+.st-top-back:hover { transform: translateY(-2px); border-color: var(--st-lamp); filter: brightness(1.05); }
+.st-top-back:active { transform: translateY(0); }
+
 /* ---------- 9. 弹窗 / 结果 ---------- */
 .modal-overlay {
   position: fixed; inset: 0; z-index: 300;
@@ -3485,7 +3487,7 @@ function resetGame() {
 .stage-enter-overlay.gone{opacity:0;pointer-events:none;transition:opacity 0.55s ease;}
 .stage-enter-card{
   position:relative;max-width:460px;width:88%;text-align:center;
-  background:var(--st-paper);border:1px solid var(--st-border-solid);border-top:3px solid var(--st-lamp);
+  background:var(--st-paper);border-top:3px solid var(--st-lamp);
   border-radius:14px;padding:2.2rem 2rem;box-shadow:var(--st-shadow);
 }
 .stage-enter-card::after{
@@ -4030,6 +4032,47 @@ start();
         }
       }, 4000);
     });
+  })();
+
+  /* ===== SleepTown 减重：单一顶部返回控件 + ESC（复用既有 back/close 逻辑，零功能损失） ===== */
+  (function initSmartBack() {
+    var backBtn = document.getElementById('st-top-back');
+    var modalIds = ['rules-modal', 'role-intro-modal', 'game-over-modal'];
+
+    function isVisible(el) { return el && getComputedStyle(el).display !== 'none'; }
+
+    function stSmartBack() {
+      // 1) 优先关闭已打开的弹窗
+      for (var i = 0; i < modalIds.length; i++) {
+        if (isVisible(document.getElementById(modalIds[i]))) { closeModal(modalIds[i]); return; }
+      }
+      // 2) 游戏内 → 返回配置
+      if (isVisible(document.getElementById('game-main'))) { goBackToSetup(); return; }
+      // 3) 配置屏 → 返回模式选择
+      if (isVisible(document.getElementById('freemode-setup')) || isVisible(document.getElementById('stagemode-setup'))) {
+        backToModeSelection(); return;
+      }
+    }
+    window.stSmartBack = stSmartBack;
+
+    function syncTopBack() {
+      if (!backBtn) return;
+      backBtn.style.display = isVisible(document.getElementById('mode-selection')) ? 'none' : 'inline-flex';
+    }
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') { e.preventDefault(); stSmartBack(); }
+    });
+
+    // 监听各屏显隐，自动切换返回箭头可见性
+    ['mode-selection', 'freemode-setup', 'stagemode-setup', 'game-main',
+     'rules-modal', 'role-intro-modal', 'game-over-modal'].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) new MutationObserver(syncTopBack).observe(el, { attributes: true, attributeFilter: ['style', 'class'] });
+    });
+
+    syncTopBack();
+    window.addEventListener('load', syncTopBack);
   })();
 </script>
 {{ end }}

@@ -4,7 +4,7 @@
 > **开发时间**: 2026-06-21 ~ 2026-06-22  
 > **技术栈**: Hugo + HTML + CSS + JavaScript (纯前端)  
 > **访问地址**: https://deepsleep.fun/play/sleeptown/  
-> **当前版本**: v3.7.0（游戏逻辑）· 视觉层 Noir 深夜渔港侦探档案 v3.7（开场时序修复 + 三处过渡画面）
+> **当前版本**: v3.7.0（游戏逻辑）· 视觉层 Noir 深夜渔港侦探档案 v3.8（Noir 动效增强：放逐聚光灯+打字机 / 墨晕转场 / 真相网格揭示 + 材质精致化 Phase 3）
 > **状态**: 已上线
 
 ---
@@ -13,7 +13,7 @@
 
 **SleepTown** 是一款基于浏览器的社交推理游戏，灵感来源于经典的"狼人杀"和"Among Us"等游戏。玩家扮演一个鱼塘的管理者，需要通过"问询"机制找出隐藏在鱼群中的坏鱼，保护豪鱼们的安全。
 
-### 当前版本特色 (v3.7.0)
+### 当前版本特色 (v3.7.0 游戏逻辑 · Noir 视觉 v3.8)
 
 - **双模式系统**: 自由模式（自定义配置）+ 关卡模式（固定挑战）
 - **关卡模式 sidebar 布局**: learn 风格「左固定章节列表 + 右关卡详情卡片」，移动端抽屉化 (v2.2.2.0)
@@ -28,6 +28,7 @@
 - **风灯 3D 开场闪屏 (v3.5.0)**: 进 `/play/sleeptown/` 即播约 4.5 秒电影感开场——中央一盏发光风灯（自身即 PointLight 光源）+ 低面粒子上浮 + 细致低面鱼影（纺锤鱼身/分叉尾鳍/背腹胸鳍/发光金眼，尾鳍摆动）环绕旋转；鼠标移动触发相机视差与灯光偏移（移动端自动旋转）。Three.js r160 自托管于 `static/js/three.module.min.js`（无第三方 CDN 依赖），无 WebGL 时降级纯 CSS 风灯呼吸灯。右上「跳过 ✕」、右下「进入 →」随时淡出进首页；每次加载都播，带「不再自动播放」开关（localStorage，默认关）
 - **暗房显影动效层 (v3.6.0)**: 以「暗房显影」为统一母题——所有揭示都像照片在显影液里从模糊/低对比慢慢浮现，金边由 0 渐显。**关卡选择**：章节列表逐项金线入场（选中态金线绘制）+ 右侧详情卡暗房显影 + 金边浮现 + 点击「开始挑战」进入对局时面板同步显影过渡。**问询**：点鱼卡触发金色光扫 + 轻微下沉；鱼卡揭示时暗房显影；线索逐条墨迹浮现（同批日志自动错峰 ~120ms）；印章「盖下顿挫」（scale 1.4→1 带回落）；日志流统一曲线。全程纯 CSS + 少量 CSS 变量 stagger，零新依赖、不碰 Three.js；新增 `--st-ease` 统一缓动，并整体包在 `prefers-reduced-motion: no-preference` 内（尊重减弱动效偏好）
 - **开场时序修复 + 三处过渡画面 (v3.7.0)**: 修复「点进页面先弹关卡选择再弹开场闪屏」的时序 bug——`#splash` 首帧即不透明全覆盖，关闭逻辑（`window.__dismissSplash`）移至非延迟脚本，Three.js 模块加载慢/失败也能随时「跳过 / 进入 / 不再自动播放」，首页与关卡选择不再先于开场闪现。新增三处全屏过渡画面，统一沿用「暗房显影」母题（复用 `stDevelop` / `stGoldRing` / `stStamp` 关键帧，`--st-ease` 缓动，包在 `prefers-reduced-motion` 内）：① **进入关卡**——「案卷暗房显影」覆盖层（关卡号 + 案名 + "调查开始"），约 760ms 后揭示对局面板；② **游戏胜利**——「结案」绿印（`--st-good`）盖下 + 绿色光晕扩散；③ **游戏失败**——「失守」红印（`--st-stamp`）盖下 + 红色光晕扩散。零新依赖
+- **Noir 动效增强与材质精致化 (v3.8.0)**: 经 `/grill-me` 6 问对齐（全选「揭示+转场 / 材质真实感 / 更鲜明 / 放逐裁决为英雄时刻 / 统一 :root 令牌 / 1:1 reduced-motion」）→ ① **放逐裁决**：径向聚光（`.exile-beam`）+ 打字机逐字宣判，由 `showExileVerdict()` 驱动（`exileFish()` 改调它播「N 号·角色名（阵营）」）；② **墨晕转场** `stInkTransition(showId,hideId)`：全屏墨晕遮罩 + `#st-inkbleed`（feTurbulence+feDisplacementMap 墨晕滤镜）+ 斜向擦除，6 个切换函数（showFreeModeSetup / showStageMode / backToModeSelection / goBackToSetup / startFreeModeGame / quickStart）统一走它，并修复原 mask 遮罩导致进入关卡模式后黑屏的回归 bug；③ **真相网格揭示** `.truth-item.reveal-st`（`truthReveal` 模糊入 + `--i` 错峰）。Phase 3 精致化新增 `:root` 令牌（`--st-ease-soft`/`--st-ease-ink`、`--st-dur-s/m/l`、`--st-stagger`、颗粒 `--st-grain` feTurbulence data-URI），放逐裁决加体积光+微呼吸+尘埃+颗粒、墨晕更厚、真相网格错峰 token 化，并 1:1 落实 `prefers-reduced-motion` 降级。配套参考集 `docs/SleepTown-动效参考集.md` + 自包含 demo `docs/SleepTown-动效demo.html`
 
 ---
 
@@ -64,7 +65,7 @@
 - 文案 Noir 化：首页副标题 `CASE FILE №2 · 深海渔港十角色`、提示 `← 侧栏点名，调阅角色档案`、版本标注 `深夜渔港 Noir`。
 
 ### 动效克制原则
-所有微交互过渡 ≤0.3s，悬停仅上浮 2px，入场用墨迹/模糊晕开，不做弹性/缩放炫技——符合"严苛克制"的 Noir 气质。v3.6.0 起「暗房显影」揭示层（详情卡 / 鱼卡 / 线索 / 印章）单元素时长放宽至 ≤600ms，但母题统一、曲线收敛（新增 `--st-ease`），不引入霓虹/流光，仍属克制范围。v3.7.0 新增三处全屏过渡画面（进入关卡「案卷暗房显影」、胜利「结案」绿印光晕、失败「失守」红印光晕），沿用同一母题与 `--st-ease`，单元素 ≤950ms，仍属克制范围。
+所有微交互过渡 ≤0.3s，悬停仅上浮 2px，入场用墨迹/模糊晕开，不做弹性/缩放炫技——符合"严苛克制"的 Noir 气质。v3.6.0 起「暗房显影」揭示层（详情卡 / 鱼卡 / 线索 / 印章）单元素时长放宽至 ≤600ms，但母题统一、曲线收敛（新增 `--st-ease`），不引入霓虹/流光，仍属克制范围。v3.7.0 新增三处全屏过渡画面（进入关卡「案卷暗房显影」、胜利「结案」绿印光晕、失败「失守」红印光晕），沿用同一母题与 `--st-ease`，单元素 ≤950ms，仍属克制范围。v3.8.0 在保持克制的前提下引入「材质真实感」以强化电影感：颗粒（feTurbulence 噪声，`mix-blend-mode:soft-light`）、体积光、尘埃、墨迹拖影——皆服务于氛围而非炫技；新增统一令牌 `--st-ease-soft` / `--st-ease-ink` / `--st-dur-s/m/l` / `--st-stagger` / `--st-grain` 驱动节奏与质感。一个回归教训：`.ink-wipe` 曾用 `mask-size:260%` + `animation-fill-mode:both`，动画停在终态把屏幕左下半遮黑（进入关卡模式黑屏），已改为 opacity+blur 揭示。
 
 ---
 
@@ -111,9 +112,11 @@ blog-static/
 ├── layouts/
 │   └── _default/
 │       ├── play.html                      # 娱乐板块布局模板 (~150行)
-│       └── sleeptown.html                 # ⭐ 核心文件：单文件实现双模式 (~3894行，HTML+JS+CSS)
+│       └── sleeptown.html                 # ⭐ 核心文件：单文件实现双模式 (~4149行，HTML+JS+CSS)
 ├── docs/
-│   └── SleepTown-项目文档.md     # 本文档
+│   ├── SleepTown-项目文档.md     # 本文档
+│   ├── SleepTown-动效参考集.md   # Noir 动效参考集（灵感链接 + 落点映射 + 工程约束）
+│   └── SleepTown-动效demo.html   # 自包含 Noir 动效 demo（暗房显影 / 聚光打字机 / 墨晕转场）
 └── hugo.toml                     # 导航菜单配置
 ```
 
@@ -815,10 +818,10 @@ function resetGame() {
 
 | 文件 | 行数 | 类型 | 说明 |
 |------|------|------|------|
-| `sleeptown.html` | ~3890 行 | 核心文件 | HTML(~500) + JS(~2400) + CSS(~1000) |
+| `sleeptown.html` | ~4149 行 | 核心文件 | HTML(~500) + JS(~2500) + CSS(~1150) |
 | `sleeptown.md` | 5 行 | 内容声明 | front matter only |
 | `play.html` | ~150 行 | 布局模板 | 娱乐板块页面 |
-| **总计** | **~4050 行** | | |
+| **总计** | **~4320 行** | | |
 
 ### 版本迭代历史
 
@@ -837,6 +840,7 @@ function resetGame() {
 | v3.5.0 | 08-04 | 风灯 3D 开场闪屏(Three.js r160 自托管于 static/js/three.module.min.js)：发光风灯+低面粒子+细致鱼影环绕+鼠标视差，4.5s 自动淡出，无 WebGL 降级 CSS 风灯，localStorage「不再自动播放」开关 | ~3420 +1 资源 |
 | v3.6.0 | 08-04 | 暗房显影动效层(纯 CSS + 少量 CSS 变量 stagger，零新依赖，不碰 Three.js)：关卡选择(章节列表逐项金线入场+详情卡暗房显影+金边浮现+进入对局显影过渡)；问询(点卡光扫+下沉+鱼卡暗房显影+线索逐条墨迹浮现+印章盖下顿挫+日志流统一)；新增 --st-ease 统一缓动，整体包在 prefers-reduced-motion | ~3890 |
 | v3.7.0 | 08-04 | 修复开场闪屏先于关卡选择闪现的时序(闪屏首帧即不透明覆盖，关闭逻辑 window.__dismissSplash 移至非延迟脚本，Three.js 慢/失败也能随时关闭)；新增三处全屏过渡——进入关卡「案卷暗房显影」(关卡号+案名+调查开始)、胜利「结案」绿印+光晕、失败「失守」红印+光晕，复用 stDevelop/stGoldRing/stStamp 母题并包在 prefers-reduced-motion | ~4034 |
+| v3.8.0 | 08-04 | Noir 动效增强（放逐裁决聚光灯+打字机 `showExileVerdict` / 墨晕转场 `stInkTransition` 统一 6 切换 + 真相网格揭示 `truthReveal`）+ 黑屏回归修复（`.ink-wipe` mask 遮罩改 opacity+blur）+ Phase 3 材质精致化（统一 :root 令牌 `--st-ease-soft/ink`、`--st-dur-s/m/l`、`--st-stagger`、`--st-grain` 颗粒；体积光/尘埃/墨迹拖影；1:1 reduced-motion）；配套 `docs/SleepTown-动效参考集.md` + `docs/SleepTown-动效demo.html` | ~4149 |
 
 ---
 
@@ -980,6 +984,48 @@ hugo --minify
 
 **质量校验**:
 - `node --check` 通过（module + plain 两个脚本均校验）；Hugo 构建通过（v3.7.0 × 3 处、新元素/动效类落入产物）；`verify_sleeptown.js` 全绿
+
+---
+
+### Noir v3.8.0 (2026-08-04) - Noir 动效增强与材质精致化（放逐聚光灯+打字机 / 墨晕转场 / 真相网格揭示 + Phase 3）
+
+**设计对齐（经 /grill-me 6 问）**:
+- 范围：全部 6 处动效、两档齐做（标准 + 减弱）
+- 定义轴：材质真实感 / 电影感
+- 克制尺度：在克制前提下更鲜明（英雄时刻可加重）
+- 英雄时刻：放逐裁决（聚光灯 + 打字机宣判）作为全场高潮
+- 节奏：统一 `:root` 令牌驱动，消除散落硬编码
+- 降级：1:1 `prefers-reduced-motion` parity
+
+**Phase 1 · 动效参考集（随 v3.8.0 提交）**:
+- `docs/SleepTown-动效参考集.md`：可点击高级动效灵感链接（遮罩揭示 / 柔边光柱 / 径向聚光 / 新黑色片单），每条标注「动效要点 / 无框启示 / SleepTown 落点」+ 词汇→落点映射表 + 工程约束（webkit 前缀、reduced-motion、禁 GSAP/Lottie）
+- `docs/SleepTown-动效demo.html`：自包含 Noir demo（暗房显影角色卡遮罩擦除+雾、聚光+打字机放逐宣判、墨晕转场 mask+feTurbulence），纯 CSS/JS 零依赖
+
+**Phase 2 · Noir 动效增强（commit `5c133f2`）**:
+- **放逐裁决 `#exile-verdict`**：径向聚光 `.exile-beam`（`color-mix` 琥珀）+ 打字机逐字揭示（`showExileVerdict()`，90ms/字）；`exileFish()` 改调它播「N 号·角色名（阵营）」
+- **墨晕转场 `stInkTransition(showId,hideId)`**：`.ink-wash` 全屏遮罩 + `#st-inkbleed`（`feTurbulence` + `feDisplacementMap` 墨晕滤镜）+ `.ink-wipe` 斜向 mask 擦除；6 个切换函数（`showFreeModeSetup` / `showStageMode` / `backToModeSelection` / `goBackToSetup` / `startFreeModeGame` / `quickStart`）全部改走它
+- **真相网格揭示** `.truth-item.reveal-st`：`truthReveal` 模糊入 + `--i` 错峰（`--i*70ms`）
+- 全程 `prefers-reduced-motion` 降级
+
+**黑屏回归修复（commit `82268aa`）**:
+- 现象：进入关卡模式后整屏黑屏
+- 根因：`.ink-wipe` 用 `mask-size:260% 100%` + `linear-gradient(115deg,#000 0%,#000 46%,transparent 56%,transparent 100%)` 配 `animation-fill-mode:both`，停在 `to`（mask-position `0% 0`）时元素只占遮罩左约 38%，透明区把屏幕左下半遮掉、压在深色背景上 → 黑屏
+- 修复：改为 opacity+blur 揭示——`@keyframes inkWipe{from{opacity:.12;filter:blur(10px) contrast(.88)}to{opacity:1;filter:none}}`；`prefers-reduced-motion` 下 `.ink-wipe{animation:none;opacity:1}`；grep 确认 `linear-gradient(115deg` 残留 = 0
+
+**Phase 3 · 材质精致化（commit `e50a1bc`）**:
+- 新增 `:root` 令牌：`--st-ease-soft:cubic-bezier(.22,.61,.36,1)`、`--st-ease-ink:cubic-bezier(.45,.05,.2,1)`、`--st-dur-s/m/l`(0.38/0.72/1.2s)、`--st-stagger:70ms`、颗粒 `--st-grain`(feTurbulence data-URI)+`--st-grain-opacity:.07`
+- 放逐裁决（英雄）：`.exile-beam` 三层层叠体积光 + `exileBreath 5.5s` 微呼吸；`.exile-verdict::before` 纯 CSS 尘埃 `exileDust 11s`；`.exile-verdict::after` 颗粒（`soft-light` 混合）；`.exile-text` 加墨迹拖影
+- 墨晕更厚：`color-mix(var(--st-ink) 82%, var(--st-lamp))` 径向 + 显形 `opacity:.62` + `::after` 颗粒
+- 真相网格错峰 token 化：`animation:truthReveal var(--st-dur-m) var(--st-ease-soft) both;animation-delay:calc(var(--i,0)*var(--st-stagger))`
+- 其余覆盖层（stage-enter / result-stamp / splash）统一加 `::after` 颗粒 + 内阴影；`#splash::after` 颗粒
+- `prefers-reduced-motion` 全面关闭所有 `::before/::after` 颗粒层并显形
+
+**工程实现**:
+- 全部纯 CSS（`@keyframes` + `transition`）+ 既有 `--st-*` 变量，零新依赖、不碰 Three.js、不引入任何新文件
+- 与 v3.5.0 风灯闪屏 / v3.6.0 暗房显影 / v3.7.0 过渡画面 / v3.4.x 首登场弹窗共存无冲突
+
+**质量校验**:
+- `node --check` 通过；Hugo `--ignoreCache --minify` 构建 0 错误（新元素/动效类/令牌均落入产物 `play/sleeptown/index.html`）；grep 确认新令牌/关键帧/颗粒在产物中存在、`linear-gradient(115deg` 残留 = 0
 
 ---
 

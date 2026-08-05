@@ -3734,13 +3734,9 @@ function resetGame() {
   color:var(--st-paper);  text-shadow:0 0 22px rgba(232,163,61,.42);text-align:center;white-space:nowrap;padding:0 1rem}
 
 .ink-wipe{
-  -webkit-mask-image:linear-gradient(115deg,#000 0%,#000 46%,transparent 56%,transparent 100%);
-          mask-image:linear-gradient(115deg,#000 0%,#000 46%,transparent 56%,transparent 100%);
-  -webkit-mask-size:260% 100%;mask-size:260% 100%;
-  -webkit-mask-position:100% 0;mask-position:100% 0;
-  animation:inkWipe .9s var(--st-ease) both;will-change:mask-position;
+  animation:inkWipe .7s var(--st-ease) both;will-change:opacity,filter;
 }
-@keyframes inkWipe{from{mask-position:100% 0;-webkit-mask-position:100% 0;opacity:.15}to{mask-position:0% 0;-webkit-mask-position:0% 0;opacity:1}}
+@keyframes inkWipe{from{opacity:.12;filter:blur(10px) contrast(.88)}to{opacity:1;filter:none}}
 .ink-wash{position:fixed;inset:0;z-index:460;pointer-events:none;opacity:0;
   background:radial-gradient(120% 90% at 50% 50%, color-mix(in srgb,var(--st-ink) 78%, var(--st-lamp)) , transparent 68%);
   filter:url(#st-inkbleed);transition:opacity .9s var(--st-ease)}
@@ -3750,7 +3746,7 @@ function resetGame() {
 @keyframes truthReveal{from{opacity:0;filter:blur(6px) contrast(.6);transform:translateY(6px)}to{opacity:1;filter:none;transform:none}}
 
 @media (prefers-reduced-motion:reduce){
-  .ink-wipe{animation:none;-webkit-mask-image:none;mask-image:none;opacity:1}
+  .ink-wipe{animation:none;opacity:1}
   .exile-beam{transition:none;transform:translate(-50%,-50%) scale(1);opacity:1}
   .truth-item.reveal-st{animation:none}
 }

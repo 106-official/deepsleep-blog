@@ -396,7 +396,11 @@
       (ns.board || []).forEach(function (m) { if (m.health > 0) cur[m.uid] = m.health; });
       ps.minions.forEach(function (m) { old[m.uid] = m.health; });
       Object.keys(old).forEach(function (uid) {
-        if (!cur[uid]) fx.deaths.push({ side: sn, kind: 'minion', rect: rects['minion:' + sn + ':' + uid] });
+        if (!cur[uid]) {
+          var mm = null;
+          for (var ki = 0; ki < ps.minions.length; ki++) { if (ps.minions[ki].uid === uid) { mm = ps.minions[ki]; break; } }
+          fx.deaths.push({ side: sn, kind: 'minion', name: mm ? mm.name : '', rect: rects['minion:' + sn + ':' + uid] });
+        }
       });
       (ns.board || []).forEach(function (m) {
         if (m.health <= 0) return;
@@ -460,7 +464,15 @@
       if (!rect) return;
       var lethal = d.dead || isLethalDeath(fx, d);
       var tier = lethal ? 'lethal' : (d.amount >= 5 ? 'heavy' : 'normal');
-      playFloating(d.amount, rect, 'dmg', tier);
+      // 出牌角色(攻击者) rect：跳字从攻击者飞向受击方
+      var fromRect = null;
+      if (fx.attacker) {
+        var aEl = fx.attacker.kind === 'hero'
+          ? app.querySelector('.ca-hero-' + (d.side === 'player' ? 'enemy' : 'player'))
+          : app.querySelector('.ca-minion[data-uid="' + fx.attacker.uid + '"]');
+        if (aEl) fromRect = aEl.getBoundingClientRect();
+      }
+      playFloating(d.amount, rect, 'dmg', tier, fromRect);
       if (el2) {
         el2.classList.remove('ca-hit', 'ca-hit--lethal');
         void el2.offsetWidth;
@@ -482,9 +494,10 @@
       var rect = el2 ? el2.getBoundingClientRect() : null;
       if (rect) playFloating(h.amount, rect, 'heal');
     });
-    // 死亡化灰烬
+    // 死亡：随从燃烧溶解化灰烬；英雄维持通用灰烬
     fx.deaths.forEach(function (d) {
-      if (d.rect) playAshes(d.rect.left + d.rect.width / 2, d.rect.top + d.rect.height / 2);
+      if (d.kind === 'minion') playBurnDeath(d);
+      else if (d.rect) playAshes(d.rect.left + d.rect.width / 2, d.rect.top + d.rect.height / 2);
     });
     // 召唤翻转入场
     fx.summons.forEach(function (sm) {
@@ -532,12 +545,22 @@
   }
 
   // 伤害/治疗飘字（fixed 定位到 body，不受重渲染影响）
-  function playFloating(amount, rect, kind, tier) {
+  // fromRect：出牌角色(攻击者)位置，传入则数字从攻击者飞向受击方；不传则落在受击方头顶
+  function playFloating(amount, rect, kind, tier, fromRect) {
     var cls = 'ca-fx ca-fx-' + kind;
     if (tier) cls += ' ca-fx-' + kind + '--' + tier;
     var fx = el('div', cls, (kind === 'dmg' ? '-' : '+') + amount);
-    fx.style.left = Math.round(rect.left + rect.width / 2) + 'px';
-    fx.style.top = Math.round(rect.top + rect.height * 0.08) + 'px';
+    var vx = rect.left + rect.width / 2;
+    var vy = rect.top + rect.height * 0.12;
+    fx.style.left = Math.round(vx) + 'px';
+    fx.style.top = Math.round(vy) + 'px';
+    if (fromRect) {
+      var ax = fromRect.left + fromRect.width / 2;
+      var ay = fromRect.top + fromRect.height / 2;
+      fx.classList.add('ca-fx-toss');
+      fx.style.setProperty('--tx', Math.round(ax - vx) + 'px');
+      fx.style.setProperty('--ty', Math.round(ay - vy) + 'px');
+    }
     document.body.appendChild(fx);
     setTimeout(function () { fx.remove(); }, 1100);
   }
@@ -571,6 +594,45 @@
     puff.style.setProperty('--ay', cy + 'px');
     wrap.appendChild(puff);
     setTimeout(function () { wrap.remove(); }, 1700);
+  }
+
+  // 随从淘汰：卡牌燃烧溶解 + 余烬飘散“离开”（纯 CSS/SVG，浮层不参与 renderAll 重建）
+  function playBurnDeath(d) {
+    if (!d.rect) return;
+    var bx = d.rect.left, by = d.rect.top, bw = d.rect.width, bh = d.rect.height;
+    var burn = el('div', 'ca-burn' + (d.side === 'player' ? ' is-player' : ''));
+    burn.style.left = Math.round(bx) + 'px';
+    burn.style.top = Math.round(by) + 'px';
+    // 卡牌剪影副本
+    var card = el('div', 'ca-burn-card');
+    card.style.setProperty('--bw', Math.round(bw) + 'px');
+    card.style.setProperty('--bh', Math.round(bh) + 'px');
+    if (d.name) card.appendChild(el('div', 'ca-burn-name', d.name));
+    burn.appendChild(card);
+    // 余烬粒子（金红上飘）
+    var n = d.side === 'player' ? 26 : 18;
+    for (var i = 0; i < n; i++) {
+      var em = el('span', 'ca-ember');
+      em.style.setProperty('--ex', (Math.random() * bw).toFixed(1) + 'px');
+      em.style.setProperty('--ey', (Math.random() * bh).toFixed(1) + 'px');
+      em.style.setProperty('--es', (3 + Math.random() * 5).toFixed(1) + 'px');
+      em.style.setProperty('--edx', (Math.random() * 60 - 30).toFixed(1) + 'px');
+      em.style.setProperty('--edy', (-(70 + Math.random() * 70)).toFixed(1) + 'px');
+      em.style.setProperty('--er', (Math.random() * 420 - 210).toFixed(1) + 'deg');
+      em.style.setProperty('--ed', (0.9 + Math.random() * 0.7).toFixed(2) + 's');
+      em.style.setProperty('--el', (Math.random() * 0.25).toFixed(2) + 's');
+      burn.appendChild(em);
+    }
+    // 自己家随从：金色余烬 + “阵亡”烙印
+    if (d.side === 'player') {
+      var seal = el('div', 'ca-burn-seal');
+      seal.style.setProperty('--bw', Math.round(bw) + 'px');
+      seal.style.setProperty('--bh', Math.round(bh) + 'px');
+      seal.appendChild(el('span', null, '阵亡'));
+      burn.appendChild(seal);
+    }
+    document.body.appendChild(burn);
+    setTimeout(function () { burn.remove(); }, 1700);
   }
 
   // 换人：幽灵卡从角色牌区 3D 翻开飞向出战区

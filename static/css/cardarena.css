@@ -2840,3 +2840,367 @@
   .ca-ambient, .ca-mote { display: none !important; }
   .ca-card:hover:not(.disabled) .ca-card-ring { animation: none !important; }
 }
+
+/* =====================================================================
+   CardArena v1.4.0 — 随从燃烧淘汰 + 金质跳字 + 四块精致化
+   ===================================================================== */
+
+/* ---- 随从淘汰：卡牌燃烧溶解 + 余烬飘散“离开” ---- */
+.ca-burn { position: fixed; width: 0; height: 0; pointer-events: none; z-index: 92; }
+.ca-burn-card {
+  position: absolute; left: 0; top: 0;
+  width: var(--bw, 80px); height: var(--bh, 110px);
+  border-radius: 8px; overflow: hidden; transform-origin: 50% 60%;
+  background: linear-gradient(160deg, #2a2014, #3c2c16 55%, #1c140a);
+  border: 1px solid rgba(232, 198, 74, 0.5);
+  box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.6);
+  animation: ca-burn-card 0.95s ease-in forwards;
+}
+.ca-burn-card::after {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(circle at 50% 38%, rgba(255, 184, 96, 0.95), rgba(255, 96, 32, 0.25) 45%, transparent 70%);
+  mix-blend-mode: screen;
+  animation: ca-burn-glow 0.95s ease-in forwards;
+}
+.ca-burn-card .ca-burn-name {
+  position: absolute; left: 0; right: 0; bottom: 9%;
+  text-align: center; font-family: var(--cardarena-serif, Georgia, serif);
+  font-size: 0.6rem; color: #f3d79a; text-shadow: 0 1px 2px #000; letter-spacing: 0.04em;
+}
+@keyframes ca-burn-card {
+  0%   { opacity: 1; transform: scale(1) rotate(0deg); filter: brightness(1); }
+  16%  { filter: brightness(1.9) saturate(1.3); }
+  52%  { opacity: 0.92; transform: scale(1.02) rotate(-1.4deg); filter: brightness(1.4) sepia(0.35); }
+  100% { opacity: 0; transform: scale(0.84) rotate(3deg) translateY(-12px); filter: brightness(0.3) sepia(0.85); }
+}
+@keyframes ca-burn-glow {
+  0% { opacity: 0; } 15% { opacity: 1; } 60% { opacity: 0.7; } 100% { opacity: 0; }
+}
+.ca-ember {
+  position: absolute; left: var(--ex, 0px); top: var(--ey, 0px);
+  width: var(--es, 5px); height: var(--es, 5px);
+  border-radius: 50% 45% 55% 40%;
+  background: radial-gradient(circle at 35% 35%, #ffd27a, #ff7a2a 55%, #7a2a0a);
+  box-shadow: 0 0 7px rgba(255, 140, 50, 0.85), 0 0 14px rgba(255, 90, 30, 0.4);
+  opacity: 0;
+  animation: ca-ember-rise var(--ed, 1.1s) ease-out var(--el, 0s) forwards;
+}
+@keyframes ca-ember-rise {
+  0%   { opacity: 0; transform: translate(0, 0) scale(0.6); }
+  12%  { opacity: 1; }
+  100% { opacity: 0; transform: translate(var(--edx, 10px), var(--edy, -96px)) scale(0.25) rotate(var(--er, 200deg)); }
+}
+.ca-burn.is-player .ca-burn-card {
+  border-color: rgba(255, 224, 150, 0.85);
+  box-shadow: inset 0 0 22px rgba(120, 80, 20, 0.6), 0 0 26px rgba(232, 198, 74, 0.5);
+}
+.ca-burn.is-player .ca-ember {
+  background: radial-gradient(circle at 35% 35%, #fff3c4, #e8c64a 55%, #8a6a2f);
+  box-shadow: 0 0 8px rgba(232, 198, 74, 0.9), 0 0 16px rgba(255, 210, 110, 0.5);
+}
+.ca-burn-seal {
+  position: absolute; left: 0; top: 0;
+  width: var(--bw, 80px); height: var(--bh, 110px);
+  display: flex; align-items: center; justify-content: center;
+  pointer-events: none; animation: ca-burn-seal 1.15s ease-out forwards;
+}
+.ca-burn-seal span {
+  font-family: var(--cardarena-serif, Georgia, serif);
+  font-size: 1rem; font-weight: 700; letter-spacing: 0.34em; text-indent: 0.34em;
+  color: #ffe9a8; text-shadow: 0 0 10px rgba(232, 198, 74, 0.9), 0 2px 0 #000;
+  border: 1px solid rgba(232, 198, 74, 0.6); border-radius: 3px;
+  padding: 2px 8px; background: rgba(40, 28, 10, 0.45);
+}
+@keyframes ca-burn-seal {
+  0% { opacity: 0; transform: scale(0.6); }
+  25% { opacity: 1; transform: scale(1.05); }
+  70% { opacity: 1; }
+  100% { opacity: 0; transform: scale(1.1) translateY(-8px); }
+}
+
+/* ---- 跳字：金质渐变衬线数字（离线）---- */
+.ca-fx-dmg, .ca-fx-heal {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-variant-numeric: lining-nums tabular-nums;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  text-shadow: none;
+}
+.ca-fx-dmg {
+  background: linear-gradient(180deg, #fff6cf 0%, #ffd86b 34%, #e8c64a 60%, #b8860b 100%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+  filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.6)) drop-shadow(0 0 7px rgba(255, 200, 80, 0.55));
+}
+.ca-fx-heal {
+  background: linear-gradient(180deg, #e2ffee 0%, #8ff0b4 50%, #3fcf7a 100%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+  filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.5)) drop-shadow(0 0 7px rgba(80, 220, 130, 0.5));
+}
+.ca-fx-dmg--heavy {
+  font-size: 1.45rem;
+  background: linear-gradient(180deg, #fff3c4 0%, #ffd86b 40%, #e8c64a 100%);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent;
+}
+.ca-fx-dmg--lethal {
+  font-size: 1.7rem;
+  background: linear-gradient(180deg, #ffe2c0 0%, #ff9a4d 45%, #ff4d3d 100%);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent;
+  filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.6)) drop-shadow(0 0 10px rgba(255, 90, 60, 0.7));
+}
+/* 从出牌角色(攻击者)飞向受击方 */
+.ca-fx-toss { animation: ca-fx-toss 0.9s cubic-bezier(0.2, 0.7, 0.3, 1) forwards; }
+@keyframes ca-fx-toss {
+  0%   { opacity: 0; transform: translate(calc(-50% + var(--tx, 0px)), var(--ty, 0px)) scale(0.45); }
+  20%  { opacity: 1; transform: translate(-50%, calc(var(--ty, 0px) * 0.38)) scale(1.22); }
+  62%  { opacity: 1; transform: translate(-50%, -6px) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -54px) scale(0.96); }
+}
+
+/* ---- 四块精致化 ---- */
+/* ① 召唤/落定：更 Q 弹的回弹 */
+@keyframes ca-minion-enter {
+  0%   { opacity: 0; transform: translateY(14px) scale(0.82); }
+  55%  { opacity: 1; transform: translateY(-6px) scale(1.05); }
+  78%  { transform: translateY(2px) scale(0.98); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+/* ② 受击反馈层次：闪光更有层、震屏更克制精准 */
+@keyframes ca-hit {
+  0%   { box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.95), 0 0 26px 8px rgba(255, 240, 200, 0.85); filter: brightness(2.1); }
+  45%  { box-shadow: inset 0 0 0 1px rgba(255, 220, 150, 0.6), 0 0 14px 3px rgba(255, 210, 110, 0.5); filter: brightness(1.5); }
+  100% { box-shadow: none; filter: brightness(1); }
+}
+@keyframes ca-hit-lethal {
+  0%   { box-shadow: inset 0 0 0 3px rgba(255, 120, 80, 0.95), 0 0 34px 12px rgba(255, 90, 50, 0.8); filter: brightness(2.4) saturate(1.4); }
+  50%  { box-shadow: inset 0 0 0 1px rgba(255, 140, 90, 0.6), 0 0 16px 4px rgba(255, 90, 50, 0.5); filter: brightness(1.6) saturate(1.2); }
+  100% { box-shadow: none; filter: brightness(1); }
+}
+@keyframes ca-shake {
+  0%, 100% { transform: translate(0, 0); }
+  15% { transform: translate(-3px, 1px); }
+  30% { transform: translate(3px, -1px); }
+  45% { transform: translate(-2px, 1px); }
+  60% { transform: translate(2px, -1px); }
+  80% { transform: translate(-1px, 0); }
+}
+/* ③ 微交互：hover 能量宝石脉冲 + 选中共振更明显 */
+.ca-card:hover:not(.disabled) .ca-card-star,
+.ca-minion:hover:not(.disabled) .ca-minion-star { animation: ca-gem-pulse 1.4s ease-in-out infinite; }
+@keyframes ca-gem-pulse {
+  0%, 100% { filter: drop-shadow(0 0 4px rgba(232, 198, 74, 0.5)); transform: scale(1); }
+  50% { filter: drop-shadow(0 0 12px rgba(255, 220, 120, 0.95)); transform: scale(1.12); }
+}
+.ca-card:hover:not(.disabled) .ca-card-ring { opacity: 0.85 !important; }
+/* ④ 胜负仪式：光柱更细、碎裂更碎更慢、战报更雅 */
+.ca-lightbeam {
+  width: 54px;
+  background: linear-gradient(180deg, rgba(255, 240, 190, 0), rgba(255, 230, 150, 0.5) 40%, rgba(232, 198, 74, 0.85));
+  filter: blur(1.5px);
+}
+.ca-win-box.show .ca-lightbeam { animation: caBeam 2s ease-out 0.3s forwards; }
+.ca-shatter::before, .ca-shatter::after {
+  background:
+    repeating-linear-gradient(135deg, rgba(20, 14, 8, 0) 0 6px, rgba(60, 42, 22, 0.28) 6px 7px),
+    repeating-linear-gradient(45deg, rgba(40, 28, 14, 0) 0 9px, rgba(90, 66, 34, 0.22) 9px 10px),
+    linear-gradient(180deg, rgba(70, 50, 26, 0), rgba(40, 28, 14, 0.5));
+}
+.ca-lose-box.show .ca-shatter::before { animation: caShatter 0.9s ease-out 0.2s forwards; }
+.ca-lose-box.show .ca-shatter::after { animation: caShatter 1.1s ease-out 0.35s forwards; }
+.ca-gameover-report .ca-report-row { animation: ca-report-row 0.5s ease-out both; }
+.ca-gameover-report .ca-report-row:nth-child(1) { animation-delay: 0.35s; }
+.ca-gameover-report .ca-report-row:nth-child(2) { animation-delay: 0.45s; }
+.ca-gameover-report .ca-report-row:nth-child(3) { animation-delay: 0.55s; }
+.ca-gameover-report .ca-report-row:nth-child(4) { animation-delay: 0.65s; }
+@keyframes ca-report-row { 0% { opacity: 0; transform: translateX(-10px); } 100% { opacity: 1; transform: translateX(0); } }
+
+/* 降级：reduced-motion 时燃烧/跳字静态可见、屏蔽常驻微动 */
+@media (prefers-reduced-motion: reduce) {
+  .ca-burn-card, .ca-ember, .ca-burn-seal, .ca-fx-toss, .ca-gem-pulse { animation: none !important; }
+  .ca-burn-card { opacity: 0.6; }
+  .ca-ember { opacity: 0.8; }
+  .ca-burn-seal { opacity: 1; }
+}
+
+/* =====================================================================
+   CardArena v1.4.0 — 随从燃烧淘汰 + 金质跳字 + 四块精致化
+   ===================================================================== */
+
+/* ---- 随从淘汰：卡牌燃烧溶解 + 余烬飘散“离开” ---- */
+.ca-burn { position: fixed; width: 0; height: 0; pointer-events: none; z-index: 92; }
+.ca-burn-card {
+  position: absolute; left: 0; top: 0;
+  width: var(--bw, 80px); height: var(--bh, 110px);
+  border-radius: 8px; overflow: hidden; transform-origin: 50% 60%;
+  background: linear-gradient(160deg, #2a2014, #3c2c16 55%, #1c140a);
+  border: 1px solid rgba(232, 198, 74, 0.5);
+  box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.6);
+  animation: ca-burn-card 0.95s ease-in forwards;
+}
+.ca-burn-card::after {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(circle at 50% 38%, rgba(255, 184, 96, 0.95), rgba(255, 96, 32, 0.25) 45%, transparent 70%);
+  mix-blend-mode: screen;
+  animation: ca-burn-glow 0.95s ease-in forwards;
+}
+.ca-burn-card .ca-burn-name {
+  position: absolute; left: 0; right: 0; bottom: 9%;
+  text-align: center; font-family: var(--cardarena-serif, Georgia, serif);
+  font-size: 0.6rem; color: #f3d79a; text-shadow: 0 1px 2px #000; letter-spacing: 0.04em;
+}
+@keyframes ca-burn-card {
+  0%   { opacity: 1; transform: scale(1) rotate(0deg); filter: brightness(1); }
+  16%  { filter: brightness(1.9) saturate(1.3); }
+  52%  { opacity: 0.92; transform: scale(1.02) rotate(-1.4deg); filter: brightness(1.4) sepia(0.35); }
+  100% { opacity: 0; transform: scale(0.84) rotate(3deg) translateY(-12px); filter: brightness(0.3) sepia(0.85); }
+}
+@keyframes ca-burn-glow {
+  0% { opacity: 0; } 15% { opacity: 1; } 60% { opacity: 0.7; } 100% { opacity: 0; }
+}
+.ca-ember {
+  position: absolute; left: var(--ex, 0px); top: var(--ey, 0px);
+  width: var(--es, 5px); height: var(--es, 5px);
+  border-radius: 50% 45% 55% 40%;
+  background: radial-gradient(circle at 35% 35%, #ffd27a, #ff7a2a 55%, #7a2a0a);
+  box-shadow: 0 0 7px rgba(255, 140, 50, 0.85), 0 0 14px rgba(255, 90, 30, 0.4);
+  opacity: 0;
+  animation: ca-ember-rise var(--ed, 1.1s) ease-out var(--el, 0s) forwards;
+}
+@keyframes ca-ember-rise {
+  0%   { opacity: 0; transform: translate(0, 0) scale(0.6); }
+  12%  { opacity: 1; }
+  100% { opacity: 0; transform: translate(var(--edx, 10px), var(--edy, -96px)) scale(0.25) rotate(var(--er, 200deg)); }
+}
+.ca-burn.is-player .ca-burn-card {
+  border-color: rgba(255, 224, 150, 0.85);
+  box-shadow: inset 0 0 22px rgba(120, 80, 20, 0.6), 0 0 26px rgba(232, 198, 74, 0.5);
+}
+.ca-burn.is-player .ca-ember {
+  background: radial-gradient(circle at 35% 35%, #fff3c4, #e8c64a 55%, #8a6a2f);
+  box-shadow: 0 0 8px rgba(232, 198, 74, 0.9), 0 0 16px rgba(255, 210, 110, 0.5);
+}
+.ca-burn-seal {
+  position: absolute; left: 0; top: 0;
+  width: var(--bw, 80px); height: var(--bh, 110px);
+  display: flex; align-items: center; justify-content: center;
+  pointer-events: none; animation: ca-burn-seal 1.15s ease-out forwards;
+}
+.ca-burn-seal span {
+  font-family: var(--cardarena-serif, Georgia, serif);
+  font-size: 1rem; font-weight: 700; letter-spacing: 0.34em; text-indent: 0.34em;
+  color: #ffe9a8; text-shadow: 0 0 10px rgba(232, 198, 74, 0.9), 0 2px 0 #000;
+  border: 1px solid rgba(232, 198, 74, 0.6); border-radius: 3px;
+  padding: 2px 8px; background: rgba(40, 28, 10, 0.45);
+}
+@keyframes ca-burn-seal {
+  0% { opacity: 0; transform: scale(0.6); }
+  25% { opacity: 1; transform: scale(1.05); }
+  70% { opacity: 1; }
+  100% { opacity: 0; transform: scale(1.1) translateY(-8px); }
+}
+
+/* ---- 跳字：金质渐变衬线数字（离线）---- */
+.ca-fx-dmg, .ca-fx-heal {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-variant-numeric: lining-nums tabular-nums;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  text-shadow: none;
+}
+.ca-fx-dmg {
+  background: linear-gradient(180deg, #fff6cf 0%, #ffd86b 34%, #e8c64a 60%, #b8860b 100%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+  filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.6)) drop-shadow(0 0 7px rgba(255, 200, 80, 0.55));
+}
+.ca-fx-heal {
+  background: linear-gradient(180deg, #e2ffee 0%, #8ff0b4 50%, #3fcf7a 100%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+  filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.5)) drop-shadow(0 0 7px rgba(80, 220, 130, 0.5));
+}
+.ca-fx-dmg--heavy {
+  font-size: 1.45rem;
+  background: linear-gradient(180deg, #fff3c4 0%, #ffd86b 40%, #e8c64a 100%);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent;
+}
+.ca-fx-dmg--lethal {
+  font-size: 1.7rem;
+  background: linear-gradient(180deg, #ffe2c0 0%, #ff9a4d 45%, #ff4d3d 100%);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent;
+  filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.6)) drop-shadow(0 0 10px rgba(255, 90, 60, 0.7));
+}
+/* 从出牌角色(攻击者)飞向受击方 */
+.ca-fx-toss { animation: ca-fx-toss 0.9s cubic-bezier(0.2, 0.7, 0.3, 1) forwards; }
+@keyframes ca-fx-toss {
+  0%   { opacity: 0; transform: translate(calc(-50% + var(--tx, 0px)), var(--ty, 0px)) scale(0.45); }
+  20%  { opacity: 1; transform: translate(-50%, calc(var(--ty, 0px) * 0.38)) scale(1.22); }
+  62%  { opacity: 1; transform: translate(-50%, -6px) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -54px) scale(0.96); }
+}
+
+/* ---- 四块精致化 ---- */
+/* ① 召唤/落定：更 Q 弹的回弹 */
+@keyframes ca-minion-enter {
+  0%   { opacity: 0; transform: translateY(14px) scale(0.82); }
+  55%  { opacity: 1; transform: translateY(-6px) scale(1.05); }
+  78%  { transform: translateY(2px) scale(0.98); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+/* ② 受击反馈层次：闪光更有层、震屏更克制精准 */
+@keyframes ca-hit {
+  0%   { box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.95), 0 0 26px 8px rgba(255, 240, 200, 0.85); filter: brightness(2.1); }
+  45%  { box-shadow: inset 0 0 0 1px rgba(255, 220, 150, 0.6), 0 0 14px 3px rgba(255, 210, 110, 0.5); filter: brightness(1.5); }
+  100% { box-shadow: none; filter: brightness(1); }
+}
+@keyframes ca-hit-lethal {
+  0%   { box-shadow: inset 0 0 0 3px rgba(255, 120, 80, 0.95), 0 0 34px 12px rgba(255, 90, 50, 0.8); filter: brightness(2.4) saturate(1.4); }
+  50%  { box-shadow: inset 0 0 0 1px rgba(255, 140, 90, 0.6), 0 0 16px 4px rgba(255, 90, 50, 0.5); filter: brightness(1.6) saturate(1.2); }
+  100% { box-shadow: none; filter: brightness(1); }
+}
+@keyframes ca-shake {
+  0%, 100% { transform: translate(0, 0); }
+  15% { transform: translate(-3px, 1px); }
+  30% { transform: translate(3px, -1px); }
+  45% { transform: translate(-2px, 1px); }
+  60% { transform: translate(2px, -1px); }
+  80% { transform: translate(-1px, 0); }
+}
+/* ③ 微交互：hover 能量宝石脉冲 + 选中共振更明显 */
+.ca-card:hover:not(.disabled) .ca-card-star,
+.ca-minion:hover:not(.disabled) .ca-minion-star { animation: ca-gem-pulse 1.4s ease-in-out infinite; }
+@keyframes ca-gem-pulse {
+  0%, 100% { filter: drop-shadow(0 0 4px rgba(232, 198, 74, 0.5)); transform: scale(1); }
+  50% { filter: drop-shadow(0 0 12px rgba(255, 220, 120, 0.95)); transform: scale(1.12); }
+}
+.ca-card:hover:not(.disabled) .ca-card-ring { opacity: 0.85 !important; }
+/* ④ 胜负仪式：光柱更细、碎裂更碎更慢、战报更雅 */
+.ca-lightbeam {
+  width: 54px;
+  background: linear-gradient(180deg, rgba(255, 240, 190, 0), rgba(255, 230, 150, 0.5) 40%, rgba(232, 198, 74, 0.85));
+  filter: blur(1.5px);
+}
+.ca-win-box.show .ca-lightbeam { animation: caBeam 2s ease-out 0.3s forwards; }
+.ca-shatter::before, .ca-shatter::after {
+  background:
+    repeating-linear-gradient(135deg, rgba(20, 14, 8, 0) 0 6px, rgba(60, 42, 22, 0.28) 6px 7px),
+    repeating-linear-gradient(45deg, rgba(40, 28, 14, 0) 0 9px, rgba(90, 66, 34, 0.22) 9px 10px),
+    linear-gradient(180deg, rgba(70, 50, 26, 0), rgba(40, 28, 14, 0.5));
+}
+.ca-lose-box.show .ca-shatter::before { animation: caShatter 0.9s ease-out 0.2s forwards; }
+.ca-lose-box.show .ca-shatter::after { animation: caShatter 1.1s ease-out 0.35s forwards; }
+.ca-gameover-report .ca-report-row { animation: ca-report-row 0.5s ease-out both; }
+.ca-gameover-report .ca-report-row:nth-child(1) { animation-delay: 0.35s; }
+.ca-gameover-report .ca-report-row:nth-child(2) { animation-delay: 0.45s; }
+.ca-gameover-report .ca-report-row:nth-child(3) { animation-delay: 0.55s; }
+.ca-gameover-report .ca-report-row:nth-child(4) { animation-delay: 0.65s; }
+@keyframes ca-report-row { 0% { opacity: 0; transform: translateX(-10px); } 100% { opacity: 1; transform: translateX(0); } }
+
+/* 降级：reduced-motion 时燃烧/跳字静态可见、屏蔽常驻微动 */
+@media (prefers-reduced-motion: reduce) {
+  .ca-burn-card, .ca-ember, .ca-burn-seal, .ca-fx-toss, .ca-gem-pulse { animation: none !important; }
+  .ca-burn-card { opacity: 0.6; }
+  .ca-ember { opacity: 0.8; }
+  .ca-burn-seal { opacity: 1; }
+}

@@ -1362,6 +1362,28 @@ const FISH_ROLES = {
   martyr:     { name: '殉道D',   faction: '坏鱼阵营', factionClass: 'evil',  icon: '', badge: 'NEW', desc: '<strong>死亡后</strong>会立即杀死一只好鱼作为报复！同样会伪装。', tip: '你死了也要拉垫背。好鱼流放你之前，先确认当晚还有谁会死、能否承受报复；必要时留你到夜杀解决。' },
 };
 
+// 鱼拟人卡：生成式半鱼半人肖像（静态资源，构建时由 static/ 复制到站点根 /images/sleeptown/）
+const FISH_IMG = {
+  slacker:     '/images/sleeptown/fish-slacker.png',
+  detective:   '/images/sleeptown/fish-detective.png',
+  judge:       '/images/sleeptown/fish-judge.png',
+  gossip:      '/images/sleeptown/fish-gossip.png',
+  sleepwalker: '/images/sleeptown/fish-sleepwalker.png',
+  coroner:     '/images/sleeptown/fish-coroner.png',
+  mage:        '/images/sleeptown/fish-mage.png',
+  trickster:   '/images/sleeptown/fish-trickster.png',
+  orca:        '/images/sleeptown/fish-orca.png',
+  phantom:     '/images/sleeptown/fish-phantom.png',
+  evil:        '/images/sleeptown/fish-evil.png',
+  martyr:      '/images/sleeptown/fish-martyr.png',
+  sealed:      '/images/sleeptown/sealed-dossier.png'
+};
+function getRolePortrait(role) {
+  const src = FISH_IMG[role] || FISH_IMG.slacker;
+  const name = (FISH_ROLES[role] && FISH_ROLES[role].name) || '鱼';
+  return `<img class="role-img" src="${src}" alt="${name}" loading="lazy">`;
+}
+
 // ==================== 阵营分类（单一真相源，由 FISH_ROLES 派生）====================
 const GOOD_ROLES = Object.keys(FISH_ROLES).filter(r => FISH_ROLES[r].factionClass === 'good');
 const EVIL_ROLES = Object.keys(FISH_ROLES).filter(r => FISH_ROLES[r].factionClass === 'evil');
@@ -1380,7 +1402,7 @@ function switchFishRole(roleId) {
   document.getElementById('home-view-fish').classList.add('active');
   // 渲染鱼详情
   document.getElementById('fish-detail-header').innerHTML = `
-    <span class="fish-detail-icon">${getRoleAvatar(roleId)}</span>
+    <span class="fish-detail-icon">${getRolePortrait(roleId)}</span>
     <span class="fish-detail-name">${role.name}</span>
     ${role.badge ? `<span class="new-badge">${role.badge}</span>` : ''}
     <span class="fish-faction-badge faction-${role.factionClass}">${role.faction}</span>
@@ -1875,7 +1897,7 @@ function renderFishes() {
     if (!fish.alive) {
       fishCard.className = `fish-card dead`;
       fishCard.innerHTML = `
-        <div class="fish-avatar dead-avatar">${getRoleAvatar(fish.role)}</div>
+        <div class="fish-avatar dead-avatar">${getRolePortrait(fish.role)}</div>
         <div class="fish-number">#${index + 1}</div>
         <div class="fish-status">已牺牲</div>
         <div class="fish-real-role">${getRoleName(fish.role)}</div>
@@ -1901,7 +1923,7 @@ function renderFishes() {
         : (gameState.phase === 'gameOver' ? '<span class="fish-stamp ok">已结案</span>' : '');
 
       fishCard.innerHTML = `
-        <div class="fish-avatar revealed-avatar">${getRoleAvatar(displayRole)}</div>
+        <div class="fish-avatar revealed-avatar">${getRolePortrait(displayRole)}</div>
         <div class="fish-number">#${index + 1}</div>
         <div class="fish-role-name">${getRoleName(displayRole)}</div>
         ${stamp}
@@ -1920,7 +1942,7 @@ function renderFishes() {
     } else {
       fishCard.className = `fish-card`;
       fishCard.innerHTML = `
-        <div class="fish-avatar hidden-avatar">?</div>
+        <div class="fish-avatar hidden-avatar"><img class="role-img sealed-img" src="/images/sleeptown/sealed-dossier.png" alt="未翻开"></div>
         <div class="fish-number">#${index + 1}</div>
         <div class="fish-hint">${gameState.gameMode === 'inquiry' ? '点击问询' : '点击流放'}</div>
         <span class="fish-stamp pending">待取证</span>
@@ -2996,6 +3018,7 @@ function resetGame() {
 }
 .fish-detail-icon { display: inline-flex; align-items: center; }
 .fish-detail-icon .role-svg { width: 44px; height: 44px; color: var(--st-lamp); }
+.fish-detail-icon .role-img { width: 76px; height: 76px; border-radius: 16px; border: 2px solid var(--st-lamp); box-shadow: 0 2px 12px color-mix(in srgb, var(--st-lamp) 35%, transparent); margin: 0 0.5rem 0 0; object-fit: cover; object-position: center 22%; background: var(--st-bg-glow); }
 .fish-detail-name { font-family: var(--st-serif); font-size: 1.3rem; font-weight: 700; color: var(--st-ink); }
 .fish-detail-body { color: var(--st-ink-soft); line-height: 1.8; font-size: 0.95rem; }
 
@@ -3322,13 +3345,21 @@ function resetGame() {
 .fish-card.revealed .role-svg { color: var(--st-lamp); }
 .fish-card.dead .role-svg { color: var(--st-ink-faint); }
 .hidden-avatar {
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 52px; height: 52px; border-radius: 50%;
-  border: 2px solid var(--st-border-strong);
-  font-family: var(--st-typewriter); font-size: 2rem; font-weight: 700;
-  color: var(--st-ink-faint);
-  background: radial-gradient(circle at 50% 40%, var(--st-bg-glow), transparent 70%);
+  display: flex; align-items: center; justify-content: center;
+  border: none; background: none; font-size: 0;
 }
+/* 鱼拟人卡：生成式半鱼半人肖像，替代原线稿 SVG 角色徽记 */
+.role-img {
+  width: 80px; height: 80px; border-radius: 50%;
+  object-fit: cover; object-position: center 22%;
+  display: block; margin: 0 auto;
+  border: 2px solid var(--st-border-strong);
+  box-shadow: 0 2px 10px color-mix(in srgb, var(--st-ink) 32%, transparent);
+  background: var(--st-bg-glow);
+}
+.fish-card.revealed .role-img { border-color: var(--st-lamp); box-shadow: 0 0 16px color-mix(in srgb, var(--st-lamp) 45%, transparent); }
+.fish-card.dead .role-img { filter: grayscale(0.85) brightness(0.9); }
+.sealed-img { border-color: color-mix(in srgb, var(--st-lamp) 60%, var(--st-border-strong)); opacity: 0.96; }
 .fish-number { font-family: var(--st-typewriter); font-size: 0.8rem; color: var(--st-ink-faint); letter-spacing: 0.05em; }
 .fish-role-name { font-family: var(--st-serif); color: var(--st-ink); font-size: 1.05rem; margin-top: 0.1rem; }
 .fish-hint { color: var(--st-ink-faint); font-family: var(--st-typewriter); font-size: 0.75rem; margin-top: 0.15rem; letter-spacing: 0.04em; }

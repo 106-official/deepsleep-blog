@@ -154,6 +154,10 @@ theme = ["PaperMod"]
     lineNos = true
     style = "monokai"
 
+# 立信学习：物理路径 content/lixin-learn/，URL 保持 /lixin/learn/ 前缀
+[permalinks]
+  'lixin-learn' = '/lixin/learn/:sections[1:]/:slug/'
+
 # 相关内容
 [related]
   includeNewer = true

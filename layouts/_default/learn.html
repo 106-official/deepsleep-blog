@@ -21,6 +21,7 @@
       {{- if hasPrefix $rel "/learn/acca/" }}{{ $activeCert = "acca" }}{{ end -}}
       {{- if hasPrefix $rel "/learn/network-protocols/" }}{{ $activeCert = "net" }}{{ end -}}
       {{- if hasPrefix $rel "/learn/three-js/" }}{{ $activeCert = "web" }}{{ end -}}
+      {{- if hasPrefix $rel "/learn/llm-from-scratch/" }}{{ $activeCert = "llm" }}{{ end -}}
       {{- /* ============= CPA ============= */ -}}
       {{- if or (eq $activeCert "") (eq $activeCert "cpa") -}}
       {{- $cpa := .Site.GetPage "/learn/cpa" -}}
@@ -121,6 +122,24 @@
           <span>WEB · Three.js 教程</span>
         </a>
         {{- range $web.RegularPages.ByParam "weight" -}}
+        <a href="{{ .Permalink }}" class="learn-nav-link {{ if eq $.Permalink .Permalink }}active{{ end }}">
+          <span class="learn-nav-num">{{ printf "%02d" .Params.weight }}</span>
+          <span class="learn-nav-text">{{ .Title }}</span>
+        </a>
+        {{- end -}}
+      </div>
+      {{- end -}}
+      {{- end -}}
+
+      {{- /* ============= LLM / 从零训练 LLM ============= */ -}}
+      {{- if or (eq $activeCert "") (eq $activeCert "llm") -}}
+      {{- $llm := .Site.GetPage "/learn/llm-from-scratch" -}}
+      {{- if $llm -}}
+      <div class="learn-nav-group learn-nav-cert">
+        <a href="{{ $llm.Permalink }}" class="learn-nav-group-title {{ if eq $activeCert "llm" }}current{{ end }}">
+          <span>LLM · 从零训练大模型</span>
+        </a>
+        {{- range $llm.RegularPages.ByParam "weight" -}}
         <a href="{{ .Permalink }}" class="learn-nav-link {{ if eq $.Permalink .Permalink }}active{{ end }}">
           <span class="learn-nav-num">{{ printf "%02d" .Params.weight }}</span>
           <span class="learn-nav-text">{{ .Title }}</span>

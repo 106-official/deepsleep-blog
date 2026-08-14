@@ -1,6 +1,6 @@
 ---
 title: "学习路径"
-description: "系统化学习路径 — CPA / ACCA / 网络协议 / Three.js Web 3D 教程"
+description: "系统化学习路径 — CPA / ACCA / 网络协议 / Three.js Web 3D / 从零训练 LLM 教程"
 slug: "learn"
 ---
 
@@ -55,6 +55,19 @@ slug: "learn"
     <div class="learn-card-meta">
       <span>8 章完整教程</span>
       <span>场景到优化</span>
+      <span>可运行示例</span>
+    </div>
+    <span class="learn-card-btn">查看路径 →</span>
+  </a>
+
+  <a href="/learn/llm-from-scratch/" class="learn-card learn-card-llm">
+    <div class="learn-card-icon">🤖</div>
+    <div class="learn-card-cert">LLM</div>
+    <h2 class="learn-card-title">从零训练大模型</h2>
+    <p class="learn-card-en">Train LLM from Scratch</p>
+    <div class="learn-card-meta">
+      <span>8 章完整教程</span>
+      <span>数据到部署</span>
       <span>可运行示例</span>
     </div>
     <span class="learn-card-btn">查看路径 →</span>

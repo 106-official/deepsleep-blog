@@ -22,6 +22,9 @@ Thumbs.db
 # Brainstorm skill temp
 .superpowers/
 
+# Local agent workspace notes (not for the public Pages site)
+.workbuddy/
+
 /node_modules/
 
 # CPA PDF source text (extracted, not tracked in git)

@@ -1,6 +1,6 @@
 ---
 title: "学习路径"
-description: "系统化学习路径 — CPA / ACCA / 网络协议 / Three.js Web 3D / 从零训练 LLM 教程"
+description: "系统化学习路径 — CPA / ACCA / 网络协议 / Three.js Web 3D / 从零训练 LLM / 网络安全"
 slug: "learn"
 ---
 
@@ -69,6 +69,19 @@ slug: "learn"
       <span>8 章完整教程</span>
       <span>数据到部署</span>
       <span>可运行示例</span>
+    </div>
+    <span class="learn-card-btn">查看路径 →</span>
+  </a>
+
+  <a href="/learn/network-security/" class="learn-card learn-card-sec">
+    <div class="learn-card-icon">🛡️</div>
+    <div class="learn-card-cert">SEC</div>
+    <h2 class="learn-card-title">网络安全</h2>
+    <p class="learn-card-en">Network Security</p>
+    <div class="learn-card-meta">
+      <span>10 章完整教程</span>
+      <span>攻防闭环</span>
+      <span>防御视角</span>
     </div>
     <span class="learn-card-btn">查看路径 →</span>
   </a>

@@ -22,6 +22,7 @@
       {{- if hasPrefix $rel "/learn/network-protocols/" }}{{ $activeCert = "net" }}{{ end -}}
       {{- if hasPrefix $rel "/learn/three-js/" }}{{ $activeCert = "web" }}{{ end -}}
       {{- if hasPrefix $rel "/learn/llm-from-scratch/" }}{{ $activeCert = "llm" }}{{ end -}}
+      {{- if hasPrefix $rel "/learn/network-security/" }}{{ $activeCert = "sec" }}{{ end -}}
       {{- /* ============= CPA ============= */ -}}
       {{- if or (eq $activeCert "") (eq $activeCert "cpa") -}}
       {{- $cpa := .Site.GetPage "/learn/cpa" -}}
@@ -140,6 +141,22 @@
           <span>LLM · 从零训练大模型</span>
         </a>
         {{- range $llm.RegularPages.ByParam "weight" -}}
+        <a href="{{ .Permalink }}" class="learn-nav-link {{ if eq $.Permalink .Permalink }}active{{ end }}">
+          <span class="learn-nav-num">{{ printf "%02d" .Params.weight }}</span>
+          <span class="learn-nav-text">{{ .Title }}</span>
+        </a>
+        {{- end -}}
+      </div>
+      {{- end -}}
+      {{- /* ============= SEC / 网络安全 ============= */ -}}
+      {{- if or (eq $activeCert "") (eq $activeCert "sec") -}}
+      {{- $sec := .Site.GetPage "/learn/network-security" -}}
+      {{- if $sec -}}
+      <div class="learn-nav-group learn-nav-cert">
+        <a href="{{ $sec.Permalink }}" class="learn-nav-group-title {{ if eq $activeCert "sec" }}current{{ end }}">
+          <span>SEC · 网络安全学习路径</span>
+        </a>
+        {{- range $sec.RegularPages.ByParam "weight" -}}
         <a href="{{ .Permalink }}" class="learn-nav-link {{ if eq $.Permalink .Permalink }}active{{ end }}">
           <span class="learn-nav-num">{{ printf "%02d" .Params.weight }}</span>
           <span class="learn-nav-text">{{ .Title }}</span>

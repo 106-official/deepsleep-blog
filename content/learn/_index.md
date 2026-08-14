@@ -1,6 +1,6 @@
 ---
 title: "学习路径"
-description: "财会证书系统化学习路径 — CPA / ACCA"
+description: "系统化学习路径 — CPA / ACCA / 网络协议 / Three.js Web 3D 教程"
 slug: "learn"
 ---
 
@@ -43,6 +43,19 @@ slug: "learn"
       <span>30 个常用协议</span>
       <span>OSI 分层</span>
       <span>原理 + 实战</span>
+    </div>
+    <span class="learn-card-btn">查看路径 →</span>
+  </a>
+
+  <a href="/learn/three-js/" class="learn-card learn-card-web">
+    <div class="learn-card-icon">🎮</div>
+    <div class="learn-card-cert">WEB</div>
+    <h2 class="learn-card-title">Three.js 教程</h2>
+    <p class="learn-card-en">Web 3D with Three.js</p>
+    <div class="learn-card-meta">
+      <span>8 章完整教程</span>
+      <span>场景到优化</span>
+      <span>可运行示例</span>
     </div>
     <span class="learn-card-btn">查看路径 →</span>
   </a>

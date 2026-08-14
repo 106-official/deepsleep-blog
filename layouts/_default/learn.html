@@ -20,6 +20,7 @@
       {{- if hasPrefix $rel "/learn/cpa/" }}{{ $activeCert = "cpa" }}{{ end -}}
       {{- if hasPrefix $rel "/learn/acca/" }}{{ $activeCert = "acca" }}{{ end -}}
       {{- if hasPrefix $rel "/learn/network-protocols/" }}{{ $activeCert = "net" }}{{ end -}}
+      {{- if hasPrefix $rel "/learn/three-js/" }}{{ $activeCert = "web" }}{{ end -}}
       {{- /* ============= CPA ============= */ -}}
       {{- if or (eq $activeCert "") (eq $activeCert "cpa") -}}
       {{- $cpa := .Site.GetPage "/learn/cpa" -}}
@@ -106,6 +107,24 @@
             {{- end -}}
           </div>
         </details>
+        {{- end -}}
+      </div>
+      {{- end -}}
+      {{- end -}}
+
+      {{- /* ============= WEB / Three.js ============= */ -}}
+      {{- if or (eq $activeCert "") (eq $activeCert "web") -}}
+      {{- $web := .Site.GetPage "/learn/three-js" -}}
+      {{- if $web -}}
+      <div class="learn-nav-group learn-nav-cert">
+        <a href="{{ $web.Permalink }}" class="learn-nav-group-title {{ if eq $activeCert "web" }}current{{ end }}">
+          <span>WEB · Three.js 教程</span>
+        </a>
+        {{- range $web.RegularPages.ByParam "weight" -}}
+        <a href="{{ .Permalink }}" class="learn-nav-link {{ if eq $.Permalink .Permalink }}active{{ end }}">
+          <span class="learn-nav-num">{{ printf "%02d" .Params.weight }}</span>
+          <span class="learn-nav-text">{{ .Title }}</span>
+        </a>
         {{- end -}}
       </div>
       {{- end -}}

@@ -1,6 +1,6 @@
 ---
 title: "第 6 章 · 密码学基础与 PKI"
-description: "理解对称/非对称加密、哈希、数字签名的作用边界；拆解 TLS 握手流程、证书链与信任模型、HSTS，建立"为什么 HTTPS 能信"的底层认知"
+description: "理解对称/非对称加密、哈希、数字签名的作用边界；拆解 TLS 握手流程、证书链与信任模型、HSTS，建立\"为什么 HTTPS 能信\"的底层认知"
 layout: "learn"
 category: "network-security"
 weight: 6

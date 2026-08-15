@@ -1,6 +1,6 @@
 ---
 title: "第 4 章 · 注入攻击：SQL / 命令 / SSRF / XXE"
-description: "注入类漏洞的本质是"把数据当代码执行"。拆解 SQL 注入、命令注入、SSRF、XXE 的成因与危害，落地参数化查询、输入白名单、网络出口管控等防御"
+description: "注入类漏洞的本质是\"把数据当代码执行\"。拆解 SQL 注入、命令注入、SSRF、XXE 的成因与危害，落地参数化查询、输入白名单、网络出口管控等防御"
 layout: "learn"
 category: "network-security"
 weight: 4

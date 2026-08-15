@@ -1,6 +1,6 @@
 ---
 title: "学习路径"
-description: "系统化学习路径 — CPA / ACCA / 网络协议 / Three.js Web 3D / 从零训练 LLM / 网络安全"
+description: "系统化学习路径 — CPA / ACCA / 网络协议 / Three.js Web 3D / 从零训练 LLM / 网络安全 / Unity 游戏开发 / 数据结构与算法"
 slug: "learn"
 ---
 
@@ -82,6 +82,32 @@ slug: "learn"
       <span>10 章完整教程</span>
       <span>攻防闭环</span>
       <span>防御视角</span>
+    </div>
+    <span class="learn-card-btn">查看路径 →</span>
+  </a>
+
+  <a href="/learn/unity/" class="learn-card learn-card-unity">
+    <div class="learn-card-icon">🎮</div>
+    <div class="learn-card-cert">UNITY</div>
+    <h2 class="learn-card-title">Unity 游戏开发</h2>
+    <p class="learn-card-en">Game Dev with Unity</p>
+    <div class="learn-card-meta">
+      <span>8 章完整教程</span>
+      <span>编辑器到打包</span>
+      <span>可运行示例</span>
+    </div>
+    <span class="learn-card-btn">查看路径 →</span>
+  </a>
+
+  <a href="/learn/algorithm/" class="learn-card learn-card-algo">
+    <div class="learn-card-icon">🧮</div>
+    <div class="learn-card-cert">ALGO</div>
+    <h2 class="learn-card-title">数据结构与算法</h2>
+    <p class="learn-card-en">Data Structures & Algorithms</p>
+    <div class="learn-card-meta">
+      <span>8 章完整教程</span>
+      <span>复杂度到 DP</span>
+      <span>可运行示例</span>
     </div>
     <span class="learn-card-btn">查看路径 →</span>
   </a>

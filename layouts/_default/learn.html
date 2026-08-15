@@ -24,6 +24,8 @@
       {{- if hasPrefix $rel "/learn/three-js/" }}{{ $activeCert = "web" }}{{ end -}}
       {{- if hasPrefix $rel "/learn/llm-from-scratch/" }}{{ $activeCert = "llm" }}{{ end -}}
       {{- if hasPrefix $rel "/learn/network-security/" }}{{ $activeCert = "sec" }}{{ end -}}
+      {{- if hasPrefix $rel "/learn/unity/" }}{{ $activeCert = "unity" }}{{ end -}}
+      {{- if hasPrefix $rel "/learn/algorithm/" }}{{ $activeCert = "algo" }}{{ end -}}
       {{- /* ============= CPA ============= */ -}}
       {{- if or (eq $activeCert "") (eq $activeCert "cpa") -}}
       {{- $cpa := .Site.GetPage "/learn/cpa" -}}
@@ -158,6 +160,42 @@
           <span>SEC · 网络安全学习路径</span>
         </a>
         {{- range $sec.RegularPages.ByParam "weight" -}}
+        <a href="{{ .Permalink }}" class="learn-nav-link {{ if eq $.Permalink .Permalink }}active{{ end }}">
+          <span class="learn-nav-num">{{ printf "%02d" .Params.weight }}</span>
+          <span class="learn-nav-text">{{ .Title }}</span>
+        </a>
+        {{- end -}}
+      </div>
+      {{- end -}}
+      {{- end -}}
+
+      {{- /* ============= UNITY / Unity 游戏开发 ============= */ -}}
+      {{- if or (eq $activeCert "") (eq $activeCert "unity") -}}
+      {{- $unity := .Site.GetPage "/learn/unity" -}}
+      {{- if $unity -}}
+      <div class="learn-nav-group learn-nav-cert">
+        <a href="{{ $unity.Permalink }}" class="learn-nav-group-title {{ if eq $activeCert "unity" }}current{{ end }}">
+          <span>UNITY · Unity 游戏开发</span>
+        </a>
+        {{- range $unity.RegularPages.ByParam "weight" -}}
+        <a href="{{ .Permalink }}" class="learn-nav-link {{ if eq $.Permalink .Permalink }}active{{ end }}">
+          <span class="learn-nav-num">{{ printf "%02d" .Params.weight }}</span>
+          <span class="learn-nav-text">{{ .Title }}</span>
+        </a>
+        {{- end -}}
+      </div>
+      {{- end -}}
+      {{- end -}}
+
+      {{- /* ============= ALGO / 算法 ============= */ -}}
+      {{- if or (eq $activeCert "") (eq $activeCert "algo") -}}
+      {{- $algo := .Site.GetPage "/learn/algorithm" -}}
+      {{- if $algo -}}
+      <div class="learn-nav-group learn-nav-cert">
+        <a href="{{ $algo.Permalink }}" class="learn-nav-group-title {{ if eq $activeCert "algo" }}current{{ end }}">
+          <span>ALGO · 数据结构与算法</span>
+        </a>
+        {{- range $algo.RegularPages.ByParam "weight" -}}
         <a href="{{ .Permalink }}" class="learn-nav-link {{ if eq $.Permalink .Permalink }}active{{ end }}">
           <span class="learn-nav-num">{{ printf "%02d" .Params.weight }}</span>
           <span class="learn-nav-text">{{ .Title }}</span>

@@ -1,0 +1,64 @@
+{{- /* ============================================================
+  learn_pager.html — 课程内「上一节/下一节」导航
+  替换 PaperMod 全局 post_nav_links（全站排序会串到其他教材）：
+  - lixin-learn 区: 限定在 /lixin-learn/ 内
+  - learn 区: 限定在所在教材（/learn/<教材段>/）内，按路径动态取段，
+              自动覆盖 cpa/acca/network-protocols/three-js/llm-from-scratch/network-security 等
+  - 顺序: 按文件路径排序（目录数字前缀即课程顺序）
+  - section 概览页不渲染翻页
+  ============================================================ */ -}}
+{{- if not .IsSection -}}
+{{- $prev := "" -}}
+{{- $next := "" -}}
+{{- $pages := slice -}}
+
+{{- /* 收集同教材页面集合 */ -}}
+{{- if eq .Section "lixin-learn" -}}
+  {{- range site.RegularPages -}}
+    {{- if eq .Section "lixin-learn" -}}
+      {{- $pages = $pages | append . -}}
+    {{- end -}}
+  {{- end -}}
+{{- else if eq .Section "learn" -}}
+  {{- $rest := strings.TrimPrefix "/learn/" .RelPermalink -}}
+  {{- $seg := index (split $rest "/") 0 -}}
+  {{- $prefix := printf "/learn/%s/" $seg -}}
+  {{- range site.RegularPages -}}
+    {{- if strings.HasPrefix .RelPermalink $prefix -}}
+      {{- $pages = $pages | append . -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{- /* 按文件路径排序（目录数字前缀天然是课程顺序）并定位前后页 */ -}}
+{{- $sorted := sort $pages "File.Path" -}}
+{{- $found := false -}}
+{{- range $sorted -}}
+  {{- if $found -}}
+    {{- $next = . -}}
+    {{- break -}}
+  {{- end -}}
+  {{- if eq .File.Path $.File.Path -}}
+    {{- $found = true -}}
+  {{- else -}}
+    {{- $prev = . -}}
+  {{- end -}}
+{{- end -}}
+
+{{- if or $prev $next -}}
+<nav class="paginav">
+  {{- with $prev -}}
+  <a class="prev" href="{{ .Permalink }}">
+    <span class="title">« {{ i18n "prev_page" }}</span>
+    <span>{{- .Name -}}</span>
+  </a>
+  {{- end -}}
+  {{- with $next -}}
+  <a class="next" href="{{ .Permalink }}">
+    <span class="title">{{ i18n "next_page" }} »</span>
+    <span>{{- .Name -}}</span>
+  </a>
+  {{- end -}}
+</nav>
+{{- end -}}
+{{- end -}}

@@ -2,7 +2,7 @@
 title: "概率论（经管）"
 description: "概率论与数理统计（经管类）课程资料 · 历年真题与考点精练"
 layout: "lixin-learn"
-weight: 1
+weight: 4
 url: "/lixin/learn/probability/"
 ---
 # 概率论（经管）

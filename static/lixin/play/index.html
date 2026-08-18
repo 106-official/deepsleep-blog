@@ -344,6 +344,97 @@ const NPCS = [
 ];
 
 /* ============================================================
+   校园生活 NPC（v1.8 新增 20 位：宿管/快递/小吃店主/保安/图书馆/食堂阿姨…
+   复用学科 NPC 的完整对话系统：greeting + 自由问答 + Grill 摸底）
+   ============================================================ */
+const VILLAGERS=[
+  /* —— 四期公寓宿舍区（4）—— */
+  {id:'va1',name:'宿管阿姨',title:'四期公寓·宿管',emoji:'🧕',color:'#c9605a',tile:{x:14,y:30},
+   greeting:'同学回来啦？电费浴卡充值、报修登记、快递代收都找我～',
+   scope:'四期公寓住宿生活：电费浴卡充值、报修、门禁、快递代收。',out:'上课问题要找学科NPC哦。',
+   quiz:[{q:'四期公寓底楼一般有哪些设施？',a:'大厅、吹风室、洗衣房、浴室、热水器和自动贩卖机等。'},{q:'宿舍报修找谁？',a:'在宿管处登记，或线上报修系统提交。'}]},
+  {id:'va2',name:'快递小哥',title:'四期·快递点',emoji:'📦',color:'#8a6a3a',tile:{x:60,y:26},
+   greeting:'你的快递到了，记得来取！顺丰在22号楼、菜鸟在31号楼～',
+   scope:'四期公寓快递点分布：1号楼中通申通、22号楼顺丰菜鸟、31号楼京东、39号楼圆通、42号楼韵达申通。',out:'不代签收，也不回答课程问题。',
+   quiz:[{q:'四期公寓哪栋楼取顺丰快递？',a:'22号楼顺丰快递、菜鸟驿站。'},{q:'京东快递在几号楼？',a:'31号楼。'}]},
+  {id:'va3',name:'外卖骑手',title:'文汇路·外卖',emoji:'🛵',color:'#5a8fc9',tile:{x:70,y:6},
+   greeting:'您好，您的外卖到楼下了！文汇路美食天天送～',
+   scope:'文汇路小吃街与外卖取餐点。',out:'配送范围外的订单我也没办法。',
+   quiz:[{q:'文汇路有什么好吃的？',a:'烤串、面馆、奶茶、麻辣烫、汉堡、甜品，一条街啥都有。'},{q:'外卖一般送到哪里？',a:'宿舍楼下外卖柜/取餐点，记得及时取。'}]},
+  {id:'va4',name:'洗衣房大姐',title:'四期·洗衣房',emoji:'🧺',color:'#5a7a4a',tile:{x:40,y:8},
+   greeting:'洗衣服吗？投币或扫码都行，3 元 40 分钟，15号楼还有烘干机～',
+   scope:'四期洗衣房：投币/扫码洗衣机、烘干机使用方法与注意事项。',out:'不负责贵重衣物干洗。',
+   quiz:[{q:'洗衣机一次多少钱多久？',a:'3 元 40 分钟左右，扫码或投币。'},{q:'烘干机在哪栋楼？',a:'15号楼海尔洗衣房。'}]},
+  /* —— 文汇路小吃街（4）—— */
+  {id:'va5',name:'烤串大叔',title:'文汇路·烤串',emoji:'🍢',color:'#c95a4a',tile:{x:8,y:44},
+   greeting:'来一串吗？孜然辣椒随便撒，晚自习前垫垫肚子～',
+   scope:'文汇路小吃街美食介绍。',out:'食品安全投诉请找市场监管局。',
+   quiz:[{q:'文汇路小吃街晚上热闹吗？',a:'超热闹，烤串奶茶一条街，逛一圈啥都想吃。'},{q:'文汇路大概几点出摊？',a:'下午到深夜都有，晚饭点最旺。'}]},
+  {id:'va6',name:'饺子店老板娘',title:'文汇路·饺子',emoji:'🥟',color:'#5a8fc9',tile:{x:28,y:44},
+   greeting:'同学吃饺子不？现包现煮，荠菜猪肉馅最受欢迎～',
+   scope:'文汇路美食与小吃街摊位介绍。',out:'不回答课程问题。',
+   quiz:[{q:'文汇路小吃街有哪些摊位？',a:'烤串、面馆、饺子、甜品、奶茶、汉堡、卷饼、冰淇淋等。'},{q:'立信宿舍区在哪条路上？',a:'文汇路1000弄，四期公寓。'}]},
+  {id:'va7',name:'奶茶店长',title:'文汇路·奶茶',emoji:'🧋',color:'#7a5ac9',tile:{x:48,y:44},
+   greeting:'新品杨枝甘露上线啦，第二杯半价，尝尝不？',
+   scope:'文汇路奶茶店与饮品推荐。',out:'糖度冰度可以定制，别的问题找别人～',
+   quiz:[{q:'文汇路上能买到什么饮品？',a:'奶茶、果茶、咖啡应有尽有，晚上开到很晚。'},{q:'第二杯半价是真的吗？',a:'活动期间真的，具体看店里公告。'}]},
+  {id:'va8',name:'卷饼小哥',title:'文汇路·卷饼',emoji:'🌮',color:'#4caf7d',tile:{x:68,y:44},
+   greeting:'手抓饼烤冷面卷饼，加蛋加肠加里脊，速度很快！',
+   scope:'文汇路小吃街。',out:'无',
+   quiz:[{q:'立信周边是哪几所大学？',a:'毗邻上外、对外经贸、东华、工程大、华政、上视觉六所高校。'},{q:'文汇路小吃街在哪？',a:'宿舍区与校区之间的文汇路上。'}]},
+  /* —— 文翔路校区·松江（6）—— */
+  {id:'va9',name:'保安大叔',title:'学验楼·保安',emoji:'👮',color:'#4a68b0',tile:{x:6,y:60},
+   greeting:'出入请刷卡登记！学验楼二楼周五晚放电影，知道不？',
+   scope:'学验楼（2号楼）：机房、英语听力教室、保卫处户籍科、二楼报告厅周五电影。',out:'课程内容找学科NPC。',
+   quiz:[{q:'学验楼有什么？',a:'计算机房、英语听力教室、保卫处、户籍科，周五二楼报告厅放电影。'},{q:'学验楼是几号楼？',a:'2号楼。'}]},
+  {id:'va10',name:'体育馆教练',title:'室内体育馆·教练',emoji:'🏀',color:'#5a8fc9',tile:{x:19,y:60},
+   greeting:'来运动吗？馆里有瑜伽、武术、跆拳道、羽毛球、乒乓球还有室内篮球场～',
+   scope:'室内体育馆设施与体育课。',out:'比赛报名问体育部。',
+   quiz:[{q:'室内体育馆有哪些场地？',a:'瑜伽房、武术房、跆拳道馆、羽毛球馆、乒乓球馆和室内篮球场。'},{q:'体育馆器材在哪借？',a:'凭校园卡在馆内器材室借用。'}]},
+  {id:'va11',name:'序伦前台',title:'序伦大楼·前台',emoji:'🏛️',color:'#9c6b3f',tile:{x:26,y:62},
+   greeting:'序伦大楼是全校最高楼～学生事务中心在 216，办证盖章都在这。',
+   scope:'序伦大楼：学生事务中心(216)、艺术团、各学院教务处、辅导员办公室、就业指导中心。',out:'不回答具体成绩查询。',
+   quiz:[{q:'序伦大楼有什么？',a:'学生事务中心、艺术团、各学院教务处、辅导员办公室等。'},{q:'学生事务中心在序伦大楼几楼？',a:'216 房间。'}]},
+  {id:'va12',name:'博物馆讲解员',title:'中国会计博物馆·讲解',emoji:'🏦',color:'#9c6b3f',tile:{x:48,y:62},
+   greeting:'欢迎参观全球第一家专业会计博物馆！校史馆也在这里，免费开放～',
+   scope:'中国会计博物馆：全球首家专业会计博物馆、校史馆、免费开放。',out:'具体展品来源可查馆内资料。',
+   quiz:[{q:'中国会计博物馆有什么特别？',a:'全球第一家专业会计博物馆，免费向大众开放，校史馆也在这。'},{q:'立信的创办人是谁？',a:'潘序伦先生，被誉为"中国会计之父"，1928 年创立。'}]},
+  {id:'va13',name:'图书管理员',title:'图书馆·管理员',emoji:'📚',color:'#b9743f',tile:{x:24,y:62},
+   greeting:'嘘～图书馆安静！一楼有小卖部，自习累了可以去买点喝的。',
+   scope:'图书馆（罗马斗兽场外观）：借阅、自习、一楼小卖部。',out:'馆内WiFi密码问服务台。',
+   quiz:[{q:'图书馆外观像什么？',a:'人称"罗马斗兽场"，是大学城里外形最霸气的图书馆。'},{q:'图书馆一楼有什么？',a:'小卖部，可以买零食饮料补充能量。'}]},
+  {id:'va14',name:'昭信堂堂务',title:'昭信堂·大礼堂',emoji:'🎭',color:'#7a5ac9',tile:{x:44,y:62},
+   greeting:'昭信堂是大礼堂，新生入学教育和各种演出都在这，可别带饮料进场哦！',
+   scope:'昭信堂：学校大礼堂，新生教育、讲座、演出。',out:'购票问题看活动主办方。',
+   quiz:[{q:'昭信堂是做什么的？',a:'学校大礼堂，办新生入学教育、大型讲座和表演。'},{q:'进昭信堂能带饮料吗？',a:'不能，不能携带有色饮料和食物进场。'}]},
+  /* —— 上川路校区·浦东（6）—— */
+  {id:'va15',name:'实验中心管理员',title:'实验中心·管理员',emoji:'💻',color:'#a85a3f',tile:{x:106,y:62},
+   greeting:'实验中心 7 层楼，模拟银行实训、一卡通补办都在一楼，机器下午经常满员～',
+   scope:'实验中心：7层、模拟银行、一卡通补办(117)、教务处(221)、保卫处(122)。',out:'设备报修走流程。',
+   quiz:[{q:'实验中心能办什么？',a:'一卡通补办、成绩单打印等，还有模拟银行实训环境。'},{q:'实验中心在几号楼/几层？',a:'上川路校区实验中心，共 7 层。'}]},
+  {id:'va16',name:'行政楼文员',title:'上川路·行政楼',emoji:'🏢',color:'#9c6b3f',tile:{x:116,y:62},
+   greeting:'教务处、财务处都在行政楼，办成绩单、贴磁条来这就对了。',
+   scope:'上川路行政楼：教务处(119A/311)、财务处(101/311)。',out:'具体业务材料问对应科室。',
+   quiz:[{q:'行政楼里最常去的是哪个处？',a:'教务处和财务处。'},{q:'上川路校区地址是？',a:'浦东新区上川路995号。'}]},
+  {id:'va17',name:'图书馆值班员',title:'赵朱木兰图书馆',emoji:'📖',color:'#b9743f',tile:{x:124,y:62},
+   greeting:'赵朱木兰图书馆有四万多平方米，抢到靠窗座位全靠手速～',
+   scope:'赵朱木兰图书馆：自习、借阅、期末抢座。',out:'闭馆时间看门口公告。',
+   quiz:[{q:'赵朱木兰图书馆有多大？',a:'四万多平方米，是上川路校区的学习地标。'},{q:'期末图书馆座位紧张吗？',a:'紧张，要早起排队抢位子。'}]},
+  {id:'va18',name:'二食堂阿姨',title:'第二食堂·阿姨',emoji:'🍛',color:'#c98a4a',tile:{x:132,y:62},
+   greeting:'同学吃啥？红烧肉刚出锅！二食堂三楼民族餐厅的麻辣烫一绝～',
+   scope:'上川路食堂：第二食堂、第三食堂、民族餐厅。',out:'饭菜口味问题欢迎反馈。',
+   quiz:[{q:'第二食堂三楼是什么？',a:'民族餐厅，麻辣烫和砂锅很受欢迎。'},{q:'上川路校区有几个食堂？',a:'第二食堂和第三食堂等。'}]},
+  {id:'va19',name:'气膜馆教练',title:'气膜馆·教练',emoji:'🏟️',color:'#5a8fc9',tile:{x:110,y:84},
+   greeting:'气膜馆里场地很宽敞，跑步羽毛球都不错，来锻炼吗？',
+   scope:'气膜馆：室内运动场地。',out:'课程安排问体育部。',
+   quiz:[{q:'气膜馆是做什么的？',a:'室内运动场馆，适合跑步、球类等运动。'},{q:'上川路校区有什么体育设施？',a:'气膜馆、篮球场、击剑中心、室外运动场等。'}]},
+  {id:'va20',name:'击剑教练',title:'击剑中心·教练',emoji:'⚔️',color:'#5a8fc9',tile:{x:144,y:84},
+   greeting:'想学击剑吗？上川路校区特色项目，装备中心都配好了～',
+   scope:'击剑中心：立信特色体育项目、训练装备。',out:'比赛报名看校队通知。',
+   quiz:[{q:'立信有什么特色体育项目？',a:'击剑中心是特色项目之一。'},{q:'击剑中心在哪？',a:'上川路校区。'}]},
+];
+
+/* ============================================================
    地图：v1.5 超大版（176×132 = 4 倍面积，楼间距 3 格以上）
    北=四期公寓 + 文汇路小吃街 / 左下=文翔路 / 右下=上川路 / 中间=校际大道
    ============================================================ */
@@ -351,17 +442,16 @@ const TILE=32, COLS=176, ROWS=132;
 const W=COLS*TILE, H=ROWS*TILE;
 let camX=0, camY=0;
 
-/* ---- 四期公寓宿舍楼（循环生成 5 排 × 7 列） ---- */
-const DORM_COLS=[6,18,30,42,54,66,78];
-const DORM_ROWS=[4,12,20,28,36];
+/* ---- 四期公寓宿舍楼（立信 1-18 栋：按真实宿舍区简化 3 排 × 6 列，楼间距宽敞） ---- */
+const DORM_COLS=[6,18,30,42,54,66];
+const DORM_ROWS=[8,20,32];
 const BUILDINGS=[];
 (function(){
   let n=1;
-  DORM_ROWS.forEach((ry,ri)=>{
-    DORM_COLS.forEach((rx,ci)=>{
-      const id=ri%2? (DORM_COLS.length-1-ci)*2+n%2+1 : 0; // 奇偶排交错编号
-      BUILDINGS.push({x:rx,y:ry,w:3,h:3,type:'dorm',emoji:'🛏️',name:((ri%2)?(n+1):n)+'栋',color:'#c0a06a'});
-      n+=2;
+  DORM_ROWS.forEach((ry)=>{
+    DORM_COLS.forEach((rx)=>{
+      BUILDINGS.push({x:rx,y:ry,w:3,h:3,type:'dorm',emoji:'🛏️',name:n+'栋',color:'#c0a06a'});
+      n++;
     });
   });
 })();
@@ -372,25 +462,29 @@ BUILDINGS.push(
   {x:70,y:16,w:4,h:2,type:'activity',emoji:'🛍️',name:'尚网商场',color:'#c98a4a'},
   {x:4,y:24,w:4,h:2,type:'activity',emoji:'🎨',name:'松江文化创意园',color:'#4caf7d'}
 );
-// ===== 文翔路校区（松江 · 主校区） =====
+// ===== 文翔路校区（松江 · 主校区，按官方校园示意图布局） =====
+// 北区：四号门进右手体育馆篮球场、左手序伦大楼；昭信堂与会计博物馆相邻（都在松江！）
 BUILDINGS.push(
-  {x:4,y:54,w:5,h:3,type:'activity',emoji:'🎾',name:'网球场·排球场',color:'#4caf7d'},
-  {x:12,y:54,w:6,h:3,type:'gym',emoji:'🏟️',name:'体育馆',color:'#5a8fc9'},
-  {x:22,y:54,w:7,h:3,type:'landmark',emoji:'🏛️',name:'序伦大楼(行政·最高楼)',color:'#9c6b3f'},
-  {x:32,y:54,w:6,h:3,type:'landmark',emoji:'🏦',name:'中国会计博物馆(全球首家)',color:'#9c6b3f'},
-  {x:42,y:54,w:7,h:3,type:'library',emoji:'📚',name:'图书馆(古罗马斗兽场)',color:'#b9743f'},
-  {x:52,y:54,w:5,h:3,type:'academic',emoji:'🏢',name:'行政楼',color:'#b08a5a'},
-  {x:60,y:54,w:5,h:3,type:'activity',emoji:'🎭',name:'昭信堂(演出礼堂)',color:'#7a5ac9'},
-  {x:68,y:54,w:6,h:3,type:'academic',emoji:'🌀',name:'育才楼(3号楼·迷宫)',color:'#a85a3f'},
-  // 中排
-  {x:4,y:78,w:5,h:3,type:'academic',emoji:'🧮',name:'学验楼(2号楼·机房)',color:'#a85a3f'},
-  {x:12,y:78,w:4,h:2,type:'canteen',emoji:'🍜',name:'师苑餐厅',color:'#c98a4a'},
-  {x:18,y:78,w:4,h:2,type:'canteen',emoji:'🍚',name:'学子餐厅(圆柱体)',color:'#c98a4a'},
-  // 教学楼群
-  {x:4,y:88,w:3,h:3,type:'academic',emoji:'🏫',name:'云间楼(7号楼)',color:'#b08a5a'},
-  {x:10,y:88,w:3,h:3,type:'academic',emoji:'🏫',name:'徐汇楼(6号楼)',color:'#b08a5a'},
-  {x:4,y:96,w:3,h:3,type:'academic',emoji:'🏫',name:'北碚楼(5号楼)',color:'#b08a5a'},
-  {x:10,y:96,w:3,h:3,type:'academic',emoji:'🏫',name:'吉祥楼(4号楼)',color:'#b08a5a'},
+  {x:3,y:54,w:4,h:2,type:'activity',emoji:'🎾',name:'网球场·排球场',color:'#4caf7d'},
+  {x:8,y:54,w:3,h:2,type:'activity',emoji:'🏀',name:'篮球场',color:'#4caf7d'},
+  {x:16,y:54,w:5,h:3,type:'gym',emoji:'🏟️',name:'体育馆',color:'#5a8fc9'},
+  {x:26,y:54,w:7,h:4,type:'landmark',emoji:'🏛️',name:'序伦大楼(行政·最高楼)',color:'#9c6b3f'},
+  {x:38,y:54,w:5,h:3,type:'activity',emoji:'🎭',name:'昭信堂(演出礼堂)',color:'#7a5ac9'},
+  {x:46,y:54,w:5,h:3,type:'landmark',emoji:'🏦',name:'中国会计博物馆(全球首家)',color:'#9c6b3f'},
+  // 柿子湾北岸：图书馆（罗马斗兽场，北望柿子湾）
+  {x:26,y:66,w:8,h:3,type:'library',emoji:'📚',name:'图书馆(古罗马斗兽场)',color:'#b9743f'},
+  // 柿子湾南岸：行政楼（"走过柿子湾就是行政楼"）与两座食堂
+  {x:46,y:78,w:5,h:3,type:'academic',emoji:'🏢',name:'行政楼',color:'#b08a5a'},
+  {x:12,y:78,w:4,h:2,type:'canteen',emoji:'🍚',name:'学子餐厅(圆柱体)',color:'#c98a4a'},
+  {x:22,y:78,w:4,h:2,type:'canteen',emoji:'🍜',name:'师苑餐厅',color:'#c98a4a'},
+  // 南区：教学楼群（2-7 号楼 + 1 号长乐楼），四五六七号楼 E 字型连体
+  {x:3,y:88,w:4,h:3,type:'academic',emoji:'🧮',name:'学验楼(2号楼·机房)',color:'#a85a3f'},
+  {x:9,y:88,w:4,h:3,type:'academic',emoji:'🌀',name:'育才楼(3号楼·迷宫)',color:'#a85a3f'},
+  {x:16,y:87,w:2,h:14,type:'ecorr',emoji:'🏫',name:'四五六七号楼连廊',color:'#a08560'},
+  {x:18,y:87,w:3,h:3,type:'ecomplex',emoji:'🏫',name:'云间楼(7号楼)',color:'#b08a5a'},
+  {x:18,y:91,w:3,h:3,type:'ecomplex',emoji:'🏫',name:'徐汇楼(6号楼)',color:'#b08a5a'},
+  {x:18,y:95,w:3,h:3,type:'ecomplex',emoji:'🏫',name:'吉祥楼(4号楼)',color:'#b08a5a'},
+  {x:18,y:99,w:3,h:3,type:'ecomplex',emoji:'🏫',name:'北碚楼(5号楼)',color:'#b08a5a'},
   {x:62,y:88,w:5,h:4,type:'academic',emoji:'🏥',name:'长乐楼(1号楼·医务室)',color:'#c0a06a'}
 );
 // ===== 上川路校区（浦东） =====
@@ -431,8 +525,8 @@ BUILDINGS.push(
 const TRACKS=[ {x:20,y:108,w:6,h:5}, {x:120,y:108,w:6,h:4} ]; // 文翔路操场 / 上川路室外运动场
 const PONDS=[];
 const LAKE=[
-  {x:4,y:72,w:36,h:1},   // 柿子湾（细流横贯文翔路，含西信/东诚两桥，避开主干道 x:40-42）
-  {x:102,y:64,w:58,h:1}, // 上川路小河（主干道 x:128-129 上建桥，天然不重叠）
+  {x:4,y:72,w:36,h:1},   // 柿子湾（细流横贯文翔路中部，西信/东诚两桥跨河，避开主干道 x:40-42）
+  {x:103,y:64,w:57,h:1}, // 上川路小河（主干道 x:128-129 上建桥；x:103 起避开西墙 x:102）
 ];
 const LAKE_BRIDGES=[
   {x:14,y:72,w:2,h:1,name:'西信桥'},{x:38,y:72,w:2,h:1,name:'东诚桥'},
@@ -440,7 +534,7 @@ const LAKE_BRIDGES=[
 ];
 const SQUARES=[
   {x:24,y:8,w:6,h:2,emoji:'🎯',name:'集点广场'},
-  {x:20,y:96,w:8,h:6,emoji:'🗿',name:'诚信广场(诚信柱·校训)'},
+  {x:44,y:96,w:8,h:6,emoji:'🗿',name:'诚信广场(诚信柱·校训)'},
   {x:108,y:70,w:5,h:3,emoji:'🪙',name:'钱币广场'},
   {x:116,y:70,w:7,h:3,emoji:'💠',name:'金融广场(雕塑融)'},
 ];
@@ -449,8 +543,8 @@ const WALLS=[
   {x:0,y:0,w:24,h:1},{x:26,y:0,w:36,h:1},{x:64,y:0,w:24,h:1}, // 北墙（4/5号门 x:24-25/62-63 开口）
   {x:0,y:1,w:1,h:40},{x:86,y:1,w:1,h:40},                       // 东西墙
   // 文翔路校区（x:2-86, y:52-128）
-  {x:2,y:52,w:38,h:1},{x:42,y:52,w:44,h:1},                     // 北墙（北门 x:40-41 开口）
-  {x:2,y:128,w:38,h:1},{x:42,y:128,w:44,h:1},                   // 南墙（1号门 x:40-41 开口）
+  {x:2,y:52,w:38,h:1},{x:43,y:52,w:43,h:1},                     // 北墙（北门 x:40-42 开口，对齐 3 格宽主干道）
+  {x:2,y:128,w:38,h:1},{x:43,y:128,w:43,h:1},                   // 南墙（1号门 x:40-42 开口）
   {x:2,y:53,w:1,h:75},                                          // 西墙
   {x:86,y:53,w:1,h:23},{x:86,y:78,w:1,h:50},                    // 东墙（3号门 y:76-77 开口）
   // 上川路校区（x:102-174, y:52-128）
@@ -466,21 +560,21 @@ const PATHS=[
   {x:88,y:42,w:12,h:86,type:'road'},
   // 文翔路主干道（纵贯 北门→1号门）= 小路（土路）
   {x:40,y:53,w:3,h:75,type:'path'},
-  // 文翔路横路：贴柿子湾的两条 = 鹅卵石；其余 = 小路（土路）
-  {x:2,y:62,w:84,h:1,type:'path'},
-  {x:2,y:70,w:84,h:1,type:'cobble'},
-  {x:2,y:74,w:84,h:1,type:'cobble'},
-  {x:2,y:86,w:84,h:1,type:'path'},
-  {x:2,y:104,w:84,h:1,type:'path'},
-  {x:2,y:116,w:84,h:1,type:'path'},
+  // 文翔路横路：贴柿子湾的两条 = 鹅卵石；其余 = 小路（土路；x:3 起避开西墙 x:2）
+  {x:3,y:62,w:83,h:1,type:'path'},
+  {x:3,y:70,w:83,h:1,type:'cobble'},
+  {x:3,y:74,w:83,h:1,type:'cobble'},
+  {x:3,y:86,w:83,h:1,type:'path'},
+  {x:3,y:104,w:83,h:1,type:'path'},
+  {x:3,y:116,w:83,h:1,type:'path'},
   // 上川路主干道（纵贯 1号门→3号门；过桥段由 LAKE_BRIDGES 覆盖）= 小路（土路）
   {x:128,y:53,w:2,h:75,type:'path'},
-  // 上川路横路：贴小河的两条 = 鹅卵石；其余 = 小路
-  {x:102,y:62,w:72,h:1,type:'cobble'},
-  {x:102,y:66,w:72,h:1,type:'cobble'},
-  {x:102,y:78,w:72,h:1,type:'path'},
-  {x:102,y:98,w:72,h:1,type:'path'},
-  {x:102,y:112,w:72,h:1,type:'path'},
+  // 上川路横路：贴小河的两条 = 鹅卵石；其余 = 小路（x:103 起避开西墙 x:102）
+  {x:103,y:62,w:71,h:1,type:'cobble'},
+  {x:103,y:66,w:71,h:1,type:'cobble'},
+  {x:103,y:78,w:71,h:1,type:'path'},
+  {x:103,y:98,w:71,h:1,type:'path'},
+  {x:103,y:112,w:71,h:1,type:'path'},
   // 校际大道与各校区连接口 = 马路
   {x:87,y:76,w:1,h:2,type:'road'},
   {x:100,y:76,w:2,h:2,type:'road'},
@@ -489,8 +583,9 @@ const PATHS=[
   {x:172,y:98,w:1,h:3,type:'path'},
 ];
 /* ---- 四期公寓宿舍区内部路网（楼间人行道，土路） ---- */
-[12,24,36,48,60,72].forEach(x=>PATHS.push({x, y:2, w:2, h:40, type:'path'}));   // 纵向楼间道
-[9,17,25,33].forEach(y=>PATHS.push({x:2, y, w:80, h:1, type:'path'}));           // 横向连廊
+[12,24,36,48,60,72].forEach(x=>PATHS.push({x, y:2, w:2, h:40, type:'path'}));   // 两侧小路（纵向楼间道）
+[15,27,37].forEach(y=>PATHS.push({x:2, y, w:80, h:1, type:'path'}));             // 横向连廊（对应 3 排楼）
+PATHS.push({x:39,y:2,w:3,h:40,type:'path'});                                     // 中心主干道（3 格宽，贯穿南北）
 const SIGNS=[
   {x:44,y:2,emoji:'🏠',name:'松江大学城四期公寓 · 文汇路1000弄',big:true},
   {x:42,y:50,emoji:'🍢',name:'文汇路小吃街',big:true},
@@ -516,7 +611,7 @@ const STALL_DEFS=[
   {x:8,y:45,emoji:'🍢',name:'烤串',color:'#c95a4a'},
   {x:18,y:45,emoji:'🍜',name:'面馆',color:'#c98a4a'},
   {x:28,y:45,emoji:'🥟',name:'饺子',color:'#5a8fc9'},
-  {x:38,y:45,emoji:'🍧',name:'甜品',color:'#d98ac9'},
+  {x:37,y:45,emoji:'🍧',name:'甜品',color:'#d98ac9'},
   {x:48,y:45,emoji:'🥤',name:'奶茶',color:'#7a5ac9'},
   {x:58,y:45,emoji:'🍔',name:'汉堡',color:'#c98a4a'},
   {x:68,y:45,emoji:'🌮',name:'卷饼',color:'#4caf7d'},
@@ -553,7 +648,7 @@ let seed=20260818; const rnd=()=>{seed=(seed*1103515245+12345)&0x7fffffff;return
 const canDecorate=(tx,ty)=>!blocked.has(key(tx,ty))&&!isPath(tx,ty)
   &&!SQUARES.some(s=>tx>=s.x&&tx<s.x+s.w&&ty>=s.y&&ty<s.y+s.h);
 const flowers=[];
-for(let i=0;i<620;i++){const tx=Math.floor(rnd()*COLS),ty=Math.floor(rnd()*ROWS);
+for(let i=0;i<1100;i++){const tx=Math.floor(rnd()*COLS),ty=Math.floor(rnd()*ROWS);
   if(canDecorate(tx,ty))flowers.push({x:tx*TILE+rnd()*TILE,y:ty*TILE+rnd()*TILE,k:Math.floor(rnd()*4)});}
 const trees=[];
 for(let i=0;i<120;i++){const tx=Math.floor(rnd()*COLS),ty=Math.floor(rnd()*ROWS);
@@ -561,6 +656,18 @@ for(let i=0;i<120;i++){const tx=Math.floor(rnd()*COLS),ty=Math.floor(rnd()*ROWS)
 const bushes=[];
 for(let i=0;i<150;i++){const tx=Math.floor(rnd()*COLS),ty=Math.floor(rnd()*ROWS);
   if(canDecorate(tx,ty))bushes.push({x:tx*TILE,y:ty*TILE,k:Math.floor(rnd()*2)});}
+/* ---- 宿舍区高大树木（四期绿化带：楼间大冠乔木） ---- */
+const dormTrees=[];
+for(let i=0;i<26;i++){
+  const tx=Math.floor(rnd()*80)+3, ty=Math.floor(rnd()*36)+2;
+  if(canDecorate(tx,ty)&&ty<40) dormTrees.push({x:tx*TILE,y:ty*TILE,k:Math.floor(rnd()*3)});
+}
+/* ---- 草叶动画数据：每草地格 2 株草（世界坐标，动态层随风摆动） ---- */
+const grassCells=[];
+for(let ty=0;ty<ROWS;ty++)for(let tx=0;tx<COLS;tx++){
+  if(canDecorate(tx,ty)) for(let k=0;k<2;k++)
+    grassCells.push({x:tx*TILE+rnd()*TILE,y:ty*TILE+rnd()*TILE,ph:rnd()*6.28,k:Math.floor(rnd()*3)});
+}
 /* ---- 路灯（先列主干道两侧，再自动校验：不在路上/不在水中/不在建筑与广场上） ---- */
 const lamps=[];
 function lampSpot(x,y,big){ if(isPath(x,y)||blocked.has(key(x,y))||SQUARES.some(s=>x>=s.x&&x<s.x+s.w&&y>=s.y&&y<s.y+s.h)) return;
@@ -573,6 +680,9 @@ for(let gy=56;gy<=124;gy+=6){ lampSpot(87,gy,true); lampSpot(100,gy,true); }
 for(let gy=56;gy<=124;gy+=6){ lampSpot(39,gy); lampSpot(43,gy); }
 // 上川路主干道两侧（x:127 / x:131；跳过小河 y:64 与桥区）
 for(let gy=56;gy<=124;gy+=6){ if(gy===64) continue; lampSpot(127,gy); lampSpot(131,gy); }
+// 宿舍区路灯：中心主干道（x:39-41）两侧 + 楼间道点缀（自动避开楼/路/广场）
+[38,42].forEach(x=>{for(let y=5;y<=37;y+=8) lampSpot(x,y);});
+[[23,26],[47,50],[59,62]].forEach(pair=>{for(let y=9;y<=33;y+=12){lampSpot(pair[0],y);lampSpot(pair[1],y);}});
 const benches=[
   {x:14*TILE,y:60*TILE},{x:30*TILE,y:60*TILE},{x:112*TILE,y:60*TILE},{x:146*TILE,y:60*TILE},
   {x:14*TILE,y:110*TILE},{x:146*TILE,y:110*TILE}
@@ -584,6 +694,17 @@ const benches=[
    青蛙：spl3mma（GitHub）；猫：Kenney cxong（CC0）
    ============================================================ */
 let FIREFLIES=[], SQUIRRELS=[], FROGS=[], CATS=[];
+/* ---- 宿舍楼下的猫窝（15 个，可喂食 +1 熟悉度）+ 固定小猫（5 只守窝） ---- */
+const CAT_NESTS=[];
+[[8,6],[20,6],[32,3]].forEach(([ry,cnt])=>{
+  [6,18,30,42,54,66].slice(0,cnt).forEach(rx=>{
+    CAT_NESTS.push({tx:rx+1, ty:ry+3, rx, ry, lastFeed:0});
+  });
+});
+const FIXED_CATS=[];
+[[6,8],[18,8],[30,8],[42,8],[54,8]].forEach(([rx,ry],i)=>{
+  FIXED_CATS.push({x:(rx+1)*TILE+TILE/2, y:(ry+3)*TILE+TILE/2, hx:(rx+1)*TILE+TILE/2, hy:(ry+3)*TILE+TILE/2, dir:1, ph:i*1.3, blinkPhase:rnd()*4});
+});
 function rndTile(){ return {x:Math.floor(rnd()*COLS), y:Math.floor(rnd()*ROWS)}; }
 function randGrassTile(){ for(let i=0;i<40;i++){ const t=rndTile(); if(passable(t.x*TILE+TILE/2,t.y*TILE+TILE/2)&&!isPath(t.x,t.y)) return t; } return {x:40,y:60}; }
 function randAnyTile(){ for(let i=0;i<40;i++){ const t=rndTile(); if(passable(t.x*TILE+TILE/2,t.y*TILE+TILE/2)) return t; } return {x:40,y:60}; }
@@ -621,6 +742,7 @@ function updateAnimals(dt){
     if(s.ft>=fps){ s.ft=0; s.frame=(s.frame+1)%(moving?8:6); }
   });
   CATS.forEach(c=>{ stepAnimal(c,1.0,dt); c.blinkPhase+=dt; });
+  FIXED_CATS.forEach(c=>{ c.ph+=0.02; c.blinkPhase+=dt; c.x=c.hx+Math.cos(c.ph)*14; c.y=c.hy+Math.sin(c.ph*1.7)*8; c.dir=Math.cos(c.ph)>0?1:-1; });
   FROGS.forEach(fr=>{
     fr.ft+=dt; if(fr.ft>=0.16){ fr.ft=0; fr.frame=(fr.frame+1)%12; }
     fr.hop-=dt; if(fr.hop<=0){ fr.hop=120+rnd()*220; const dir=rnd()<0.5?-1:1; if(passable(fr.x+dir*TILE,fr.y)) fr.x+=dir*TILE; }
@@ -668,6 +790,22 @@ function drawCat(c){
   } else { ctx.fillStyle='#888'; ctx.fillRect(c.x-9,c.y-9,18,18); }
   ctx.restore();
 }
+/* ---- 宿舍楼下的猫窝（草垫 + 食碗 + 名牌，静态画进背景缓存） ---- */
+function drawCatNest(n){
+  const x=n.tx*TILE, y=n.ty*TILE;
+  ctx.fillStyle='rgba(0,0,0,.12)';ctx.beginPath();ctx.ellipse(x+TILE/2,y+TILE/2+4,16,9,0,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#caa46a';ctx.beginPath();ctx.ellipse(x+TILE/2,y+TILE/2,16,9,0,0,Math.PI*2);ctx.fill();
+  ctx.strokeStyle='#a8824a';ctx.lineWidth=1.5;ctx.beginPath();ctx.ellipse(x+TILE/2,y+TILE/2,16,9,0,0,Math.PI*2);ctx.stroke();
+  ctx.strokeStyle='rgba(140,100,50,.4)';ctx.beginPath();ctx.ellipse(x+TILE/2,y+TILE/2,11,6,0,0,Math.PI*2);ctx.stroke();
+  ctx.fillStyle='#e8e0d0';ctx.beginPath();ctx.arc(x+TILE/2-2,y+TILE/2+8,4,0,7);ctx.fill();
+  ctx.strokeStyle='#9a8a6a';ctx.lineWidth=1;ctx.beginPath();ctx.arc(x+TILE/2-2,y+TILE/2+8,4,0,7);ctx.stroke();
+  ctx.fillStyle='#c97b5a';ctx.beginPath();ctx.arc(x+TILE/2-2,y+TILE/2+8,2,0,7);ctx.fill();
+  const tw=56;
+  ctx.fillStyle='rgba(255,250,240,.95)';ctx.fillRect(x+TILE/2-tw/2,y-6,tw,16);
+  ctx.strokeStyle='#6e452c';ctx.lineWidth=1.5;ctx.strokeRect(x+TILE/2-tw/2,y-6,tw,16);
+  ctx.fillStyle='#6e452c';ctx.font='11px "ZCOOL KuaiLe",sans-serif';ctx.textAlign='center';
+  ctx.fillText('🐱 猫窝',x+TILE/2,y+6);
+}
 
 /* ---------- 同学（随机走动 · 结伴而行 · 点击闲聊） ---------- */
 const STUDENT_NAMES=['小陈','小雨','阿杰','彤彤','嘉嘉','晨晨','楠楠','一帆','思思','阿泽','可可','子豪','晓雯','大壮','圆圆','浩然','甜甜','凯文','璐璐','志强','美玲','小胖','悦悦','冬冬'];
@@ -689,7 +827,7 @@ const STUDENT_CHITCHAT=[
 const STUDENT_GROUPS=[[0,1],[2,3,4],[5,6],[7,8,9],[10,11],[12,13,14],[15,16],[17,18,19],[20,21],[22,23]];
 const STUDENT_SPAWNS=[
   [10,20],[22,20],[34,20],[46,20],[58,20],[70,20],[82,20],[14,30],   // 四期 8
-  [10,60],[20,60],[30,60],[8,90],[16,90],[24,96],[30,80],[50,60],     // 文翔路 8
+  [10,60],[20,60],[30,60],[8,90],[24,90],[24,96],[30,80],[50,60],     // 文翔路 8
   [110,60],[125,60],[140,60],[110,78],[125,78],[140,78],[108,96],[130,100], // 上川路 8
 ];
 /* ---------- 小坏人（推销员；地图上可见形象 + 名牌，靠近强制对话） ---------- */
@@ -702,15 +840,18 @@ const VILLAINS=[
   {id:'class2',tile:{x:173,y:101},emoji:'🎓',name:'教培小哥',color:'#8a4aa0',msg:'同学，四六级/教资考前冲刺班，最后 3 个名额！'},
   {id:'food1',tile:{x:14,y:50},emoji:'🍎',name:'水果摊',color:'#b0783a',msg:'新鲜水果便宜卖啦，走过路过别错过～'},
   {id:'food2',tile:{x:68,y:41},emoji:'🧋',name:'奶茶试喝',color:'#a05a8a',msg:'新店开业！奶茶免费试喝一杯？'},
-  {id:'laundry',tile:{x:30,y:10},emoji:'🧺',name:'洗衣卡',color:'#5a7a4a',msg:'同学，办洗衣卡吗？充值 100 送 20，扫码即办～'},
+  {id:'laundry',tile:{x:26,y:16},emoji:'🧺',name:'洗衣卡',color:'#5a7a4a',msg:'同学，办洗衣卡吗？充值 100 送 20，扫码即办～'},
   {id:'gym',tile:{x:64,y:10},emoji:'🏋️',name:'健身卡',color:'#4a7a68',msg:'健身房年卡团购，学生价半折，练出好身材！'},
   {id:'car',tile:{x:94,y:80},emoji:'🚗',name:'驾校顾问',color:'#6a5a8a',msg:'考驾照吗？周末班寒暑假班都有，包接送～'},
   {id:'film',tile:{x:94,y:110},emoji:'📱',name:'贴膜小哥',color:'#8a6a3a',msg:'手机贴膜 9.9，钢化膜 19.9，贴完包好！'},
+  {id:'tel1',tile:{x:40,y:26},emoji:'📱',name:'电话卡推销',color:'#4a78a0',msg:'同学！办张校园电话卡吧，月租 19 元送 100G 校园流量，宿舍楼间信号最好～'},
+  {id:'net3',tile:{x:64,y:33},emoji:'🛜',name:'宽带小哥',color:'#4a68b0',msg:'宿舍拉宽带吗？200M 光钎四期专属价 39 元/月，今天办还送路由器！'},
 ];
 VILLAINS.forEach(v=>{v.x=v.tile.x*TILE+TILE/2; v.y=v.tile.y*TILE+TILE/2;});
 const STUDENTS=[];
 const player={x:24*TILE+TILE/2,y:46*TILE+TILE/2,tx:24*TILE+TILE/2,ty:46*TILE+TILE/2,dir:0,walk:0};
 NPCS.forEach(n=>{n.px=n.tile.x*TILE+TILE/2; n.py=n.tile.y*TILE+TILE/2; if(!n.history)n.history=[];});
+VILLAGERS.forEach(v=>{v.px=v.tile.x*TILE+TILE/2; v.py=v.tile.y*TILE+TILE/2; if(!v.history)v.history=[];});
 STUDENTS.length=0;
 STUDENT_GROUPS.forEach(g=>{
   g.forEach((idx,pi)=>{
@@ -826,6 +967,17 @@ function drawGrassTile(x,y){
   let name='grassA';
   if(h===0)name='grassB'; else if(h===3)name='grassAf'; else if(h===7)name='grassBf';
   kTile(name,x*TILE,y*TILE);
+  // 程序化草坪层次：色块/草簇，让地面不单调（缓存层，无动态开销）
+  const px=x*TILE, py=y*TILE;
+  if(h===1||h===5||h===9){
+    ctx.fillStyle='rgba(70,150,60,.30)'; ctx.fillRect(px+3,py+9,3,7); ctx.fillRect(px+13,py+20,3,9); ctx.fillRect(px+24,py+5,3,8);
+    ctx.fillStyle='rgba(130,200,100,.28)'; ctx.fillRect(px+9,py+15,2,6); ctx.fillRect(px+21,py+10,2,5);
+  } else if(h===2||h===6||h===10){
+    ctx.fillStyle='rgba(100,170,80,.25)'; ctx.fillRect(px+7,py+17,3,8); ctx.fillRect(px+19,py+8,3,7);
+    ctx.fillStyle='rgba(60,140,55,.20)'; ctx.fillRect(px+15,py+24,3,6);
+  } else {
+    ctx.fillStyle='rgba(90,165,75,.18)'; ctx.fillRect(px+11,py+12,3,7);
+  }
 }
 function drawPathTile(x,y,p){
   const px=x*TILE, py=y*TILE, type=p.type||'path';
@@ -895,7 +1047,88 @@ function drawNameplate(b,x,y,w,h){
   ctx.fillStyle='#6e452c';ctx.font='13px "ZCOOL KuaiLe",sans-serif';ctx.textAlign='center';
   ctx.fillText(b.emoji+' '+b.name,x+w/2,y-16);
 }
+/* ---- 图书馆（松江：罗马斗兽场造型，精细建模） ---- */
+function drawLibrary(b){
+  const x=b.x*TILE,y=b.y*TILE,w=b.w*TILE,h=b.h*TILE;
+  const cx=x+w/2, cy=y+h/2;
+  // 基台与阴影
+  ctx.fillStyle='rgba(0,0,0,.18)';ctx.fillRect(x+6,y+h-2,w-12,8);
+  ctx.fillStyle='#d9c9a8';ctx.fillRect(x-2,y+h-6,w+4,6);
+  // 斗兽场主体：外椭圆（米色石材）
+  ctx.fillStyle='#cfbd97';ctx.beginPath();ctx.ellipse(cx,cy,w/2+4,h/2+3,0,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#b7a47e';ctx.beginPath();ctx.ellipse(cx,cy-2,w/2,h/2,0,0,Math.PI*2);ctx.fill();
+  // 底层连续券廊（拱门洞）
+  ctx.fillStyle='#8a7456';
+  const nArch=Math.max(6,Math.floor(w/26));
+  for(let i=0;i<nArch;i++){
+    const ax=x+16+i*(w-32)/nArch;
+    ctx.beginPath();ctx.ellipse(ax,cy+8,7,10,0,Math.PI,0);ctx.fill();
+  }
+  ctx.fillStyle='#9c8870';ctx.fillRect(x+8,cy-8,w-16,4);
+  // 二层小拱窗
+  ctx.fillStyle='#7c6a50';
+  for(let i=0;i<nArch;i++){
+    const ax=x+16+i*(w-32)/nArch;
+    ctx.beginPath();ctx.arc(ax,cy-14,4.5,0,7);ctx.fill();
+  }
+  ctx.fillStyle='#6e5c44';ctx.fillRect(x+4,cy-24,w-8,4);
+  // 顶部平台（天井 + 天空）
+  ctx.fillStyle='#efe6cf';ctx.beginPath();ctx.ellipse(cx,cy-28,w/2-4,9,0,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#8fc9e8';ctx.beginPath();ctx.ellipse(cx,cy-30,w/2-16,5,0,0,Math.PI*2);ctx.fill();
+  // 入口门廊（南侧）
+  ctx.fillStyle='#5a3a22';ctx.fillRect(cx-9,y+h-22,18,22);
+  ctx.fillStyle='#caa46a';ctx.fillRect(cx-11,y+h-24,22,4);
+  ctx.fillStyle='#f3d27a';ctx.beginPath();ctx.arc(cx,y+h-14,5,0,7);ctx.fill();
+  // 门前台阶
+  ctx.fillStyle='#d9c9a8';ctx.fillRect(cx-14,y+h-4,28,4);
+  drawNameplate(b,x,y,w,h);
+}
+/* ---- 图书馆（上川路赵朱木兰：方正玻璃幕墙现代馆） ---- */
+function drawLibraryModern(b){
+  const x=b.x*TILE,y=b.y*TILE,w=b.w*TILE,h=b.h*TILE;
+  ctx.fillStyle='rgba(0,0,0,.18)';ctx.fillRect(x+5,y+h-2,w-10,8);
+  ctx.fillStyle='#8aa4c9';ctx.fillRect(x,y,w,h);
+  ctx.fillStyle='rgba(220,235,250,.85)';
+  for(let gx=x+8;gx<x+w-8;gx+=18)ctx.fillRect(gx,y+8,13,h-22);
+  ctx.strokeStyle='rgba(60,80,120,.5)';ctx.lineWidth=1;
+  for(let gx=x+8;gx<x+w-8;gx+=18)ctx.strokeRect(gx,y+8,13,h-22);
+  ctx.strokeStyle='rgba(60,80,120,.35)';
+  ctx.beginPath();ctx.moveTo(x+8,y+8);ctx.lineTo(x+w-8,y+8);ctx.moveTo(x+8,y+h-14);ctx.lineTo(x+w-8,y+h-14);ctx.stroke();
+  ctx.fillStyle='#5a7296';ctx.fillRect(x-2,y-4,w+4,6);
+  ctx.fillStyle='#f3d27a';ctx.fillRect(x-2,y-4,w+4,2);
+  drawNameplate(b,x,y,w,h);
+}
+/* ---- E 字型教学楼（四五六七号楼）：西侧联通连廊 + 向东伸出四翼 ---- */
+function drawEComplex(b){
+  const x=b.x*TILE,y=b.y*TILE,w=b.w*TILE,h=b.h*TILE;
+  ctx.fillStyle='rgba(0,0,0,.18)';ctx.fillRect(x+4,y+h-2,w,8);
+  ctx.fillStyle=b.color;ctx.fillRect(x,y,w,h);
+  ctx.fillStyle='rgba(255,255,255,.12)';ctx.fillRect(x,y,4,h);
+  for(let wy=y+8;wy<y+h-6;wy+=14)for(let wx=x+6;wx<x+w-10;wx+=16){
+    ctx.fillStyle='#fff3c4';ctx.fillRect(wx,wy,10,11);
+    ctx.strokeStyle='rgba(90,60,40,.5)';ctx.lineWidth=1;ctx.strokeRect(wx,wy,10,11);
+    ctx.beginPath();ctx.moveTo(wx+5,wy);ctx.lineTo(wx+5,wy+11);ctx.stroke();
+  }
+  ctx.fillStyle=shade(b.color,-30);ctx.fillRect(x-1,y-3,w+2,4);
+  ctx.fillStyle=shade(b.color,-45);ctx.fillRect(x-1,y,2,h);
+  ctx.fillStyle=shade(b.color,-22);ctx.fillRect(x+w-5,y,h,5);
+  drawNameplate(b,x,y,w,h);
+}
+function drawECorridor(b){
+  const x=b.x*TILE,y=b.y*TILE,w=b.w*TILE,h=b.h*TILE;
+  ctx.fillStyle='rgba(0,0,0,.15)';ctx.fillRect(x+2,y+h-2,w-4,7);
+  ctx.fillStyle=b.color;ctx.fillRect(x,y,w,h);
+  ctx.fillStyle='rgba(210,230,245,.9)';ctx.fillRect(x+2,y-2,w-4,5);
+  ctx.fillStyle='rgba(140,170,200,.6)';
+  for(let gy=y+8;gy<y+h-4;gy+=16)ctx.fillRect(x+2,gy,w-4,2);
+  ctx.fillStyle='#fff3d6';ctx.fillRect(x+5,y+20,w-10,10);ctx.fillRect(x+5,y+64,w-10,10);ctx.fillRect(x+5,y+108,w-10,10);
+  ctx.fillStyle='#caa46a';ctx.fillRect(x+5,y+28,w-10,3);
+  drawNameplate(b,x,y,w,h);
+}
 function drawBuilding(b){
+  if(b.type==='library') return b.name.indexOf('赵朱')>=0?drawLibraryModern(b):drawLibrary(b);
+  if(b.type==='ecomplex') return drawEComplex(b);
+  if(b.type==='ecorr') return drawECorridor(b);
   const x=b.x*TILE,y=b.y*TILE,w=b.w*TILE,h=b.h*TILE;
   ctx.fillStyle='rgba(0,0,0,.18)';ctx.fillRect(x+5,y+h-2,w,10);
   ctx.fillStyle=b.color;ctx.fillRect(x,y,w,h);
@@ -1061,6 +1294,18 @@ function drawTree(t){
   const names=['treeG1','treeG2','treeO','treeG1'];
   kTile(names[t.k%4],t.x,t.y);
 }
+/* ---- 宿舍区高大乔木（程序化：粗干 + 三层大冠，比 Kenney 树高半个身位） ---- */
+function drawTallTree(t){
+  const x=t.x+16, y=t.y+16;
+  ctx.fillStyle='#5a3a22';ctx.fillRect(x-3,y+6,6,14);
+  ctx.fillStyle='#6e452c';ctx.fillRect(x-1,y+2,2,18);
+  const g=ctx.createRadialGradient(x,y-6,2,x,y-6,26);
+  g.addColorStop(0,'#7cc06a');g.addColorStop(.65,'#5aa04e');g.addColorStop(1,'#43843c');
+  ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y-6,25,0,7);ctx.fill();
+  ctx.fillStyle='rgba(150,210,120,.65)';ctx.beginPath();ctx.arc(x-10,y-12,14,0,7);ctx.fill();
+  ctx.fillStyle='rgba(130,195,105,.5)';ctx.beginPath();ctx.arc(x+11,y-14,12,0,7);ctx.fill();
+  ctx.fillStyle='rgba(70,140,60,.35)';ctx.beginPath();ctx.arc(x+4,y+2,20,0,7);ctx.fill();
+}
 function drawFlower(f){
   kTile(f.k<2?'mush':'flower',f.x-8,f.y-8,16,16);
 }
@@ -1130,8 +1375,11 @@ function drawMapVisible(cx,cy){
   TRACKS.forEach(t=>{if(inView(t.x,t.y,r))drawTrack(t);});
   // 树（画在草地/装饰之上）
   trees.forEach(t=>{if(t.x>cx-40&&t.x<cx+LOGIC_W+40&&t.y>cy-40&&t.y<cy+LOGIC_H+40)drawTree(t);});
-  // 建筑
-  BUILDINGS.forEach(b=>{if(inView(b.x,b.y,r))drawBuilding(b);});
+  // 宿舍区高大乔木
+  dormTrees.forEach(t=>{if(t.x>cx-60&&t.x<cx+LOGIC_W+60&&t.y>cy-60&&t.y<cy+LOGIC_H+60)drawTallTree(t);});
+  // 猫窝（宿舍楼下，草地之上）
+  CAT_NESTS.forEach(n=>{if(n.tx*TILE>cx-60&&n.tx*TILE<cx+LOGIC_W+60&&n.ty*TILE>cy-60&&n.ty*TILE<cy+LOGIC_H+60)drawCatNest(n);});
+  // 建筑：v1.8 起移出缓存，改在动态层绘制（影子必须垫在建筑后面、每栋独立光影）
   // 小吃摊位
   STALLS.forEach(s=>{if(inView(s.x,s.y,r))drawStall(s);});
   // 围墙 / 门 / 牌 / 路灯 / 长椅
@@ -1192,7 +1440,8 @@ function drawChar(px,py,color,faceDir,walkPhase,emoji,hair){
 function drawNPC(n){
   drawChar(n.px,n.py,n.color,0,0,n.emoji);
   ctx.font='13px "ZCOOL KuaiLe",sans-serif';ctx.textAlign='center';
-  ctx.fillStyle='rgba(255,250,240,.9)';ctx.fillRect(n.px-26,n.py-44,52,18);
+  const tw=n.name.length*13+16;
+  ctx.fillStyle='rgba(255,250,240,.9)';ctx.fillRect(n.px-tw/2,n.py-44,tw,18);
   ctx.fillStyle='#6e452c';ctx.fillText(n.name,n.px,n.py-31);
   const d=Math.hypot(player.x-n.px,player.y-n.py);
   if(d<90){ctx.fillStyle='#d98a1f';ctx.font='bold 20px sans-serif';
@@ -1249,9 +1498,15 @@ function drawBuildingShadows(){
   if(Math.abs(SUN.shadowDX)<1) return;
   BUILDINGS.forEach(b=>{
     const x=b.x*TILE,y=b.y*TILE,w=b.w*TILE,h=b.h*TILE;
-    if(x>camX-80&&x<camX+LOGIC_W+80&&y>camY-80&&y<camY+LOGIC_H+80){
+    if(x>camX-140&&x<camX+LOGIC_W+140&&y>camY-140&&y<camY+LOGIC_H+140){
+      // 每栋建筑独立计算：影长随建筑高度（h/TILE）伸缩，方向统一由太阳方位决定
+      const len=SUN.shadowLen*(0.45+b.h/TILE*0.4);
+      const shx=SUN.shadowDX>0?len:-len;
       ctx.save(); ctx.globalAlpha=0.20; ctx.fillStyle='#000';
-      ctx.beginPath(); ctx.ellipse(x+w/2+SUN.shadowDX, y+h+2, Math.max(10,w*0.5), 7, 0,0,Math.PI*2); ctx.fill(); ctx.restore();
+      ctx.beginPath(); ctx.ellipse(x+w/2+shx, y+h+3, Math.max(10,w*0.5), 7, 0,0,Math.PI*2); ctx.fill();
+      ctx.globalAlpha=0.09;
+      ctx.beginPath(); ctx.ellipse(x+w/2+shx*0.55, y+h+2, Math.max(8,w*0.42), 5, 0,0,Math.PI*2); ctx.fill();
+      ctx.restore();
     }
   });
 }
@@ -1284,6 +1539,19 @@ function drawWeather(){
   }
   ctx.restore();
 }
+/* ---- 草叶动画：地面上随风摆动的草（动态层，世界坐标） ---- */
+function drawGrassBlades(){
+  const t=Date.now()/900, wind=Math.sin(Date.now()/1300)*1.1;
+  ctx.strokeStyle='rgba(84,158,74,.55)'; ctx.lineWidth=1.3;
+  const x0=camX-40,x1=camX+LOGIC_W+40,y0=camY-40,y1=camY+LOGIC_H+40;
+  for(const g of grassCells){
+    if(g.x<x0||g.x>x1||g.y<y0||g.y>y1) continue;
+    const sw=Math.sin(t+g.ph)*2.2+wind;
+    const gh=g.k===0?8:(g.k===1?10:6);
+    ctx.beginPath(); ctx.moveTo(g.x,g.y);
+    ctx.quadraticCurveTo(g.x+sw*0.4,g.y-gh*0.5,g.x+sw,g.y-gh); ctx.stroke();
+  }
+}
 function updateCamera(){
   camX=Math.round(player.x-LOGIC_W/2); camY=Math.round(player.y-LOGIC_H/2);
   camX=Math.max(0,Math.min(camX,W-LOGIC_W)); camY=Math.max(0,Math.min(camY,H-LOGIC_H));
@@ -1304,19 +1572,25 @@ function render(){
   ensureCache();
   ctx.clearRect(0,0,LOGIC_W,LOGIC_H);
   ctx.save(); ctx.translate(-camX,-camY);
+  const rv=visRect(camX,camY);
   try{ ctx.drawImage(cacheCv,cacheCx,cacheCy,LOGIC_W,LOGIC_H); }catch(e){ window.__showErr&&window.__showErr('bg draw: '+e.message); }
-  drawWaterSparkle();
+  try{ drawGrassBlades(); }catch(e){ window.__showErr&&window.__showErr('grass: '+e.message); }
   try{ drawBuildingShadows(); }catch(e){ window.__showErr&&window.__showErr('bshadow: '+e.message); }
+  // 建筑动态层：画在影子之后（影子垫底），保证"光影在建筑物后面"
+  try{ BUILDINGS.forEach(b=>{ if(inView(b.x,b.y,rv)) drawBuilding(b); }); }catch(e){ window.__showErr&&window.__showErr('build: '+e.message); }
+  drawWaterSparkle();
   try{
     const arr=[
       {px:player.x,py:player.y,draw:()=>drawChar(player.x,player.y,'#3b7fd4',player.dir,player.walk,'🧑')},
       ...NPCS.map(n=>({px:n.px,py:n.py,draw:()=>drawNPC(n)})),
+      ...VILLAGERS.map(v=>({px:v.px,py:v.py,draw:()=>drawNPC(v)})),
       ...VILLAINS.map(v=>({px:v.x,py:v.y,draw:()=>drawVillain(v)})),
       ...STUDENTS.map(s=>({px:s.x,py:s.y,draw:()=>drawStudent(s)})),
       ...FIREFLIES.map(f=>({px:f.x,py:f.y,draw:()=>drawFirefly(f)})),
       ...SQUIRRELS.map(s=>({px:s.x,py:s.y,draw:()=>drawSquirrel(s)})),
       ...FROGS.map(fr=>({px:fr.x,py:fr.y,draw:()=>drawFrog(fr)})),
-      ...CATS.map(c=>({px:c.x,py:c.y,draw:()=>drawCat(c)}))];
+      ...CATS.map(c=>({px:c.x,py:c.y,draw:()=>drawCat(c)})),
+      ...FIXED_CATS.map(c=>({px:c.x,py:c.y,draw:()=>drawCat(c)}))];
     arr.sort((a,b)=>a.py-b.py); arr.forEach(o=>o.draw());
   }catch(e){ window.__showErr&&window.__showErr('chars: '+e.message); }
   ctx.restore();
@@ -1326,14 +1600,21 @@ function render(){
 }
 
 /* ---------- 移动 ---------- */
+/* 点击不可通行点时，按"由内向外逐环"搜索最近可行点：每环完整扫描一圈，
+   找到最近一环即停（不再偏向左上），8 环内找不到则交给滑动碰撞贴墙停。 */
 function moveTo(px,py){
   if(!passable(px,py)){
     let best=null,bd=1e9;
-    for(let r=1;r<6;r++)for(let dx=-r;dx<=r;dx++)for(let dy=-r;dy<=r;dy++){
-      const nx=px+dx*TILE, ny=py+dy*TILE;
-      if(passable(nx,ny)){const d=Math.hypot(dx,dy);if(d<bd){bd=d;best={nx,ny};}}
+    outer:
+    for(let r=1;r<=8;r++){
+      for(let dy=-r;dy<=r;dy++)for(let dx=-r;dx<=r;dx++){
+        if(Math.max(Math.abs(dx),Math.abs(dy))!==r) continue;
+        const nx=px+dx*TILE, ny=py+dy*TILE;
+        if(passable(nx,ny)){const d=dx*dx+dy*dy; if(d<bd){bd=d;best={nx,ny};}}
+      }
+      if(best) break outer;
     }
-    if(best){px=best.nx;py=best.ny;} else return;
+    if(best){px=best.nx;py=best.ny;}
   }
   player.tx=px;player.ty=py;
 }
@@ -1353,18 +1634,28 @@ function loop(t){
   }
   const dx=player.tx-player.x, dy=player.ty-player.y, dist=Math.hypot(dx,dy);
   if(dist>1.5){
-    const sp=3.2*dt;
-    if(dx) player.dir=dx>0?1:-1;
-    player.x+=dx/dist*Math.min(sp,dist);
-    player.y+=dy/dist*Math.min(sp,dist);
-    player.walk+=0.3*dt;
+    const sp=3.2*dt, step=Math.min(sp,dist);
+    const sx=dx/dist*step, sy=dy/dist*step;
+    // 滑动碰撞：x/y 分别试探，贴墙时自动沿墙滑行；全部被挡则原地停（不会穿楼/卡回）
+    let mx=0,my=0;
+    if(passable(player.x+sx,player.y)) mx=sx;
+    if(passable(player.x,player.y+sy)) my=sy;
+    if(mx||my){
+      player.x+=mx; player.y+=my;
+      if(dx) player.dir=dx>0?1:-1;
+      player.walk+=0.3*dt;
+    } else { player.walk=0; }
   } else { player.walk=0; }
-  let near=null, snear=null;
+  let near=null, snear=null, vnear=null, nnear=null;
   NPCS.forEach(n=>{if(Math.hypot(player.x-n.px,player.y-n.py)<90)near=n;});
+  VILLAGERS.forEach(v=>{if(Math.hypot(player.x-v.px,player.y-v.py)<90)vnear=v;});
   STUDENTS.forEach(s=>{if(Math.hypot(player.x-s.x,player.y-s.y)<70)snear=s;});
+  CAT_NESTS.forEach(n=>{const nx=n.tx*TILE+TILE/2,ny=n.ty*TILE+TILE/2;if(Math.hypot(player.x-nx,player.y-ny)<56)nnear=n;});
   const tip=document.getElementById('nearTip');
   if(near&&!dialogOpen){tip.classList.add('show');tip.innerHTML='按 <b>空格</b> 或点 '+near.name+' 对话';}
+  else if(vnear&&!dialogOpen){tip.classList.add('show');tip.innerHTML='按 <b>空格</b> 或点 '+vnear.name+' 聊聊';}
   else if(snear&&!dialogOpen){tip.classList.add('show');tip.innerHTML='按 <b>空格</b> 或点 '+snear.name+' 闲聊';}
+  else if(nnear&&!dialogOpen){tip.classList.add('show');tip.innerHTML='按 <b>空格</b> 喂猫（熟悉度 +1）';}
   else tip.classList.remove('show');
   render();
   requestAnimationFrame(loop);
@@ -1378,7 +1669,12 @@ cv.addEventListener('pointerdown',e=>{
   const sx=LOGIC_W/r.width, sy=LOGIC_H/r.height;
   const mx=(e.clientX-r.left)*sx+camX, my=(e.clientY-r.top)*sy+camY;
   for(const n of NPCS){ if(Math.hypot(mx-n.px,my-n.py)<26){ openDialog(n); return; } }
-  for(const s of STUDENTS){ if(Math.hypot(mx-s.x,s.y-my)<22){ openStudentChat(s); return; } }
+  for(const v of VILLAGERS){ if(Math.hypot(mx-v.px,my-v.py)<26){ openDialog(v); return; } }
+  for(const s of STUDENTS){ if(Math.hypot(mx-s.x,my-s.y)<22){ openStudentChat(s); return; } }
+  for(const n of CAT_NESTS){
+    const nx=n.tx*TILE+TILE/2, ny=n.ty*TILE+TILE/2;
+    if(Math.hypot(mx-nx,my-ny)<30){ openNestDialog(n); return; }
+  }
   if(dialogOpen) return;
   moveTo(mx,my);
 });
@@ -1387,8 +1683,16 @@ window.addEventListener('keydown',e=>{
     let near=null;NPCS.forEach(n=>{if(Math.hypot(player.x-n.px,player.y-n.py)<90)near=n;});
     if(near) openDialog(near);
     else{
-      let sn=null;STUDENTS.forEach(s=>{if(Math.hypot(player.x-s.x,player.y-s.y)<70)sn=s;});
-      if(sn) openStudentChat(sn);
+      let vn=null;VILLAGERS.forEach(v=>{if(Math.hypot(player.x-v.px,player.y-v.py)<90)vn=v;});
+      if(vn) openDialog(vn);
+      else{
+        let sn=null;STUDENTS.forEach(s=>{if(Math.hypot(player.x-s.x,player.y-s.y)<70)sn=s;});
+        if(sn) openStudentChat(sn);
+        else{
+          let nn=null;CAT_NESTS.forEach(n=>{const nx=n.tx*TILE+TILE/2,ny=n.ty*TILE+TILE/2;if(Math.hypot(player.x-nx,player.y-ny)<56)nn=n;});
+          if(nn) openNestDialog(nn);
+        }
+      }
     }
   }
   if(e.code==='Escape'&&dialogOpen) closeDialog();
@@ -1468,6 +1772,35 @@ function showVillainChoices(){
       toast('你被推销员追着说了十分钟，最终还是溜了…');
       closeDialog();
     })
+  );
+}
+/* ---- 猫窝喂食（靠近按空格/点击，喂小鱼干 +1 熟悉度，30s 冷却） ---- */
+let activeNest=null;
+const NEST_CD=30000;
+function openNestDialog(nest){
+  activeNest=nest; dialogOpen=true; mode='nest';
+  dlgName.textContent='🐱 猫窝'; dlgTitle.textContent='宿舍楼下的猫窝';
+  dlgPortrait.textContent='🐱'; dlgPortrait.style.background='#c97b5a33';
+  chatEl.style.display='none'; chatEl.innerHTML=''; inputRow.style.display='none'; scoreEl.style.display='none';
+  dialog.classList.add('show');
+  const cd=nest.lastFeed&&(performance.now()-nest.lastFeed)<NEST_CD;
+  typeText(cd?'窝里的小猫还在舔爪子，暂时不饿了，蹭了蹭你的手就继续睡了。'
+    :'一只毛茸茸的小橘猫蜷在窝里，抬头朝你"喵～"了一声，尾巴轻轻晃着。',()=>showNestChoices(cd));
+}
+function showNestChoices(cd){
+  choicesEl.innerHTML='';
+  if(cd){
+    choicesEl.append(mkBtn('👋 那下次再喂它','ghost',()=>closeDialog()));
+    return;
+  }
+  choicesEl.append(
+    mkBtn('🍖 喂小鱼干（熟悉度 +1）','brand',()=>{
+      activeNest.lastFeed=performance.now();
+      addFamiliarity(1);
+      toast('😸 小猫开心地吃起小鱼干！对立信熟悉度 +1');
+      closeDialog();
+    }),
+    mkBtn('👋 摸摸头就走','ghost',()=>{toast('小猫眯起眼睛，舒服地咕噜咕噜～');closeDialog();})
   );
 }
 function closeDialog(){dialogOpen=false;dialog.classList.remove('show');}
@@ -1628,6 +1961,20 @@ document.getElementById('helpBtn').onclick=()=>toast('点地面走 · 点村民�
 
 /* ---------- 更新日志（右上角） ---------- */
 const CHANGELOG=[
+  {ver:'v1.8',date:'2026-08-18',items:[
+    '修复：玩家移动改为"滑动碰撞"——不再直线穿楼/被弹回，贴墙自动滑行；点击楼内目标按环形就近落点，宿舍区不再被困',
+    '修复：建筑光影绘制在建筑本体后面（影子垫底），且每栋建筑按自身高度独立计算影长与拖尾，不再盖住楼体',
+    '修复：围墙穿模——西墙不再横穿横路与上川路小河西端（横路/小河西端内移 1 格避开竖墙），松江北门/南门开口加宽至与 3 格宽主干道对齐',
+    '宿舍区路网升级：新增 3 格宽中心主干道（贯穿南北），两侧楼间小路对称分布；楼间空地种高大乔木，主干道与楼间道两侧补路灯',
+    '四期公寓按真实布局瘦身：35 栋 → 立信 1-18 栋（3 排 × 6 列，楼间距加大、绿地更多），路网/猫窝/固定猫同步重排',
+    '新增 20 位校园生活 NPC：宿管/快递/外卖/洗衣房（四期）、烤串/饺子/奶茶/卷饼（文汇路）、保安/教练/前台/讲解员/图书管理员/堂务（文翔路）、实验中心/行政楼/图书馆/食堂/气膜馆/击剑（上川路），可自由问答 + Grill 摸底',
+    '宿舍区新增 2 个推销坏人：电话卡推销（送 100G 校园流量）与宽带小哥（四期专属 39 元/月）',
+    '猫咪家园：宿舍楼下新增 15 个猫窝 + 5 只固定守窝小猫；靠近猫窝按空格/点击可喂小鱼干，熟悉度 +1（30s 冷却防刷分）',
+    '地面草坪化：草地增加草簇纹理层次，不再是单色绿；动态草叶随"风"摆动（全局风场 + 每株独立相位）；花朵密度提升近一倍',
+    '松江校区按官方校园示意图重排：昭信堂移至序伦大楼与会计博物馆之间（松江校区北部，不再靠东）；图书馆移至柿子湾北岸；行政楼移至柿子湾南岸（"走过柿子湾就是行政楼"）；诚信广场移至正门内侧',
+    '图书馆精细重建（松江）：还原"罗马斗兽场"造型——椭圆石材主体 + 双层连续券廊 + 天井 + 南侧门廊；上川路赵朱木兰图书馆独立建模（方正玻璃幕墙现代馆）',
+    '松江 4/5/6/7 号楼（吉祥/北碚/徐汇/云间）重建为 E 字型连体：西侧联通连廊 + 向东伸出四翼，翼间留小花园',
+  ]},
   {ver:'v1.7',date:'2026-08-18',items:[
     '萤火虫：换成手绘像素萤火虫（带翅膀+发光腹节，CC0），不再用纯光斑',
     '猫：换成手绘像素橘猫（含眨眼帧 cat_blink），数量增至 20 只，校园随机游走',
@@ -1704,7 +2051,7 @@ document.addEventListener('keydown',e=>{if(e.code==='Escape')closeLog();});
 logEl.addEventListener('click',e=>{if(e.target===logEl)closeLog();});
 
 // 初始提示
-toast('欢迎来到 Lixin v1.7！宿舍区新路、像素木桥、昼夜光影、下雨撑伞～两校区随便走');
+toast('欢迎来到 Lixin v1.8！宿舍区新路+大树+猫窝喂猫、20 位新NPC、斗兽场图书馆、E 字教学楼～两校区随便走');
 </script>
 </body>
 </html>

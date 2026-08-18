@@ -49,8 +49,8 @@
     box-shadow:0 10px 30px var(--shadow), inset 0 0 0 4px var(--wood);
     width:100%;height:100%;touch-action:none;display:block;}
   /* 全图迷你地图（v1.9：解决地图太大、浦东/宿舍看不到；点击传送） */
-  #minimap{position:absolute;right:12px;bottom:12px;width:180px;height:135px;
-    background:rgba(255,250,240,.95);border:3px solid var(--wood);border-radius:10px;
+  #minimap{position:absolute;right:12px;bottom:12px;width:180px;min-width:180px;height:135px;min-height:135px;
+    background:rgba(158,199,138,.95);border:3px solid var(--wood);border-radius:10px;
     box-shadow:0 6px 18px var(--shadow);z-index:7;cursor:pointer;display:block;
     image-rendering:pixelated;}
   .minimap-label{position:absolute;right:18px;font:bold 11px 'ZCOOL KuaiLe',sans-serif;
@@ -242,7 +242,7 @@
     </div>
 
     <div class="toast" id="toast"></div>
-    <div id="errBar" style="position:absolute;left:50%;bottom:50px;transform:translateX(-50%);z-index:99;background:rgba(212,86,75,.95);color:#fff;padding:6px 14px;border-radius:8px;font:12px/1.4 monospace;max-width:90%;display:none;cursor:pointer;white-space:pre-wrap;"></div>
+    <div id="errBar" style="position:absolute;left:50%;top:52px;transform:translateX(-50%);z-index:99;background:rgba(212,86,75,.97);color:#fff;padding:8px 16px;border-radius:10px;font:bold 13px/1.5 monospace;max-width:92%;display:none;cursor:pointer;white-space:pre-wrap;box-shadow:0 4px 14px rgba(0,0,0,.3);"></div>
   </div>
 </div>
 
@@ -667,20 +667,30 @@ buildBlocked();
 let seed=20260818; const rnd=()=>{seed=(seed*1103515245+12345)&0x7fffffff;return seed/0x7fffffff;};
 const canDecorate=(tx,ty)=>!blocked.has(key(tx,ty))&&!isPath(tx,ty)
   &&!SQUARES.some(s=>tx>=s.x&&tx<s.x+s.w&&ty>=s.y&&ty<s.y+s.h);
+// v1.10 大幅提高装饰密度，解决"大地图很多空白"——canDecorate 自然避开建筑/路/河/广场/摊位
 const flowers=[];
-for(let i=0;i<1100;i++){const tx=Math.floor(rnd()*COLS),ty=Math.floor(rnd()*ROWS);
+for(let i=0;i<2400;i++){const tx=Math.floor(rnd()*COLS),ty=Math.floor(rnd()*ROWS);
   if(canDecorate(tx,ty))flowers.push({x:tx*TILE+rnd()*TILE,y:ty*TILE+rnd()*TILE,k:Math.floor(rnd()*4)});}
 const trees=[];
-for(let i=0;i<120;i++){const tx=Math.floor(rnd()*COLS),ty=Math.floor(rnd()*ROWS);
+for(let i=0;i<320;i++){const tx=Math.floor(rnd()*COLS),ty=Math.floor(rnd()*ROWS);
   if(canDecorate(tx,ty))trees.push({x:tx*TILE,y:ty*TILE,k:Math.floor(rnd()*4)});}
 const bushes=[];
-for(let i=0;i<150;i++){const tx=Math.floor(rnd()*COLS),ty=Math.floor(rnd()*ROWS);
+for(let i=0;i<500;i++){const tx=Math.floor(rnd()*COLS),ty=Math.floor(rnd()*ROWS);
   if(canDecorate(tx,ty))bushes.push({x:tx*TILE,y:ty*TILE,k:Math.floor(rnd()*2)});}
 /* ---- 宿舍区高大树木（四期绿化带：楼间大冠乔木） ---- */
 const dormTrees=[];
-for(let i=0;i<26;i++){
+for(let i=0;i<90;i++){
   const tx=Math.floor(rnd()*80)+3, ty=Math.floor(rnd()*36)+2;
   if(canDecorate(tx,ty)&&ty<40) dormTrees.push({x:tx*TILE,y:ty*TILE,k:Math.floor(rnd()*3)});
+}
+/* ---- 校际大道两侧绿化带（v1.10：之前最空旷区域，x:87 / x:100 沿大道密集灌木+大树） ---- */
+for(let y=44;y<=126;y+=2){
+  if(canDecorate(87,y)) bushes.push({x:87*TILE,y:y*TILE,k:0});
+  if(canDecorate(100,y)) bushes.push({x:100*TILE,y:y*TILE,k:1});
+}
+for(let y=48;y<=124;y+=6){
+  if(canDecorate(87,y)) trees.push({x:87*TILE,y:y*TILE,k:1});
+  if(canDecorate(100,y)) trees.push({x:100*TILE,y:y*TILE,k:2});
 }
 /* ---- 草叶动画数据：每草地格 2 株草（世界坐标，动态层随风摆动） ---- */
 const grassCells=[];
@@ -1588,14 +1598,19 @@ function ensureCache(){
   cacheCtx.setTransform(DPR,0,0,DPR,0,0);
   cacheCtx.clearRect(0,0,LOGIC_W,LOGIC_H);
   const saved=ctx; ctx=cacheCtx;
+  // v1.10 修复：平移让 camY 视野画在 cacheCv 物理 0 起（否则 camY 太大时视野在 cacheCv 物理外被静默丢弃）
+  cacheCtx.translate(0, -camY);
   try{ drawMapVisible(camX,camY); }catch(e){ window.__showErr&&window.__showErr('bg: '+e.message); }
+  cacheCtx.translate(0, camY);
   ctx=saved;
   cacheCx=camX; cacheCy=camY;
 }
 /* ============================================================
    全图迷你地图（v1.9：解决地图太大/浦东看不见；点击传送导航）
    ============================================================ */
-const mmCv=document.getElementById('minimap'), mctx=mmCv.getContext('2d');
+const mmCv=document.getElementById('minimap');
+mmCv.width=200; mmCv.height=150;  // v1.10 修复：强制 buffer 尺寸（防止 attribute 丢失导致 minimap 空白）
+const mctx=mmCv.getContext('2d');
 const MM_W=mmCv.width, MM_H=mmCv.height;
 const MM_SX=MM_W/COLS, MM_SY=MM_H/ROWS;
 function drawMinimap(){
@@ -1665,7 +1680,7 @@ function render(){
   ctx.clearRect(0,0,LOGIC_W,LOGIC_H);
   ctx.save(); ctx.translate(-camX,-camY);
   try{ ctx.drawImage(cacheCv,cacheCx,cacheCy,LOGIC_W,LOGIC_H); }catch(e){ window.__showErr&&window.__showErr('bg draw: '+e.message); }
-  drawWaterSparkle();
+  try{ drawWaterSparkle(); }catch(e){ window.__showErr&&window.__showErr('water: '+e.message); }
   try{
     const arr=[
       {px:player.x,py:player.y,draw:()=>drawChar(player.x,player.y,'#3b7fd4',player.dir,player.walk,'🧑')},
@@ -2063,6 +2078,8 @@ const CHANGELOG=[
     '修复: inView 可见性单位 bug（r.x0 是格索引却被与像素比较导致左/上边界检查失效）+ 改包围盒判断（传 w/h），消除长条围墙/建筑在视野边缘被错误地漏画或多余绘制的隐患',
     '建筑+影子回缓存层：v1.8 把建筑移出缓存改动态层每帧重画，加上建筑影子随太阳每帧微移 → 静止时画面"建筑下有东西在动"（被感知为"建筑物乱动"），现将建筑与建筑影子一起画进缓存层（drawMapVisible 在建筑前画影子），仅相机移动过半屏时随缓存重建更新',
     '效果: 玩家站着不动时整个画面（除动态角色/NPC/小动物/水纹/雨/天光/minimap 外）完全静止，围墙/建筑/影子/地面/道路等所有地图建模固定不动',
+    '地图装饰密度大幅提升: 花 822→1776、树 87→255、灌木 111→455、宿舍区大树 20→63；新增校际大道两侧绿化带（x:87 / x:100 沿 y:42-126 每 2 格一丛灌木 + 每 6 格一棵树），解决"大地图很多区域空旷/空白"',
+    'minimap 修复: 强制 buffer 尺寸（mmCv.width=200; mmCv.height=150 防止 attribute 丢失导致空白）+ 草绿不透明背景（与 minimap 内部草底一致，canvas 异常时也不显白）',
   ]},
   {ver:'v1.9',date:'2026-08-18',items:[
     '修复：草坪完全静态化——v1.8 的动态摆动草叶取消，改为画进背景缓存层的固定草叶，地面不再"区块挪动"',

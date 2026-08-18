@@ -26,6 +26,7 @@ Thumbs.db
 .workbuddy/
 
 /node_modules/
+**/node_modules/
 
 # CPA PDF source text (extracted, not tracked in git)
 docs/cpa-source/textbooks/

@@ -1,0 +1,24 @@
+{
+  "name": "deepsleep-community-backend",
+  "version": "1.0.0",
+  "description": "DeepSleep Blog 社区后端：注册/登录/发帖/资料。部署到腾讯云 SCF。",
+  "main": "scf.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node src/server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@vendia/serverless-express": "^4.12.6",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
+    "mysql2": "^3.11.0"
+  },
+  "optionalDependencies": {
+    "better-sqlite3": "^11.10.0"
+  }
+}

@@ -1,0 +1,6 @@
+node_modules/
+community.db
+community.db-wal
+community.db-shm
+.env
+*.log

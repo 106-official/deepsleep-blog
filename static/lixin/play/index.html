@@ -131,13 +131,21 @@
     padding:6px 16px;font-size:14px;color:var(--wood-d);z-index:6;display:none;}
   .near-tip.show{display:block;animation:bob 1s infinite ease-in-out;}
   @keyframes bob{50%{transform:translateX(-50%) translateY(-4px);}}
+  /* 熟悉度标签 */
+  .familiarity{font-size:13px;color:var(--brand-d);background:var(--paper);border:1.5px solid var(--brand);
+    border-radius:999px;padding:3px 12px;letter-spacing:0.5px;}
+  .familiarity b{color:var(--brand-d);font-weight:bold;font-size:14px;}
+  /* 坏人形象（头像画法与 NPC 同，由 emoji 替代） */
+  .villain-tag{position:absolute;font-size:11px;color:#d4564b;background:rgba(255,250,240,.92);
+    border:1.5px solid #d4564b;border-radius:999px;padding:2px 8px;pointer-events:none;z-index:5;display:none;}
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="hud">
     <h1>🌾 Lixin</h1>
-    <span class="hint">点地面走动 · 点学长问全站 · 点村民聊单科 · 文翔路/上川路两校区随便逛</span>
+    <span class="hint">点地面走动 · 点学长问全站 · 点村民聊单科 · 低头迅速走开摆脱校园搭讪</span>
+    <span class="familiarity">熟悉度：<b id="famVal">0</b></span>
     <span class="spacer"></span>
     <button class="btn ghost sm" id="codexBtn">📖 村民图鉴</button>
     <button class="btn ghost sm" id="helpBtn">玩法</button>
@@ -233,7 +241,7 @@ const LIXIN_KB = `「立信学习」（Lixin Learn）是上海立信会计金融
 const NPCS = [
   {
     id:'senpai', name:'学长', title:'立信向导 · 学长', emoji:'🎓', color:'#3b7fd4',
-    tile:{x:4,y:8}, greeting:'嗨，学弟/学妹！我是学长，立信的活地图～想了解「立信学习」站点、各门课怎么刷、文翔路/上川路两校区在哪儿，尽管问我！',
+    tile:{x:15,y:36}, greeting:'嗨，学弟/学妹！我是学长，立信的活地图～想了解「立信学习」站点、各门课怎么刷、文翔路/上川路两校区在哪儿，尽管问我！',
     scope:'「立信学习」全站内容与上海立信会计金融学院两校区公开信息（课程板块、历年真题、备考路径）。',
     out:'不逐题讲具体某门课（请找对应村民），也不编造站点里没有的资料或题目。',
     quiz:[
@@ -247,7 +255,7 @@ const NPCS = [
   },
   {
     id:'accounting', name:'会计学NPC', title:'会计学助教', emoji:'🧮', color:'#c97b5a',
-    tile:{x:26,y:9}, greeting:'哟，新同学！我是会计学NPC，Lixin 会计学的助教～',
+    tile:{x:22,y:22}, greeting:'哟，新同学！我是会计学NPC，Lixin 会计学的助教～',
     scope:'会计恒等式、借贷记账法、分录、账簿、三大报表（资产/利润/现金流）。',
     out:'不聊与会计无关的（编程、其他学科），也不给具体税务/审计的法律意见。',
     quiz:[
@@ -261,7 +269,7 @@ const NPCS = [
   },
   {
     id:'calc1', name:'微积分一NPC', title:'微积分（一）学姐', emoji:'📐', color:'#5a8fc9',
-    tile:{x:22,y:5}, greeting:'极限和导数还晕吗？我是微积分一NPC，微积分一包教包会～',
+    tile:{x:5,y:26}, greeting:'极限和导数还晕吗？我是微积分一NPC，微积分一包教包会～',
     scope:'极限与连续、导数与微分、中值定理、不定积分、洛必达法则。',
     out:'定积分 / 级数 / 多元微积分归微积分二，别来问我哦。',
     quiz:[
@@ -272,7 +280,7 @@ const NPCS = [
   },
   {
     id:'calc2', name:'微积分二NPC', title:'微积分（二）学长', emoji:'∫', color:'#7a5ac9',
-    tile:{x:27,y:5}, greeting:'我是微积分二NPC，定积分、级数、重积分都归我管！',
+    tile:{x:2,y:36}, greeting:'我是微积分二NPC，定积分、级数、重积分都归我管！',
     scope:'定积分、换元/分部积分、无穷级数、幂级数、多元函数、重积分。',
     out:'极限、导数、不定积分那是微积分一的地盘。',
     quiz:[
@@ -283,7 +291,7 @@ const NPCS = [
   },
   {
     id:'linalg', name:'线性代数NPC', title:'线性代数课代表', emoji:'🔢', color:'#4caf7d',
-    tile:{x:15,y:8}, greeting:'矩阵、向量空间、特征值——我是线性代数NPC，排好队形跟我来！',
+    tile:{x:8,y:39}, greeting:'矩阵、向量空间、特征值——我是线性代数NPC，排好队形跟我来！',
     scope:'行列式、矩阵运算与秩、向量空间、线性变换、特征值特征向量、二次型。',
     out:'不聊数值计算库的实现细节，专注理论与手算。',
     quiz:[
@@ -294,7 +302,7 @@ const NPCS = [
   },
   {
     id:'prob', name:'概率论NPC', title:'概率论老师', emoji:'🎲', color:'#d98a1f',
-    tile:{x:44,y:5}, greeting:'骰子摇起来～我是概率论NPC，概率论和数理统计都找我。',
+    tile:{x:44,y:22}, greeting:'骰子摇起来～我是概率论NPC，概率论和数理统计都找我。',
     scope:'古典/几何概型、条件概率、随机变量、常见分布、期望方差、大数定律、中心极限。',
     out:'不聊统计软件操作，先吃透概念。',
     quiz:[
@@ -305,7 +313,7 @@ const NPCS = [
   },
   {
     id:'python', name:'PythonNPC', title:'Python 助教', emoji:'🐍', color:'#2f9e6b',
-    tile:{x:50,y:8}, greeting:'hi～我是PythonNPC，带你从 print("hello") 到类与对象！',
+    tile:{x:50,y:27}, greeting:'hi～我是PythonNPC，带你从 print("hello") 到类与对象！',
     scope:'语法、变量与类型、控制流、函数、列表/字典、文件 IO、类与对象、基础库。',
     out:'不聊 Web 框架/数据科学高阶库，先把基础打牢。',
     quiz:[
@@ -316,82 +324,174 @@ const NPCS = [
   }
 ];
 
-/* ---------- 地图：文翔路 + 上川路 双校区（按真实布局，像素风，可拼接） ---------- */
-const TILE=48, COLS=64, ROWS=22;
+/* ---------- 地图：四期公寓（北）+ 文翔路（左）+ 上川路（右）三区超大地图（按真实布局还原） ---------- */
+const TILE=40, COLS=72, ROWS=56;
 const W=COLS*TILE, H=ROWS*TILE;
 let camX=0, camY=0;
 
 // 建筑（tile 坐标；type 决定屋顶/立面样式）
 const BUILDINGS=[
+  // ===== 四期学生公寓（松江大学城 · 文汇路1000弄 · 校外） =====
+  // 栋楼（简化代表性，42 栋分 ABCD 块；实际编号 1-42 用名牌标）
+  {x:4,y:5,w:2,h:2,type:'dorm',emoji:'🛏️',name:'1栋',color:'#c0a06a'},
+  {x:7,y:5,w:2,h:2,type:'dorm',emoji:'🛏️',name:'3栋',color:'#c0a06a'},
+  {x:4,y:8,w:2,h:2,type:'dorm',emoji:'🛏️',name:'4栋',color:'#c0a06a'},
+  {x:7,y:8,w:2,h:2,type:'dorm',emoji:'🛏️',name:'7栋',color:'#c0a06a'},
+  {x:4,y:11,w:2,h:2,type:'dorm',emoji:'🛏️',name:'8栋',color:'#c0a06a'},
+  {x:7,y:11,w:2,h:2,type:'dorm',emoji:'🛏️',name:'12栋',color:'#c0a06a'},
+  {x:12,y:5,w:2,h:2,type:'dorm',emoji:'🛏️',name:'13栋',color:'#c0a06a'},
+  {x:15,y:5,w:2,h:2,type:'dorm',emoji:'🛏️',name:'18栋',color:'#c0a06a'},
+  {x:12,y:8,w:2,h:2,type:'dorm',emoji:'🛏️',name:'17栋',color:'#c0a06a'},
+  {x:15,y:8,w:2,h:2,type:'dorm',emoji:'🛏️',name:'22栋(集点)',color:'#c0a06a'},
+  {x:12,y:11,w:2,h:2,type:'dorm',emoji:'🛏️',name:'21栋',color:'#c0a06a'},
+  {x:15,y:11,w:2,h:2,type:'dorm',emoji:'🛏️',name:'28栋',color:'#c0a06a'},
+  {x:20,y:5,w:2,h:2,type:'dorm',emoji:'🛏️',name:'24栋',color:'#c0a06a'},
+  {x:23,y:5,w:2,h:2,type:'dorm',emoji:'🛏️',name:'30栋',color:'#c0a06a'},
+  {x:20,y:8,w:2,h:2,type:'dorm',emoji:'🛏️',name:'29栋',color:'#c0a06a'},
+  {x:23,y:8,w:2,h:2,type:'dorm',emoji:'🛏️',name:'35栋',color:'#c0a06a'},
+  {x:20,y:11,w:2,h:2,type:'dorm',emoji:'🛏️',name:'34栋',color:'#c0a06a'},
+  {x:23,y:11,w:2,h:2,type:'dorm',emoji:'🛏️',name:'40栋',color:'#c0a06a'},
+  {x:28,y:5,w:2,h:2,type:'dorm',emoji:'🛏️',name:'36栋',color:'#c0a06a'},
+  {x:31,y:5,w:2,h:2,type:'dorm',emoji:'🛏️',name:'42栋',color:'#c0a06a'},
+  {x:28,y:8,w:2,h:2,type:'dorm',emoji:'🛏️',name:'41栋',color:'#c0a06a'},
+  {x:31,y:8,w:2,h:2,type:'dorm',emoji:'🛏️',name:'33栋',color:'#c0a06a'},
+  {x:28,y:11,w:2,h:2,type:'dorm',emoji:'🛏️',name:'32栋',color:'#c0a06a'},
+  {x:31,y:11,w:2,h:2,type:'dorm',emoji:'🛏️',name:'39栋',color:'#c0a06a'},
+  // 商业/广场
+  {x:18,y:5,w:2,h:3,type:'activity',emoji:'🏬',name:'集点广场',color:'#7a5ac9'},
+  {x:25,y:11,w:2,h:2,type:'activity',emoji:'🍜',name:'吃货天地',color:'#c98a4a'},
+  {x:34,y:11,w:2,h:2,type:'activity',emoji:'🛍️',name:'尚网商场',color:'#c98a4a'},
+  {x:2,y:14,w:3,h:2,type:'activity',emoji:'🎨',name:'松江文化创意园',color:'#4caf7d'},
   // ===== 文翔路校区（松江 · 文翔路2800号 · 主校区） =====
-  // 北区：行政 / 图书馆 / 教学楼群
-  {x:2,y:2,w:5,h:3,type:'landmark',emoji:'🏛️',name:'序伦大楼',color:'#9c6b3f'},
-  {x:9,y:2,w:5,h:3,type:'library',emoji:'📚',name:'图书馆',color:'#b9743f'},
-  {x:21,y:2,w:3,h:3,type:'academic',emoji:'🧮',name:'学验楼',color:'#a85a3f'},
-  {x:25,y:2,w:2,h:3,type:'academic',emoji:'🏫',name:'吉祥楼',color:'#b08a5a'},
-  {x:28,y:2,w:2,h:3,type:'academic',emoji:'🏫',name:'北碚楼',color:'#b08a5a'},
-  // 中区：育才楼 / 徐汇云间楼 / 昭信堂 / 会计博物馆 / 长乐楼
-  {x:8,y:6,w:4,h:2,type:'academic',emoji:'🌀',name:'育才楼(3号楼)',color:'#a85a3f'},
-  {x:13,y:6,w:2,h:3,type:'academic',emoji:'🏫',name:'徐汇楼',color:'#b08a5a'},
-  {x:16,y:6,w:2,h:3,type:'academic',emoji:'🏫',name:'云间楼',color:'#b08a5a'},
-  {x:20,y:6,w:3,h:2,type:'activity',emoji:'🎭',name:'昭信堂',color:'#7a5ac9'},
-  {x:24,y:6,w:3,h:2,type:'landmark',emoji:'🏦',name:'中国会计博物馆',color:'#9c6b3f'},
-  {x:28,y:6,w:2,h:2,type:'academic',emoji:'🏥',name:'长乐楼(1号楼)',color:'#c0a06a'},
-  // 南区：食堂 / 体育
-  {x:2,y:12,w:3,h:2,type:'canteen',emoji:'🍚',name:'学子食堂',color:'#c98a4a'},
-  {x:6,y:12,w:3,h:2,type:'canteen',emoji:'🍜',name:'师苑餐厅',color:'#c98a4a'},
-  {x:10,y:12,w:4,h:3,type:'gym',emoji:'🏟️',name:'体育馆',color:'#5a8fc9'},
-  {x:22,y:12,w:3,h:2,type:'activity',emoji:'🎾',name:'网球·排球场',color:'#4caf7d'},
+  // 顶部：网球场/体育馆/序伦大楼/会计博物馆
+  {x:3,y:19,w:4,h:3,type:'activity',emoji:'🎾',name:'网球场·排球场',color:'#4caf7d'},
+  {x:8,y:19,w:4,h:3,type:'gym',emoji:'🏟️',name:'体育馆',color:'#5a8fc9'},
+  {x:13,y:19,w:5,h:3,type:'landmark',emoji:'🏛️',name:'序伦大楼',color:'#9c6b3f'},
+  {x:19,y:19,w:4,h:3,type:'landmark',emoji:'🏦',name:'中国会计博物馆',color:'#9c6b3f'},
+  // 中区：行政楼+图书馆（连体）/ 昭信堂
+  {x:8,y:23,w:4,h:3,type:'academic',emoji:'🏢',name:'行政楼',color:'#b08a5a'},
+  {x:13,y:23,w:4,h:3,type:'library',emoji:'📚',name:'图书馆(古罗马)',color:'#b9743f'},
+  {x:19,y:23,w:3,h:3,type:'activity',emoji:'🎭',name:'昭信堂',color:'#7a5ac9'},
+  // 中下：学验楼(2号楼) / 师苑餐厅 / 学子餐厅
+  {x:3,y:30,w:3,h:3,type:'academic',emoji:'🧮',name:'学验楼(2号楼)',color:'#a85a3f'},
+  {x:7,y:30,w:3,h:2,type:'canteen',emoji:'🍜',name:'师苑餐厅',color:'#c98a4a'},
+  {x:11,y:30,w:3,h:2,type:'canteen',emoji:'🍚',name:'学子餐厅',color:'#c98a4a'},
+  // 教学楼群：云间7/徐汇6/北碚5/吉祥4 + 诚信广场 + 长乐楼1
+  {x:3,y:34,w:2,h:3,type:'academic',emoji:'🏫',name:'云间楼(7号楼)',color:'#b08a5a'},
+  {x:6,y:34,w:2,h:3,type:'academic',emoji:'🏫',name:'徐汇楼(6号楼)',color:'#b08a5a'},
+  {x:3,y:38,w:2,h:3,type:'academic',emoji:'🏫',name:'北碚楼(5号楼)',color:'#b08a5a'},
+  {x:6,y:38,w:2,h:3,type:'academic',emoji:'🏫',name:'吉祥楼(4号楼)',color:'#b08a5a'},
   // ===== 上川路校区（浦东 · 上川路995号） =====
-  // 北区：教学楼 / 图书馆+行政楼
-  {x:34,y:2,w:3,h:3,type:'academic',emoji:'🏫',name:'第一教学楼',color:'#b08a5a'},
-  {x:38,y:2,w:3,h:3,type:'academic',emoji:'🏫',name:'第二教学楼',color:'#b08a5a'},
-  {x:42,y:2,w:4,h:3,type:'academic',emoji:'🏫',name:'第六教学楼',color:'#b08a5a'},
-  {x:48,y:2,w:5,h:3,type:'library',emoji:'📚',name:'赵朱木兰图书馆',color:'#b9743f'},
-  {x:54,y:2,w:4,h:3,type:'academic',emoji:'🏢',name:'行政楼',color:'#9c6b3f'},
-  {x:59,y:2,w:3,h:3,type:'academic',emoji:'🏫',name:'第五教学楼',color:'#b08a5a'},
-  // 中区：实验中心 / 文博楼 / 击剑中心
-  {x:47,y:6,w:4,h:2,type:'academic',emoji:'💻',name:'实验中心',color:'#a85a3f'},
-  {x:52,y:6,w:4,h:2,type:'library',emoji:'📖',name:'文博楼',color:'#b9743f'},
-  {x:57,y:6,w:3,h:2,type:'gym',emoji:'⚔️',name:'击剑中心',color:'#5a8fc9'},
-  // 南区：食堂 / 活动 / 体育 / 宿舍
-  {x:34,y:12,w:4,h:2,type:'canteen',emoji:'🍚',name:'综合服务楼(一食堂)',color:'#c98a4a'},
-  {x:39,y:12,w:4,h:2,type:'canteen',emoji:'🍛',name:'第二食堂',color:'#c98a4a'},
-  {x:44,y:12,w:3,h:2,type:'canteen',emoji:'🍽️',name:'金融家俱乐部',color:'#c98a4a'},
-  {x:48,y:12,w:4,h:2,type:'activity',emoji:'🎭',name:'学生活动中心',color:'#7a5ac9'},
-  {x:53,y:12,w:4,h:3,type:'gym',emoji:'🏟️',name:'体育馆',color:'#5a8fc9'},
-  {x:34,y:16,w:2,h:2,type:'dorm',emoji:'🛏️',name:'新苑1号',color:'#c0a06a'},
-  {x:37,y:16,w:2,h:2,type:'dorm',emoji:'🛏️',name:'新苑2号',color:'#c0a06a'},
-  {x:40,y:16,w:2,h:2,type:'dorm',emoji:'🛏️',name:'新苑3号',color:'#c0a06a'},
-  {x:44,y:16,w:3,h:2,type:'academic',emoji:'🌐',name:'金保楼',color:'#b08a5a'},
-  {x:48,y:16,w:2,h:2,type:'academic',emoji:'🏥',name:'保健中心',color:'#c0a06a'},
-  {x:51,y:16,w:3,h:2,type:'activity',emoji:'☕',name:'教职工活动中心',color:'#7a5ac9'},
+  // 顶部：第六教学楼 / 实验中心 / 行政楼+图书馆 / 第二食堂 / 新苑1-3
+  {x:42,y:19,w:4,h:3,type:'academic',emoji:'🏫',name:'第六教学楼',color:'#b08a5a'},
+  {x:47,y:19,w:3,h:3,type:'academic',emoji:'💻',name:'实验中心',color:'#a85a3f'},
+  {x:51,y:19,w:4,h:3,type:'academic',emoji:'🏢',name:'行政楼',color:'#9c6b3f'},
+  {x:55,y:19,w:5,h:3,type:'library',emoji:'📚',name:'赵朱木兰图书馆',color:'#b9743f'},
+  {x:61,y:19,w:3,h:3,type:'canteen',emoji:'🍛',name:'第二食堂',color:'#c98a4a'},
+  {x:64,y:19,w:2,h:3,type:'dorm',emoji:'🛏️',name:'新苑1号',color:'#c0a06a'},
+  {x:66,y:19,w:2,h:3,type:'dorm',emoji:'🛏️',name:'新苑2号',color:'#c0a06a'},
+  // 中区：教工活动 / 小剧场 / 学生活动中心 / 篮球场
+  {x:47,y:23,w:3,h:3,type:'activity',emoji:'🏥',name:'教工活动中心',color:'#7a5ac9'},
+  {x:51,y:23,w:3,h:3,type:'activity',emoji:'🎭',name:'小剧场',color:'#7a5ac9'},
+  {x:61,y:23,w:4,h:3,type:'activity',emoji:'🎭',name:'学生活动中心',color:'#7a5ac9'},
+  {x:66,y:23,w:3,h:3,type:'gym',emoji:'🏀',name:'篮球场',color:'#5a8fc9'},
+  // 气膜馆 / 市部中心 / 保卫中心 / 保健中心 / 新苑4
+  {x:42,y:27,w:3,h:3,type:'gym',emoji:'🏟️',name:'气膜馆',color:'#5a8fc9'},
+  {x:61,y:27,w:2,h:2,type:'academic',emoji:'📋',name:'市部中心',color:'#b08a5a'},
+  {x:63,y:27,w:2,h:2,type:'academic',emoji:'🛡️',name:'保卫中心',color:'#b08a5a'},
+  {x:65,y:27,w:2,h:2,type:'academic',emoji:'🏥',name:'保健中心',color:'#c0a06a'},
+  {x:67,y:27,w:2,h:2,type:'dorm',emoji:'🛏️',name:'新苑4号',color:'#c0a06a'},
+  // 教学楼下排：第一/第二/第五教学楼 / 文博楼 / 金保楼 / 国际交流 / 第三食堂 / 新苑5-6
+  {x:42,y:34,w:3,h:3,type:'academic',emoji:'🏫',name:'第一教学楼',color:'#b08a5a'},
+  {x:45,y:34,w:3,h:3,type:'academic',emoji:'🏫',name:'第二教学楼',color:'#b08a5a'},
+  {x:48,y:34,w:2,h:3,type:'academic',emoji:'🌐',name:'国际交流中心',color:'#b08a5a'},
+  {x:55,y:34,w:4,h:4,type:'library',emoji:'📖',name:'文博楼',color:'#b9743f'},
+  {x:60,y:34,w:3,h:3,type:'academic',emoji:'🏫',name:'第五教学楼',color:'#b08a5a'},
+  {x:64,y:34,w:3,h:2,type:'canteen',emoji:'🍚',name:'第三食堂',color:'#c98a4a'},
+  {x:64,y:37,w:2,h:3,type:'dorm',emoji:'🛏️',name:'新苑5号',color:'#c0a06a'},
+  {x:66,y:37,w:2,h:3,type:'dorm',emoji:'🛏️',name:'新苑6号',color:'#c0a06a'},
 ];
-const TRACKS=[ {x:16,y:12,w:5,h:4}, {x:58,y:12,w:4,h:3} ]; // 文翔路操场 / 上川路室外运动场
-const PONDS=[];                                            // （无）
-const LAKE=[ {x:16,y:2,w:4,h:3} ];                         // 文翔路 柿子湾
+const TRACKS=[ {x:18,y:42,w:6,h:4}, {x:66,y:42,w:4,h:3} ]; // 文翔路操场 / 上川路室外运动场
+const PONDS=[];
+const LAKE=[ // 柿子湾横贯文翔路（西信桥/东诚桥）
+  {x:2,y:27,w:33,h:3},
+];
+const LAKE_BRIDGES=[ // 桥梁（横跨河流，可通行；h 必须与覆盖河段匹配）
+  {x:8,y:27,w:2,h:3,name:'西信桥'},{x:30,y:27,w:2,h:3,name:'东诚桥'},
+];
 const SQUARES=[ // 广场（可通行的地标开放空间）
-  {x:2,y:6,w:5,h:2,emoji:'🗿',name:'诚信广场'},
-  {x:34,y:6,w:5,h:2,emoji:'🪙',name:'钱币广场'},
-  {x:40,y:6,w:5,h:2,emoji:'💠',name:'金融广场'},
+  {x:18,y:5,w:2,h:3,emoji:'🎯',name:'集点广场'},
+  {x:13,y:34,w:6,h:5,emoji:'🗿',name:'诚信广场(诚信柱)'},
+  {x:42,y:23,w:4,h:3,emoji:'🪙',name:'钱币广场'},
+  {x:55,y:23,w:5,h:3,emoji:'💠',name:'金融广场'},
 ];
-const PATHS=[ // 主干道 + 各楼前纵路（仅作路面贴图，不阻挡）
-  {x:0,y:10,w:COLS,h:2},
-  {x:5,y:5,w:2,h:5},{x:11,y:5,w:2,h:5},{x:22,y:5,w:2,h:5},{x:27,y:5,w:2,h:5},
-  {x:35,y:5,w:2,h:5},{x:39,y:5,w:2,h:5},{x:44,y:5,w:2,h:5},{x:50,y:5,w:2,h:5},{x:56,y:5,w:2,h:5},{x:60,y:5,w:2,h:5},
-  {x:31,y:5,w:3,h:6},{x:10,y:8,w:2,h:2},{x:26,y:8,w:2,h:2},{x:49,y:8,w:2,h:2},{x:54,y:8,w:2,h:2},
-  {x:3,y:14,w:2,h:2},{x:7,y:14,w:2,h:2},{x:36,y:14,w:2,h:2},{x:41,y:14,w:2,h:2},{x:46,y:14,w:2,h:2},{x:50,y:14,w:2,h:2},
+const WALLS=[ // 三区围墙
+  // ===== 四期公寓围墙 =====
+  {x:0,y:2,w:72,h:1},                          // 北墙
+  {x:0,y:17,w:9,h:1},{x:11,y:17,w:15,h:1},{x:28,y:17,w:44,h:1}, // 南墙（4/5号门 x:9-10/26-27 开口）
+  {x:0,y:3,w:1,h:14},{x:71,y:3,w:1,h:14},       // 东/西墙
+  // ===== 文翔路校区围墙 =====
+  {x:1,y:18,w:34,h:1},                         // 北墙 x:1-34
+  {x:1,y:47,w:15,h:1},{x:18,y:47,w:17,h:1},    // 南墙（1号门 x:16-17 开口）
+  {x:1,y:19,w:1,h:28},                         // 西墙 x:1
+  {x:35,y:19,w:1,h:11},{x:35,y:32,w:1,h:15},  // 东墙（通道口 y:30-31 开口）
+  // ===== 上川路校区围墙 =====
+  {x:39,y:18,w:32,h:1},                        // 北墙 x:39-70
+  {x:39,y:47,w:16,h:1},{x:57,y:47,w:14,h:1},  // 南墙（3号门 x:55-56 开口）
+  {x:39,y:19,w:1,h:11},{x:39,y:32,w:1,h:15},  // 西墙（通道口 y:30-31 开口）
+  {x:70,y:19,w:1,h:23},{x:70,y:44,w:1,h:3},    // 东墙（4号门 y:42-43 开口）
+];
+const PATHS=[
+  // 四期栋间道路
+  {x:6,y:4,w:1,h:11},{x:11,y:4,w:1,h:11},{x:19,y:4,w:1,h:11},{x:27,y:4,w:1,h:11},{x:33,y:4,w:1,h:11},
+  {x:3,y:7,w:34,h:1},{x:3,y:10,w:34,h:1},
+  // 文翔路主干道（纵贯 5 号门到顶部）
+  {x:14,y:15,w:2,h:2},                       // 立信5号门连接
+  {x:14,y:17,w:2,h:1},{x:14,y:18,w:2,h:1},   // 校门通道
+  {x:14,y:42,w:2,h:5},                      // 5号门 → 校门
+  {x:14,y:19,w:2,h:23},                      // 纵贯主干道
+  {x:7,y:22,w:20,h:1},                       // 体育馆/序伦/博物馆前横路
+  {x:7,y:26,w:16,h:1},                       // 行政楼/图书馆/昭信堂前横路
+  {x:3,y:29,w:10,h:1},                       // 学验楼/师苑前
+  {x:3,y:33,w:8,h:1},                        // 教学楼群前
+  // 柿子湾桥连接（西信桥、东诚桥）
+  {x:8,y:26,w:2,h:1},{x:8,y:30,w:2,h:1},     // 西信桥两端连接
+  {x:30,y:26,w:2,h:1},{x:30,y:30,w:2,h:1},   // 东诚桥两端连接
+  // 上川路主干道
+  {x:55,y:17,w:2,h:2},                       // 立信4号门
+  {x:55,y:18,w:2,h:1},{x:55,y:47,w:2,h:1},   // 3号门 → 上川桥
+  {x:55,y:19,w:2,h:28},                      // 纵贯主干道
+  {x:42,y:22,w:28,h:1},                      // 顶排前横路
+  {x:42,y:26,w:28,h:1},                      // 钱币广场前
+  {x:42,y:30,w:28,h:1},                      // 气膜馆前
+  {x:42,y:33,w:28,h:1},                      // 教学楼前
+  // 上川路中央小河桥
+  {x:51,y:24,w:2,h:1},{x:51,y:25,w:2,h:1},
+  // 跨湖桥梁（柿子湾 + 上川路小河）
+  {x:8,y:27,w:2,h:3},{x:30,y:27,w:2,h:3},{x:53,y:24,w:2,h:2},
 ];
 const SIGNS=[
-  {x:0,y:0,emoji:'🏫',name:'文翔路校区 · 松江 · 文翔路2800号',big:true},
-  {x:62,y:0,emoji:'🏫',name:'上川路校区 · 浦东 · 上川路995号',big:true},
-  {x:32,y:9,emoji:'🚏',name:'校际通道 · 文翔路 ⇄ 上川路'},
-  {x:2,y:19,emoji:'🏠',name:'四期公寓（校外 · 文汇路1000弄）'},
-  {x:56,y:19,emoji:'🛏️',name:'新苑宿舍区'},
+  {x:36,y:0,emoji:'🏠',name:'松江大学城四期公寓 · 文汇路1000弄',big:true},
+  {x:18,y:3,emoji:'🌙',name:'四期公寓 · 宿舍区',big:false},
+  {x:3,y:0,emoji:'⬅️',name:'华政',big:false},
+  {x:70,y:3,emoji:'➡️',name:'龙源路',big:false},
+  {x:36,y:18,emoji:'⬅️',name:'文翔路2800号(松江)',big:true},
+  {x:70,y:18,emoji:'➡️',name:'华东路 → 上川路995号(浦东)',big:true},
+  {x:36,y:46,emoji:'🏫',name:'文翔路 / 上川路',big:false},
+  {x:70,y:48,emoji:'🛒',name:'校外围商业区',big:false},
 ];
-const GATES=[ {x:1,y:10,name:'文翔路校区 1号门'}, {x:62,y:10,name:'上川路校区 1号门'} ];
-const ROAD_ROWS=[10,11];   // 横贯两校区的主干道
-const PLAZA=[31,32,33];    // 校际通道连接带列
+const GATES=[
+  {x:9,y:16,name:'立信4号门(四期)'},
+  {x:26,y:16,name:'立信5号门(四期)'},
+  {x:16,y:46,name:'文翔路校区 1号门(正门)'},
+  {x:36,y:30,name:'文翔路校区 3号门(东)'},
+  {x:40,y:20,name:'上川路校区 1号门(西)'},
+  {x:40,y:30,name:'上川路校区 2号门(西)'},
+  {x:56,y:46,name:'上川路校区 3号门(南)'},
+  {x:71,y:43,name:'上川路校区 4号门(东)'},
+];
+const ROAD_ROWS=[];   // 三区无统一横贯主干道（用各区 PATHS）
+const PLAZA=[];       // 三区独立，无中央连接带
 
 const blocked=new Set();
 const key=(x,y)=>x+','+y;
@@ -400,7 +500,11 @@ function buildBlocked(){
   BUILDINGS.forEach(b=>{for(let i=b.x;i<b.x+b.w;i++)for(let j=b.y;j<b.y+b.h;j++)blocked.add(key(i,j));});
   TRACKS.forEach(t=>{for(let i=t.x;i<t.x+t.w;i++)for(let j=t.y;j<t.y+t.h;j++)blocked.add(key(i,j));});
   PONDS.forEach(p=>{for(let i=p.x;i<p.x+p.w;i++)for(let j=p.y;j<p.y+p.h;j++)blocked.add(key(i,j));});
-  LAKE.forEach(p=>{for(let i=p.x;i<p.x+p.w;i++)for(let j=p.y;j<p.y+p.h;j++)blocked.add(key(i,j));});
+  LAKE.forEach(p=>{for(let i=p.x;i<p.x+p.w;i++)for(let j=p.y;j<p.y+p.h;j++){
+    if(LAKE_BRIDGES&&LAKE_BRIDGES.some(b=>i>=b.x&&i<b.x+b.w&&j>=b.y&&j<b.y+b.h))continue;
+    blocked.add(key(i,j));
+  }});
+  WALLS.forEach(w=>{for(let i=w.x;i<w.x+w.w;i++)for(let j=w.y;j<w.y+w.h;j++)blocked.add(key(i,j));});
 }
 function passable(px,py){
   const tx=Math.floor(px/TILE), ty=Math.floor(py/TILE);
@@ -419,21 +523,113 @@ for(let i=0;i<46;i++){const tx=Math.floor(rnd()*COLS),ty=Math.floor(rnd()*ROWS);
 const bushes=[];
 for(let i=0;i<48;i++){const tx=Math.floor(rnd()*COLS),ty=Math.floor(rnd()*ROWS);
   if(!blocked.has(key(tx,ty))&&!ROAD_ROWS.includes(ty))bushes.push({x:tx*TILE+TILE/2,y:ty*TILE+TILE/2});}
-const lamps=[]; for(let gx=2;gx<63;gx+=5){
-  if(!blocked.has(key(gx,9)))lamps.push({x:gx*TILE+TILE/2,y:9*TILE+TILE/2});
-  if(!blocked.has(key(gx,12)))lamps.push({x:gx*TILE+TILE/2,y:12*TILE+TILE/2});}
+const lamps=[]; for(let gx=3;gx<66;gx+=4){
+  if(!blocked.has(key(gx,11)))lamps.push({x:gx*TILE+TILE/2,y:11*TILE+TILE/2,big:true});
+  if(!blocked.has(key(gx,14)))lamps.push({x:gx*TILE+TILE/2,y:14*TILE+TILE/2});}
 const benches=[{x:7*TILE,y:8*TILE},{x:18*TILE,y:9*TILE},{x:46*TILE,y:9*TILE},{x:52*TILE,y:8*TILE}];
 
+/* ---------- 同学（随机走动 · 结伴而行 · 点击闲聊） ---------- */
+const STUDENT_NAMES=['小陈','小雨','阿杰','彤彤','嘉嘉','晨晨','楠楠','一帆','思思','阿泽','可可','子豪'];
+const STUDENT_COLORS=['#c97b5a','#5a8fc9','#4caf7d','#d98a1f','#7a5ac9','#3b7fd4','#c9605a','#5a9e6b'];
+const STUDENT_CHITCHAT=[
+  '咦，你也是来赶课的？第六教学楼的高数快开始了，快跑！',
+  '刚在赵朱木兰图书馆抢到靠窗座位，可太幸福了～',
+  '二食堂三楼是民族餐厅，麻辣烫和砂锅一绝，一定要试试！',
+  '下周概率论要考了，我正在刷历年真题，紧张…你呢？',
+  '诚信广场晚上常有滑板社活动，可热闹了，去围观吗？',
+  '我喜欢在柿子湾边上背书，风吹着特别舒服～',
+  '育才楼那个迷宫真的太容易迷路了，你敢挑战吗？',
+  '听说图书馆期末一座难求，得早上六点去排队抢位子！',
+  '校门口新开了家奶茶店，第二杯半价，要不要一起去？',
+  '我们社团这周末在昭信堂办演出，记得来捧场呀！',
+  '实验中心的机器下午经常满员，要早点去占座哦。',
+  '四期公寓到校门口那段路路灯可亮了，晚上散步很舒服。',
+];
+const STUDENT_GROUPS=[[0,1],[2,3,4],[5,6],[7,8,9],[10,11]]; // 结伴分组（学生编号）
+const STUDENT_SPAWNS=[
+  [9,10],[15,7],[27,11],[33,11],          // 四期
+  [5,33],[11,38],[20,40],[25,35],          // 文翔路
+  [44,30],[50,25],[60,32],[68,30],         // 上川路
+];
+/* ---------- 小坏人（推销员/宽带/报班；强制对话） ---------- */
+const VILLAINS=[
+  {id:'pen',x:17*TILE+TILE/2,y:46*TILE+TILE/2,emoji:'🖊️',name:'可疑推销员',msg:'学弟/学妹！要不要买支中性笔？9.9 元包邮，写作业必备～'},
+  {id:'net',x:33*TILE+TILE/2,y:14*TILE+TILE/2,emoji:'📡',name:'宽带小哥',msg:'办宽带吗？校内专享 39 元/月，200M 高速～'},
+  {id:'class',x:69*TILE+TILE/2,y:45*TILE+TILE/2,emoji:'📚',name:'考证机构',msg:'报个 CFA/CPA/考研班吗？包过协议，不过退费～'},
+];
+const STUDENTS=[];                  // 运行时初始化
+
 /* ---------- 实体 ---------- */
-const player={x:4*TILE+TILE/2,y:11*TILE+TILE/2,tx:4*TILE+TILE/2,ty:11*TILE+TILE/2,dir:0,walk:0};
+const player={x:16*TILE+TILE/2,y:45*TILE+TILE/2,tx:16*TILE+TILE/2,ty:45*TILE+TILE/2,dir:0,walk:0};
 NPCS.forEach(n=>{n.px=n.tile.x*TILE+TILE/2; n.py=n.tile.y*TILE+TILE/2; if(!n.history)n.history=[];});
+// 学生初始化（组内第一个为 leader，其余结伴跟随）
+STUDENTS.length=0;
+STUDENT_GROUPS.forEach(g=>{
+  g.forEach((idx,pi)=>{
+    const [sx,sy]=STUDENT_SPAWNS[idx]||[6,13];
+    STUDENTS.push({
+      name:STUDENT_NAMES[idx],
+      color:STUDENT_COLORS[idx%STUDENT_COLORS.length],
+      hair:['#5a3a22','#3a2f25','#7a4a22','#2f3a4a','#8a5a3b'][idx%5],
+      x:sx*TILE+TILE/2, y:sy*TILE+TILE/2, tx:sx*TILE+TILE/2, ty:sy*TILE+TILE/2,
+      speed:1.0+Math.random()*0.6, dir:0, walk:0,
+      rt:240+Math.random()*360,
+      phase:'walk', phaseTime:30+Math.random()*60,
+      leader:pi===0?null:g[0],
+      offx:(pi%2?1:-1)*(36+Math.floor(Math.random()*14)), offy:pi>1?36:0,
+    });
+  });
+});
+function wanderTarget(s){
+  for(let k=0;k<14;k++){
+    const tx=s.x+(Math.random()*2-1)*260, ty=s.y+(Math.random()*2-1)*260;
+    if(passable(tx,ty))return{x:tx,y:ty};
+  }
+  return null;
+}
+function updateStudents(dt){
+  STUDENTS.forEach(s=>{
+    s.phaseTime-=dt;
+    if(s.phaseTime<=0){
+      const r=Math.random();
+      if(r<0.6){s.phase='walk';s.phaseTime=60+Math.random()*180;}
+      else if(r<0.85){s.phase='pause';s.phaseTime=40+Math.random()*120;}
+      else{s.phase='run';s.phaseTime=20+Math.random()*40;}
+    }
+    let sp;
+    if(s.phase==='pause')sp=0;
+    else if(s.phase==='run')sp=s.speed*2.4;
+    else sp=s.speed*0.55;
+    if(s.leader===null){
+      s.rt-=dt;
+      if(s.rt<=0||Math.hypot(s.x-s.tx,s.y-s.ty)<10){
+        s.rt=180+Math.random()*240;
+        const t=wanderTarget(s); if(t){s.tx=t.x;s.ty=t.y;}
+      }
+    }else{
+      const l=STUDENTS[s.leader];
+      s.tx=l.x+s.offx; s.ty=l.y+s.offy;
+    }
+    const dx=s.tx-s.x, dy=s.ty-s.y, dist=Math.hypot(dx,dy);
+    if(dist>2&&sp>0){
+      if(dx)s.dir=dx>0?1:-1;
+      s.x+=dx/dist*Math.min(sp*dt,dist);
+      s.y+=dy/dist*Math.min(sp*dt,dist);
+      s.walk+=0.3*dt*(sp/s.speed);
+    }else s.walk=0;
+  });
+}
 
 /* ---------- 渲染 ---------- */
+const LOGIC_W=960, LOGIC_H=672;              // 逻辑画布尺寸（CSS 布局坐标系）
+const DPR=Math.min(2,window.devicePixelRatio||1); // 高 DPI 渲染：物理像素按 DPR 放大，文字不再模糊
 let cv=document.getElementById('game'), ctx=cv.getContext('2d');
+cv.width=LOGIC_W*DPR; cv.height=LOGIC_H*DPR;
+ctx.setTransform(DPR,0,0,DPR,0,0);
 /* 背景独立建模：静态元素（地面/道路/广场/水/建筑/装饰）画到离屏图层，只构建一次，
    每帧 drawImage 复用，动态元素（角色/水波纹）仍走主画布。 */
-const bgCv=document.createElement('canvas'); bgCv.width=W; bgCv.height=H;
-const bgCtx=bgCv.getContext('2d');
+const bgCv=document.createElement('canvas'); bgCv.width=W*DPR; bgCv.height=H*DPR;
+const bgCtx=bgCv.getContext('2d'); bgCtx.setTransform(DPR,0,0,DPR,0,0);
 function buildBackground(){
   const saved=ctx; ctx=bgCtx;
   try{ drawMap(); }catch(e){ window.__showErr&&window.__showErr('bg: '+e.message); }
@@ -549,9 +745,38 @@ function drawGate(g){
   ctx.fillText('🏛️ '+g.name,x+TILE/2,y-23);
 }
 function drawLamp(l){
-  ctx.fillStyle='#5a3a22';ctx.fillRect(l.x-2,l.y-2,4,22);
-  ctx.fillStyle='#ffe9a8';ctx.beginPath();ctx.arc(l.x,l.y-4,4,0,7);ctx.fill();
-  ctx.fillStyle='rgba(255,233,168,.35)';ctx.beginPath();ctx.arc(l.x,l.y-4,9,0,7);ctx.fill();
+  // 底座
+  ctx.fillStyle='#4a3526';ctx.fillRect(l.x-6,l.y+16,12,5);
+  // 灯柱（木纹渐变）
+  const g=ctx.createLinearGradient(l.x-3,0,l.x+3,0);
+  g.addColorStop(0,'#5a3a22');g.addColorStop(.5,'#7a5638');g.addColorStop(1,'#4a3526');
+  ctx.fillStyle=g;ctx.fillRect(l.x-3,l.y-8,6,26);
+  // 横臂
+  ctx.fillStyle='#5a3a22';ctx.fillRect(l.x-16,l.y-8,32,3);
+  ctx.fillStyle='#6e452c';ctx.fillRect(l.x-16,l.y-6,32,1);
+  // 双灯罩 + 光晕
+  [-15,15].forEach(dx=>{
+    ctx.fillStyle='#ffe9a8';ctx.beginPath();ctx.arc(l.x+dx,l.y-14,5,0,7);ctx.fill();
+    ctx.fillStyle='#fff6d8';ctx.beginPath();ctx.arc(l.x+dx,l.y-15,2.4,0,7);ctx.fill();
+    const glow=l.big?14:11;
+    ctx.fillStyle='rgba(255,233,168,.30)';ctx.beginPath();ctx.arc(l.x+dx,l.y-14,glow,0,7);ctx.fill();
+  });
+}
+function drawWall(w){
+  const x=w.x*TILE, y=w.y*TILE, ww=w.w*TILE, hh=w.h*TILE;
+  // 砖墙主体
+  ctx.fillStyle='#9a7a5a';ctx.fillRect(x,y,ww,hh);
+  // 砖缝纹理
+  ctx.strokeStyle='rgba(70,50,30,.45)';ctx.lineWidth=1;
+  const bs=12;
+  for(let gy=y;gy<y+hh;gy+=bs){
+    const off=((gy-y)/bs%2)*bs/2;
+    for(let gx=x-off;gx<x+ww;gx+=bs){ctx.strokeRect(gx,gy,bs-1,bs-1);}
+  }
+  // 顶部压顶 + 底部基座
+  ctx.fillStyle='#b08a5a';ctx.fillRect(x-1,y-2,ww+2,4);
+  ctx.fillStyle='#8a6a4a';ctx.fillRect(x-1,y+2,ww+2,2);
+  ctx.fillStyle='rgba(0,0,0,.08)';ctx.fillRect(x,y+hh-2,ww,2);
 }
 function drawSquare(s){
   const x=s.x*TILE,y=s.y*TILE,w=s.w*TILE,h=s.h*TILE;
@@ -603,12 +828,13 @@ function drawMap(){
   TRACKS.forEach(drawTrack);
   trees.forEach(drawTree);
   BUILDINGS.forEach(drawBuilding);
+  WALLS.forEach(drawWall);
   GATES.forEach(drawGate);
   SIGNS.forEach(drawSign);
   lamps.forEach(drawLamp);
   benches.forEach(drawBench);
 }
-function drawChar(px,py,color,faceDir,walkPhase,emoji){
+function drawChar(px,py,color,faceDir,walkPhase,emoji,hair){
   // 影子
   ctx.fillStyle='rgba(0,0,0,.18)';ctx.beginPath();ctx.ellipse(px,py+22,16,6,0,0,Math.PI*2);ctx.fill();
   const bob=Math.sin(walkPhase)*3;
@@ -618,7 +844,7 @@ function drawChar(px,py,color,faceDir,walkPhase,emoji){
   // 头
   ctx.fillStyle='#f4c9a0';ctx.beginPath();ctx.arc(px,py-16+bob,12,0,7);ctx.fill();
   // 头发
-  ctx.fillStyle='#5a3a22';ctx.beginPath();ctx.arc(px,py-19+bob,12,Math.PI,0);ctx.fill();
+  ctx.fillStyle=hair||'#5a3a22';ctx.beginPath();ctx.arc(px,py-19+bob,12,Math.PI,0);ctx.fill();
   // 眼睛
   ctx.fillStyle='#3a2f25';
   const ex=faceDir*3;
@@ -636,19 +862,27 @@ function drawNPC(n){
   if(d<90){ctx.fillStyle='#d98a1f';ctx.font='bold 20px sans-serif';
     ctx.fillText('!',n.px,n.py-50+Math.sin(Date.now()/300)*3);}
 }
+function drawStudent(s){
+  drawChar(s.x,s.y,s.color,s.dir,s.walk,0,s.hair);
+  // 名牌
+  ctx.font='12px "ZCOOL KuaiLe",sans-serif';ctx.textAlign='center';
+  ctx.fillStyle='rgba(255,250,240,.85)';ctx.fillRect(s.x-26,s.y-44,52,16);
+  ctx.fillStyle='#6e452c';ctx.fillText(s.name,s.x,s.y-32);
+}
 function updateCamera(){
-  camX=Math.round(player.x-cv.width/2); camY=Math.round(player.y-cv.height/2);
-  camX=Math.max(0,Math.min(camX,W-cv.width)); camY=Math.max(0,Math.min(camY,H-cv.height));
+  camX=Math.round(player.x-LOGIC_W/2); camY=Math.round(player.y-LOGIC_H/2);
+  camX=Math.max(0,Math.min(camX,W-LOGIC_W)); camY=Math.max(0,Math.min(camY,H-LOGIC_H));
 }
 function render(){
   updateCamera();
-  ctx.clearRect(0,0,cv.width,cv.height);
+  ctx.clearRect(0,0,LOGIC_W,LOGIC_H);
   ctx.save(); ctx.translate(-camX,-camY);
-  try{ ctx.drawImage(bgCv,0,0); }catch(e){ window.__showErr&&window.__showErr('bg draw: '+e.message); }
+  try{ ctx.drawImage(bgCv,0,0,W,H); }catch(e){ window.__showErr&&window.__showErr('bg draw: '+e.message); }
   drawWaterSparkle();
   try{
     const arr=[{px:player.x,py:player.y,draw:()=>drawChar(player.x,player.y,'#3b7fd4',player.dir,player.walk,'🧑')},
-      ...NPCS.map(n=>({px:n.px,py:n.py,draw:()=>drawNPC(n)}))];
+      ...NPCS.map(n=>({px:n.px,py:n.py,draw:()=>drawNPC(n)})),
+      ...STUDENTS.map(s=>({px:s.x,py:s.y,draw:()=>drawStudent(s)}))];
     arr.sort((a,b)=>a.py-b.py); arr.forEach(o=>o.draw());
   }catch(e){ window.__showErr&&window.__showErr('chars: '+e.message); }
   ctx.restore();
@@ -670,6 +904,15 @@ function moveTo(px,py){
 let lastT=performance.now();
 function loop(t){
   const dt=Math.min(32,t-lastT)/16; lastT=t;
+  updateStudents(dt);
+  if(villainCD>0)villainCD--;
+  else if(!dialogOpen){
+    for(const v of VILLAINS){
+      if(Math.hypot(player.x-v.x,player.y-v.y)<80){
+        openVillainDialog(v); villainCD=300; break;
+      }
+    }
+  }
   const dx=player.tx-player.x, dy=player.ty-player.y, dist=Math.hypot(dx,dy);
   if(dist>1.5){
     const sp=3.2*dt;
@@ -679,10 +922,12 @@ function loop(t){
     player.walk+=0.3*dt;
   } else { player.walk=0; }
   // 邻近提示
-  let near=null;
+  let near=null, snear=null;
   NPCS.forEach(n=>{if(Math.hypot(player.x-n.px,player.y-n.py)<90)near=n;});
+  STUDENTS.forEach(s=>{if(Math.hypot(player.x-s.x,player.y-s.y)<70)snear=s;});
   const tip=document.getElementById('nearTip');
   if(near&&!dialogOpen){tip.classList.add('show');tip.innerHTML='按 <b>空格</b> 或点 '+near.name+' 对话';}
+  else if(snear&&!dialogOpen){tip.classList.add('show');tip.innerHTML='按 <b>空格</b> 或点 '+snear.name+' 闲聊';}
   else tip.classList.remove('show');
   render();
   requestAnimationFrame(loop);
@@ -692,10 +937,12 @@ requestAnimationFrame(loop);
 /* ---------- 输入 ---------- */
 cv.addEventListener('pointerdown',e=>{
   const r=cv.getBoundingClientRect();
-  const sx=cv.width/r.width, sy=cv.height/r.height;
+  const sx=LOGIC_W/r.width, sy=LOGIC_H/r.height;
   const mx=(e.clientX-r.left)*sx+camX, my=(e.clientY-r.top)*sy+camY;
   // 命中 NPC？
   for(const n of NPCS){ if(Math.hypot(mx-n.px,my-n.py)<26){ openDialog(n); return; } }
+  // 命中学生？
+  for(const s of STUDENTS){ if(Math.hypot(mx-s.x,s.y-my)<22){ openStudentChat(s); return; } }
   if(dialogOpen) return;
   moveTo(mx,my);
 });
@@ -703,6 +950,10 @@ window.addEventListener('keydown',e=>{
   if(e.code==='Space'&&!dialogOpen){
     let near=null;NPCS.forEach(n=>{if(Math.hypot(player.x-n.px,player.y-n.py)<90)near=n;});
     if(near) openDialog(near);
+    else{
+      let sn=null;STUDENTS.forEach(s=>{if(Math.hypot(player.x-s.x,player.y-s.y)<70)sn=s;});
+      if(sn) openStudentChat(sn);
+    }
   }
   if(e.code==='Escape'&&dialogOpen) closeDialog();
 });
@@ -734,6 +985,56 @@ function openDialog(n){
   scoreEl.style.display='none';
   dialog.classList.add('show');
   typeText(n.greeting+' 想和我聊聊，还是让我考考你？',()=>showChoices());
+}
+/* ---------- 同学闲聊（不接 LLM，内置校园话题） ---------- */
+let activeStudent=null;
+const FAM_KEY='lixin_rpg_familiarity';
+let familiarity=+localStorage.getItem(FAM_KEY)||0;
+function addFamiliarity(n=1){familiarity+=n;localStorage.setItem(FAM_KEY,familiarity);document.getElementById('famVal').textContent=familiarity;}
+document.getElementById('famVal').textContent=familiarity;
+let villainCD=0;
+function openStudentChat(s){
+  activeStudent=s; dialogOpen=true; mode='student';
+  dlgName.textContent=s.name; dlgTitle.textContent='同学';
+  dlgPortrait.textContent='🧑‍🎓'; dlgPortrait.style.background=s.color+'33';
+  chatEl.style.display='none'; chatEl.innerHTML=''; inputRow.style.display='none';
+  scoreEl.style.display='none';
+  dialog.classList.add('show');
+  const line=STUDENT_CHITCHAT[Math.floor(Math.random()*STUDENT_CHITCHAT.length)];
+  typeText(s.name+'：'+line,()=>showStudentChoices());
+}
+function showStudentChoices(){
+  choicesEl.innerHTML='';
+  choicesEl.append(
+    mkBtn('💬 再聊两句','brand',()=>{
+      const line=STUDENT_CHITCHAT[Math.floor(Math.random()*STUDENT_CHITCHAT.length)];
+      typeText(activeStudent.name+'：'+line,()=>showStudentChoices());
+    }),
+    mkBtn('👋 拜拜','ghost',()=>closeDialog())
+  );
+}
+/* ---------- 校园搭讪（强制对话，避之则熟悉度+1） ---------- */
+function openVillainDialog(v){
+  dialogOpen=true; mode='villain';
+  dlgName.textContent=v.name; dlgTitle.textContent='校园搭讪';
+  dlgPortrait.textContent=v.emoji; dlgPortrait.style.background='#d4564b33';
+  chatEl.style.display='none'; inputRow.style.display='none'; scoreEl.style.display='none';
+  dialog.classList.add('show');
+  typeText(v.msg+' 你会？',()=>showVillainChoices());
+}
+function showVillainChoices(){
+  choicesEl.innerHTML='';
+  choicesEl.append(
+    mkBtn('🙅 低头迅速走开（正确选择！）','brand',()=>{
+      addFamiliarity(1);
+      toast('✅ 摆脱骚扰！对立信熟悉度 +1');
+      closeDialog();
+    }),
+    mkBtn('👀 停下来听一会儿','ghost',()=>{
+      toast('你被推销员追着说了十分钟，最终还是溜了…');
+      closeDialog();
+    })
+  );
 }
 function closeDialog(){dialogOpen=false;dialog.classList.remove('show');}
 function showChoices(){
@@ -852,22 +1153,14 @@ async function callLLM(messages){
 function mockReply(messages){
   const sys=messages[0].content, user=messages[messages.length-1].content;
   const npc=activeNpc;
-  if(npc.id==='senpai'){
-    if(sys.includes('[MODE:GRILL]')){
-      const q=npc.quiz[quizStep]||{a:''};
-      const hit=q.a.split(/[，。、]/)[0].slice(0,5);
-      if(user.length>6&&user.includes(hit)) return '答对啦，记性不错！'+q.a.slice(0,18)+'… 这块你门儿清，下一题继续👍';
-      return '方向对，但还有细节：'+q.a+'。不急，记下来就好～';
-    }
-    return '（Demo 模式）学长说：关于「'+user.slice(0,14)+(user.length>14?'…':'')+'」——「立信学习」有 6 大板块（会计学 / 微积分一二 / 线代 / 概率论 / Python），松江+浦东两校区，历年真题随便刷～配置后端 /api/llm/chat 后我就能按全站知识库细答啦！';
-  }
+  const nick=npc?npc.name:'该角色';
   if(sys.includes('[MODE:GRILL]')){
-    const q=npc.quiz[quizStep]||{a:''};
+    const q=(npc&&npc.quiz&&npc.quiz[quizStep])?npc.quiz[quizStep]:{a:''};
     const hit=q.a.split(/[，。、]/)[0].slice(0,5);
-    if(user.length>6&&user.includes(hit)) return '答到点子上了！'+q.a.slice(0,18)+'…这部分你掌握得不错，我们继续下一题👍';
-    return '嗯，方向对，但还差一点：'+q.a+'。没关系，记下来，咱们下一题～';
+    if(user.length>6&&user.includes(hit)) return '答到点子上了！'+q.a.slice(0,18)+'…这部分你掌握得不错，我们继续下一题👍（Demo 模式）';
+    return '嗯，方向对，但还差一点：'+q.a+'。没关系，记下来，咱们下一题～（Demo 模式）';
   }
-  return '（Demo 模式）'+npc.name+'说：关于「'+user.slice(0,12)+(user.length>12?'…':'')+'」——我主要管 '+npc.scope.slice(0,16)+'… 配置后端 /api/llm/chat 后我就能接真实大模型细聊啦！';
+  return '（未配置 LLM 后端）'+nick+'点了点头：「'+user.slice(0,14)+(user.length>14?'…':'')+'」这个问题等我接到真实后端再细说，请先在右上角 ⚙ 设置里填写后端地址。';
 }
 
 /* ---------- 设置面板 ---------- */
@@ -911,6 +1204,22 @@ document.getElementById('helpBtn').onclick=()=>toast('点地面走 · 点村民�
 
 /* ---------- 更新日志（右上角） ---------- */
 const CHANGELOG=[
+  {ver:'v1.3',date:'2026-08-18',items:[
+    '地图按三张真实图重做：四期公寓(北) + 文翔路(左) + 上川路(右)，超大 72×56 格',
+    '还原柿子湾横贯文翔路（西信桥/东诚桥）+ 上川路中央小河（上川桥）',
+    '42 栋宿舍以代表性编号呈现 + 集点广场/吃货天地/尚网商场等商业',
+    '学生节奏：慢走-停-偶尔跑，三种状态随机切换，不再匀速',
+    '校园搭讪小坏人：校门口中性笔/宿舍区宽带/校外考证，靠近强制对话',
+    '选项「低头迅速走开（正确选择！）」→ HUD 熟悉度 +1（localStorage 持久化）',
+    '清理 mock 推销话术：未配置 LLM 后端时只给简短提示，不再弹「配置后端…」长串',
+  ]},
+  {ver:'v1.2',date:'2026-08-18',items:[
+    '画面清晰度提升：按设备 DPR 高分辨率渲染，文字不再模糊',
+    '新增 12 位结伴走动的同学：校园里随机溜达、三五成群结伴而行，点他们可以闲聊校园话题',
+    '为两个校区各加了一圈砖墙围墙（校门与校际通道处开口）',
+    '路灯重新建模：复古双头路灯 + 暖色光晕，更精致',
+    '地图四周扩充一圈（68×26），校区整体内移，外围绿化与围墙空间更大',
+  ]},
   {ver:'v1.1',date:'2026-08-18',items:[
     '地图按两校区真实布局重构：文翔路校区（序伦大楼/图书馆/柿子湾/学验楼/育才楼/吉祥·北碚·徐汇·云间楼/长乐楼/昭信堂/中国会计博物馆/诚信广场/学子食堂/师苑餐厅/体育馆/操场）与上川路校区（第一至第六教学楼/赵朱木兰图书馆/行政楼/实验中心/文博楼/击剑中心/钱币广场/金融广场/综合服务楼/第二食堂/金融家俱乐部/学生活动中心/体育馆/新苑宿舍）',
     '两校区经校际通道拼接为同一张地图，可跨校区自由走动',

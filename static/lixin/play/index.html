@@ -172,6 +172,7 @@
     </div>
 
     <div class="toast" id="toast"></div>
+    <div id="errBar" style="position:absolute;left:50%;bottom:50px;transform:translateX(-50%);z-index:99;background:rgba(212,86,75,.95);color:#fff;padding:6px 14px;border-radius:8px;font:12px/1.4 monospace;max-width:90%;display:none;cursor:pointer;white-space:pre-wrap;"></div>
   </div>
 </div>
 
@@ -183,6 +184,18 @@
    - 对话接 LLM（可配置后端 /api/llm/chat），失败降级内置 mock
    - Grill me：村民先划清知识边界，再逐题摸底
    ============================================================ */
+// 错误条：把任何未捕获异常显示在屏幕上（仅出错时显示，默认隐藏）
+(function(){
+  var bar=document.getElementById('errBar');
+  if(!bar) return;
+  bar.title='点击关闭';
+  bar.onclick=function(){bar.style.display='none';};
+  function show(msg){ bar.textContent='⚠ '+msg; bar.style.display='block'; }
+  window.addEventListener('error',function(e){show((e.message||e)+' ('+(e.filename||'')+':'+(e.lineno||'')+')');});
+  window.addEventListener('unhandledrejection',function(e){show('Promise: '+(e.reason&&e.reason.message||e.reason));});
+  window.__showErr=show;
+})();
+
 
 /* ---------- 学科 / NPC 数据 ---------- */
 /* ---------- 立信学习全站知识库（学长专用，全量注入） ---------- */
@@ -477,7 +490,7 @@ function drawBush(b){
   ctx.fillStyle='#57994f';ctx.beginPath();ctx.arc(b.x+4,b.y+1,5,0,7);ctx.fill();
 }
 function drawTree(t){
-  ctx.fillStyle='rgba(0,0,0,.15)';ctx.beginPath();ctx.ellipse(t.x,t.y+14,14,5,0,7);ctx.fill();
+  ctx.fillStyle='rgba(0,0,0,.15)';ctx.beginPath();ctx.ellipse(t.x,t.y+14,14,5,0,0,Math.PI*2);ctx.fill();
   ctx.fillStyle='#5a3c22';ctx.fillRect(t.x-3,t.y,6,16);
   ctx.fillStyle='#3f7d3a';ctx.beginPath();ctx.arc(t.x,t.y-8,16,0,7);ctx.fill();
   ctx.fillStyle='#4f914a';ctx.beginPath();ctx.arc(t.x-6,t.y-2,11,0,7);ctx.fill();
@@ -504,7 +517,7 @@ function drawMap(){
 }
 function drawChar(px,py,color,faceDir,walkPhase,emoji){
   // 影子
-  ctx.fillStyle='rgba(0,0,0,.18)';ctx.beginPath();ctx.ellipse(px,py+22,16,6,0,7);ctx.fill();
+  ctx.fillStyle='rgba(0,0,0,.18)';ctx.beginPath();ctx.ellipse(px,py+22,16,6,0,0,Math.PI*2);ctx.fill();
   const bob=Math.sin(walkPhase)*3;
   // 身体
   ctx.fillStyle=color;ctx.fillRect(px-13,py-6+bob,26,26);
@@ -538,10 +551,12 @@ function render(){
   updateCamera();
   ctx.clearRect(0,0,cv.width,cv.height);
   ctx.save(); ctx.translate(-camX,-camY);
-  drawMap();
-  const arr=[{px:player.x,py:player.y,draw:()=>drawChar(player.x,player.y,'#3b7fd4',player.dir,player.walk,'🧑')},
-    ...NPCS.map(n=>({px:n.px,py:n.py,draw:()=>drawNPC(n)}))];
-  arr.sort((a,b)=>a.py-b.py); arr.forEach(o=>o.draw());
+  try{ drawMap(); }catch(e){ window.__showErr&&window.__showErr('drawMap: '+e.message); }
+  try{
+    const arr=[{px:player.x,py:player.y,draw:()=>drawChar(player.x,player.y,'#3b7fd4',player.dir,player.walk,'🧑')},
+      ...NPCS.map(n=>({px:n.px,py:n.py,draw:()=>drawNPC(n)}))];
+    arr.sort((a,b)=>a.py-b.py); arr.forEach(o=>o.draw());
+  }catch(e){ window.__showErr&&window.__showErr('chars: '+e.message); }
   ctx.restore();
 }
 

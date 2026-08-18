@@ -44,6 +44,45 @@
   .btn.ghost{background:#fff;color:var(--wood-d);box-shadow:0 3px 0 #d9c7a3;}
   .btn.sm{padding:6px 12px;font-size:13px;}
   /* 地图区 */
+  /* ============ 开屏闪光灯动画（v1.10：进入游戏前白光闪光 + 标题弹出） ============ */
+  #splash{position:fixed;inset:0;z-index:9999;cursor:pointer;overflow:hidden;
+    background:radial-gradient(circle at 50% 42%, #1b2547, #0a0f22 72%);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    font-family:'ZCOOL KuaiLe','PingFang SC',sans-serif;}
+  #splash .flash{position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);
+    width:64vmin;height:64vmin;border-radius:50%;
+    background:radial-gradient(circle, rgba(255,252,224,.95), rgba(255,238,170,.45) 38%, rgba(255,220,120,0) 68%);
+    opacity:0;animation:spFlash 1.8s ease-out .25s 1 forwards;pointer-events:none;}
+  @keyframes spFlash{
+    0%{opacity:0;transform:translate(-50%,-50%) scale(.15);}
+    20%{opacity:1;transform:translate(-50%,-50%) scale(1.05);}
+    42%{opacity:.85;transform:translate(-50%,-50%) scale(1.18);}
+    60%{opacity:.45;transform:translate(-50%,-50%) scale(1.3);}
+    78%{opacity:.7;transform:translate(-50%,-50%) scale(1.22);}
+    100%{opacity:0;transform:translate(-50%,-50%) scale(1.5);}
+  }
+  #splash .title{color:#fff8d0;font-size:min(20vw,132px);letter-spacing:.07em;
+    text-shadow:0 0 34px rgba(255,222,120,.95),0 6px 0 rgba(0,0,0,.4),0 0 80px rgba(255,200,90,.5);
+    opacity:0;animation:spTitle .95s ease-out 1.15s forwards;z-index:1;}
+  @keyframes spTitle{
+    0%{opacity:0;transform:scale(.55) rotate(-4deg);}
+    62%{opacity:1;transform:scale(1.09) rotate(1.2deg);}
+    100%{opacity:1;transform:scale(1) rotate(0);}
+  }
+  #splash .sub{color:#aab8dc;font-size:min(5.2vw,27px);letter-spacing:.14em;margin-top:16px;
+    opacity:0;animation:spFade .8s ease-out 1.75s forwards;z-index:1;}
+  #splash .skip{position:absolute;bottom:30px;left:0;right:0;text-align:center;
+    color:#6b7aa6;font-size:14px;letter-spacing:.08em;opacity:0;
+    animation:spFade .9s ease-out 2.3s forwards;z-index:1;}
+  @keyframes spFade{to{opacity:1;}}
+  #splash.bye{animation:spOut .6s ease forwards;}
+  @keyframes spOut{to{opacity:0;visibility:hidden;}}
+  /* 手机端开屏适配 */
+  @media (max-width:720px){
+    #splash .title{font-size:min(26vw,96px);}
+    #splash .sub{font-size:min(6vw,20px);margin-top:10px;}
+    #splash .skip{bottom:18px;font-size:12px;}
+  }
   .stage{flex:1;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;min-height:0;}
   canvas{image-rendering:pixelated;background:#7cb86a;border-radius:14px;
     box-shadow:0 10px 30px var(--shadow), inset 0 0 0 4px var(--wood);
@@ -178,6 +217,12 @@
 </head>
 <body>
 <div class="wrap">
+  <div id="splash">
+    <div class="flash"></div>
+    <div class="title">Lixin</div>
+    <div class="sub">上海立信会计金融学院 · 学习 RPG</div>
+    <div class="skip">点击任意处 或 按 空格/回车 进入</div>
+  </div>
   <div class="hud">
     <h1>🌾 Lixin</h1>
     <span class="hint">点地面走动 · 点学长问全站 · 点村民聊单科 · 低头迅速走开摆脱校园搭讪</span>
@@ -185,6 +230,7 @@
     <span class="spacer"></span>
     <button class="btn ghost sm" id="codexBtn">📖<span class="lbl"> 村民图鉴</span></button>
     <button class="btn ghost sm" id="helpBtn">❓<span class="lbl"> 玩法</span></button>
+    <button class="btn ghost sm" id="mapBtn">🗺️<span class="lbl"> 全图</span></button>
     <button class="btn ghost sm" id="logBtn">📜<span class="lbl"> 更新日志</span></button>
     <button class="btn ghost sm" id="setBtn">⚙<span class="lbl"> 设置</span></button>
   </div>
@@ -266,6 +312,31 @@
   window.addEventListener('unhandledrejection',function(e){show('Promise: '+(e.reason&&e.reason.message||e.reason));});
   window.__showErr=show;
 })();
+
+/* ============================================================
+   开屏闪光灯动画（v1.10）：黑屏 → 白光闪光 → Lixin 标题 → 淡出
+   点击/空格/回车可跳过；splash 期间屏蔽游戏输入
+   ============================================================ */
+let splashing=true;
+const splash=document.getElementById('splash');
+function spKey(e){
+  if(e.code==='Space'||e.code==='Enter'||e.code==='Escape'){ e.stopPropagation(); hideSplash(); }
+}
+function hideSplash(){
+  if(!splashing) return;
+  splashing=false;
+  splash.classList.add('bye');
+  if(window.removeEventListener) window.removeEventListener('keydown',spKey,true);
+  setTimeout(()=>{
+    if(splash.parentNode) splash.parentNode.removeChild(splash);
+    toast('欢迎来到 Lixin v1.10！右上角 🗺️ 全图一屏看全地图、点击传送～');
+  },650);
+}
+if(splash){
+  splash.addEventListener('click',hideSplash);
+  window.addEventListener('keydown',spKey,true);
+  setTimeout(hideSplash,4400);
+}
 
 /* ---------- 学科 / NPC 数据 ---------- */
 const LIXIN_KB = `「立信学习」（Lixin Learn）是上海立信会计金融学院的课程资料与历年真题互动学习平台，由松江（文翔路2800号，主校区）与浦东（上川路995号）两个校区组成。站点用 Hugo + PaperMod 构建，公式用 KaTeX 渲染、表格用 Markdown、扫描件/真题以图片化方式保真嵌入。共 6 大课程板块：
@@ -972,7 +1043,9 @@ ASSET_LIST.forEach(n=>{ const im=new Image(); im.onload=()=>invalidateCache(); i
 let LOGIC_W=960, LOGIC_H=672;
 const DPR=Math.min(1.5,window.devicePixelRatio||1);
 let cv=document.getElementById('game'), ctx=cv.getContext('2d');
+// v1.10 双缓冲缓存：cacheCv 显示 / cacheCv2 后台重建，画完原子切换 → 重建无闪烁/不"走出去不见了"
 let cacheCv=document.createElement('canvas'), cacheCtx=cacheCv.getContext('2d');
+let cacheCv2=document.createElement('canvas'), cacheCtx2=cacheCv2.getContext('2d');
 let cacheCx=-1e9, cacheCy=-1e9;
 function resizeCanvas(){
   const st=document.getElementById('stage');
@@ -1594,15 +1667,19 @@ function updateCamera(){
 }
 function ensureCache(){
   if(Math.abs(camX-cacheCx)<LOGIC_W/2 && Math.abs(camY-cacheCy)<LOGIC_H/2) return;
-  cacheCv.width=LOGIC_W*DPR; cacheCv.height=LOGIC_H*DPR;
-  cacheCtx.setTransform(DPR,0,0,DPR,0,0);
-  cacheCtx.clearRect(0,0,LOGIC_W,LOGIC_H);
-  const saved=ctx; ctx=cacheCtx;
-  // v1.10 修复：平移让 camY 视野画在 cacheCv 物理 0 起（否则 camY 太大时视野在 cacheCv 物理外被静默丢弃）
-  cacheCtx.translate(0, -camY);
+  // v1.10 双缓冲：画到后台 buffer（cacheCv2），画完原子切换 → 重建期间旧缓存继续显示，无闪烁/空白
+  const bv=cacheCv2, bc=cacheCtx2;
+  bv.width=LOGIC_W*DPR; bv.height=LOGIC_H*DPR;
+  bc.setTransform(DPR,0,0,DPR,0,0);
+  bc.clearRect(0,0,LOGIC_W,LOGIC_H);
+  const saved=ctx; ctx=bc;
+  bc.translate(0, -camY);  // v1.10 修复：让 camY 视野画在缓存物理 0 起
   try{ drawMapVisible(camX,camY); }catch(e){ window.__showErr&&window.__showErr('bg: '+e.message); }
-  cacheCtx.translate(0, camY);
+  bc.translate(0, camY);
   ctx=saved;
+  // 原子切换：cacheCv2(刚画好) → cacheCv(显示)
+  const tc=cacheCv; cacheCv=cacheCv2; cacheCv2=tc;
+  const tC=cacheCtx; cacheCtx=cacheCtx2; cacheCtx2=tC;
   cacheCx=camX; cacheCy=camY;
 }
 /* ============================================================
@@ -1672,8 +1749,56 @@ function warpTo(px,py){
   updateCamera();
   toast('已瞬移到 ('+Math.floor(px/TILE)+','+Math.floor(py/TILE)+')');
 }
+/* ============================================================
+   全图导航模式（v1.10：整张地图一屏显示，建筑/围墙完全固定不随相机动；
+   点击任意位置传送并返回正常视角；解决"只看到周围一块/走出去不见了/栏杆跟着动"）
+   ============================================================ */
+let mapMode=false;  // [v1.10] 全图模式 flag，按 HUD 的"🗺️ 全图"按钮或 Esc 切换
+const ALL_SCALE=4;                                   // 每格 4px → 704×528
+const bgAllCv=document.createElement('canvas');
+bgAllCv.width=COLS*ALL_SCALE; bgAllCv.height=ROWS*ALL_SCALE;
+const bgAllCtx=bgAllCv.getContext('2d');
+function buildBgAll(){
+  bgAllCtx.fillStyle='#9ec78a'; bgAllCtx.fillRect(0,0,bgAllCv.width,bgAllCv.height);
+  PATHS.forEach(p=>{bgAllCtx.fillStyle=p.type==='road'?'#5a4a3a':(p.type==='cobble'?'#a89e8a':'#a8916a');bgAllCtx.fillRect(p.x*ALL_SCALE,p.y*ALL_SCALE,p.w*ALL_SCALE,p.h*ALL_SCALE);});
+  LAKE.forEach(l=>{bgAllCtx.fillStyle='#3a86c0';bgAllCtx.fillRect(l.x*ALL_SCALE,l.y*ALL_SCALE,l.w*ALL_SCALE,l.h*ALL_SCALE);});
+  BUILDINGS.forEach(b=>{bgAllCtx.fillStyle='#8a5a78';bgAllCtx.fillRect(b.x*ALL_SCALE,b.y*ALL_SCALE,b.w*ALL_SCALE,b.h*ALL_SCALE);});
+  WALLS.forEach(w=>{bgAllCtx.fillStyle='#463028';bgAllCtx.fillRect(w.x*ALL_SCALE,w.y*ALL_SCALE,w.w*ALL_SCALE,w.h*ALL_SCALE);});
+  SQUARES.forEach(s=>{bgAllCtx.fillStyle='#e2d0a8';bgAllCtx.fillRect(s.x*ALL_SCALE,s.y*ALL_SCALE,s.w*ALL_SCALE,s.h*ALL_SCALE);});
+  GATES.forEach(g=>{bgAllCtx.fillStyle='#f3d27a';bgAllCtx.fillRect(g.x*ALL_SCALE-1,g.y*ALL_SCALE-1,3,3);});
+  bgAllCtx.fillStyle='#3a2f25'; bgAllCtx.font='bold 15px sans-serif'; bgAllCtx.textAlign='center';
+  bgAllCtx.fillText('四期公寓', 44*ALL_SCALE, 20*ALL_SCALE);
+  bgAllCtx.fillText('文翔路校区(松江)', 44*ALL_SCALE, 92*ALL_SCALE);
+  bgAllCtx.fillText('上川路校区(浦东)', 138*ALL_SCALE, 92*ALL_SCALE);
+  bgAllCtx.fillStyle='#7a5a3a'; bgAllCtx.font='11px sans-serif';
+  bgAllCtx.fillText('文汇路', 44*ALL_SCALE, 46*ALL_SCALE);
+  bgAllCtx.fillText('校际大道', 94*ALL_SCALE, 46*ALL_SCALE);
+}
+buildBgAll();
+function drawMapMode(){
+  ctx.clearRect(0,0,LOGIC_W,LOGIC_H);
+  // 整张地图一屏显示（静态，固定）
+  ctx.drawImage(bgAllCv, 0, 0, LOGIC_W, LOGIC_H);
+  // 当前视野框
+  ctx.strokeStyle='rgba(255,255,255,.9)'; ctx.lineWidth=2;
+  ctx.strokeRect(camX/COLS*LOGIC_W, camY/ROWS*LOGIC_H, LOGIC_W/COLS*LOGIC_W, LOGIC_H/ROWS*LOGIC_H);
+  // 玩家亮点
+  ctx.fillStyle='#fff8d0'; ctx.strokeStyle='#3a2f25'; ctx.lineWidth=1.5;
+  const d=player.dir||1, px=player.x/COLS*LOGIC_W, py=player.y/ROWS*LOGIC_H;
+  ctx.beginPath(); ctx.moveTo(px+d*4,py); ctx.lineTo(px-d*3,py-3); ctx.lineTo(px-d*3,py+3);
+  ctx.closePath(); ctx.fill(); ctx.stroke();
+  // NPC/村民小点
+  ctx.fillStyle='#ffd34d';
+  NPCS.forEach(n=>{ctx.beginPath();ctx.arc(n.px/COLS*LOGIC_W,n.py/ROWS*LOGIC_H,2.5,0,7);ctx.fill();});
+  VILLAGERS.forEach(v=>{ctx.beginPath();ctx.arc(v.px/COLS*LOGIC_W,v.py/ROWS*LOGIC_H,2,0,7);ctx.fill();});
+  // 提示
+  ctx.fillStyle='rgba(58,47,37,.85)'; ctx.fillRect(LOGIC_W/2-130,LOGIC_H-40,260,26);
+  ctx.fillStyle='#fff'; ctx.font='13px "ZCOOL KuaiLe",sans-serif'; ctx.textAlign='center';
+  ctx.fillText('点击地图任意位置 → 传送到该处', LOGIC_W/2, LOGIC_H-21);
+}
 
 function render(){
+  if(mapMode){ drawMapMode(); return; }
   updateCamera();
   computeSun();
   ensureCache();
@@ -1729,7 +1854,7 @@ function loop(t){
   updateAnimals(dt);
   updateWeather(performance.now());
   if(villainCD>0)villainCD--;
-  else if(!dialogOpen){
+  else if(!dialogOpen&&!splashing){
     for(const v of VILLAINS){
       if(Math.hypot(player.x-v.x,player.y-v.y)<80){
         openVillainDialog(v); villainCD=300; break;
@@ -1769,6 +1894,13 @@ requestAnimationFrame(loop);
 
 /* ---------- 输入 ---------- */
 cv.addEventListener('pointerdown',e=>{
+  if(mapMode){
+    const r=cv.getBoundingClientRect();
+    const rx=(e.clientX-r.left)/r.width, ry=(e.clientY-r.top)/r.height;
+    mapMode=false;
+    warpTo(rx*COLS*TILE, ry*ROWS*TILE);
+    return;
+  }
   const r=cv.getBoundingClientRect();
   const sx=LOGIC_W/r.width, sy=LOGIC_H/r.height;
   const mx=(e.clientX-r.left)*sx+camX, my=(e.clientY-r.top)*sy+camY;
@@ -1792,6 +1924,8 @@ mmCv.addEventListener('pointerdown',e=>{
   warpTo(tx*TILE+TILE/2, ty*TILE+TILE/2);
 });
 window.addEventListener('keydown',e=>{
+  if(splashing) return;
+  if(e.code==='Escape'&&mapMode){ mapMode=false; return; }
   if(e.code==='Space'&&!dialogOpen){
     let near=null;NPCS.forEach(n=>{if(Math.hypot(player.x-n.px,player.y-n.py)<90)near=n;});
     if(near) openDialog(near);
@@ -2071,6 +2205,11 @@ cg.querySelectorAll('[data-id]').forEach(b=>{
 
 /* ---------- 玩法 ---------- */
 document.getElementById('helpBtn').onclick=()=>toast('点地面走 · 点村民聊 · Grill me 摸底');
+/* ---------- 全图导航模式（v1.10：整图一屏显示，点击传送） ---------- */
+document.getElementById('mapBtn').onclick=()=>{
+  mapMode=!mapMode;
+  toast(mapMode?'🗺️ 全图模式：整张地图固定显示，点击任意位置传送':'已返回游戏视角');
+};
 
 /* ---------- 更新日志（右上角） ---------- */
 const CHANGELOG=[
@@ -2080,6 +2219,9 @@ const CHANGELOG=[
     '效果: 玩家站着不动时整个画面（除动态角色/NPC/小动物/水纹/雨/天光/minimap 外）完全静止，围墙/建筑/影子/地面/道路等所有地图建模固定不动',
     '地图装饰密度大幅提升: 花 822→1776、树 87→255、灌木 111→455、宿舍区大树 20→63；新增校际大道两侧绿化带（x:87 / x:100 沿 y:42-126 每 2 格一丛灌木 + 每 6 格一棵树），解决"大地图很多区域空旷/空白"',
     'minimap 修复: 强制 buffer 尺寸（mmCv.width=200; mmCv.height=150 防止 attribute 丢失导致空白）+ 草绿不透明背景（与 minimap 内部草底一致，canvas 异常时也不显白）',
+    '全图导航模式（按 HUD "🗺️ 全图" 按钮或 Esc 切换）：整张地图（176×132 格）以 4px/格 缩放一次性画在一屏上，地图完全静态（建筑/围墙/路/树/墙/柿子湾都不会动），底部提示"点击地图任意位置 → 传送到该处"并自动返回正常视角。Edge headless 截图验证完整显示。',
+    '正常模式双缓冲缓存（cacheCv 显示 / cacheCv2 后台重建）：缓存画到后台画完原子切换 → 重建期间旧缓存继续显示，彻底解决"走出去不见了/重建闪烁/栏杆跳动"',
+    '开屏闪光灯动画：进入游戏时深蓝黑底 + 中央白光闪光灯脉冲 + "Lixin" 标题弹性弹出 + "上海立信会计金融学院 · 学习 RPG" 副标 + "点击任意处或空格进入"提示，4.4s 自动消失或点击/空格/回车/Esc 跳过，splash 期间屏蔽游戏键盘+坏人对话输入，移除后显示欢迎 toast',
   ]},
   {ver:'v1.9',date:'2026-08-18',items:[
     '修复：草坪完全静态化——v1.8 的动态摆动草叶取消，改为画进背景缓存层的固定草叶，地面不再"区块挪动"',
@@ -2178,7 +2320,7 @@ document.addEventListener('keydown',e=>{if(e.code==='Escape')closeLog();});
 logEl.addEventListener('click',e=>{if(e.target===logEl)closeLog();});
 
 // 初始提示
-toast('欢迎来到 Lixin v1.8！宿舍区新路+大树+猫窝喂猫、20 位新NPC、斗兽场图书馆、E 字教学楼～两校区随便走');
+// 初始提示已改由开屏动画结束后（hideSplash）显示
 </script>
 </body>
 </html>

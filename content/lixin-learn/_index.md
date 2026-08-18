@@ -15,8 +15,8 @@ cascade:
 - 点学科村民开口对话；每位村民背后都是一门课（会计学 / 微积分（一）（二）/ 线性代数 / 概率论 / Python）；
 - 选「💬 自由问答」随口问，或「🔥 Grill me 摸底」让村民先**划清知识边界**，再逐题考你、统计掌握度。
 
-<iframe src="/lixin/rpg/" title="Lixin 学习 RPG" loading="lazy"
+<iframe src="/lixin/play/" title="Lixin 学习 RPG" loading="lazy"
   style="width:100%;height:820px;border:0;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.08);"></iframe>
 
 > 对话框右上角「⚙ 设置」可填你的 LLM 后端地址启用真实大模型；留空则以内置 Demo 游玩。
-> 若内嵌打不开，可[点此在新页面打开 🌾](/lixin/rpg/)。
+> 若内嵌打不开，可[点此在新页面打开 🌾](/lixin/play/)。

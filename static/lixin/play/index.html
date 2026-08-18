@@ -1368,9 +1368,12 @@ function visRect(cx,cy){
     x1:Math.min(COLS-1,Math.ceil((cx+LOGIC_W)/TILE)+1), y1:Math.min(ROWS-1,Math.ceil((cy+LOGIC_H)/TILE)+1)
   };
 }
-function inView(cx,cy,r){
-  const rx=cx*TILE, ry=cy*TILE;
-  return rx+TILE>r.x0&&rx<r.x1*TILE+TILE&&ry+TILE>r.y0&&ry<r.y1*TILE+TILE;
+/* v1.10 修复：inView 单位 bug（r.x0 是格索引却被与像素比较导致左/上边界失效）+ 改包围盒判断
+   避免长条围墙/建筑起点格在视野边缘时被错误地漏画或多余绘制 */
+function inView(cx,cy,r,w,h){
+  const x0=cx*TILE, y0=cy*TILE, x1=(cx+(w||1))*TILE, y1=(cy+(h||1))*TILE;
+  const vx0=r.x0*TILE, vy0=r.y0*TILE, vx1=(r.x1+1)*TILE, vy1=(r.y1+1)*TILE;
+  return x1>vx0&&x0<vx1&&y1>vy0&&y0<vy1;
 }
 function drawMapVisible(cx,cy){
   const r=visRect(cx,cy);
@@ -1384,30 +1387,33 @@ function drawMapVisible(cx,cy){
   // 静态草叶（v1.9：完全固定，画进缓存层，不摆动）
   drawGrassTufts();
   // 广场
-  SQUARES.forEach(s=>{if(inView(s.x,s.y,r))drawSquare(s);});
+  SQUARES.forEach(s=>{if(inView(s.x,s.y,r,s.w,s.h))drawSquare(s);});
   // 花
   flowers.forEach(f=>{if(f.x>cx-40&&f.x<cx+LOGIC_W+40&&f.y>cy-40&&f.y<cy+LOGIC_H+40)drawFlower(f);});
   // 灌木
   bushes.forEach(b=>{if(b.x>cx-40&&b.x<cx+LOGIC_W+40&&b.y>cy-40&&b.y<cy+LOGIC_H+40)drawBush(b);});
   // 河流
-  LAKE.forEach(p=>{if(inView(p.x,p.y,r))drawLake(p);}); PONDS.forEach(p=>{if(inView(p.x,p.y,r))drawPond(p);});
+  LAKE.forEach(p=>{if(inView(p.x,p.y,r,p.w,p.h))drawLake(p);}); PONDS.forEach(p=>{if(inView(p.x,p.y,r,p.w,p.h))drawPond(p);});
   // 桥梁（画在河上）
-  LAKE_BRIDGES.forEach(b=>{if(inView(b.x,b.y,r))drawBridge(b);});
+  LAKE_BRIDGES.forEach(b=>{if(inView(b.x,b.y,r,b.w,b.h))drawBridge(b);});
   // 操场
-  TRACKS.forEach(t=>{if(inView(t.x,t.y,r))drawTrack(t);});
+  TRACKS.forEach(t=>{if(inView(t.x,t.y,r,t.w,t.h))drawTrack(t);});
   // 树（画在草地/装饰之上）
   trees.forEach(t=>{if(t.x>cx-40&&t.x<cx+LOGIC_W+40&&t.y>cy-40&&t.y<cy+LOGIC_H+40)drawTree(t);});
   // 宿舍区高大乔木
   dormTrees.forEach(t=>{if(t.x>cx-60&&t.x<cx+LOGIC_W+60&&t.y>cy-60&&t.y<cy+LOGIC_H+60)drawTallTree(t);});
   // 猫窝（宿舍楼下，草地之上）
   CAT_NESTS.forEach(n=>{if(n.tx*TILE>cx-60&&n.tx*TILE<cx+LOGIC_W+60&&n.ty*TILE>cy-60&&n.ty*TILE<cy+LOGIC_H+60)drawCatNest(n);});
-  // 建筑：v1.8 起移出缓存，改在动态层绘制（影子必须垫在建筑后面、每栋独立光影）
+  // 建筑影子（v1.10：画进缓存层，垫在建筑下面；缓存重建时按当前 SUN 画 → 静止时完全固定）
+  drawBuildingShadows();
+  // 建筑（v1.10：回缓存层，固定地图建模；不再每帧重画 → 彻底解决"建筑物乱动"）
+  BUILDINGS.forEach(b=>{if(inView(b.x,b.y,r,b.w,b.h))drawBuilding(b);});
   // 小吃摊位
-  STALLS.forEach(s=>{if(inView(s.x,s.y,r))drawStall(s);});
+  STALLS.forEach(s=>{if(inView(s.x,s.y,r,s.w,s.h))drawStall(s);});
   // 围墙 / 门 / 牌 / 路灯 / 长椅
-  WALLS.forEach(w=>{if(inView(w.x,w.y,r))drawWall(w);});
-  GATES.forEach(g=>{if(inView(g.x,g.y,r))drawGate(g);});
-  SIGNS.forEach(s=>{if(inView(s.x,s.y,r))drawSign(s);});
+  WALLS.forEach(w=>{if(inView(w.x,w.y,r,w.w,w.h))drawWall(w);});
+  GATES.forEach(g=>{if(inView(g.x,g.y,r,1,1))drawGate(g);});
+  SIGNS.forEach(s=>{if(inView(s.x,s.y,r,1,1))drawSign(s);});
   lamps.forEach(l=>{if(l.x>cx-60&&l.x<cx+LOGIC_W+60&&l.y>cy-60&&l.y<cy+LOGIC_H+60)drawLamp(l);});
   benches.forEach(b=>{if(b.x>cx-40&&b.x<cx+LOGIC_W+40&&b.y>cy-40&&b.y<cy+LOGIC_H+40)drawBench(b);});
 }
@@ -1658,11 +1664,7 @@ function render(){
   ensureCache();
   ctx.clearRect(0,0,LOGIC_W,LOGIC_H);
   ctx.save(); ctx.translate(-camX,-camY);
-  const rv=visRect(camX,camY);
   try{ ctx.drawImage(cacheCv,cacheCx,cacheCy,LOGIC_W,LOGIC_H); }catch(e){ window.__showErr&&window.__showErr('bg draw: '+e.message); }
-  try{ drawBuildingShadows(); }catch(e){ window.__showErr&&window.__showErr('bshadow: '+e.message); }
-  // 建筑动态层：画在影子之后（影子垫底），保证"光影在建筑物后面"
-  try{ BUILDINGS.forEach(b=>{ if(inView(b.x,b.y,rv)) drawBuilding(b); }); }catch(e){ window.__showErr&&window.__showErr('build: '+e.message); }
   drawWaterSparkle();
   try{
     const arr=[
@@ -2057,6 +2059,11 @@ document.getElementById('helpBtn').onclick=()=>toast('点地面走 · 点村民�
 
 /* ---------- 更新日志（右上角） ---------- */
 const CHANGELOG=[
+  {ver:'v1.10',date:'2026-08-19',items:[
+    '修复: inView 可见性单位 bug（r.x0 是格索引却被与像素比较导致左/上边界检查失效）+ 改包围盒判断（传 w/h），消除长条围墙/建筑在视野边缘被错误地漏画或多余绘制的隐患',
+    '建筑+影子回缓存层：v1.8 把建筑移出缓存改动态层每帧重画，加上建筑影子随太阳每帧微移 → 静止时画面"建筑下有东西在动"（被感知为"建筑物乱动"），现将建筑与建筑影子一起画进缓存层（drawMapVisible 在建筑前画影子），仅相机移动过半屏时随缓存重建更新',
+    '效果: 玩家站着不动时整个画面（除动态角色/NPC/小动物/水纹/雨/天光/minimap 外）完全静止，围墙/建筑/影子/地面/道路等所有地图建模固定不动',
+  ]},
   {ver:'v1.9',date:'2026-08-18',items:[
     '修复：草坪完全静态化——v1.8 的动态摆动草叶取消，改为画进背景缓存层的固定草叶，地面不再"区块挪动"',
     '右下角新增全图迷你地图：实时显示 176×132 整张地图（建筑/路/河/校门/校区间路网），含当前视野框与玩家位置三角',

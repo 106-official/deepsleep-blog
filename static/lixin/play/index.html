@@ -75,6 +75,32 @@
     color:#6b7aa6;font-size:14px;letter-spacing:.08em;opacity:0;
     animation:spFade .9s ease-out 2.3s forwards;z-index:1;}
   @keyframes spFade{to{opacity:1;}}
+  /* v1.12 开屏性别选择面板 */
+  #splash .gender-pick{position:relative;z-index:2;margin-top:34px;display:none;flex-direction:column;
+    align-items:center;opacity:0;transform:translateY(14px);}
+  #splash .gender-pick.show{display:flex;animation:gpIn .5s cubic-bezier(.2,.9,.3,1.2) forwards;}
+  @keyframes gpIn{to{opacity:1;transform:translateY(0);}}
+  #splash .gp-title{color:#ffe9b0;font-size:min(4.6vw,22px);letter-spacing:.12em;margin-bottom:16px;
+    text-shadow:0 2px 0 rgba(0,0,0,.35);}
+  #splash .gp-opts{display:flex;gap:22px;}
+  #splash .gp-opt{width:min(30vw,150px);padding:14px 10px 12px;border-radius:16px;cursor:pointer;
+    background:rgba(255,250,235,.08);border:2px solid rgba(255,240,200,.35);
+    display:flex;flex-direction:column;align-items:center;gap:6px;
+    transition:transform .12s, background .12s, border-color .12s;box-shadow:0 4px 0 rgba(0,0,0,.25);}
+  #splash .gp-opt:hover{transform:translateY(-3px);background:rgba(255,250,235,.16);
+    border-color:rgba(255,222,140,.9);}
+  #splash .gp-opt canvas{image-rendering:pixelated;width:72px;height:72px;background:rgba(124,184,106,.55);
+    border-radius:10px;border:2px solid rgba(255,240,200,.4);}
+  #splash .gp-name{color:#fff;font-size:min(4.2vw,19px);letter-spacing:.06em;}
+  #splash .gp-desc{color:#aab8dc;font-size:min(3.2vw,12px);letter-spacing:.04em;}
+  #splash .gp-tip{color:#6b7aa6;font-size:13px;letter-spacing:.08em;margin-top:18px;}
+  @media (max-width:720px){
+    #splash .gender-pick{margin-top:20px;}
+    #splash .gp-opts{gap:14px;}
+    #splash .gp-opt{width:min(38vw,130px);padding:10px 6px 9px;}
+    #splash .gp-opt canvas{width:56px;height:56px;}
+    #splash .gp-tip{font-size:11px;margin-top:12px;}
+  }
   #splash.bye{animation:spOut .6s ease forwards;}
   @keyframes spOut{to{opacity:0;visibility:hidden;}}
   /* 手机端开屏适配 */
@@ -221,7 +247,24 @@
     <div class="flash"></div>
     <div class="title">Lixin</div>
     <div class="sub">上海立信会计金融学院 · 学习 RPG</div>
-    <div class="skip">点击任意处 或 按 空格/回车 进入</div>
+    <!-- v1.12 进入游戏选择性别形象 -->
+    <div class="gender-pick" id="genderPick">
+      <div class="gp-title">🎮 选择你的形象</div>
+      <div class="gp-opts">
+        <div class="gp-opt" data-g="m">
+          <canvas id="gpPrevM" width="72" height="72"></canvas>
+          <div class="gp-name">👦 男生</div>
+          <div class="gp-desc">短发 · 蓝白校服</div>
+        </div>
+        <div class="gp-opt" data-g="f">
+          <canvas id="gpPrevF" width="72" height="72"></canvas>
+          <div class="gp-name">👧 女生</div>
+          <div class="gp-desc">长发 · 粉白校服</div>
+        </div>
+      </div>
+      <div class="gp-tip">点击选择，开始立信校园之旅</div>
+    </div>
+    <div class="skip">点击任意处 或 按 空格/回车 选择形象</div>
   </div>
   <div class="hud">
     <h1>🌾 Lixin</h1>
@@ -294,7 +337,7 @@
 
 <script>
 /* ============================================================
-   Lixin · 学习 RPG  v1.5
+   Lixin · 学习 RPG  v1.12
    - 地图扩大 4 倍（176×132，楼间距拉大，便于后续细化）
    - 引入 Kenney Tiny Town（CC0）素材：草地/泥路/树/灌木/花/桥
    - 文汇路小吃街（摊位 + 路灯 + 招牌）
@@ -318,9 +361,22 @@
    点击/空格/回车可跳过；splash 期间屏蔽游戏输入
    ============================================================ */
 let splashing=true;
+let genderChosen=false;
 const splash=document.getElementById('splash');
+const genderPick=document.getElementById('genderPick');
 function spKey(e){
-  if(e.code==='Space'||e.code==='Enter'||e.code==='Escape'){ e.stopPropagation(); hideSplash(); }
+  if(e.code==='Space'||e.code==='Enter'||e.code==='Escape'){ e.stopPropagation(); showGenderPick(); }
+}
+/* v1.12 开屏性别选择：标题动画后弹出，选完才进游戏 */
+function showGenderPick(){
+  if(genderChosen) return;
+  if(genderPick&&!genderPick.classList.contains('show')) genderPick.classList.add('show');
+}
+function chooseGender(g){
+  if(genderChosen) return;
+  genderChosen=true;
+  playerApp=(g==='f')?PLAYER_APPEARANCE.f:PLAYER_APPEARANCE.m;
+  hideSplash();
 }
 function hideSplash(){
   if(!splashing) return;
@@ -329,13 +385,18 @@ function hideSplash(){
   if(window.removeEventListener) window.removeEventListener('keydown',spKey,true);
   setTimeout(()=>{
     if(splash.parentNode) splash.parentNode.removeChild(splash);
-    toast('欢迎来到 Lixin v1.11！全图渲染已修复，右上角 🗺️ 全图一屏看全地图、点击传送～');
+    toast('欢迎来到 Lixin v1.12！已选择'+(playerApp.gender==='f'?'女生':'男生')+'形象，全图渲染已修复，右上角 🗺️ 全图一屏看全地图、点击传送～');
   },650);
 }
 if(splash){
-  splash.addEventListener('click',hideSplash);
+  splash.addEventListener('click',showGenderPick);
+  if(genderPick){
+    genderPick.querySelectorAll('.gp-opt').forEach(o=>{
+      o.addEventListener('click',()=>chooseGender(o.getAttribute('data-g')));
+    });
+  }
   window.addEventListener('keydown',spKey,true);
-  setTimeout(hideSplash,4400);
+  setTimeout(showGenderPick,2400);
 }
 
 /* ---------- 学科 / NPC 数据 ---------- */
@@ -615,9 +676,15 @@ BUILDINGS.push(
 );
 const TRACKS=[ {x:20,y:108,w:6,h:5}, {x:120,y:108,w:6,h:4} ]; // 文翔路操场 / 上川路室外运动场
 const PONDS=[];
+/* v1.12 河流湖泊美化：主河道 + 湖面加宽段（小湖），不再是笔直一条线；
+   加宽段均位于两条鹅卵石路之间（y:70/74 与 y:62/66），不挡路不压建筑 */
 const LAKE=[
   {x:4,y:72,w:36,h:1},   // 柿子湾（细流横贯文翔路中部，西信/东诚两桥跨河，避开主干道 x:40-42）
+  {x:18,y:71,w:10,h:3},  // 柿子湾·湖面（加宽成小湖，西信桥与东诚桥之间）
+  {x:6,y:71,w:4,h:2},    // 柿子湾·西侧小潭
   {x:103,y:64,w:57,h:1}, // 上川路小河（主干道 x:128-129 上建桥；x:103 起避开西墙 x:102）
+  {x:140,y:63,w:10,h:3}, // 上川路·湖面（加宽成小湖，上川桥东侧）
+  {x:112,y:63,w:6,h:2},  // 上川路·东侧小潭
 ];
 const LAKE_BRIDGES=[
   {x:14,y:72,w:2,h:1,name:'西信桥'},{x:38,y:72,w:2,h:1,name:'东诚桥'},
@@ -763,6 +830,17 @@ for(let y=48;y<=124;y+=6){
   if(canDecorate(87,y)) trees.push({x:87*TILE,y:y*TILE,k:1});
   if(canDecorate(100,y)) trees.push({x:100*TILE,y:y*TILE,k:2});
 }
+/* ---- v1.12 高大树木：树干+下层冠画进背景，上层冠在建筑后以半透明叠加 → 树叶遮挡建筑时透视虚化 ---- */
+const bigTrees=[];
+for(let i=0;i<80;i++){
+  const tx=Math.floor(rnd()*COLS), ty=Math.floor(rnd()*ROWS);
+  if(canDecorate(tx,ty)) bigTrees.push({x:tx*TILE,y:ty*TILE,k:Math.floor(rnd()*3),s:0.9+rnd()*0.5});
+}
+// 校际大道 / 校园绿地 / 河边补种高大树（保证显眼位置有）
+[[87,50],[87,62],[87,74],[87,86],[87,98],[87,110],[100,56],[100,68],[100,80],[100,92],[100,104],[100,116],
+ [12,60],[24,60],[36,60],[60,60],[72,60],[112,60],[136,60],[148,60],[12,110],[148,110]].forEach(([tx,ty])=>{
+  if(canDecorate(tx,ty)) bigTrees.push({x:tx*TILE,y:ty*TILE,k:Math.floor(rnd()*3),s:1.1});
+});
 /* ---- 草叶动画数据：每草地格 2 株草（世界坐标，动态层随风摆动） ---- */
 const grassCells=[];
 for(let ty=0;ty<ROWS;ty++)for(let tx=0;tx<COLS;tx++){
@@ -803,8 +881,25 @@ const CAT_NESTS=[];
   });
 });
 const FIXED_CATS=[];
+/* v1.12 猫毛色：橘/白/黑/灰/棕 */
+const CAT_COLORS=[
+  {body:'#e8a13c',belly:'#f5d9a8',name:'橘猫'},
+  {body:'#f2f2f0',belly:'#ffffff',name:'白猫'},
+  {body:'#3a3a3c',belly:'#5a5a5e',name:'黑猫'},
+  {body:'#9a9a9e',belly:'#c8c8cc',name:'灰猫'},
+  {body:'#b07a4a',belly:'#d9b98a',name:'棕猫'}
+];
+/* v1.12 猫动作状态机：walk（游走）→ idle（坐）→ sleep（睡）→ walk */
+function catState(c,dt){
+  c.stateT-=dt;
+  if(c.stateT<=0){
+    if(c.state==='walk'){ c.state=Math.random()<0.5?'idle':'sleep'; c.stateT=2+Math.random()*4; }
+    else if(c.state==='sleep'){ c.state='walk'; c.stateT=4+Math.random()*6; }
+    else { c.state='walk'; c.stateT=3+Math.random()*5; }
+  }
+}
 [[6,8],[18,8],[30,8],[42,8],[54,8]].forEach(([rx,ry],i)=>{
-  FIXED_CATS.push({x:(rx+1)*TILE+TILE/2, y:(ry+3)*TILE+TILE/2, hx:(rx+1)*TILE+TILE/2, hy:(ry+3)*TILE+TILE/2, dir:1, ph:i*1.3, blinkPhase:rnd()*4});
+  FIXED_CATS.push({x:(rx+1)*TILE+TILE/2, y:(ry+3)*TILE+TILE/2, hx:(rx+1)*TILE+TILE/2, hy:(ry+3)*TILE+TILE/2, dir:1, ph:i*1.3, blinkPhase:rnd()*4, ci:i%CAT_COLORS.length, state:'idle', stateT:2+rnd()*3});
 });
 function rndTile(){ return {x:Math.floor(rnd()*COLS), y:Math.floor(rnd()*ROWS)}; }
 function randGrassTile(){ for(let i=0;i<40;i++){ const t=rndTile(); if(passable(t.x*TILE+TILE/2,t.y*TILE+TILE/2)&&!isPath(t.x,t.y)) return t; } return {x:40,y:60}; }
@@ -827,7 +922,7 @@ function spawnAnimals(){
   FROGS=[];
   for(let i=0;i<8;i++){ const t=lakeSideTile(); FROGS.push({x:t.x*TILE+TILE/2,y:t.y*TILE+TILE/2,frame:Math.floor(rnd()*12),ft:rnd()*10,hop:rnd()*200}); }
   CATS=[];
-  for(let i=0;i<20;i++){ const t=randAnyTile(); CATS.push({x:t.x*TILE+TILE/2,y:t.y*TILE+TILE/2,tx:t.x*TILE+TILE/2,ty:t.y*TILE+TILE/2,dir:1,walk:0,blinkPhase:rnd()*4}); }
+  for(let i=0;i<20;i++){ const t=randAnyTile(); CATS.push({x:t.x*TILE+TILE/2,y:t.y*TILE+TILE/2,tx:t.x*TILE+TILE/2,ty:t.y*TILE+TILE/2,dir:1,walk:0,blinkPhase:rnd()*4,ci:Math.floor(rnd()*CAT_COLORS.length),state:'walk',stateT:3+rnd()*4}); }
 }
 function stepAnimal(a,sp,dt){
   const dx=a.tx-a.x, dy=a.ty-a.y, d=Math.hypot(dx,dy);
@@ -842,8 +937,8 @@ function updateAnimals(dt){
     const fps=moving?0.5:0.32;
     if(s.ft>=fps){ s.ft=0; s.frame=(s.frame+1)%(moving?8:6); }
   });
-  CATS.forEach(c=>{ stepAnimal(c,1.0,dt); c.blinkPhase+=dt; });
-  FIXED_CATS.forEach(c=>{ c.ph+=0.02; c.blinkPhase+=dt; c.x=c.hx+Math.cos(c.ph)*14; c.y=c.hy+Math.sin(c.ph*1.7)*8; c.dir=Math.cos(c.ph)>0?1:-1; });
+  CATS.forEach(c=>{ catState(c,dt); if(c.state==='walk') stepAnimal(c,1.0,dt); c.blinkPhase+=dt; });
+  FIXED_CATS.forEach(c=>{ catState(c,dt); c.ph+=0.02; c.blinkPhase+=dt; c.x=c.hx+Math.cos(c.ph)*14; c.y=c.hy+Math.sin(c.ph*1.7)*8; c.dir=Math.cos(c.ph)>0?1:-1; });
   FROGS.forEach(fr=>{
     fr.ft+=dt; if(fr.ft>=0.16){ fr.ft=0; fr.frame=(fr.frame+1)%12; }
     fr.hop-=dt; if(fr.hop<=0){ fr.hop=120+rnd()*220; const dir=rnd()<0.5?-1:1; if(passable(fr.x+dir*TILE,fr.y)) fr.x+=dir*TILE; }
@@ -879,16 +974,67 @@ function drawFrog(fr){
   else { ctx.fillStyle='#4caf50'; ctx.beginPath(); ctx.ellipse(fr.x,fr.y,9,7,0,0,Math.PI*2); ctx.fill(); }
   ctx.restore();
 }
+/* v1.12 猫建模重做：程序化像素猫，完整动作逻辑（walk 行走 / idle 坐 / sleep 蜷睡）+ 5 种毛色 */
 function drawCat(c){
+  const col=CAT_COLORS[c.ci]||CAT_COLORS[0];
   const blink=(c.blinkPhase%4)<0.12;
-  const im=A[blink?'cat_blink':'cat_pixel'];
+  const t=Date.now()/1000;
   ctx.save();
-  ctx.fillStyle='rgba(0,0,0,.15)'; ctx.beginPath(); ctx.ellipse(c.x,c.y+14,11,3,0,0,Math.PI*2); ctx.fill();
-  if(im&&im.complete){
-    const w=30,h=30;
-    if(c.dir<0){ ctx.translate(c.x,c.y); ctx.scale(-1,1); ctx.translate(-c.x,-c.y); }
-    ctx.drawImage(im,c.x-w/2,c.y-h/2,w,h);
-  } else { ctx.fillStyle='#888'; ctx.fillRect(c.x-9,c.y-9,18,18); }
+  ctx.translate(c.x,c.y);
+  if(c.dir<0) ctx.scale(-1,1);
+  // 影子
+  ctx.fillStyle='rgba(0,0,0,.15)'; ctx.beginPath(); ctx.ellipse(0,14,12,3.5,0,0,Math.PI*2); ctx.fill();
+  if(c.state==='sleep'){
+    // 蜷睡：团成球 + 闭眼 + Zzz
+    ctx.fillStyle=col.body; ctx.beginPath(); ctx.ellipse(0,6,11,8,0,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle=col.belly; ctx.beginPath(); ctx.ellipse(2,7,7,5,0,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle=col.body;
+    ctx.beginPath(); ctx.moveTo(-8,0); ctx.lineTo(-5,-7); ctx.lineTo(-2,0); ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(2,0); ctx.lineTo(5,-7); ctx.lineTo(8,0); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle='#3a2f25'; ctx.lineWidth=1.2;
+    ctx.beginPath(); ctx.moveTo(-3,2); ctx.lineTo(-1,3); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(1,3); ctx.lineTo(3,2); ctx.stroke();
+    ctx.strokeStyle=col.body; ctx.lineWidth=3; ctx.lineCap='round';
+    ctx.beginPath(); ctx.arc(0,6,9,Math.PI*0.9,Math.PI*1.8); ctx.stroke();
+    ctx.fillStyle='#5a8fc9'; ctx.font='bold 11px sans-serif'; ctx.textAlign='left';
+    const zz=Math.sin(t*2)*1.5;
+    ctx.fillText('Z',10,-6+zz); ctx.fillText('z',15,-11+zz); ctx.fillText('z',19,-16+zz);
+  } else {
+    // 站立 / 行走
+    const bob=c.state==='walk'?Math.sin(c.walk*2)*1.5:Math.sin(t*1.5)*0.6;
+    // 尾巴摆动
+    const tailSw=Math.sin(t*2.5+(c.walk||0))*3;
+    ctx.strokeStyle=col.body; ctx.lineWidth=3; ctx.lineCap='round';
+    ctx.beginPath(); ctx.moveTo(-9,8); ctx.quadraticCurveTo(-15,2+tailSw,-12,-6+tailSw); ctx.stroke();
+    // 身体
+    ctx.fillStyle=col.body; ctx.beginPath(); ctx.ellipse(0,6+bob,10,8,0,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle=col.belly; ctx.beginPath(); ctx.ellipse(2,8+bob,6,5,0,0,Math.PI*2); ctx.fill();
+    // 腿（行走交替）
+    if(c.state==='walk'){
+      const lp=Math.sin(c.walk*2);
+      ctx.fillStyle=col.body;
+      ctx.fillRect(-6,11+bob+Math.max(0,lp)*1.5,3,4);
+      ctx.fillRect(3,11+bob+Math.max(0,-lp)*1.5,3,4);
+    }
+    // 头
+    ctx.fillStyle=col.body; ctx.beginPath(); ctx.arc(4,-4+bob,7,0,Math.PI*2); ctx.fill();
+    // 耳朵 + 内耳
+    ctx.fillStyle=col.body;
+    ctx.beginPath(); ctx.moveTo(-1,-9+bob); ctx.lineTo(1,-15+bob); ctx.lineTo(4,-9+bob); ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(5,-9+bob); ctx.lineTo(8,-14+bob); ctx.lineTo(9,-8+bob); ctx.closePath(); ctx.fill();
+    ctx.fillStyle='#e8b8a8';
+    ctx.beginPath(); ctx.moveTo(0,-9+bob); ctx.lineTo(1,-13+bob); ctx.lineTo(3,-9+bob); ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(6,-9+bob); ctx.lineTo(8,-12+bob); ctx.lineTo(8,-9+bob); ctx.closePath(); ctx.fill();
+    // 眼睛（眨眼）
+    ctx.fillStyle='#2f3a1f';
+    if(blink){ ctx.fillRect(1,-5+bob,3,1.5); ctx.fillRect(6,-5+bob,3,1.5); }
+    else { ctx.beginPath(); ctx.arc(3,-5+bob,1.6,0,7); ctx.fill(); ctx.beginPath(); ctx.arc(7,-5+bob,1.6,0,7); ctx.fill(); }
+    // 鼻子 + 胡须
+    ctx.fillStyle='#d98a8a'; ctx.beginPath(); ctx.arc(5,-3+bob,0.9,0,7); ctx.fill();
+    ctx.strokeStyle='rgba(60,50,40,.5)'; ctx.lineWidth=0.8;
+    ctx.beginPath(); ctx.moveTo(2,-3+bob); ctx.lineTo(-2,-4+bob); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(2,-2+bob); ctx.lineTo(-2,-1+bob); ctx.stroke();
+  }
   ctx.restore();
 }
 /* ---- 宿舍楼下的猫窝（草垫 + 食碗 + 名牌，静态画进背景缓存） ---- */
@@ -951,6 +1097,20 @@ const VILLAINS=[
 VILLAINS.forEach(v=>{v.x=v.tile.x*TILE+TILE/2; v.y=v.tile.y*TILE+TILE/2;});
 const STUDENTS=[];
 const player={x:24*TILE+TILE/2,y:46*TILE+TILE/2,tx:24*TILE+TILE/2,ty:46*TILE+TILE/2,dir:0,walk:0};
+/* v1.12 玩家形象：进入游戏可选择性别（发型/服装差异） */
+const PLAYER_APPEARANCE={
+  m:{gender:'m',hair:'#3a2f25',shirt:'#3b7fd4',skin:'#f4c9a0'},
+  f:{gender:'f',hair:'#5a3a22',shirt:'#d4567a',skin:'#f4c9a0'}
+};
+let playerApp=PLAYER_APPEARANCE.m;
+/* v1.12 NPC/村民/同学性别分配（发型/服装按性别差异化建模） */
+const NPC_GENDER={senpai:'m',accounting:'m',calc1:'f',calc2:'m',linalg:'m',prob:'m',python:'m'};
+const VILLAGER_GENDER={va1:'f',va2:'m',va3:'m',va4:'f',va5:'m',va6:'f',va7:'f',va8:'m',va9:'m',va10:'m',
+  va11:'f',va12:'f',va13:'f',va14:'m',va15:'m',va16:'f',va17:'f',va18:'f',va19:'m',va20:'m'};
+const STUDENT_GENDER={小雨:'f',彤彤:'f',嘉嘉:'f',楠楠:'f',思思:'f',可可:'f',晓雯:'f',圆圆:'f',甜甜:'f',璐璐:'f',美玲:'f',悦悦:'f'};
+NPCS.forEach(n=>n.gender=NPC_GENDER[n.id]||'m');
+VILLAGERS.forEach(v=>v.gender=VILLAGER_GENDER[v.id]||'m');
+STUDENT_NAMES.forEach(nm=>{ if(!(nm in STUDENT_GENDER)) STUDENT_GENDER[nm]='m'; });
 NPCS.forEach(n=>{n.px=n.tile.x*TILE+TILE/2; n.py=n.tile.y*TILE+TILE/2; if(!n.history)n.history=[];});
 VILLAGERS.forEach(v=>{v.px=v.tile.x*TILE+TILE/2; v.py=v.tile.y*TILE+TILE/2; if(!v.history)v.history=[];});
 STUDENTS.length=0;
@@ -1043,7 +1203,8 @@ const ASSET_LIST=[
 ASSET_LIST.forEach(n=>{ const im=new Image(); im.onload=()=>invalidateCache(); im.onerror=()=>{}; im.src='assets/'+n+'.png'; A[n]=im; });
 
 let LOGIC_W=960, LOGIC_H=672;
-const DPR=Math.min(1.5,window.devicePixelRatio||1);
+// v1.12 提升 DPI（1.5→2）让字体/像素更锐利；关闭平滑缩放保持像素颗粒感
+const DPR=Math.min(2,window.devicePixelRatio||1);
 let cv=document.getElementById('game'), ctx=cv.getContext('2d');
 function resizeCanvas(){
   const st=document.getElementById('stage');
@@ -1052,6 +1213,7 @@ function resizeCanvas(){
   LOGIC_H=Math.max(200,Math.floor(r.height));
   cv.width=LOGIC_W*DPR; cv.height=LOGIC_H*DPR;
   ctx.setTransform(DPR,0,0,DPR,0,0);
+  ctx.imageSmoothingEnabled=false;
 }
 window.addEventListener('resize',resizeCanvas);
 resizeCanvas();
@@ -1067,7 +1229,7 @@ function drawGrassTile(x,y){
   let name='grassA';
   if(h===0)name='grassB'; else if(h===3)name='grassAf'; else if(h===7)name='grassBf';
   kTile(name,x*TILE,y*TILE);
-  // 程序化草坪层次：色块/草簇，让地面不单调（缓存层，无动态开销）
+  // v1.12 程序化草坪层次：绿色草簇 + 橙黄干草簇（重新建模，更显眼、层次更丰富）
   const px=x*TILE, py=y*TILE;
   if(h===1||h===5||h===9){
     ctx.fillStyle='rgba(70,150,60,.30)'; ctx.fillRect(px+3,py+9,3,7); ctx.fillRect(px+13,py+20,3,9); ctx.fillRect(px+24,py+5,3,8);
@@ -1077,6 +1239,11 @@ function drawGrassTile(x,y){
     ctx.fillStyle='rgba(60,140,55,.20)'; ctx.fillRect(px+15,py+24,3,6);
   } else {
     ctx.fillStyle='rgba(90,165,75,.18)'; ctx.fillRect(px+11,py+12,3,7);
+  }
+  // v1.12 橙黄干草簇（秋季草色点缀，画在草皮之上、树/灌木之下，不再被完全遮挡）
+  if(h===4||h===8){
+    ctx.fillStyle='rgba(214,172,84,.55)'; ctx.fillRect(px+6,py+18,2,7); ctx.fillRect(px+11,py+15,2,9); ctx.fillRect(px+16,py+20,2,6);
+    ctx.fillStyle='rgba(232,192,96,.42)'; ctx.fillRect(px+8,py+17,1,6); ctx.fillRect(px+13,py+14,1,7);
   }
 }
 function drawPathTile(x,y,p){
@@ -1258,8 +1425,57 @@ function drawLake(p){
   const g=ctx.createLinearGradient(x,y,x,y+h);
   g.addColorStop(0,'#4f9fd0');g.addColorStop(.5,'#3f86c0');g.addColorStop(1,'#2e6f9e');
   ctx.fillStyle=g;ctx.fillRect(x,y,w,h);
-  // 岸边浅滩（草色过渡）
-  ctx.fillStyle='rgba(126,176,120,.55)';ctx.fillRect(x,y-2,w,3);ctx.fillRect(x,y+h-1,w,3);
+  // v1.12 波浪形河岸：用正弦曲线把草色"咬"进水面，河岸不再笔直
+  const t=Date.now()/4000;
+  const bank=(edge)=>{
+    ctx.fillStyle='rgba(126,176,120,.85)';
+    ctx.beginPath();
+    const seg=Math.max(4,Math.floor(w/18));
+    if(edge==='top'){
+      ctx.moveTo(x,y);
+      for(let i=0;i<=seg;i++){
+        const bx=x+w*i/seg;
+        const by=y+2+Math.sin(bx/26+t*2+(p.x*7+p.y*13))*2.2;
+        ctx.lineTo(bx,by);
+      }
+      ctx.lineTo(x+w,y);ctx.closePath();ctx.fill();
+    } else {
+      ctx.moveTo(x,y+h);
+      for(let i=0;i<=seg;i++){
+        const bx=x+w*i/seg;
+        const by=y+h-2+Math.sin(bx/26+t*2+2.1+(p.x*7+p.y*13))*2.2;
+        ctx.lineTo(bx,by);
+      }
+      ctx.lineTo(x+w,y+h);ctx.closePath();ctx.fill();
+    }
+  };
+  bank('top'); bank('bottom');
+  // 岸边浅滩（草色过渡，叠在波浪岸下缘）
+  ctx.fillStyle='rgba(126,176,120,.45)';ctx.fillRect(x,y-2,w,3);ctx.fillRect(x,y+h-1,w,3);
+  // 岸边卵石（随机，静态）
+  const hs=(p.x*31+p.y*17)%5;
+  for(let i=0;i<3;i++){
+    const cx=x+((hs*37+i*53)%Math.max(8,Math.floor(w/3)))+6;
+    ctx.fillStyle='rgba(180,178,168,.6)';
+    ctx.beginPath();ctx.ellipse(cx,y+3,3,2,0,0,Math.PI*2);ctx.fill();
+    ctx.beginPath();ctx.ellipse(cx+((i*29)%12),y+h-3,3,2,0,0,Math.PI*2);ctx.fill();
+  }
+  // 芦苇（岸边草丛，静态画进背景）
+  if(hs===0||hs===2){
+    const rx=x+((hs*19+40)%Math.max(10,Math.floor(w/2)));
+    ctx.strokeStyle='rgba(90,140,70,.9)';ctx.lineWidth=1.6;
+    for(let k=0;k<3;k++){
+      const lx=rx+k*4;
+      ctx.beginPath();ctx.moveTo(lx,y+2);ctx.quadraticCurveTo(lx+1,y-6-k*2,lx+2,y-10-k*3);ctx.stroke();
+    }
+  }
+  // 睡莲（湖面加宽段点缀）
+  if(w>h*2){
+    const lx=x+w*0.28, ly=y+h/2;
+    ctx.fillStyle='rgba(60,150,90,.55)';ctx.beginPath();ctx.ellipse(lx,ly,5,3,0,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#ffd9e8';ctx.beginPath();ctx.arc(lx-2,ly-1,1.6,0,7);ctx.fill();
+    ctx.fillStyle='#ff9ec4';ctx.beginPath();ctx.arc(lx-2,ly-1,0.9,0,7);ctx.fill();
+  }
   // 静态波纹细线
   ctx.strokeStyle='rgba(255,255,255,.15)';ctx.lineWidth=1.2;
   for(let i=0;i<5;i++){
@@ -1268,16 +1484,30 @@ function drawLake(p){
   }
 }
 function drawPond(p){drawLake(p);}
-/* ---- 像素桥（手绘 CC0：木 plank + 栏杆，跨 2 格宽水面） ---- */
+/* ---- v1.12 石头桥（程序化：石拱桥 + 石栏 + 拱洞，跨 2 格宽水面） ---- */
 function drawBridge(b){
   const x=b.x*TILE,y=b.y*TILE,w=b.w*TILE,h=b.h*TILE;
-  if(A.bridge_pixel&&A.bridge_pixel.complete&&A.bridge_pixel.naturalWidth){
-    ctx.drawImage(A.bridge_pixel,x,y,w,h);
-  } else {
-    ctx.fillStyle='#9c6a38';ctx.fillRect(x,y+h*0.35,w,h*0.65);
-    ctx.fillStyle='#7a5230';ctx.fillRect(x,y+h*0.33,w,3);
-    ctx.fillStyle='#6e4a28';for(let gx=x;gx<x+w;gx+=16)ctx.fillRect(gx,y+4,4,h*0.3);
-  }
+  // 桥面石板
+  ctx.fillStyle='#9a9aa2';ctx.fillRect(x,y+h*0.32,w,h*0.68);
+  ctx.fillStyle='#8a8a92';ctx.fillRect(x,y+h*0.32,w,3);
+  // 石砖纹理（横向错缝）
+  ctx.fillStyle='rgba(60,60,70,.22)';
+  for(let gx=x;gx<x+w;gx+=12)ctx.fillRect(gx,y+h*0.36,2,h*0.6);
+  ctx.fillStyle='rgba(255,255,255,.14)';
+  for(let gx=x+6;gx<x+w;gx+=12)ctx.fillRect(gx,y+h*0.36,2,h*0.6);
+  // 拱洞（露出水面，石拱造型）
+  const archR=Math.min(w/2.6,h*0.62);
+  ctx.fillStyle='#2e6f9e';
+  ctx.beginPath();ctx.arc(x+w/2,y+h+2,archR,Math.PI,0);ctx.fill();
+  ctx.strokeStyle='#7a7a84';ctx.lineWidth=2.5;
+  ctx.beginPath();ctx.arc(x+w/2,y+h+2,archR,Math.PI,0);ctx.stroke();
+  // 桥面高光
+  ctx.fillStyle='rgba(255,255,255,.22)';ctx.fillRect(x,y+h*0.32,w,2);
+  // 石栏立柱 + 横杆
+  ctx.fillStyle='#a2a2ac';
+  for(let gx=x+3;gx<x+w;gx+=14)ctx.fillRect(gx,y+h*0.32-7,4,9);
+  ctx.fillStyle='#b0b0ba';ctx.fillRect(x,y+h*0.32-9,w,3);
+  ctx.fillStyle='rgba(255,255,255,.18)';ctx.fillRect(x,y+h*0.32-9,w,1);
 }
 function drawSign(s){
   const x=s.x*TILE+TILE/2,y=s.y*TILE+TILE/2;
@@ -1285,6 +1515,11 @@ function drawSign(s){
   const w=s.big?120:188, h=s.big?26:22;
   ctx.fillStyle='#fff3d6';ctx.fillRect(x-w/2,y-30,w,h);
   ctx.strokeStyle='#6e452c';ctx.lineWidth=2;ctx.strokeRect(x-w/2,y-30,w,h);
+  drawSignText(s);
+}
+/* v1.12 招牌文字单独抽出：文本覆盖层始终置顶重绘 */
+function drawSignText(s){
+  const x=s.x*TILE+TILE/2,y=s.y*TILE+TILE/2;
   ctx.fillStyle='#6e452c';ctx.font=(s.big?'bold 15px':'13px')+' "ZCOOL KuaiLe",sans-serif';ctx.textAlign='center';
   ctx.fillText(s.emoji+' '+s.name,x,y-14);
 }
@@ -1293,6 +1528,11 @@ function drawGate(g){
   ctx.fillStyle='#8a5a3b';ctx.fillRect(x-2,y-4,10,28);ctx.fillRect(x+TILE-8,y-4,10,28);
   ctx.fillStyle='#6e452c';ctx.fillRect(x-6,y-12,TILE+12,9);
   ctx.fillStyle='#f3d27a';ctx.fillRect(x-6,y-12,TILE+12,3);
+  drawGateText(g);
+}
+/* v1.12 校门文字单独抽出：文本覆盖层始终置顶重绘 */
+function drawGateText(g){
+  const x=g.x*TILE, y=g.y*TILE;
   const tw=g.name.length*13+24;
   ctx.fillStyle='rgba(255,250,240,.96)';ctx.fillRect(x+TILE/2-tw/2,y-38,tw,20);
   ctx.strokeStyle='#6e452c';ctx.lineWidth=2;ctx.strokeRect(x+TILE/2-tw/2,y-38,tw,20);
@@ -1409,6 +1649,33 @@ function drawTallTree(t){
 function drawFlower(f){
   kTile(f.k<2?'mush':'flower',f.x-8,f.y-8,16,16);
 }
+/* ---- v1.12 高大树木：分两层绘制（树干层进背景 / 树冠层半透明叠加在建筑上） ---- */
+function drawBigTreeBase(t){
+  const x=t.x+16, y=t.y+16, s=t.s||1;
+  ctx.save(); ctx.translate(x,y); ctx.scale(s,s); ctx.translate(-x,-y);
+  // 粗干
+  ctx.fillStyle='#4a3018';ctx.fillRect(x-4,y+4,8,20);
+  ctx.fillStyle='#6e452c';ctx.fillRect(x-2,y+2,4,22);
+  // 下层树冠（深绿，进背景层）
+  const g=ctx.createRadialGradient(x,y-10,4,x,y-10,30);
+  g.addColorStop(0,'#5a9e4e');g.addColorStop(.7,'#43843c');g.addColorStop(1,'#2f6a2c');
+  ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y-10,28,0,7);ctx.fill();
+  ctx.fillStyle='rgba(60,130,55,.5)';ctx.beginPath();ctx.arc(x-8,y-4,18,0,7);ctx.fill();
+  ctx.restore();
+}
+function drawBigTreeCanopy(t){
+  const x=t.x+16, y=t.y+16, s=t.s||1;
+  ctx.save(); ctx.translate(x,y); ctx.scale(s,s); ctx.translate(-x,-y);
+  // 上层树冠：半透明叠加 → 遮挡建筑时透视虚化
+  ctx.globalAlpha=0.62;
+  const g=ctx.createRadialGradient(x,y-22,4,x,y-22,30);
+  g.addColorStop(0,'#8fd07a');g.addColorStop(.6,'#6cb45c');g.addColorStop(1,'#4a9444');
+  ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y-22,26,0,7);ctx.fill();
+  ctx.fillStyle='rgba(170,225,140,.7)';ctx.beginPath();ctx.arc(x-12,y-28,13,0,7);ctx.fill();
+  ctx.fillStyle='rgba(150,210,120,.6)';ctx.beginPath();ctx.arc(x+12,y-30,11,0,7);ctx.fill();
+  ctx.fillStyle='rgba(90,160,80,.4)';ctx.beginPath();ctx.arc(x+4,y-12,18,0,7);ctx.fill();
+  ctx.restore();
+}
 /* ---- 小吃街摊位（2×2 格：遮阳棚 + 台面 + 食物） ---- */
 function drawStall(s){
   const x=s.x*TILE,y=s.y*TILE,w=s.w*TILE,h=s.h*TILE;
@@ -1482,12 +1749,16 @@ function drawMapVisible(cx,cy){
   trees.forEach(t=>{if(t.x>cx-40&&t.x<cx+LOGIC_W+40&&t.y>cy-40&&t.y<cy+LOGIC_H+40)drawTree(t);});
   // 宿舍区高大乔木
   dormTrees.forEach(t=>{if(t.x>cx-60&&t.x<cx+LOGIC_W+60&&t.y>cy-60&&t.y<cy+LOGIC_H+60)drawTallTree(t);});
+  // v1.12 高大树木：树干层（进背景，画在建筑前）
+  bigTrees.forEach(t=>{if(t.x>cx-80&&t.x<cx+LOGIC_W+80&&t.y>cy-80&&t.y<cy+LOGIC_H+80)drawBigTreeBase(t);});
   // 猫窝（宿舍楼下，草地之上）
   CAT_NESTS.forEach(n=>{if(n.tx*TILE>cx-60&&n.tx*TILE<cx+LOGIC_W+60&&n.ty*TILE>cy-60&&n.ty*TILE<cy+LOGIC_H+60)drawCatNest(n);});
   // 建筑影子（v1.10：画进缓存层，垫在建筑下面；缓存重建时按当前 SUN 画 → 静止时完全固定）
   drawBuildingShadows();
   // 建筑（v1.10：回缓存层，固定地图建模；不再每帧重画 → 彻底解决"建筑物乱动"）
   BUILDINGS.forEach(b=>{if(inView(b.x,b.y,r,b.w,b.h))drawBuilding(b);});
+  // v1.12 高大树木：上层树冠（半透明叠加在建筑上 → 树叶遮挡建筑时透视虚化）
+  bigTrees.forEach(t=>{if(t.x>cx-80&&t.x<cx+LOGIC_W+80&&t.y>cy-80&&t.y<cy+LOGIC_H+80)drawBigTreeCanopy(t);});
   // 小吃摊位
   STALLS.forEach(s=>{if(inView(s.x,s.y,r,s.w,s.h))drawStall(s);});
   // 围墙 / 门 / 牌 / 路灯 / 长椅
@@ -1513,8 +1784,9 @@ function drawWaterSparkle(){
     }
     // 原有流动高光（保留，叠加在水面增强流动感）
     const horizontal = w>=h;
-    for(let k=0;k<4;k++){
-      const ph=((pi*0.37+k/4+t)%1);
+    const n=w>h*2?7:4; // 湖面加宽段更多流动高光
+    for(let k=0;k<n;k++){
+      const ph=((pi*0.37+k/n+t)%1);
       if(horizontal){
         const sx=x+w*ph, sy=y+h/2+Math.sin(ph*Math.PI*3)*2;
         ctx.strokeStyle='rgba(255,255,255,.30)';ctx.lineWidth=1.6;
@@ -1525,38 +1797,98 @@ function drawWaterSparkle(){
         ctx.beginPath();ctx.moveTo(sx,sy-9);ctx.quadraticCurveTo(sx+3,sy,sx,sy+9);ctx.stroke();
       }
     }
+    // v1.12 湖面波光：加宽段叠加闪烁光斑（screen 混合，随波光闪烁）
+    if(w>h*2){
+      ctx.save();
+      ctx.beginPath();ctx.rect(x,y,w,h);ctx.clip();
+      ctx.globalCompositeOperation='screen';
+      for(let k=0;k<5;k++){
+        const gx=x+((pi*53+k*97+Math.floor(t*30))%Math.max(10,Math.floor(w/2)))+8;
+        const gy=y+((k*41+Math.floor(t*20))%Math.max(6,Math.floor(h*0.8)))+4;
+        const tw=3+((k*7)%3);
+        ctx.fillStyle='rgba(255,255,255,'+(0.10+0.10*Math.sin(t*3+k*1.7))+')';
+        ctx.fillRect(gx,gy,tw,1.5);
+      }
+      ctx.restore();
+    }
   });
 }
-function drawChar(px,py,color,faceDir,walkPhase,emoji,hair){
-  // 影子：随太阳水平位置偏移（太阳在东影子朝西，反之亦然）
-  ctx.fillStyle='rgba(0,0,0,.18)';
-  ctx.beginPath();ctx.ellipse(px+SUN.shadowDX, py+22-Math.abs(SUN.shadowDX)*0.12, 16,6,0,0,Math.PI*2);ctx.fill();
+/* v1.12 人物建模重做：程序化像素小人（性别差异：发型/服装/裙摆），支持任意 ctx 绘制 */
+function drawCharCtx(c,px,py,color,faceDir,walkPhase,hair,gender){
   const bob=Math.sin(walkPhase)*3;
-  ctx.fillStyle=color;ctx.fillRect(px-13,py-6+bob,26,26);
-  ctx.fillStyle='rgba(255,255,255,.25)';ctx.fillRect(px-13,py-6+bob,26,5);
-  ctx.fillStyle='#f4c9a0';ctx.beginPath();ctx.arc(px,py-16+bob,12,0,7);ctx.fill();
-  ctx.fillStyle=hair||'#5a3a22';ctx.beginPath();ctx.arc(px,py-19+bob,12,Math.PI,0);ctx.fill();
-  ctx.fillStyle='#3a2f25';
+  const skin='#f4c9a0';
+  const g=gender==='f';
+  // 影子：随太阳水平位置偏移（太阳在东影子朝西，反之亦然）
+  c.fillStyle='rgba(0,0,0,.18)';
+  c.beginPath();c.ellipse(px+SUN.shadowDX, py+22-Math.abs(SUN.shadowDX)*0.12, 16,6,0,0,Math.PI*2);c.fill();
+  // 腿 + 鞋
+  c.fillStyle='#3a3a44';c.fillRect(px-7,py+13+bob,6,9);c.fillRect(px+1,py+13+bob,6,9);
+  c.fillStyle='#2f2f38';c.fillRect(px-8,py+20+bob,7,3);c.fillRect(px+1,py+20+bob,7,3);
+  // 身体（上衣 + 领口）
+  c.fillStyle=color;c.fillRect(px-12,py-4+bob,24,18);
+  c.fillStyle='rgba(255,255,255,.22)';c.fillRect(px-12,py-4+bob,24,4);
+  c.fillStyle='rgba(255,255,255,.38)';c.fillRect(px-4,py-4+bob,8,3);
+  if(g){
+    // 女生裙摆（A 字裙）
+    c.fillStyle=color;
+    c.beginPath();c.moveTo(px-12,py+8+bob);c.lineTo(px+12,py+8+bob);
+    c.lineTo(px+7,py+17+bob);c.lineTo(px-7,py+17+bob);c.closePath();c.fill();
+    c.fillStyle='rgba(255,255,255,.18)';c.fillRect(px-12,py+8+bob,24,2);
+  }
+  // 手臂 + 手
+  c.fillStyle=color;c.fillRect(px-15,py-2+bob,4,10);c.fillRect(px+11,py-2+bob,4,10);
+  c.fillStyle=skin;c.fillRect(px-16,py+6+bob,4,4);c.fillRect(px+12,py+6+bob,4,4);
+  // 头
+  c.fillStyle=skin;c.beginPath();c.arc(px,py-16+bob,12,0,7);c.fill();
+  // 头发（性别差异）
+  c.fillStyle=hair||'#5a3a22';
+  if(g){
+    // 女生长发：头顶 + 两侧长发 + 刘海 + 发饰
+    c.beginPath();c.arc(px,py-19+bob,12,Math.PI,0);c.fill();
+    c.fillRect(px-12,py-18+bob,4,17);c.fillRect(px+8,py-18+bob,4,17);
+    c.fillRect(px-11,py-15+bob,22,3);
+    c.fillStyle='#ff8fb0';c.fillRect(px+8,py-20+bob,3,3);
+  } else {
+    // 男生短发
+    c.beginPath();c.arc(px,py-19+bob,12,Math.PI,0);c.fill();
+    c.fillRect(px-12,py-18+bob,4,5);c.fillRect(px+8,py-18+bob,4,5);
+    c.fillRect(px-10,py-15+bob,20,2);
+  }
+  // 眼睛
+  c.fillStyle='#3a2f25';
   const ex=faceDir*3;
-  ctx.beginPath();ctx.arc(px-4+ex,py-15+bob,1.8,0,7);ctx.fill();
-  ctx.beginPath();ctx.arc(px+4+ex,py-15+bob,1.8,0,7);ctx.fill();
+  c.beginPath();c.arc(px-4+ex,py-15+bob,1.8,0,7);c.fill();
+  c.beginPath();c.arc(px+4+ex,py-15+bob,1.8,0,7);c.fill();
+  // 嘴
+  c.fillStyle='#c97b5a';c.fillRect(px-1,py-12+bob,2,1);
   // 下雨时撑伞（像素伞素材，CC0）
   if(isRaining&&A.umbrella_pixel&&A.umbrella_pixel.complete){
-    const uw=28; ctx.drawImage(A.umbrella_pixel, px-uw/2, py-62, uw, uw);
+    const uw=28; c.drawImage(A.umbrella_pixel, px-uw/2, py-62, uw, uw);
   }
 }
+function drawChar(px,py,color,faceDir,walkPhase,emoji,hair,gender){
+  drawCharCtx(ctx,px,py,color,faceDir,walkPhase,hair,gender);
+}
 function drawNPC(n){
-  drawChar(n.px,n.py,n.color,0,0,n.emoji);
-  ctx.font='13px "ZCOOL KuaiLe",sans-serif';ctx.textAlign='center';
-  const tw=n.name.length*13+16;
-  ctx.fillStyle='rgba(255,250,240,.9)';ctx.fillRect(n.px-tw/2,n.py-44,tw,18);
-  ctx.fillStyle='#6e452c';ctx.fillText(n.name,n.px,n.py-31);
+  drawChar(n.px,n.py,n.color,0,0,n.emoji,n.hair||(n.gender==='f'?'#5a3a22':'#3a2f25'),n.gender);
+  drawNPCTag(n);
   const d=Math.hypot(player.x-n.px,player.y-n.py);
   if(d<90){ctx.fillStyle='#d98a1f';ctx.font='bold 20px sans-serif';
     ctx.fillText('!',n.px,n.py-50+Math.sin(Date.now()/300)*3);}
 }
+/* v1.12 人物名牌单独抽出：文本覆盖层始终置顶重绘 */
+function drawNPCTag(n){
+  ctx.font='13px "ZCOOL KuaiLe",sans-serif';ctx.textAlign='center';
+  const tw=n.name.length*13+16;
+  ctx.fillStyle='rgba(255,250,240,.9)';ctx.fillRect(n.px-tw/2,n.py-44,tw,18);
+  ctx.fillStyle='#6e452c';ctx.fillText(n.name,n.px,n.py-31);
+}
 function drawStudent(s){
-  drawChar(s.x,s.y,s.color,s.dir,s.walk,0,s.hair);
+  drawChar(s.x,s.y,s.color,s.dir,s.walk,0,s.hair,STUDENT_GENDER[s.name]||'m');
+  drawStudentTag(s);
+}
+/* v1.12 学生名牌单独抽出：文本覆盖层始终置顶重绘 */
+function drawStudentTag(s){
   ctx.font='12px "ZCOOL KuaiLe",sans-serif';ctx.textAlign='center';
   ctx.fillStyle='rgba(255,250,240,.85)';ctx.fillRect(s.x-26,s.y-44,52,16);
   ctx.fillStyle='#6e452c';ctx.fillText(s.name,s.x,s.y-32);
@@ -1564,15 +1896,18 @@ function drawStudent(s){
 /* ---- 小坏人：可见形象（紫红衣 + 名牌 + 感叹号） ---- */
 function drawVillain(v){
   drawChar(v.x,v.y,v.color,0,0,v.emoji);
-  // 名牌
+  drawVillainTag(v);
+  // 头顶晃动"!"警示
+  ctx.fillStyle='#d4564b';ctx.font='bold 20px sans-serif';
+  ctx.fillText('❗',v.x+16,v.y-46+Math.sin(Date.now()/260)*3);
+}
+/* v1.12 坏人名牌单独抽出：文本覆盖层始终置顶重绘 */
+function drawVillainTag(v){
   ctx.font='12px "ZCOOL KuaiLe",sans-serif';ctx.textAlign='center';
   const tw=v.name.length*13+22;
   ctx.fillStyle='rgba(255,250,240,.94)';ctx.fillRect(v.x-tw/2,v.y-44,tw,18);
   ctx.strokeStyle='#d4564b';ctx.lineWidth=1.5;ctx.strokeRect(v.x-tw/2,v.y-44,tw,18);
   ctx.fillStyle='#b03a30';ctx.fillText(v.name,v.x,v.y-31);
-  // 头顶晃动"!"警示
-  ctx.fillStyle='#d4564b';ctx.font='bold 20px sans-serif';
-  ctx.fillText('❗',v.x+16,v.y-46+Math.sin(Date.now()/260)*3);
 }
 /* ============================================================
    时间流动（15 分钟昼夜循环）+ 天气（7~10 分钟一场 5 分钟雨）
@@ -1580,7 +1915,18 @@ function drawVillain(v){
    ============================================================ */
 const DAY_MS=15*60*1000;
 let SUN={ph:0,dl:1,shadowDX:0,shadowLen:4};
+/* v1.12 开屏性别预览：用 drawCharCtx 在预览画布上渲染男女形象（需在 isRaining 声明后调用） */
+function drawGenderPreviews(){
+  const draw=(id,app)=>{ const c=document.getElementById(id); if(!c) return;
+    const g=c.getContext('2d'); g.imageSmoothingEnabled=false; g.clearRect(0,0,72,72);
+    g.fillStyle='rgba(124,184,106,.55)'; g.fillRect(0,0,72,72);
+    drawCharCtx(g,36,44,app.shirt,1,0,app.hair,app.gender);
+  };
+  draw('gpPrevM',PLAYER_APPEARANCE.m);
+  draw('gpPrevF',PLAYER_APPEARANCE.f);
+}
 let isRaining=false;
+drawGenderPreviews();
 let weatherState='clear';
 let nextRainAt=performance.now()+(7+Math.random()*3)*60*1000;
 let rainEndAt=0;
@@ -1664,7 +2010,7 @@ function updateCamera(){
 }
 /* v1.11 全图预渲染：整张地图一次性画进大画布，每帧只裁剪可视区域（替代 v1.10 视口缓存） */
 function buildFullMap(){
-  if(!fullCv){ fullCv=document.createElement('canvas'); fullCv.width=W; fullCv.height=H; fullCtx=fullCv.getContext('2d'); }
+  if(!fullCv){ fullCv=document.createElement('canvas'); fullCv.width=W; fullCv.height=H; fullCtx=fullCv.getContext('2d'); fullCtx.imageSmoothingEnabled=false; }
   const savedCtx=ctx, savedW=LOGIC_W, savedH=LOGIC_H, savedX=camX, savedY=camY;
   ctx=fullCtx; LOGIC_W=W; LOGIC_H=H; camX=0; camY=0;
   try{
@@ -1680,6 +2026,7 @@ function buildFullMap(){
 const mmCv=document.getElementById('minimap');
 mmCv.width=200; mmCv.height=150;  // v1.10 修复：强制 buffer 尺寸（防止 attribute 丢失导致 minimap 空白）
 const mctx=mmCv.getContext('2d');
+mctx.imageSmoothingEnabled=false;
 const MM_W=mmCv.width, MM_H=mmCv.height;
 const MM_SX=MM_W/COLS, MM_SY=MM_H/ROWS;
 function drawMinimap(){
@@ -1800,7 +2147,7 @@ function render(){
   try{ drawWaterSparkle(); }catch(e){ window.__showErr&&window.__showErr('water: '+e.message); }
   try{
     const arr=[
-      {px:player.x,py:player.y,draw:()=>drawChar(player.x,player.y,'#3b7fd4',player.dir,player.walk,'🧑')},
+      {px:player.x,py:player.y,draw:()=>drawChar(player.x,player.y,playerApp.shirt,player.dir,player.walk,'🧑',playerApp.hair,playerApp.gender)},
       ...NPCS.map(n=>({px:n.px,py:n.py,draw:()=>drawNPC(n)})),
       ...VILLAGERS.map(v=>({px:v.px,py:v.py,draw:()=>drawNPC(v)})),
       ...VILLAINS.map(v=>({px:v.x,py:v.y,draw:()=>drawVillain(v)})),
@@ -1813,11 +2160,30 @@ function render(){
     arr.sort((a,b)=>a.py-b.py); arr.forEach(o=>o.draw());
   }catch(e){ window.__showErr&&window.__showErr('chars: '+e.message); }
   ctx.restore();
+  // v1.12 文本覆盖层：名牌/招牌/校门/建筑名始终置顶（不被角色/树木遮挡）
+  try{ drawTextOverlay(); }catch(e){ window.__showErr&&window.__showErr('text: '+e.message); }
   // 屏幕空间叠层：先天气（雨）后天光（日/月 + 昼夜 tint）
   try{ drawWeather(); }catch(e){ window.__showErr&&window.__showErr('weather: '+e.message); }
   try{ drawSky(); }catch(e){ window.__showErr&&window.__showErr('sky: '+e.message); }
   // 全图迷你地图（屏幕空间，独立 canvas）
   try{ drawMinimap(); }catch(e){ window.__showErr&&window.__showErr('minimap: '+e.message); }
+}
+
+/* v1.12 文本覆盖层：所有地图文字在角色层之后重绘 → 字体始终显示在最上层 */
+function drawTextOverlay(){
+  const r=visRect(camX,camY);
+  ctx.save(); ctx.translate(-camX,-camY);
+  // 建筑名牌
+  BUILDINGS.forEach(b=>{ if(inView(b.x,b.y,r,b.w,b.h)) drawNameplate(b,b.x*TILE,b.y*TILE,b.w*TILE,b.h*TILE); });
+  // 招牌 / 校门
+  SIGNS.forEach(s=>{ if(inView(s.x,s.y,r,1,1)) drawSignText(s); });
+  GATES.forEach(g=>{ if(inView(g.x,g.y,r,1,1)) drawGateText(g); });
+  // 人物名牌
+  NPCS.forEach(n=>{ if(n.px>camX-40&&n.px<camX+LOGIC_W+40&&n.py>camY-40&&n.py<camY+LOGIC_H+40) drawNPCTag(n); });
+  VILLAGERS.forEach(v=>{ if(v.px>camX-40&&v.px<camX+LOGIC_W+40&&v.py>camY-40&&v.py<camY+LOGIC_H+40) drawNPCTag(v); });
+  VILLAINS.forEach(v=>{ if(v.x>camX-40&&v.x<camX+LOGIC_W+40&&v.y>camY-40&&v.y<camY+LOGIC_H+40) drawVillainTag(v); });
+  STUDENTS.forEach(s=>{ if(s.x>camX-40&&s.x<camX+LOGIC_W+40&&s.y>camY-40&&s.y<camY+LOGIC_H+40) drawStudentTag(s); });
+  ctx.restore();
 }
 
 /* ---------- 移动 ---------- */
@@ -2207,6 +2573,16 @@ document.getElementById('mapBtn').onclick=()=>{
 
 /* ---------- 更新日志（右上角） ---------- */
 const CHANGELOG=[
+  {ver:'v1.12',date:'2026-08-19',items:[
+    '字体 DPI 提升（1.5→2）+ 关闭平滑缩放：文字与像素更锐利，保留像素颗粒感',
+    '文字置顶：新增文本覆盖层，建筑名牌/招牌/校门/人物名牌在角色层之后重绘，任何情况下都显示在最上层',
+    '像素颗粒度细化：画布 DPR 提升 + imageSmoothingEnabled=false，像素边缘更清晰',
+    '小猫建模重做：程序化像素猫 + 完整动作逻辑（walk 游走 / idle 坐 / sleep 蜷睡 + 眨眼/尾巴摆动），新增白猫/黑猫/灰猫/棕猫 5 种毛色',
+    '草坪橙黄干草簇重做：画在草皮之上、树/灌木之下，不再被遮挡；新增高大树木（树干进背景 + 树冠半透明叠加在建筑上 → 树叶遮挡建筑时透视虚化）',
+    '人物/NPC 建模重做：程序化像素小人（发型/服装/裙摆性别差异），进入游戏可选择男生/女生形象，NPC/村民/同学按性别差异化建模',
+    '河流湖泊美化：主河道 + 湖面加宽段（柿子湾小湖/上川路小湖），波浪形河岸 + 芦苇/卵石/睡莲点缀，不再是笔直一条线；湖面波光流动动画增强',
+    '桥梁改为石头桥：石拱桥 + 石栏 + 拱洞造型，替换原木桥',
+  ]},
   {ver:'v1.11',date:'2026-08-19',items:[
     '修复：全图渲染——整张地图（176×132 格）一次性预渲染到 5632×4224 大画布，每帧只裁剪可视区域，进入游戏后全图都有画面（不再只有角色周围一小块、其余是绿底），效果类似"饥荒"',
     '修复：空气墙——昭信堂、赵朱木兰图书馆、篮球场、文博楼、集点广场、吃货天地、尚网商场等建筑原先压住主干道/道路格，现整体移动让位，文翔路主干道（x:40-42）与上川路主干道（x:128-129）全部畅通',

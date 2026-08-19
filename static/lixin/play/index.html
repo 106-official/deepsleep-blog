@@ -633,11 +633,12 @@ BUILDINGS.push(
   // 南区（y:82-108）：教学楼群均匀分布；2号楼(学验楼) 位于校区正中央
   {x:10,y:88,w:4,h:3,type:'academic',emoji:'🌀',name:'育才楼(3号楼·迷宫)',color:'#a85a3f'},
   {x:41,y:82,w:6,h:5,type:'academic',emoji:'🧮',name:'学验楼(2号楼·机房)',color:'#a85a3f'},
-  {x:18,y:88,w:2,h:14,type:'ecorr',emoji:'🏫',name:'四五六七号楼连廊',color:'#a08560'},
-  {x:20,y:88,w:3,h:3,type:'ecomplex',emoji:'🏫',name:'云间楼(7号楼)',color:'#b08a5a'},
-  {x:20,y:92,w:3,h:3,type:'ecomplex',emoji:'🏫',name:'徐汇楼(6号楼)',color:'#b08a5a'},
-  {x:20,y:96,w:3,h:3,type:'ecomplex',emoji:'🏫',name:'吉祥楼(4号楼)',color:'#b08a5a'},
-  {x:20,y:100,w:3,h:3,type:'ecomplex',emoji:'🏫',name:'北碚楼(5号楼)',color:'#b08a5a'},
+  // 四五六七号楼：西方中世纪白色典雅学院楼群，E 字形左侧连廊相连（v1.14 重建，约原 4~5 倍体量的大型楼群）
+  {x:18,y:82,w:2,h:32,type:'medieval',emoji:'🏛️',name:'四五六七号楼·连廊',color:'#efe9dc'},
+  {x:20,y:82,w:9,h:5,type:'medieval',emoji:'🏫',name:'云间楼(7号楼)',color:'#efe9dc'},
+  {x:20,y:89,w:9,h:5,type:'medieval',emoji:'🏫',name:'徐汇楼(6号楼)',color:'#efe9dc'},
+  {x:20,y:96,w:9,h:5,type:'medieval',emoji:'🏫',name:'吉祥楼(4号楼)',color:'#efe9dc'},
+  {x:20,y:103,w:9,h:5,type:'medieval',emoji:'🏫',name:'北碓楼(5号楼)',color:'#efe9dc'},
   {x:68,y:88,w:5,h:4,type:'academic',emoji:'🏥',name:'长乐楼(1号楼·医务室)',color:'#c0a06a'}
 );
 // ===== 上川路校区（浦东 · v1.13 建筑放大并均匀分布） =====
@@ -763,12 +764,12 @@ const SIGNS=[
 const GATES=[
   {x:24,y:0,name:'立信4号门(四期)'},
   {x:62,y:0,name:'立信5号门(四期)'},
-  {x:40,y:51,name:'文翔路校区 北门'},
-  {x:40,y:127,name:'文翔路校区 1号门(正门)'},
+  {x:40,y:51,name:'文翔路校区 北门',big:true},
+  {x:40,y:127,name:'文翔路校区 1号门(正门)',big:true},
   {x:86,y:76,name:'文翔路校区 3号门(东)'},
-  {x:128,y:51,name:'上川路校区 1号门(北)'},
+  {x:128,y:51,name:'上川路校区 1号门(北)',big:true},
   {x:101,y:76,name:'上川路校区 2号门(西)'},
-  {x:138,y:127,name:'上川路校区 3号门(南)'},
+  {x:138,y:127,name:'上川路校区 3号门(南)',big:true},
   {x:173,y:100,name:'上川路校区 4号门(东)'},
 ];
 /* ---- 文汇路小吃街摊位（2×2 格，路中央两排） ---- */
@@ -814,24 +815,24 @@ const canDecorate=(tx,ty)=>!blocked.has(key(tx,ty))&&!isPath(tx,ty)
   &&!SQUARES.some(s=>tx>=s.x&&tx<s.x+s.w&&ty>=s.y&&ty<s.y+s.h);
 // v1.10 大幅提高装饰密度，解决"大地图很多空白"——canDecorate 自然避开建筑/路/河/广场/摊位
 const flowers=[];
-for(let i=0;i<2400;i++){const tx=Math.floor(rnd()*COLS),ty=Math.floor(rnd()*ROWS);
-  if(canDecorate(tx,ty))flowers.push({x:tx*TILE+rnd()*TILE,y:ty*TILE+rnd()*TILE,k:Math.floor(rnd()*4)});}
+for(let i=0;i<3200;i++){const tx=Math.floor(rnd()*COLS),ty=Math.floor(rnd()*ROWS);
+  if(canDecorate(tx,ty))flowers.push({x:tx*TILE+rnd()*TILE,y:ty*TILE+rnd()*TILE,k:Math.floor(rnd()*8)});}
 const trees=[];
-for(let i=0;i<320;i++){const tx=Math.floor(rnd()*COLS),ty=Math.floor(rnd()*ROWS);
-  if(canDecorate(tx,ty))trees.push({x:tx*TILE,y:ty*TILE,k:Math.floor(rnd()*4)});}
+for(let i=0;i<460;i++){const tx=Math.floor(rnd()*COLS),ty=Math.floor(rnd()*ROWS);
+  if(canDecorate(tx,ty))trees.push({x:tx*TILE,y:ty*TILE,k:Math.floor(rnd()*5)});}
 const bushes=[];
-for(let i=0;i<500;i++){const tx=Math.floor(rnd()*COLS),ty=Math.floor(rnd()*ROWS);
-  if(canDecorate(tx,ty))bushes.push({x:tx*TILE,y:ty*TILE,k:Math.floor(rnd()*2)});}
+for(let i=0;i<800;i++){const tx=Math.floor(rnd()*COLS),ty=Math.floor(rnd()*ROWS);
+  if(canDecorate(tx,ty))bushes.push({x:tx*TILE,y:ty*TILE,k:Math.floor(rnd()*4)});}
 /* ---- 宿舍区高大树木（四期绿化带：楼间大冠乔木） ---- */
 const dormTrees=[];
-for(let i=0;i<90;i++){
+for(let i=0;i<130;i++){
   const tx=Math.floor(rnd()*80)+3, ty=Math.floor(rnd()*36)+2;
   if(canDecorate(tx,ty)&&ty<40) dormTrees.push({x:tx*TILE,y:ty*TILE,k:Math.floor(rnd()*3)});
 }
 /* ---- 校际大道两侧绿化带（v1.10：之前最空旷区域，x:87 / x:100 沿大道密集灌木+大树） ---- */
 for(let y=44;y<=126;y+=2){
-  if(canDecorate(87,y)) bushes.push({x:87*TILE,y:y*TILE,k:0});
-  if(canDecorate(100,y)) bushes.push({x:100*TILE,y:y*TILE,k:1});
+  if(canDecorate(87,y)) bushes.push({x:87*TILE,y:y*TILE,k:2});
+  if(canDecorate(100,y)) bushes.push({x:100*TILE,y:y*TILE,k:3});
 }
 for(let y=48;y<=124;y+=6){
   if(canDecorate(87,y)) trees.push({x:87*TILE,y:y*TILE,k:1});
@@ -839,14 +840,14 @@ for(let y=48;y<=124;y+=6){
 }
 /* ---- v1.12 高大树木：树干+下层冠画进背景，上层冠在建筑后以半透明叠加 → 树叶遮挡建筑时透视虚化 ---- */
 const bigTrees=[];
-for(let i=0;i<80;i++){
+for(let i=0;i<150;i++){
   const tx=Math.floor(rnd()*COLS), ty=Math.floor(rnd()*ROWS);
-  if(canDecorate(tx,ty)) bigTrees.push({x:tx*TILE,y:ty*TILE,k:Math.floor(rnd()*3),s:0.9+rnd()*0.5});
+  if(canDecorate(tx,ty)) bigTrees.push({x:tx*TILE,y:ty*TILE,k:Math.floor(rnd()*3),s:1.1+rnd()*0.7});
 }
 // 校际大道 / 校园绿地 / 河边补种高大树（保证显眼位置有）
 [[87,50],[87,62],[87,74],[87,86],[87,98],[87,110],[100,56],[100,68],[100,80],[100,92],[100,104],[100,116],
  [12,60],[24,60],[36,60],[60,60],[72,60],[112,60],[136,60],[148,60],[12,110],[148,110]].forEach(([tx,ty])=>{
-  if(canDecorate(tx,ty)) bigTrees.push({x:tx*TILE,y:ty*TILE,k:Math.floor(rnd()*3),s:1.1});
+  if(canDecorate(tx,ty)) bigTrees.push({x:tx*TILE,y:ty*TILE,k:Math.floor(rnd()*3),s:1.4});
 });
 /* ---- 草叶动画数据：每草地格 2 株草（世界坐标，动态层随风摆动） ---- */
 const grassCells=[];
@@ -1136,6 +1137,7 @@ STUDENT_GROUPS.forEach(g=>{
       name:STUDENT_NAMES[idx],
       color:STUDENT_COLORS[idx%STUDENT_COLORS.length],
       hair:['#5a3a22','#3a2f25','#7a4a22','#2f3a4a','#8a5a3b'][idx%5],
+      spriteIdx: idx % 14,
       x:sx*TILE+TILE/2, y:sy*TILE+TILE/2, tx:sx*TILE+TILE/2, ty:sy*TILE+TILE/2,
       speed:1.0+Math.random()*0.6, dir:0, walk:0,
       rt:240+Math.random()*360,
@@ -1213,7 +1215,7 @@ const ASSET_LIST=[
   'frog_00','frog_01','frog_02','frog_03','frog_04','frog_05','frog_06','frog_07','frog_08','frog_09','frog_10','frog_11',
   'squirrel_idle_1','squirrel_idle_2','squirrel_idle_3','squirrel_idle_4','squirrel_idle_5','squirrel_idle_6',
   'squirrel_run_1','squirrel_run_2','squirrel_run_3','squirrel_run_4','squirrel_run_5','squirrel_run_6','squirrel_run_7','squirrel_run_8',
-  'water_calm','npc_sprites'
+  'water_calm','npc_sprites','player_sprites','villager_sprites'
 ];
 ASSET_LIST.forEach(n=>{ const im=new Image(); im.onload=()=>invalidateCache(); im.onerror=()=>{}; im.src='assets/'+n+'.png'; A[n]=im; });
 
@@ -1407,13 +1409,68 @@ function drawECorridor(b){
   ctx.fillStyle='#caa46a';ctx.fillRect(x+5,y+28,w-10,3);
   drawNameplate(b,x,y,w,h);
 }
+/* v1.14 西方中世纪白色典雅学院楼：石材墙体 + 壁柱 + 5 层拱窗 + 石板尖顶 + 女儿墙齿 */
+function drawMedieval(b){
+  const x=b.x*TILE,y=b.y*TILE,w=b.w*TILE,h=b.h*TILE;
+  ctx.fillStyle='rgba(0,0,0,.18)';ctx.fillRect(x+5,y+h-2,w-10,9);
+  // 白色石材墙体（左右受光渐变）
+  const wall=ctx.createLinearGradient(x,0,x+w,0);
+  wall.addColorStop(0,'#f3eee2');wall.addColorStop(.5,'#e7e0d0');wall.addColorStop(1,'#d8d0bd');
+  ctx.fillStyle=wall;ctx.fillRect(x,y,w,h);
+  // 顶部受光 / 底部 AO
+  const lg=ctx.createLinearGradient(0,y,0,y+h);
+  lg.addColorStop(0,'rgba(255,255,255,.14)');lg.addColorStop(.2,'rgba(255,255,255,0)');
+  lg.addColorStop(.85,'rgba(0,0,0,0)');lg.addColorStop(1,'rgba(70,55,35,.22)');
+  ctx.fillStyle=lg;ctx.fillRect(x,y,w,h);
+  // 竖向壁柱（带柱头柱础）
+  const cols=Math.max(2,Math.floor(w/26));
+  for(let i=0;i<=cols;i++){
+    const px=x+8+i*(w-16)/cols;
+    ctx.fillStyle='#f6f1e6';ctx.fillRect(px-3,y,6,h);
+    ctx.fillStyle='#cdc4ad';ctx.fillRect(px-4,y,1,h);ctx.fillRect(px+3,y,1,h);
+    ctx.fillStyle='#b9ad92';ctx.fillRect(px-4,y,8,3);ctx.fillRect(px-4,y+h-3,8,3);
+  }
+  // 5 层拱窗
+  const rows=5, floorH=(h-14)/rows;
+  for(let r=0;r<rows;r++){
+    const wy=y+8+r*floorH;
+    for(let i=0;i<cols;i++){
+      const wx=x+16+i*(w-16)/cols, ww=floorH*0.5;
+      ctx.fillStyle='#6b5640';ctx.fillRect(wx-5,wy,ww,floorH*0.6);
+      ctx.fillStyle='#bfe0f0';
+      ctx.beginPath();ctx.moveTo(wx-4,wy+2);ctx.lineTo(wx-4,wy+1);
+      ctx.arc(wx,wy+1,4,Math.PI,0);ctx.lineTo(wx+4,wy+2);
+      ctx.lineTo(wx+4,wy+floorH*0.55);ctx.lineTo(wx-4,wy+floorH*0.55);ctx.closePath();ctx.fill();
+      ctx.strokeStyle='rgba(80,64,46,.6)';ctx.lineWidth=1;ctx.strokeRect(wx-5,wy,ww,floorH*0.6);
+      ctx.beginPath();ctx.moveTo(wx,wy+1);ctx.lineTo(wx,wy+floorH*0.55);ctx.stroke();
+    }
+  }
+  // 层间腰线
+  ctx.fillStyle='#cdc4ad';
+  for(let r=1;r<rows;r++){const wy=y+8+r*floorH-2;ctx.fillRect(x,wy,w,2);}
+  // 檐口 + 石板尖顶
+  ctx.fillStyle='#cdc4ad';ctx.fillRect(x-2,y-4,w+4,6);
+  ctx.fillStyle='#3b4a63';
+  ctx.beginPath();ctx.moveTo(x-4,y-4);ctx.lineTo(x+w/2,y-22);ctx.lineTo(x+w+4,y-4);ctx.closePath();ctx.fill();
+  ctx.fillStyle='#2c384c';ctx.fillRect(x-4,y-6,w+8,3);
+  // 女儿墙小齿
+  ctx.fillStyle='#e7e0d0';
+  for(let i=0;i<w/12;i++)ctx.fillRect(x+i*12,y-4,7,3);
+  drawNameplate(b,x,y,w,h);
+}
 function drawBuilding(b){
   if(b.type==='library') return b.name.indexOf('赵朱')>=0?drawLibraryModern(b):drawLibrary(b);
   if(b.type==='ecomplex') return drawEComplex(b);
   if(b.type==='ecorr') return drawECorridor(b);
+  if(b.type==='medieval') return drawMedieval(b);
   const x=b.x*TILE,y=b.y*TILE,w=b.w*TILE,h=b.h*TILE;
   ctx.fillStyle='rgba(0,0,0,.18)';ctx.fillRect(x+5,y+h-2,w,10);
   ctx.fillStyle=b.color;ctx.fillRect(x,y,w,h);
+  // v1.14 环境光遮蔽：顶部受光 + 底部阴影渐变，增强体积感
+  const lg=ctx.createLinearGradient(x,y,x,y+h);
+  lg.addColorStop(0,'rgba(255,255,255,.12)');lg.addColorStop(.18,'rgba(255,255,255,0)');
+  lg.addColorStop(.82,'rgba(0,0,0,0)');lg.addColorStop(1,'rgba(0,0,0,.18)');
+  ctx.fillStyle=lg;ctx.fillRect(x,y,w,h);
   ctx.fillStyle='rgba(0,0,0,.05)';
   for(let i=x+7;i<x+w-5;i+=13)ctx.fillRect(i,y+8,2,h-16);
   drawRoof(b,x,y,w,h);
@@ -1553,22 +1610,48 @@ function drawSignText(s){
   ctx.fillStyle='#6e452c';ctx.font=(s.big?'bold 15px':'13px')+' "ZCOOL KuaiLe",sans-serif';ctx.textAlign='center';
   ctx.fillText(s.emoji+' '+s.name,x,y-14);
 }
+/* v1.14 校门重做：中式牌坊（红漆立柱 + 青瓦檐顶 + 匾额），主校门加高加重檐 */
 function drawGate(g){
   const x=g.x*TILE, y=g.y*TILE;
-  ctx.fillStyle='#8a5a3b';ctx.fillRect(x-2,y-4,10,28);ctx.fillRect(x+TILE-8,y-4,10,28);
-  ctx.fillStyle='#6e452c';ctx.fillRect(x-6,y-12,TILE+12,9);
-  ctx.fillStyle='#f3d27a';ctx.fillRect(x-6,y-12,TILE+12,3);
-  drawGateText(g);
+  const big=!!g.big;
+  const cx=x+TILE/2;
+  const span=big?TILE*3.2:TILE*2;
+  const ph=big?TILE*4.2:TILE*1.7;
+  const lx=cx-span/2, rx=cx+span/2, pw=big?12:8;
+  // 落影
+  ctx.fillStyle='rgba(0,0,0,.16)';
+  ctx.fillRect(lx-pw/2+3,y-ph+4,pw,ph+8); ctx.fillRect(rx-pw/2+3,y-ph+4,pw,ph+8);
+  // 立柱
+  ctx.fillStyle='#9c3b34'; ctx.fillRect(lx-pw/2,y-ph,pw,ph+8); ctx.fillStyle='#b1463d'; ctx.fillRect(lx-pw/2,y-ph,3,ph+8);
+  ctx.fillStyle='#9c3b34'; ctx.fillRect(rx-pw/2,y-ph,pw,ph+8); ctx.fillStyle='#b1463d'; ctx.fillRect(rx-pw/2,y-ph,3,ph+8);
+  ctx.fillStyle='#caa46a'; ctx.fillRect(lx-pw/2-3,y-2,pw+6,6); ctx.fillRect(rx-pw/2-3,y-2,pw+6,6);
+  // 额枋
+  const beamY=y-ph-16;
+  ctx.fillStyle='#7a2e28'; ctx.fillRect(lx-pw/2-6,beamY,span+pw+12,16);
+  ctx.fillStyle='#caa46a'; ctx.fillRect(lx-pw/2-6,beamY,span+pw+12,4);
+  // 檐顶（青瓦悬山）
+  ctx.fillStyle='#3a2c1f';
+  ctx.beginPath();ctx.moveTo(lx-pw/2-16,beamY);ctx.lineTo(cx,beamY-22);ctx.lineTo(rx+pw/2+16,beamY);ctx.closePath();ctx.fill();
+  ctx.fillStyle='#5a4636'; ctx.fillRect(lx-pw/2-16,beamY-2,span+pw+32,3);
+  if(big){
+    const beamY2=beamY-30;
+    ctx.fillStyle='#6e452c'; ctx.fillRect(lx-pw/2-12,beamY2,span+pw+24,14);
+    ctx.fillStyle='#caa46a'; ctx.fillRect(lx-pw/2-12,beamY2,span+pw+24,3);
+    ctx.fillStyle='#3a2c1f';
+    ctx.beginPath();ctx.moveTo(lx-pw/2-22,beamY2);ctx.lineTo(cx,beamY2-20);ctx.lineTo(rx+pw/2+22,beamY2);ctx.closePath();ctx.fill();
+    ctx.fillStyle='#d9b24a'; ctx.beginPath();ctx.arc(cx,beamY2-22,4,0,7);ctx.fill();
+  }
+  // 匾额（校门名）
+  const by=big?beamY+2:y-30;
+  const tw=g.name.length*13+28;
+  ctx.fillStyle='#241a10'; ctx.fillRect(cx-tw/2,by-16,tw,18);
+  ctx.strokeStyle='#caa46a'; ctx.lineWidth=2; ctx.strokeRect(cx-tw/2,by-16,tw,18);
+  ctx.fillStyle='#f3d27a'; ctx.font=(big?'bold 14px':'13px')+' "ZCOOL KuaiLe",sans-serif';
+  ctx.textAlign='center'; ctx.textBaseline='alphabetic';
+  ctx.fillText(g.name,cx,by-3);
 }
-/* v1.12 校门文字单独抽出：文本覆盖层始终置顶重绘 */
-function drawGateText(g){
-  const x=g.x*TILE, y=g.y*TILE;
-  const tw=g.name.length*13+24;
-  ctx.fillStyle='rgba(255,250,240,.96)';ctx.fillRect(x+TILE/2-tw/2,y-38,tw,20);
-  ctx.strokeStyle='#6e452c';ctx.lineWidth=2;ctx.strokeRect(x+TILE/2-tw/2,y-38,tw,20);
-  ctx.fillStyle='#6e452c';ctx.font='13px "ZCOOL KuaiLe",sans-serif';ctx.textAlign='center';
-  ctx.fillText('🏛️ '+g.name,x+TILE/2,y-23);
-}
+/* v1.12 校门文字单独抽出：文本覆盖层始终置顶重绘（牌坊已在 drawGate 内绘制匾额，这里不再重复） */
+function drawGateText(g){}
 function drawLamp(l){
   // 地面投射渐变光效（程序化）
   ctx.save(); ctx.translate(l.x,l.y+10); ctx.scale(1.6,0.8);
@@ -1658,15 +1741,56 @@ function drawBench(b){
   ctx.fillStyle='#8a5a3b';ctx.fillRect(b.x-12,b.y-5,24,7);
   ctx.fillStyle='#6e452c';ctx.fillRect(b.x-12,b.y+2,3,6);ctx.fillRect(b.x+9,b.y+2,3,6);
 }
-/* ---- 灌木 / 树 / 花（Kenney 素材） ---- */
-function drawBush(b){ kTile(b.k?'bush2':'bush1',b.x,b.y); }
-function drawTree(t){
-  const names=['treeG1','treeG2','treeO','treeG1'];
-  kTile(names[t.k%4],t.x,t.y);
+/* ---- 植被（v1.14 程序化重做：去掉黄色树，增加花/草/树种类，加大树木） ---- */
+function drawBush(b){
+  if(b.k===2){ // 开花灌木
+    const x=b.x+16,y=b.y+18;
+    ctx.fillStyle='#3f8a3a';ctx.beginPath();ctx.arc(x,y,15,0,7);ctx.fill();
+    ctx.fillStyle='rgba(60,150,55,.5)';ctx.beginPath();ctx.arc(x-6,y+2,10,0,7);ctx.fill();
+    ctx.fillStyle='rgba(255,170,205,.9)';
+    for(let i=0;i<7;i++){const a=i/7*6.28;ctx.beginPath();ctx.arc(x+Math.cos(a)*9,y+Math.sin(a)*9,2.3,0,7);ctx.fill();}
+    return;
+  }
+  if(b.k===3){ // 圆柏
+    const x=b.x+16,y=b.y+18;
+    ctx.fillStyle='#2f6a3c';ctx.beginPath();ctx.moveTo(x-10,y+6);ctx.lineTo(x,y-22);ctx.lineTo(x+10,y+6);ctx.closePath();ctx.fill();
+    ctx.fillStyle='#3f8048';ctx.beginPath();ctx.moveTo(x-6,y+2);ctx.lineTo(x,y-10);ctx.lineTo(x+6,y+2);ctx.closePath();ctx.fill();
+    return;
+  }
+  kTile(b.k?'bush2':'bush1',b.x,b.y);
 }
-/* ---- 宿舍区高大乔木（程序化：粗干 + 三层大冠，比 Kenney 树高半个身位） ---- */
+/* v1.14 树木：5 种（橡树/松树/花树/亮绿/大橡），无黄色；程序化绘制带树干阴影 */
+function drawTree(t){
+  const x=t.x+16, y=t.y+16, k=t.k%5;
+  const tw=k===1?4:5;
+  // 树干 + 落影
+  ctx.fillStyle='rgba(0,0,0,.14)';ctx.beginPath();ctx.ellipse(x+3,y+18,12,4,0,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#5a3a22';ctx.fillRect(x-tw/2,y-2,tw,20);
+  ctx.fillStyle='#6e452c';ctx.fillRect(x-tw/2+1,y-2,2,20);
+  if(k===1){ // 松树（层叠三角）
+    for(let i=0;i<3;i++){
+      const cy=y+6-i*10, cw=20-i*5;
+      ctx.fillStyle='#2f6a2c';ctx.beginPath();ctx.moveTo(x,y-14-i*10);ctx.lineTo(x-cw,y+8-i*10);ctx.lineTo(x+cw,y+8-i*10);ctx.closePath();ctx.fill();
+      ctx.fillStyle='rgba(120,195,105,.45)';ctx.beginPath();ctx.moveTo(x,y-14-i*10);ctx.lineTo(x-cw*0.55,y+1-i*10);ctx.lineTo(x+cw*0.55,y+1-i*10);ctx.closePath();ctx.fill();
+    }
+    return;
+  }
+  const r=k===4?28:22;
+  const pal=k===2?['#ffc6e0','#f29ec4','#d97aa6']:k===3?['#a6d988','#84bf6a','#5f9444']:['#74bd62','#4f9a48','#357a34'];
+  const g=ctx.createRadialGradient(x-6,y-14,4,x,y-14,r);
+  g.addColorStop(0,pal[0]);g.addColorStop(.6,pal[1]);g.addColorStop(1,pal[2]);
+  ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y-16,r,0,7);ctx.fill();
+  ctx.fillStyle='rgba(190,230,160,.5)';ctx.beginPath();ctx.arc(x-9,y-22,12,0,7);ctx.fill();
+  ctx.fillStyle='rgba(150,210,120,.42)';ctx.beginPath();ctx.arc(x+10,y-24,10,0,7);ctx.fill();
+  if(k===2){ // 花树：粉白花点
+    ctx.fillStyle='rgba(255,235,245,.95)';
+    for(let i=0;i<8;i++){const a=i/8*6.28;ctx.beginPath();ctx.arc(x+Math.cos(a)*r*0.62,y-16+Math.sin(a)*r*0.62,2.4,0,7);ctx.fill();}
+  }
+}
+/* ---- 宿舍区高大乔木（程序化：粗干 + 三层大冠） ---- */
 function drawTallTree(t){
   const x=t.x+16, y=t.y+16;
+  ctx.fillStyle='rgba(0,0,0,.14)';ctx.beginPath();ctx.ellipse(x+3,y+18,13,4,0,0,Math.PI*2);ctx.fill();
   ctx.fillStyle='#5a3a22';ctx.fillRect(x-3,y+6,6,14);
   ctx.fillStyle='#6e452c';ctx.fillRect(x-1,y+2,2,18);
   const g=ctx.createRadialGradient(x,y-6,2,x,y-6,26);
@@ -1676,21 +1800,31 @@ function drawTallTree(t){
   ctx.fillStyle='rgba(130,195,105,.5)';ctx.beginPath();ctx.arc(x+11,y-14,12,0,7);ctx.fill();
   ctx.fillStyle='rgba(70,140,60,.35)';ctx.beginPath();ctx.arc(x+4,y+2,20,0,7);ctx.fill();
 }
+/* v1.14 花：程序化多彩小花（茎 + 5 瓣 + 花心），按 k 取色 */
 function drawFlower(f){
-  kTile(f.k<2?'mush':'flower',f.x-8,f.y-8,16,16);
+  const x=f.x, y=f.y;
+  const cols=['#ff7eb0','#ffd54a','#ff8a5b','#c08bff','#ff5b7a','#ffffff','#7ec8ff','#ff9ec4'];
+  const c=cols[f.k%cols.length];
+  ctx.strokeStyle='rgba(70,140,60,.85)';ctx.lineWidth=1.4;
+  ctx.beginPath();ctx.moveTo(x,y+1);ctx.lineTo(x,y-9);ctx.stroke();
+  ctx.fillStyle=c;
+  for(let i=0;i<5;i++){const a=i/5*6.28;ctx.beginPath();ctx.arc(x+Math.cos(a)*4,y-12+Math.sin(a)*4,2.6,0,7);ctx.fill();}
+  ctx.fillStyle='#ffe27a';ctx.beginPath();ctx.arc(x,y-12,2.1,0,7);ctx.fill();
+  ctx.fillStyle='rgba(255,255,255,.5)';ctx.beginPath();ctx.arc(x-1,y-13,0.8,0,7);ctx.fill();
 }
 /* ---- v1.12 高大树木：分两层绘制（树干层进背景 / 树冠层半透明叠加在建筑上） ---- */
 function drawBigTreeBase(t){
   const x=t.x+16, y=t.y+16, s=t.s||1;
   ctx.save(); ctx.translate(x,y); ctx.scale(s,s); ctx.translate(-x,-y);
+  ctx.fillStyle='rgba(0,0,0,.14)';ctx.beginPath();ctx.ellipse(x+4,y+22,16,5,0,0,Math.PI*2);ctx.fill();
   // 粗干
-  ctx.fillStyle='#4a3018';ctx.fillRect(x-4,y+4,8,20);
-  ctx.fillStyle='#6e452c';ctx.fillRect(x-2,y+2,4,22);
+  ctx.fillStyle='#4a3018';ctx.fillRect(x-5,y+4,10,24);
+  ctx.fillStyle='#6e452c';ctx.fillRect(x-2,y+2,4,26);
   // 下层树冠（深绿，进背景层）
-  const g=ctx.createRadialGradient(x,y-10,4,x,y-10,30);
+  const g=ctx.createRadialGradient(x,y-12,4,x,y-12,36);
   g.addColorStop(0,'#5a9e4e');g.addColorStop(.7,'#43843c');g.addColorStop(1,'#2f6a2c');
-  ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y-10,28,0,7);ctx.fill();
-  ctx.fillStyle='rgba(60,130,55,.5)';ctx.beginPath();ctx.arc(x-8,y-4,18,0,7);ctx.fill();
+  ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y-12,34,0,7);ctx.fill();
+  ctx.fillStyle='rgba(60,130,55,.5)';ctx.beginPath();ctx.arc(x-10,y-4,22,0,7);ctx.fill();
   ctx.restore();
 }
 function drawBigTreeCanopy(t){
@@ -1698,12 +1832,12 @@ function drawBigTreeCanopy(t){
   ctx.save(); ctx.translate(x,y); ctx.scale(s,s); ctx.translate(-x,-y);
   // 上层树冠：半透明叠加 → 遮挡建筑时透视虚化
   ctx.globalAlpha=0.62;
-  const g=ctx.createRadialGradient(x,y-22,4,x,y-22,30);
+  const g=ctx.createRadialGradient(x,y-26,4,x,y-26,36);
   g.addColorStop(0,'#8fd07a');g.addColorStop(.6,'#6cb45c');g.addColorStop(1,'#4a9444');
-  ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y-22,26,0,7);ctx.fill();
-  ctx.fillStyle='rgba(170,225,140,.7)';ctx.beginPath();ctx.arc(x-12,y-28,13,0,7);ctx.fill();
-  ctx.fillStyle='rgba(150,210,120,.6)';ctx.beginPath();ctx.arc(x+12,y-30,11,0,7);ctx.fill();
-  ctx.fillStyle='rgba(90,160,80,.4)';ctx.beginPath();ctx.arc(x+4,y-12,18,0,7);ctx.fill();
+  ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y-26,32,0,7);ctx.fill();
+  ctx.fillStyle='rgba(170,225,140,.7)';ctx.beginPath();ctx.arc(x-14,y-32,16,0,7);ctx.fill();
+  ctx.fillStyle='rgba(150,210,120,.6)';ctx.beginPath();ctx.arc(x+14,y-34,13,0,7);ctx.fill();
+  ctx.fillStyle='rgba(90,160,80,.4)';ctx.beginPath();ctx.arc(x+5,y-14,22,0,7);ctx.fill();
   ctx.restore();
 }
 /* ---- 小吃街摊位（2×2 格：遮阳棚 + 台面 + 食物） ---- */
@@ -1918,6 +2052,27 @@ function drawCharCtx(c,px,py,color,faceDir,walkPhase,hair,gender){
 function drawChar(px,py,color,faceDir,walkPhase,emoji,hair,gender){
   drawCharCtx(ctx,px,py,color,faceDir,walkPhase,hair,gender);
 }
+function drawPlayer(){
+  const sheet=A.player_sprites;
+  if(sheet&&sheet.complete&&sheet.naturalWidth){
+    const cols=2;
+    const sw=Math.floor(sheet.naturalWidth/cols);
+    const sh=sheet.naturalHeight;
+    const spriteIdx=(playerApp.gender==='f')?1:0;
+    const sx=spriteIdx*sw;
+    const bob=Math.sin(player.walk)*2.5;
+    const dh=64;
+    const dw=dh*(sw/sh);
+    ctx.fillStyle='rgba(0,0,0,.20)';
+    ctx.beginPath();ctx.ellipse(player.x+SUN.shadowDX*0.5,player.y+2,16,5,0,0,Math.PI*2);ctx.fill();
+    const smooth=ctx.imageSmoothingEnabled;
+    ctx.imageSmoothingEnabled=false;
+    ctx.drawImage(sheet,sx,0,sw,sh,player.x-dw/2,player.y-dh+bob,dw,dh);
+    ctx.imageSmoothingEnabled=smooth;
+  } else {
+    drawChar(player.x,player.y,playerApp.shirt,player.dir,player.walk,'🧑',playerApp.hair,playerApp.gender);
+  }
+}
 function drawNPC(n){
   const sheet=A.npc_sprites;
   const hasSprite=typeof n.spriteIdx==='number'&&sheet&&sheet.complete&&sheet.naturalWidth;
@@ -1952,7 +2107,24 @@ function drawNPCTag(n){
   ctx.fillStyle='#6e452c';ctx.fillText(n.name,n.px,n.py-31);
 }
 function drawStudent(s){
-  drawChar(s.x,s.y,s.color,s.dir,s.walk,0,s.hair,STUDENT_GENDER[s.name]||'m');
+  const sheet=A.villager_sprites;
+  if(sheet&&sheet.complete&&sheet.naturalWidth&&typeof s.spriteIdx==='number'){
+    const cols=14;
+    const sw=Math.floor(sheet.naturalWidth/cols);
+    const sh=sheet.naturalHeight;
+    const sx=s.spriteIdx*sw;
+    const bob=Math.sin(s.walk)*2.5;
+    const dh=64;
+    const dw=dh*(sw/sh);
+    ctx.fillStyle='rgba(0,0,0,.18)';
+    ctx.beginPath();ctx.ellipse(s.x+SUN.shadowDX*0.5,s.y+2,16,5,0,0,Math.PI*2);ctx.fill();
+    const smooth=ctx.imageSmoothingEnabled;
+    ctx.imageSmoothingEnabled=false;
+    ctx.drawImage(sheet,sx,0,sw,sh,s.x-dw/2,s.y-dh+bob,dw,dh);
+    ctx.imageSmoothingEnabled=smooth;
+  } else {
+    drawChar(s.x,s.y,s.color,s.dir,s.walk,0,s.hair,STUDENT_GENDER[s.name]||'m');
+  }
   drawStudentTag(s);
 }
 /* v1.12 学生名牌单独抽出：文本覆盖层始终置顶重绘 */
@@ -2060,6 +2232,27 @@ function drawWeather(){
     ctx.beginPath(); ctx.moveTo(d.x,d.y); ctx.lineTo(d.x-2,d.y+d.l); ctx.stroke();
   }
   ctx.restore();
+}
+/* v1.14 屏幕级光照（类 Minecraft 光影材质包氛围）：暗角(vignette) + 正午暖光晕(bloom) + 夜间冷调降亮 */
+function drawLighting(){
+  const dl=SUN.dl;
+  // 暗角：夜晚更深，营造四周虚化聚焦
+  const g=ctx.createRadialGradient(LOGIC_W/2,LOGIC_H*0.46,Math.min(LOGIC_W,LOGIC_H)*0.30,
+                                    LOGIC_W/2,LOGIC_H*0.5,Math.max(LOGIC_W,LOGIC_H)*0.80);
+  g.addColorStop(0,'rgba(0,0,0,0)');
+  g.addColorStop(1,'rgba(8,12,30,'+(0.15+0.22*(1-Math.max(0,dl)))+')');
+  ctx.fillStyle=g; ctx.fillRect(0,0,LOGIC_W,LOGIC_H);
+  // 正午暖光晕：轻微 bloom 提亮画面中心
+  if(dl>0.15){
+    ctx.save(); ctx.globalCompositeOperation='lighter';
+    const bg=ctx.createRadialGradient(LOGIC_W/2,LOGIC_H*0.32,20, LOGIC_W/2,LOGIC_H*0.32, Math.max(LOGIC_W,LOGIC_H)*0.62);
+    bg.addColorStop(0,'rgba(255,244,205,'+(0.055*dl)+')'); bg.addColorStop(1,'rgba(255,244,205,0)');
+    ctx.fillStyle=bg; ctx.fillRect(0,0,LOGIC_W,LOGIC_H); ctx.restore();
+  }
+  // 地面全局环境冷影：白天淡淡蓝绿压暗远景，夜间更冷
+  const amb=0.05+0.05*(1-Math.max(0,dl));
+  ctx.save(); ctx.globalCompositeOperation='multiply';
+  ctx.fillStyle='rgba(150,170,200,'+amb+')'; ctx.fillRect(0,0,LOGIC_W,LOGIC_H); ctx.restore();
 }
 /* ---- 草叶：完全静态，画进背景缓存层（v1.9：用户反馈"草坪区块挪动"，取消动态摆动） ---- */
 function drawGrassTufts(){
@@ -2225,7 +2418,7 @@ function render(){
   try{ drawWaterSparkle(); }catch(e){ window.__showErr&&window.__showErr('water: '+e.message); }
   try{
     const arr=[
-      {px:player.x,py:player.y,draw:()=>drawChar(player.x,player.y,playerApp.shirt,player.dir,player.walk,'🧑',playerApp.hair,playerApp.gender)},
+      {px:player.x,py:player.y,draw:()=>drawPlayer()},
       ...NPCS.map(n=>({px:n.px,py:n.py,draw:()=>drawNPC(n)})),
       ...VILLAGERS.map(v=>({px:v.px,py:v.py,draw:()=>drawNPC(v)})),
       ...VILLAINS.map(v=>({px:v.x,py:v.y,draw:()=>drawVillain(v)})),
@@ -2243,6 +2436,7 @@ function render(){
   // 屏幕空间叠层：先天气（雨）后天光（日/月 + 昼夜 tint）
   try{ drawWeather(); }catch(e){ window.__showErr&&window.__showErr('weather: '+e.message); }
   try{ drawSky(); }catch(e){ window.__showErr&&window.__showErr('sky: '+e.message); }
+  try{ drawLighting(); }catch(e){ window.__showErr&&window.__showErr('lighting: '+e.message); }
   // 全图迷你地图（屏幕空间，独立 canvas）
   try{ drawMinimap(); }catch(e){ window.__showErr&&window.__showErr('minimap: '+e.message); }
 }

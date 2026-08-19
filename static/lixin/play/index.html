@@ -616,21 +616,26 @@ BUILDINGS.push(
   {x:74,y:16,w:4,h:2,type:'activity',emoji:'🛍️',name:'尚网商场',color:'#c98a4a'},
   {x:4,y:24,w:4,h:2,type:'activity',emoji:'🎨',name:'松江文化创意园',color:'#4caf7d'}
 );
-// ===== 文翔路校区（松江 · 主校区，v1.13 建筑放大、均匀分布；2号楼在中央，下方巨大诚信广场） =====
+// ===== 文翔路校区（松江 · 主校区；v1.15 #2 按真实地图还原：
+//   北区（龙源路侧）西→东：体育馆→网球场·排球场→篮球场→序伦大楼(最高)→昭信堂→中国会计博物馆→行政楼；
+//   图书馆临柿子湾北岸；柿子湾（y:70-73，西信桥/东诚桥跨河）南岸：学生事务中心·学子餐厅·师苑餐厅；
+//   南区（文翔路侧）教学楼群：育才楼/学验楼/四五六七号楼/长乐楼 + 中央诚信广场） =====
 BUILDINGS.push(
-  // 北区（y:54-68）：体育/行政/文化建筑均匀分布
-  {x:3,y:54,w:4,h:2,type:'activity',emoji:'🎾',name:'网球场·排球场',color:'#4caf7d'},
-  {x:8,y:54,w:3,h:2,type:'activity',emoji:'🏀',name:'篮球场',color:'#4caf7d'},
-  {x:16,y:54,w:5,h:3,type:'gym',emoji:'🏟️',name:'体育馆',color:'#5a8fc9'},
-  {x:26,y:54,w:7,h:4,type:'landmark',emoji:'🏛️',name:'序伦大楼(行政·最高楼)',color:'#9c6b3f'},
-  {x:36,y:54,w:5,h:3,type:'activity',emoji:'🎭',name:'昭信堂(演出礼堂)',color:'#7a5ac9'},
-  {x:48,y:54,w:5,h:3,type:'landmark',emoji:'🏦',name:'中国会计博物馆(全球首家)',color:'#9c6b3f'},
-  {x:60,y:54,w:8,h:3,type:'library',emoji:'📚',name:'图书馆(古罗马斗兽场)',color:'#b9743f'},
-  // 中区（y:74-77）：行政/生活建筑置于柿子湾南岸，避开主河道 y:71-72 与桥梁
-  {x:10,y:74,w:5,h:3,type:'academic',emoji:'🏢',name:'行政楼',color:'#b08a5a'},
+  // 北区（y:54-57）文体行政
+  {x:3,y:54,w:6,h:3,type:'gym',emoji:'🏟️',name:'体育馆',color:'#5a8fc9'},
+  {x:11,y:54,w:5,h:2,type:'activity',emoji:'🎾',name:'网球场·排球场',color:'#4caf7d'},
+  {x:18,y:54,w:4,h:2,type:'activity',emoji:'🏀',name:'篮球场',color:'#4caf7d'},
+  {x:26,y:54,w:8,h:4,type:'landmark',emoji:'🏛️',name:'序伦大楼(行政·最高楼)',color:'#9c6b3f'},
+  {x:37,y:54,w:5,h:3,type:'activity',emoji:'🎭',name:'昭信堂(演出礼堂)',color:'#7a5ac9'},
+  {x:45,y:54,w:5,h:3,type:'landmark',emoji:'🏦',name:'中国会计博物馆(全球首家)',color:'#9c6b3f'},
+  {x:53,y:54,w:5,h:3,type:'academic',emoji:'🏢',name:'行政楼',color:'#b08a5a'},
+  // 图书馆：临柿子湾北岸（y:64-66，横路 y:62 南、河道 y:70 北）
+  {x:46,y:64,w:8,h:3,type:'library',emoji:'📚',name:'图书馆(古罗马斗兽场)',color:'#b9743f'},
+  // 中区（y:74-77）柿子湾南岸：餐饮 + 学生事务中心
+  {x:10,y:74,w:4,h:2,type:'activity',emoji:'🏷️',name:'学生事务中心',color:'#7a5ac9'},
   {x:20,y:74,w:4,h:2,type:'canteen',emoji:'🍚',name:'学子餐厅(圆柱体)',color:'#c98a4a'},
   {x:30,y:74,w:4,h:2,type:'canteen',emoji:'🍜',name:'师苑餐厅',color:'#c98a4a'},
-  // 南区（y:82-108）：教学楼群均匀分布；2号楼(学验楼) 位于校区正中央
+  // 南区（y:82-108）：教学楼群均匀分布；2号楼(学验楼) 位于校区正中央偏东
   {x:10,y:88,w:4,h:3,type:'academic',emoji:'🌀',name:'育才楼(3号楼·迷宫)',color:'#a85a3f'},
   {x:41,y:82,w:6,h:5,type:'academic',emoji:'🧮',name:'学验楼(2号楼·机房)',color:'#a85a3f'},
   // 四五六七号楼：西方中世纪白色典雅学院楼群，E 字形左侧连廊相连（v1.14 重建，约原 4~5 倍体量的大型楼群）
@@ -682,6 +687,10 @@ const PONDS=[];
 /* v1.12 河流湖泊美化：主河道 + 湖面加宽段（小湖），不再是笔直一条线；
    加宽段均位于两条鹅卵石路之间（y:70/74 与 y:62/66），不挡路不压建筑 */
 const LAKE=[
+  // ===== 文汇河（v1.15 #8：商铺后、宿舍区前，y:38-39；北门桥 x:40-42 跨河） =====
+  {x:2,y:38,w:82,h:2, depth:0.75},   // 主河道横贯四期公寓南缘 y:38-39
+  {x:3,y:38,w:16,h:2, lake:true},    // 西端小潭（北门桥以西加宽）
+  {x:46,y:38,w:18,h:2, lake:true},   // 东段小潭（北门桥以东加宽）
   // ===== 松江·柿子湾（主河道加宽 2 格蜿蜒；西信桥/东诚桥跨河） =====
   {x:4,y:71,w:40,h:2, depth:0.9},     // 主河道横贯文翔路中部 y:71-72
   {x:5,y:70,w:6,h:4,  lake:true},     // 西端深潭
@@ -693,6 +702,8 @@ const LAKE=[
   {x:138,y:62,w:14,h:4, lake:true},   // 东侧大湖（上川桥以东）
 ];
 const LAKE_BRIDGES=[
+  // 北门桥：跨文汇河（四期公寓南缘），与文翔路校区北门对齐
+  {x:40,y:38,w:3,h:3,name:'北门桥'},
   // 跨河石桥：垂直跨过 2 格主河道（y 向覆盖河+两岸），3×4 更大更立体，桥面铺满盖水不重叠
   {x:13,y:70,w:3,h:4,name:'西信桥'},
   {x:32,y:70,w:3,h:4,name:'东诚桥'},
@@ -724,29 +735,29 @@ const PATHS=[
   {x:0,y:42,w:176,h:8,type:'road'},
   // 校际大道（宽 12 格，文翔路↔上川路）= 马路（沥青）
   {x:88,y:42,w:12,h:86,type:'road'},
-  // 文翔路主干道（纵贯 北门→1号门）= 小路（土路）
-  {x:40,y:53,w:3,h:75,type:'path'},
-  // 文翔路横路：贴柿子湾的两条 = 鹅卵石；其余 = 小路（土路；x:3 起避开西墙 x:2）
-  {x:3,y:62,w:83,h:1,type:'path'},
+  // v1.15 #4 文翔路主干道（纵贯 北门→1号门）= 灰色水泥路（3 格宽）
+  {x:40,y:53,w:3,h:75,type:'concrete'},
+  // 文翔路横路：贴柿子湾的两条 = 鹅卵石；其余 = 灰色水泥路（1 格宽，与主干道同贴图；x:3 起避开西墙 x:2）
+  {x:3,y:62,w:83,h:1,type:'concrete'},
   {x:3,y:70,w:83,h:1,type:'cobble'},
   {x:3,y:74,w:83,h:1,type:'cobble'},
-  {x:3,y:86,w:83,h:1,type:'path'},
-  {x:3,y:104,w:83,h:1,type:'path'},
-  {x:3,y:116,w:83,h:1,type:'path'},
-  // 上川路主干道（纵贯 1号门→3号门；过桥段由 LAKE_BRIDGES 覆盖）= 小路（土路）
-  {x:128,y:53,w:2,h:75,type:'path'},
-  // 上川路横路：贴小河的两条 = 鹅卵石；其余 = 小路（x:103 起避开西墙 x:102）
+  {x:3,y:86,w:83,h:1,type:'concrete'},
+  {x:3,y:104,w:83,h:1,type:'concrete'},
+  {x:3,y:116,w:83,h:1,type:'concrete'},
+  // v1.15 #4 上川路主干道（纵贯 1号门→3号门；过桥段由 LAKE_BRIDGES 覆盖）= 灰色水泥路
+  {x:128,y:53,w:2,h:75,type:'concrete'},
+  // 上川路横路：贴小河的两条 = 鹅卵石；其余 = 灰色水泥路（x:103 起避开西墙 x:102）
   {x:103,y:62,w:71,h:1,type:'cobble'},
   {x:103,y:66,w:71,h:1,type:'cobble'},
-  {x:103,y:78,w:71,h:1,type:'path'},
-  {x:103,y:98,w:71,h:1,type:'path'},
-  {x:103,y:112,w:71,h:1,type:'path'},
+  {x:103,y:78,w:71,h:1,type:'concrete'},
+  {x:103,y:98,w:71,h:1,type:'concrete'},
+  {x:103,y:112,w:71,h:1,type:'concrete'},
   // 校际大道与各校区连接口 = 马路
   {x:87,y:76,w:1,h:2,type:'road'},
   {x:100,y:76,w:2,h:2,type:'road'},
-  // 上川路南门(3号门)竖路 / 东门(4号门)竖路 = 小路
-  {x:138,y:112,w:2,h:15,type:'path'},
-  {x:172,y:98,w:1,h:3,type:'path'},
+  // v1.15 #4 上川路南门(3号门)竖路 / 东门(4号门)竖路 = 灰色水泥路
+  {x:138,y:112,w:2,h:15,type:'concrete'},
+  {x:172,y:98,w:1,h:3,type:'concrete'},
 ];
 /* ---- 四期公寓宿舍区内部路网（楼间人行道，土路） ---- */
 [12,24,36,48,60,72].forEach(x=>PATHS.push({x, y:2, w:2, h:40, type:'path'}));   // 两侧小路（纵向楼间道）
@@ -772,18 +783,23 @@ const GATES=[
   {x:138,y:127,name:'上川路校区 3号门(南)',big:true},
   {x:173,y:100,name:'上川路校区 4号门(东)'},
 ];
-/* ---- 文汇路小吃街摊位（2×2 格，路中央两排） ---- */
-const STALL_DEFS=[
-  {x:8,y:45,emoji:'🍢',name:'烤串',color:'#c95a4a'},
-  {x:18,y:45,emoji:'🍜',name:'面馆',color:'#c98a4a'},
-  {x:28,y:45,emoji:'🥟',name:'饺子',color:'#5a8fc9'},
-  {x:37,y:45,emoji:'🍧',name:'甜品',color:'#d98ac9'},
-  {x:48,y:45,emoji:'🥤',name:'奶茶',color:'#7a5ac9'},
-  {x:58,y:45,emoji:'🍔',name:'汉堡',color:'#c98a4a'},
-  {x:68,y:45,emoji:'🌮',name:'卷饼',color:'#4caf7d'},
-  {x:78,y:45,emoji:'🍦',name:'冰淇淋',color:'#5a8fc9'},
-];
-const STALLS=STALL_DEFS.map(s=>({...s,w:2,h:2}));
+/* v1.15 #8 文汇路北侧一排商铺（商铺开在路北 y:40-41、不占路面；
+   中央 x:37-44 留空给「北门桥」通道；商铺后 y:38-39 为文汇河，河后才到宿舍区） */
+BUILDINGS.push(
+  {x:3,y:40,w:4,h:2,type:'shop',emoji:'🍢',name:'烤串店',color:'#c95a4a'},
+  {x:9,y:40,w:4,h:2,type:'shop',emoji:'🍜',name:'兰州拉面',color:'#c98a4a'},
+  {x:15,y:40,w:4,h:2,type:'shop',emoji:'🥟',name:'饺子馆',color:'#5a8fc9'},
+  {x:21,y:40,w:4,h:2,type:'shop',emoji:'🍧',name:'甜品店',color:'#d98ac9'},
+  {x:27,y:40,w:4,h:2,type:'shop',emoji:'🥤',name:'奶茶店',color:'#7a5ac9'},
+  {x:33,y:40,w:4,h:2,type:'shop',emoji:'🍔',name:'汉堡店',color:'#c98a4a'},
+  // x:37-44 北门桥通道（空）
+  {x:45,y:40,w:4,h:2,type:'shop',emoji:'🌮',name:'卷饼店',color:'#4caf7d'},
+  {x:51,y:40,w:4,h:2,type:'shop',emoji:'🍦',name:'冰淇淋店',color:'#5a8fc9'},
+  {x:57,y:40,w:4,h:2,type:'shop',emoji:'🍎',name:'水果店',color:'#b0783a'},
+  {x:63,y:40,w:4,h:2,type:'shop',emoji:'🍗',name:'炸鸡店',color:'#c95a4a'},
+  {x:69,y:40,w:4,h:2,type:'shop',emoji:'☕',name:'咖啡店',color:'#8a6a3a'},
+  {x:75,y:40,w:4,h:2,type:'shop',emoji:'🛒',name:'便利店',color:'#4a7a68'}
+);
 
 const blocked=new Set();
 const key=(x,y)=>x+','+y;
@@ -792,7 +808,6 @@ function buildBlocked(){
   BUILDINGS.forEach(b=>{for(let i=b.x;i<b.x+b.w;i++)for(let j=b.y;j<b.y+b.h;j++)blocked.add(key(i,j));});
   TRACKS.forEach(t=>{for(let i=t.x;i<t.x+t.w;i++)for(let j=t.y;j<t.y+t.h;j++)blocked.add(key(i,j));});
   PONDS.forEach(p=>{for(let i=p.x;i<p.x+p.w;i++)for(let j=p.y;j<p.y+p.h;j++)blocked.add(key(i,j));});
-  STALLS.forEach(s=>{for(let i=s.x;i<s.x+s.w;i++)for(let j=s.y;j<s.y+s.h;j++)blocked.add(key(i,j));});
   LAKE.forEach(p=>{for(let i=p.x;i<p.x+p.w;i++)for(let j=p.y;j<p.y+p.h;j++){
     if(LAKE_BRIDGES&&LAKE_BRIDGES.some(b=>i>=b.x&&i<b.x+b.w&&j>=b.y&&j<b.y+b.h))continue;
     blocked.add(key(i,j));
@@ -808,6 +823,15 @@ function passable(px,py){
   if(tx<0||ty<0||tx>=COLS||ty>=ROWS) return false;
   return !blocked.has(key(tx,ty));
 }
+/* v1.15：判断某世界坐标是否在水面（不含桥面） */
+function isWater(px,py){
+  const tx=Math.floor(px/TILE), ty=Math.floor(py/TILE);
+  return LAKE.some(p=>tx>=p.x&&tx<p.x+p.w&&ty>=p.y&&ty<p.y+p.h)
+    && !LAKE_BRIDGES.some(b=>tx>=b.x&&tx<b.x+b.w&&ty>=b.y&&ty<b.y+b.h);
+}
+/* v1.15：入水/出水水花涟漪 */
+let ripples=[];
+function spawnRipple(x,y){ ripples.push({x,y,t:0,life:0.8}); }
 buildBlocked();
 // 稳定随机装饰（避开障碍/道路/河流/广场/摊位）
 let seed=20260818; const rnd=()=>{seed=(seed*1103515245+12345)&0x7fffffff;return seed/0x7fffffff;};
@@ -901,9 +925,10 @@ const CAT_COLORS=[
 function catState(c,dt){
   c.stateT-=dt;
   if(c.stateT<=0){
-    if(c.state==='walk'){ c.state=Math.random()<0.5?'idle':'sleep'; c.stateT=2+Math.random()*4; }
-    else if(c.state==='sleep'){ c.state='walk'; c.stateT=4+Math.random()*6; }
-    else { c.state='walk'; c.stateT=3+Math.random()*5; }
+    // v1.15：状态约 30 秒切换一次（不在移动/睡觉间高频抖动）
+    if(c.state==='walk'){ c.state=Math.random()<0.5?'idle':'sleep'; c.stateT=26+Math.random()*8; }
+    else if(c.state==='sleep'){ c.state='walk'; c.stateT=26+Math.random()*8; }
+    else { c.state='walk'; c.stateT=26+Math.random()*8; }
   }
 }
 [[6,8],[18,8],[30,8],[42,8],[54,8]].forEach(([rx,ry],i)=>{
@@ -923,7 +948,7 @@ function lakeSideTile(){
 }
 function spawnAnimals(){
   FIREFLIES=[];
-  for(let i=0;i<22;i++){ const t=randGrassTile(); const hx=t.x*TILE+TILE/2, hy=t.y*TILE+TILE/2;
+  for(let i=0;i<42;i++){ const t=randGrassTile(); const hx=t.x*TILE+TILE/2, hy=t.y*TILE+TILE/2;
     FIREFLIES.push({hx,hy,x:hx,y:hy,ph:rnd()*6.28,sp:0.4+rnd()*0.5,r:16+rnd()*22}); }
   SQUIRRELS=[];
   for(let i=0;i<7;i++){ const t=randGrassTile(); SQUIRRELS.push({x:t.x*TILE+TILE/2,y:t.y*TILE+TILE/2,tx:t.x*TILE+TILE/2,ty:t.y*TILE+TILE/2,dir:1,walk:0,frame:0,ft:0}); }
@@ -939,6 +964,7 @@ function stepAnimal(a,sp,dt){
 }
 function updateAnimals(dt){
   FIREFLIES.forEach(f=>{ f.ph+=f.sp*dt*0.05; f.x=f.hx+Math.cos(f.ph)*f.r; f.y=f.hy+Math.sin(f.ph*1.3)*f.r*0.7; });
+  for(let i=ripples.length-1;i>=0;i--){ ripples[i].t+=dt; if(ripples[i].t>=ripples[i].life) ripples.splice(i,1); }
   SQUIRRELS.forEach(s=>{
     stepAnimal(s,1.4,dt); s.ft+=dt;
     const moving=Math.hypot(s.tx-s.x,s.ty-s.y)>=2;
@@ -949,7 +975,13 @@ function updateAnimals(dt){
   FIXED_CATS.forEach(c=>{ catState(c,dt); c.ph+=0.02; c.blinkPhase+=dt; c.x=c.hx+Math.cos(c.ph)*14; c.y=c.hy+Math.sin(c.ph*1.7)*8; c.dir=Math.cos(c.ph)>0?1:-1; });
   FROGS.forEach(fr=>{
     fr.ft+=dt; if(fr.ft>=0.16){ fr.ft=0; fr.frame=(fr.frame+1)%12; }
-    fr.hop-=dt; if(fr.hop<=0){ fr.hop=120+rnd()*220; const dir=rnd()<0.5?-1:1; if(passable(fr.x+dir*TILE,fr.y)) fr.x+=dir*TILE; }
+    // v1.15：每 ~10 秒小型跳跃移动 1-2 格；入水/出水产生水花
+    fr.hop-=dt; if(fr.hop<=0){ fr.hop=10000; const dir=rnd()<0.5?-1:1; const step=1+Math.floor(rnd()*2);
+      const nx=fr.x+dir*step*TILE;
+      const wasWater=isWater(fr.x,fr.y);
+      if(passable(nx,fr.y)) fr.x=nx;
+      if(isWater(fr.x,fr.y)!==wasWater) spawnRipple(fr.x,fr.y);
+    }
   });
 }
 function drawFirefly(f){
@@ -1045,7 +1077,17 @@ function drawCat(c){
   }
   ctx.restore();
 }
-/* ---- 宿舍楼下的猫窝（草垫 + 食碗 + 名牌，静态画进背景缓存） ---- */
+/* v1.15：水花涟漪（青蛙入水/出水） */
+function drawRipples(){
+  ripples.forEach(r=>{
+    const p=r.t/r.life;
+    ctx.save();
+    ctx.strokeStyle='rgba(235,248,255,'+(0.55*(1-p))+')';
+    ctx.lineWidth=2;
+    ctx.beginPath(); ctx.ellipse(r.x,r.y+8,(6+p*24),(3+p*12),0,0,Math.PI*2); ctx.stroke();
+    ctx.restore();
+  });
+}
 function drawCatNest(n){
   const x=n.tx*TILE, y=n.ty*TILE;
   ctx.fillStyle='rgba(0,0,0,.12)';ctx.beginPath();ctx.ellipse(x+TILE/2,y+TILE/2+4,16,9,0,0,Math.PI*2);ctx.fill();
@@ -1097,7 +1139,7 @@ const VILLAINS=[
   {id:'food2',tile:{x:68,y:41},emoji:'🧋',name:'奶茶试喝',color:'#a05a8a',msg:'新店开业！奶茶免费试喝一杯？'},
   {id:'laundry',tile:{x:26,y:16},emoji:'🧺',name:'洗衣卡',color:'#5a7a4a',msg:'同学，办洗衣卡吗？充值 100 送 20，扫码即办～'},
   {id:'gym',tile:{x:64,y:10},emoji:'🏋️',name:'健身卡',color:'#4a7a68',msg:'健身房年卡团购，学生价半折，练出好身材！'},
-  {id:'car',tile:{x:94,y:80},emoji:'🚗',name:'驾校顾问',color:'#6a5a8a',msg:'考驾照吗？周末班寒暑假班都有，包接送～'},
+  {id:'car',tile:{x:100,y:82},emoji:'🚗',name:'驾校顾问',color:'#6a5a8a',msg:'考驾照吗？周末班寒暑假班都有，包接送～'},
   {id:'film',tile:{x:94,y:110},emoji:'📱',name:'贴膜小哥',color:'#8a6a3a',msg:'手机贴膜 9.9，钢化膜 19.9，贴完包好！'},
   {id:'tel1',tile:{x:40,y:26},emoji:'📱',name:'电话卡推销',color:'#4a78a0',msg:'同学！办张校园电话卡吧，月租 19 元送 100G 校园流量，宿舍楼间信号最好～'},
   {id:'net3',tile:{x:64,y:33},emoji:'🛜',name:'宽带小哥',color:'#4a68b0',msg:'宿舍拉宽带吗？200M 光钎四期专属价 39 元/月，今天办还送路由器！'},
@@ -1115,9 +1157,13 @@ if(urlPos){
 }
 /* v1.12 玩家形象：进入游戏可选择性别（发型/服装差异） */
 const PLAYER_APPEARANCE={
-  m:{gender:'m',hair:'#3a2f25',shirt:'#3b7fd4',skin:'#f4c9a0'},
-  f:{gender:'f',hair:'#5a3a22',shirt:'#d4567a',skin:'#f4c9a0'}
+  m:{gender:'m',hair:'#3a2f25',shirt:'#3b7fd4',skin:'#f4c9a0',umbrella:'#274a8a'},
+  f:{gender:'f',hair:'#5a3a22',shirt:'#d4567a',skin:'#f4c9a0',umbrella:'#e8c33a'}
 };
+/* v1.15 雨伞配色：黑 / 深蓝 / 黄 */
+const UMBRELLA_COLORS=['#274a8a','#2b2b30','#e8c33a','#3b7fd4'];
+/* v1.15 结伴聊天气泡颜文字 */
+const TALK_EMOTES=['^-^','？！','？','！','…','♪','~','o.o'];
 let playerApp=PLAYER_APPEARANCE.m;
 /* v1.12 NPC/村民/同学性别分配（发型/服装按性别差异化建模） */
 const NPC_GENDER={senpai:'m',accounting:'m',calc1:'f',calc2:'m',linalg:'m',prob:'m',python:'m'};
@@ -1138,6 +1184,9 @@ STUDENT_GROUPS.forEach(g=>{
       color:STUDENT_COLORS[idx%STUDENT_COLORS.length],
       hair:['#5a3a22','#3a2f25','#7a4a22','#2f3a4a','#8a5a3b'][idx%5],
       spriteIdx: idx % 14,
+      umbrella:UMBRELLA_COLORS[Math.floor(Math.random()*UMBRELLA_COLORS.length)],
+      noUmbrella:false,
+      bubble:null, bubbleT:200+Math.random()*400, flee:false,
       x:sx*TILE+TILE/2, y:sy*TILE+TILE/2, tx:sx*TILE+TILE/2, ty:sy*TILE+TILE/2,
       speed:1.0+Math.random()*0.6, dir:0, walk:0,
       rt:240+Math.random()*360,
@@ -1150,11 +1199,21 @@ STUDENT_GROUPS.forEach(g=>{
 function wanderTarget(s){
   for(let k=0;k<14;k++){
     const tx=s.x+(Math.random()*2-1)*260, ty=s.y+(Math.random()*2-1)*260;
-    if(passable(tx,ty))return{x:tx,y:ty};
+    const txc=Math.floor(tx/TILE), tyc=Math.floor(ty/TILE);
+    // v1.15 #7 行人不在大马路上乱走：主干道 tile 仅在斑马线范围内允许经过
+    if(passable(tx,ty) && (!onMainRoad(txc,tyc) || inCrossing(txc,tyc))) return {x:tx,y:ty};
   }
   return null;
 }
 function updateStudents(dt){
+  // v1.15 下雨：随机部分同学不带伞 → 气泡 TAT 并跑出屏幕外躲雨
+  if(isRaining&&!lastRainState){
+    STUDENTS.forEach(s=>{ if(Math.random()<0.28){ s.noUmbrella=true; s.flee=true; s.bubble='TAT'; s.phase='run'; s.phaseTime=1e9; s.leader=null; } });
+  }
+  if(!isRaining&&lastRainState){
+    STUDENTS.forEach(s=>{ if(s.noUmbrella){ s.noUmbrella=false; s.flee=false; s.bubble=null; } });
+  }
+  lastRainState=isRaining;
   STUDENTS.forEach(s=>{
     s.phaseTime-=dt;
     if(s.phaseTime<=0){
@@ -1163,17 +1222,30 @@ function updateStudents(dt){
       else if(r<0.85){s.phase='pause';s.phaseTime=40+Math.random()*120;}
       else{s.phase='run';s.phaseTime=20+Math.random()*40;}
     }
+    // v1.15 结伴/走路时高概率冒出对话气泡
+    s.bubbleT-=dt;
+    if(s.bubbleT<=0){
+      if(s.flee){ s.bubble='TAT'; s.bubbleT=60; }
+      else if((s.phase==='walk'||s.leader!==null)&&Math.random()<0.6){
+        s.bubble=TALK_EMOTES[Math.floor(Math.random()*TALK_EMOTES.length)]; s.bubbleT=120+Math.random()*260;
+      } else { s.bubble=null; s.bubbleT=120+Math.random()*200; }
+    }
     let sp;
     if(s.phase==='pause')sp=0;
     else if(s.phase==='run')sp=s.speed*2.4;
     else sp=s.speed*0.55;
-    if(s.leader===null){
+    if(s.flee){
+      // 朝最近地图边缘猛跑（跑出屏幕外躲雨）
+      const ex = s.x < W/2 ? -200 : W+200;
+      s.tx = ex; s.ty = s.y; sp = s.speed*2.6;
+    }
+    if(s.leader===null && !s.flee){
       s.rt-=dt;
       if(s.rt<=0||Math.hypot(s.x-s.tx,s.y-s.ty)<10){
         s.rt=180+Math.random()*240;
         const t=wanderTarget(s); if(t){s.tx=t.x;s.ty=t.y;}
       }
-    }else{
+    }else if(!s.flee){
       const l=STUDENTS[s.leader];
       s.tx=l.x+s.offx; s.ty=l.y+s.offy;
     }
@@ -1186,6 +1258,131 @@ function updateStudents(dt){
     }else s.walk=0;
   });
 }
+
+/* ============================================================
+   v1.15 #7 路面交通：自行车 / 电动车 / 汽车沿主干道直线行驶，礼让行人；
+   斑马线 + 红绿灯（十字路口与学校门口）
+   ============================================================ */
+/* ---- 主干道车道（仅在 type==='road' 的路面上行驶） ---- */
+const ROAD_LANES=[
+  // 文汇路小吃街（横向 y:42-49）：东行 lane44 / 西行 lane47
+  {axis:'h',lane:44*TILE+TILE/2,dir:1, from:0,to:W},
+  {axis:'h',lane:47*TILE+TILE/2,dir:-1,from:0,to:W},
+  // 校际大道（纵向 x:88-99）：南行 lane90 / 北行 lane97
+  {axis:'v',lane:90*TILE+TILE/2,dir:1, from:42*TILE,to:128*TILE},
+  {axis:'v',lane:97*TILE+TILE/2,dir:-1,from:42*TILE,to:128*TILE},
+];
+const VEHICLE_KINDS=[
+  {kind:'bike', w:30,h:18,spd:1.5,col:'#d94f4f'},
+  {kind:'ebike',w:34,h:22,spd:2.2,col:'#3f7fd4'},
+  {kind:'car',  w:54,h:30,spd:2.9,col:'#2f2f36'},
+  {kind:'car',  w:54,h:30,spd:2.9,col:'#c9a23a'},
+];
+let VEHICLES=[];
+function spawnVehicles(){
+  VEHICLES=[];
+  ROAD_LANES.forEach(l=>{
+    const n=l.axis==='h'?6:7;
+    for(let i=0;i<n;i++){
+      const k=VEHICLE_KINDS[Math.floor(rnd()*VEHICLE_KINDS.length)];
+      const pos=l.from+(l.to-l.from)*((i+Math.random()*0.7)/n);
+      VEHICLES.push({axis:l.axis,dir:l.dir,lane:l.lane,from:l.from,to:l.to,pos,
+        speed:k.spd*(0.85+Math.random()*0.35),kind:k.kind,w:k.w,h:k.h,col:k.col,yield:0});
+    }
+  });
+}
+/* 前方 ~135px、横向偏差 < 26px 内有行人 → 礼让停车 */
+function vehBlocks(pa,pc,v){
+  if(Math.abs(pc-v.lane)>26) return false;
+  const ahead=(pa-v.pos)*v.dir;
+  return ahead>-18 && ahead<135;
+}
+/* 红灯：在停止线带内停车（横向绿灯/纵向红灯交替，周期 9s） */
+function vehLightRed(v){
+  const tlGreenH=(Math.floor(performance.now()/9000)%2===0);
+  const Xc=93*TILE, Yc=45.5*TILE;
+  if(v.axis==='h'){
+    if(tlGreenH) return false;
+    if(v.dir>0&&v.pos>Xc-42&&v.pos<Xc-8) return true;
+    if(v.dir<0&&v.pos<Xc+42&&v.pos>Xc+8) return true;
+  }else{
+    if(!tlGreenH) return false;
+    if(v.dir>0&&v.pos>Yc-42&&v.pos<Yc-8) return true;
+    if(v.dir<0&&v.pos<Yc+42&&v.pos>Yc+8) return true;
+  }
+  return false;
+}
+function updateVehicles(dt){
+  VEHICLES.forEach(v=>{
+    let blocking=false;
+    if(vehBlocks(player.x,player.y,v)) blocking=true;
+    else for(const s of STUDENTS){ if(vehBlocks(s.x,s.y,v)){blocking=true;break;} }
+    if(blocking) v.yield=Math.min(1,v.yield+dt*0.25);
+    else v.yield=Math.max(0,v.yield-dt*0.25);
+    const sp=v.speed*(1-v.yield*0.97);
+    if(!vehLightRed(v)) v.pos+=v.dir*sp*dt;
+    const ext=130;
+    if(v.axis==='h'){ if(v.pos>v.to+ext)v.pos=v.from-ext; else if(v.pos<v.from-ext)v.pos=v.to+ext; }
+    else { if(v.pos>v.to+ext)v.pos=v.from-ext; else if(v.pos<v.from-ext)v.pos=v.to+ext; }
+  });
+}
+function drawVehicle(v){
+  const x=v.axis==='h'?v.pos:v.lane;
+  const y=v.axis==='h'?v.lane:v.pos;
+  ctx.save(); ctx.translate(x,y);
+  if(v.dir<0) ctx.scale(-1,1);
+  ctx.fillStyle='rgba(0,0,0,.20)';
+  ctx.beginPath(); ctx.ellipse(0,v.h*0.42,v.w*0.5,v.h*0.26,0,0,Math.PI*2); ctx.fill();
+  if(v.kind==='car') drawCarShape(v); else drawBikeShape(v);
+  ctx.restore();
+}
+function drawCarShape(v){
+  const w=v.w,h=v.h,c=v.col;
+  rr(ctx,-w/2,-h/2,w,h,6); ctx.fillStyle=c; ctx.fill();
+  rr(ctx,-w/2+8,-h/2-7,w-24,12,4); ctx.fillStyle=shade(c,22); ctx.fill();
+  ctx.fillStyle='rgba(180,220,240,.85)'; rr(ctx,-w/2+11,-h/2-5,w-28,7,2); ctx.fill();
+  ctx.fillStyle='#15151a'; ctx.beginPath();
+  ctx.arc(-w/2+13,h/2-1,6,0,Math.PI*2); ctx.arc(w/2-13,h/2-1,6,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='rgba(255,245,180,.95)'; ctx.fillRect(w/2-4,-3,4,7);
+}
+function drawBikeShape(v){
+  const w=v.w,h=v.h,c=v.col;
+  ctx.fillStyle='#1a1a1a';
+  ctx.beginPath(); ctx.arc(-w/2+7,h/2-1,7,0,Math.PI*2); ctx.arc(w/2-7,h/2-1,7,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle=c; ctx.lineWidth=3;
+  ctx.beginPath(); ctx.moveTo(-w/2+7,h/2-1); ctx.lineTo(0,-2); ctx.lineTo(w/2-7,h/2-1); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(0,-2); ctx.lineTo(2,-h/2+2); ctx.stroke();
+  ctx.fillStyle='#5a4030'; ctx.beginPath(); ctx.arc(2,-h/2-2,5,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='#7a5a4a'; ctx.fillRect(0,-h/2+2,7,9);
+  if(v.kind==='ebike'){
+    ctx.fillStyle='#3a3a40'; ctx.fillRect(-w/2+4,-2,w-10,5);
+    ctx.strokeStyle='#cfcabb'; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(w/2-7,-6,4,0,Math.PI*2); ctx.stroke();
+  }
+  ctx.fillStyle='rgba(255,245,180,.9)'; ctx.fillRect(w/2-3,-5,4,5);
+}
+/* ---- 斑马线（主干道路面上的白色条纹，行人横穿处） ---- */
+const CROSSINGS=[
+  {x:23,y:42,w:3,h:8},{x:40,y:42,w:4,h:8},{x:61,y:42,w:3,h:8},{x:87,y:42,w:12,h:8},
+];
+function inCrossing(x,y){ return CROSSINGS.some(c=>x>=c.x&&x<c.x+c.w&&y>=c.y&&y<c.y+c.h); }
+/* ---- 红绿灯（十字路口与校门口，动态闪烁；横向/纵向交替放行） ---- */
+const TRAFFIC_LIGHTS=[
+  {x:43,y:41,axis:'h'},{x:86,y:41,axis:'v'},{x:100,y:41,axis:'v'},
+  {x:23,y:41,axis:'h'},{x:61,y:41,axis:'h'},
+];
+function drawTrafficLights(){
+  const tlGreenH=(Math.floor(performance.now()/9000)%2===0);
+  TRAFFIC_LIGHTS.forEach(L=>{
+    const x=L.x*TILE+TILE/2, y=L.y*TILE+TILE/2;
+    ctx.fillStyle='#3a3a40'; ctx.fillRect(x-2,y-2,4,26);                 // 灯杆
+    rr(ctx,x-7,y-26,14,20,4); ctx.fillStyle='#22242a'; ctx.fill();      // 灯箱
+    const go=(L.axis==='h')?tlGreenH:!tlGreenH;
+    ctx.fillStyle=go?'#3a1414':'#e23b2b'; ctx.beginPath(); ctx.arc(x,y-20,4,0,Math.PI*2); ctx.fill(); // 红
+    ctx.fillStyle=go?'#2faf4a':'#143a18'; ctx.beginPath(); ctx.arc(x,y-11,4,0,Math.PI*2); ctx.fill(); // 绿
+  });
+}
+/* 主干道判定（行人寻路避让其上，仅在斑马线处可横穿） */
+function onMainRoad(tx,ty){ return PATHS.some(p=>p.type==='road'&&tx>=p.x&&tx<p.x+p.w&&ty>=p.y&&ty<p.y+p.h); }
 
 /* ============================================================
    渲染：Kenney Tiny Town 素材（CC0） + 程序化绘制
@@ -1240,6 +1437,13 @@ function shade(hex,amt){
   r=Math.max(0,Math.min(255,r+amt));g=Math.max(0,Math.min(255,g+amt));b=Math.max(0,Math.min(255,b+amt));
   return 'rgb('+r+','+g+','+b+')';
 }
+/* v1.15 圆角矩形辅助（用于车辆/灯箱） */
+function rr(c,x,y,w,h,r){
+  r=Math.min(r,w/2,h/2);
+  c.beginPath();
+  c.moveTo(x+r,y); c.arcTo(x+w,y,x+w,y+h,r); c.arcTo(x+w,y+h,x,y+h,r);
+  c.arcTo(x,y+h,x,y,r); c.arcTo(x,y,x+w,y,r); c.closePath();
+}
 /* ---- 草地 / 道路 tile（Kenney 素材，带少量花） ---- */
 function drawGrassTile(x,y){
   const h=(x*7+y*13)%11;
@@ -1266,17 +1470,38 @@ function drawGrassTile(x,y){
 function drawPathTile(x,y,p){
   const px=x*TILE, py=y*TILE, type=p.type||'path';
   if(type==='road'){
-    // 沥青马路：深灰底 + 细微噪点
-    ctx.fillStyle='#3b3f45'; ctx.fillRect(px,py,TILE,TILE);
+    const horizontal = p.w>=p.h;
+    // v1.15 真实柏油马路：深沥青底 + 细微噪点
+    ctx.fillStyle='#2c3036'; ctx.fillRect(px,py,TILE,TILE);
     const hsh=(x*13+y*7)%5;
-    ctx.fillStyle='rgba(255,255,255,.05)'; if(hsh===0)ctx.fillRect(px+5,py+7,3,3);
-    ctx.fillStyle='rgba(0,0,0,.12)'; if(hsh===2)ctx.fillRect(px+18,py+20,4,3);
-    ctx.fillStyle='rgba(255,255,255,.04)'; if(hsh===4)ctx.fillRect(px+10,py+22,2,2);
-    // 车道中线（宽路中间一行画淡黄虚线）
-    ctx.strokeStyle='rgba(240,210,90,.75)'; ctx.lineWidth=2; ctx.setLineDash([6,6]);
-    if(p.w>=p.h && y===p.y+((p.h/2)|0)){ ctx.beginPath(); ctx.moveTo(px,py+TILE/2); ctx.lineTo(px+TILE,py+TILE/2); ctx.stroke(); }
-    if(p.w<p.h && x===p.x+((p.w/2)|0)){ ctx.beginPath(); ctx.moveTo(px+TILE/2,py); ctx.lineTo(px+TILE/2,py+TILE); ctx.stroke(); }
+    ctx.fillStyle='rgba(255,255,255,.04)'; if(hsh===0)ctx.fillRect(px+5,py+7,3,3);
+    ctx.fillStyle='rgba(0,0,0,.18)'; if(hsh===2)ctx.fillRect(px+18,py+20,4,3);
+    ctx.fillStyle='rgba(255,255,255,.03)'; if(hsh===4)ctx.fillRect(px+10,py+22,2,2);
+    // 路缘（混凝土人行道）：沿路长方向的两条边
+    ctx.fillStyle='#6f7378';
+    if(horizontal){ ctx.fillRect(px,py,TILE,3); ctx.fillRect(px,py+TILE-3,TILE,3); }
+    else { ctx.fillRect(px,py,3,TILE); ctx.fillRect(px+TILE-3,py,3,TILE); }
+    // 车道中线（淡黄虚线）
+    ctx.strokeStyle='rgba(240,210,90,.8)'; ctx.lineWidth=2; ctx.setLineDash([6,6]);
+    if(horizontal){ if(y===p.y+((p.h/2)|0)){ ctx.beginPath(); ctx.moveTo(px,py+TILE/2); ctx.lineTo(px+TILE,py+TILE/2); ctx.stroke(); } }
+    else { if(x===p.x+((p.w/2)|0)){ ctx.beginPath(); ctx.moveTo(px+TILE/2,py); ctx.lineTo(px+TILE/2,py+TILE); ctx.stroke(); } }
     ctx.setLineDash([]);
+    // v1.15 #7 斑马线：主干道上、斑马线范围内的白色条纹
+    if(inCrossing(x,y)){
+      ctx.fillStyle='rgba(245,245,245,.82)';
+      for(let i=0;i<2;i++){ const bx=px+5+i*16; ctx.fillRect(bx,py+5,8,TILE-10); }
+    }
+    return;
+  }
+  if(type==='concrete'){
+    // v1.15 #4 灰色水泥路：水泥板 + 伸缩缝 + 少量裂纹
+    ctx.fillStyle='#9a9ba0'; ctx.fillRect(px,py,TILE,TILE);
+    ctx.fillStyle='rgba(255,255,255,.22)'; ctx.fillRect(px,py,TILE,2);
+    ctx.strokeStyle='rgba(70,70,78,.40)'; ctx.lineWidth=1;
+    ctx.strokeRect(px+0.5,py+0.5,TILE-1,TILE-1);
+    const hs=(x*7+y*13)%4;
+    if(hs===0){ ctx.fillStyle='rgba(126,126,132,.55)'; ctx.fillRect(px+6,py+6,18,18); }
+    if(hs===2){ ctx.fillStyle='rgba(60,60,66,.5)'; ctx.fillRect(px+10,py+20,9,3); ctx.fillRect(px+14,py+23,3,4); }
     return;
   }
   if(type==='cobble'){
@@ -1923,8 +2148,6 @@ function drawMapVisible(cx,cy){
   BUILDINGS.forEach(b=>{if(inView(b.x,b.y,r,b.w,b.h))drawBuilding(b);});
   // v1.12 高大树木：上层树冠（半透明叠加在建筑上 → 树叶遮挡建筑时透视虚化）
   bigTrees.forEach(t=>{if(t.x>cx-80&&t.x<cx+LOGIC_W+80&&t.y>cy-80&&t.y<cy+LOGIC_H+80)drawBigTreeCanopy(t);});
-  // 小吃摊位
-  STALLS.forEach(s=>{if(inView(s.x,s.y,r,s.w,s.h))drawStall(s);});
   // 围墙 / 门 / 牌 / 路灯 / 长椅
   WALLS.forEach(w=>{if(inView(w.x,w.y,r,w.w,w.h))drawWall(w);});
   GATES.forEach(g=>{if(inView(g.x,g.y,r,1,1))drawGate(g);});
@@ -1997,7 +2220,20 @@ function drawWaterSparkle(){
   });
 }
 /* v1.12 人物建模重做：程序化像素小人（性别差异：发型/服装/裙摆），支持任意 ctx 绘制 */
-function drawCharCtx(c,px,py,color,faceDir,walkPhase,hair,gender){
+/* v1.15 程序化雨伞（2 格宽，支持黑/深蓝/黄等颜色） */
+function drawUmbrella(c,px,py,color){
+  const uw=64, cx=px, top=py-66;
+  c.strokeStyle='#6b4f2a'; c.lineWidth=2;
+  c.beginPath(); c.moveTo(cx, top+6); c.lineTo(cx, py-2); c.stroke();
+  c.fillStyle=color;
+  c.beginPath(); c.moveTo(cx-uw/2, top+6); c.quadraticCurveTo(cx, top-18, cx+uw/2, top+6); c.closePath(); c.fill();
+  c.fillStyle='rgba(255,255,255,.18)';
+  c.beginPath(); c.moveTo(cx-uw/2, top+6); c.quadraticCurveTo(cx, top-10, cx, top+6); c.closePath(); c.fill();
+  c.strokeStyle='rgba(0,0,0,.25)'; c.lineWidth=1;
+  for(let i=-2;i<=2;i++){ c.beginPath(); c.moveTo(cx, top-2); c.lineTo(cx+i*uw/5, top+6); c.stroke(); }
+  c.fillStyle='#6b4f2a'; c.fillRect(cx-1, top-22, 2, 6);
+}
+function drawCharCtx(c,px,py,color,faceDir,walkPhase,hair,gender,umb){
   const bob=Math.sin(walkPhase)*3;
   const skin='#f4c9a0';
   const g=gender==='f';
@@ -2044,13 +2280,11 @@ function drawCharCtx(c,px,py,color,faceDir,walkPhase,hair,gender){
   c.beginPath();c.arc(px+4+ex,py-15+bob,1.8,0,7);c.fill();
   // 嘴
   c.fillStyle='#c97b5a';c.fillRect(px-1,py-12+bob,2,1);
-  // 下雨时撑伞（像素伞素材，CC0）
-  if(isRaining&&A.umbrella_pixel&&A.umbrella_pixel.complete){
-    const uw=28; c.drawImage(A.umbrella_pixel, px-uw/2, py-62, uw, uw);
-  }
+  // v1.15 下雨时撑伞：加宽到 2 格，黑/深蓝/黄等颜色（程序化绘制）
+  if(isRaining&&umb){ drawUmbrella(c,px,py,umb); }
 }
-function drawChar(px,py,color,faceDir,walkPhase,emoji,hair,gender){
-  drawCharCtx(ctx,px,py,color,faceDir,walkPhase,hair,gender);
+function drawChar(px,py,color,faceDir,walkPhase,emoji,hair,gender,umb){
+  drawCharCtx(ctx,px,py,color,faceDir,walkPhase,hair,gender,umb);
 }
 function drawPlayer(){
   const sheet=A.player_sprites;
@@ -2070,7 +2304,7 @@ function drawPlayer(){
     ctx.drawImage(sheet,sx,0,sw,sh,player.x-dw/2,player.y-dh+bob,dw,dh);
     ctx.imageSmoothingEnabled=smooth;
   } else {
-    drawChar(player.x,player.y,playerApp.shirt,player.dir,player.walk,'🧑',playerApp.hair,playerApp.gender);
+    drawChar(player.x,player.y,playerApp.shirt,player.dir,player.walk,'🧑',playerApp.hair,playerApp.gender, playerApp.umbrella);
   }
 }
 function drawNPC(n){
@@ -2092,7 +2326,7 @@ function drawNPC(n){
     ctx.drawImage(sheet,sx,0,sw,sh,n.px-dw/2,n.py-dh+bob,dw,dh);
     ctx.imageSmoothingEnabled=smooth;
   } else {
-    drawChar(n.px,n.py,n.color,0,0,n.emoji,n.hair||(n.gender==='f'?'#5a3a22':'#3a2f25'),n.gender);
+    drawChar(n.px,n.py,n.color,0,0,n.emoji,n.hair||(n.gender==='f'?'#5a3a22':'#3a2f25'),n.gender, n.umbrella||'#3b7fd4');
   }
   drawNPCTag(n);
   const d=Math.hypot(player.x-n.px,player.y-n.py);
@@ -2122,9 +2356,11 @@ function drawStudent(s){
     ctx.imageSmoothingEnabled=false;
     ctx.drawImage(sheet,sx,0,sw,sh,s.x-dw/2,s.y-dh+bob,dw,dh);
     ctx.imageSmoothingEnabled=smooth;
+    if(isRaining&&!s.noUmbrella){ drawUmbrella(ctx,s.x,s.y,s.umbrella); }
   } else {
-    drawChar(s.x,s.y,s.color,s.dir,s.walk,0,s.hair,STUDENT_GENDER[s.name]||'m');
+    drawChar(s.x,s.y,s.color,s.dir,s.walk,0,s.hair,STUDENT_GENDER[s.name]||'m', s.noUmbrella?null:s.umbrella);
   }
+  drawStudentBubble(s);
   drawStudentTag(s);
 }
 /* v1.12 学生名牌单独抽出：文本覆盖层始终置顶重绘 */
@@ -2132,6 +2368,19 @@ function drawStudentTag(s){
   ctx.font='12px "ZCOOL KuaiLe",sans-serif';ctx.textAlign='center';
   ctx.fillStyle='rgba(255,250,240,.85)';ctx.fillRect(s.x-26,s.y-44,52,16);
   ctx.fillStyle='#6e452c';ctx.fillText(s.name,s.x,s.y-32);
+}
+/* v1.15 结伴聊天气泡（？！ / ^-^ 颜文字；下雨没伞显示 TAT） */
+function drawStudentBubble(s){
+  if(!s.bubble) return;
+  ctx.font='13px "ZCOOL KuaiLe",sans-serif'; ctx.textAlign='center';
+  const txt=s.bubble, w=txt.length*15+14, bx=s.x, by=s.y-90;
+  ctx.fillStyle='rgba(255,255,255,.96)'; ctx.fillRect(bx-w/2, by, w, 22);
+  ctx.strokeStyle= s.bubble==='TAT' ? '#d4564b' : '#7a9bd0'; ctx.lineWidth=1.5;
+  ctx.strokeRect(bx-w/2, by, w, 22);
+  ctx.fillStyle='rgba(255,255,255,.96)';
+  ctx.beginPath(); ctx.moveTo(bx-5,by+22); ctx.lineTo(bx+5,by+22); ctx.lineTo(bx,by+30); ctx.closePath(); ctx.fill();
+  ctx.fillStyle= s.bubble==='TAT' ? '#d4564b' : '#4a5a7a';
+  ctx.fillText(txt, bx, by+15);
 }
 /* ---- 小坏人：可见形象（紫红衣 + 名牌 + 感叹号） ---- */
 function drawVillain(v){
@@ -2160,12 +2409,13 @@ function drawGenderPreviews(){
   const draw=(id,app)=>{ const c=document.getElementById(id); if(!c) return;
     const g=c.getContext('2d'); g.imageSmoothingEnabled=false; g.clearRect(0,0,72,72);
     g.fillStyle='rgba(124,184,106,.55)'; g.fillRect(0,0,72,72);
-    drawCharCtx(g,36,44,app.shirt,1,0,app.hair,app.gender);
+    drawCharCtx(g,36,44,app.shirt,1,0,app.hair,app.gender,app.umbrella);
   };
   draw('gpPrevM',PLAYER_APPEARANCE.m);
   draw('gpPrevF',PLAYER_APPEARANCE.f);
 }
 let isRaining=false;
+let lastRainState=false;
 drawGenderPreviews();
 let weatherState='clear';
 let nextRainAt=performance.now()+(7+Math.random()*3)*60*1000;
@@ -2253,6 +2503,36 @@ function drawLighting(){
   const amb=0.05+0.05*(1-Math.max(0,dl));
   ctx.save(); ctx.globalCompositeOperation='multiply';
   ctx.fillStyle='rgba(150,170,200,'+amb+')'; ctx.fillRect(0,0,LOGIC_W,LOGIC_H); ctx.restore();
+}
+/* v1.15 夜间光源：路灯（暖色强光源）与萤火虫（移动光源，亮度更小）随入夜叠加发光。
+   用 canvas 2D additive 混合实现，不引入 three.js，避免重构成 WebGL 层。 */
+function drawLightSources(){
+  const nf=Math.max(0,1-Math.max(0,SUN.dl));   // 夜晚强度：白天 0 → 深夜 1
+  if(nf<=0.02) return;
+  ctx.save(); ctx.globalCompositeOperation='lighter';
+  // 路灯：暖色、范围大、最亮
+  lamps.forEach(l=>{
+    if(l.x<camX-90||l.x>camX+LOGIC_W+90||l.y<camY-90||l.y>camY+LOGIC_H+90) return;
+    const R=(l.big?160:120)*nf;
+    const g=ctx.createRadialGradient(l.x,l.y-6,4,l.x,l.y-6,R);
+    g.addColorStop(0,'rgba(255,228,150,'+(0.60*nf)+')');
+    g.addColorStop(.45,'rgba(255,205,110,'+(0.24*nf)+')');
+    g.addColorStop(1,'rgba(255,205,110,0)');
+    ctx.fillStyle=g; ctx.beginPath(); ctx.arc(l.x,l.y-6,R,0,7); ctx.fill();
+  });
+  // 萤火虫：移动光源，亮度显著小于路灯
+  FIREFLIES.forEach(f=>{
+    if(f.x<camX-90||f.x>camX+LOGIC_W+90||f.y<camY-90||f.y>camY+LOGIC_H+90) return;
+    const pulse=0.5+0.5*Math.sin(Date.now()/300+f.ph);
+    const R=(42+12*pulse)*nf;
+    const a=0.5*nf*(0.45+0.55*pulse);
+    const g=ctx.createRadialGradient(f.x,f.y,1,f.x,f.y,R);
+    g.addColorStop(0,'rgba(195,255,130,'+a+')');
+    g.addColorStop(.5,'rgba(150,230,90,'+(0.16*nf)+')');
+    g.addColorStop(1,'rgba(150,230,90,0)');
+    ctx.fillStyle=g; ctx.beginPath(); ctx.arc(f.x,f.y,R,0,7); ctx.fill();
+  });
+  ctx.restore();
 }
 /* ---- 草叶：完全静态，画进背景缓存层（v1.9：用户反馈"草坪区块挪动"，取消动态摆动） ---- */
 function drawGrassTufts(){
@@ -2416,6 +2696,11 @@ function render(){
   }catch(e){ window.__showErr&&window.__showErr('bg draw: '+e.message); }
   ctx.save(); ctx.translate(-camX,-camY);
   try{ drawWaterSparkle(); }catch(e){ window.__showErr&&window.__showErr('water: '+e.message); }
+  try{ drawRipples(); }catch(e){ window.__showErr&&window.__showErr('ripple: '+e.message); }
+  // v1.15 桥面遮挡水流：水生动画每帧绘制会盖住桥，这里在动画之上重绘桥体
+  try{ const vr=visRect(camX,camY); LAKE_BRIDGES.forEach(b=>{ if(inView(b.x,b.y,vr,b.w,b.h)) drawBridge(b); }); }catch(e){ window.__showErr&&window.__showErr('bridge-cover: '+e.message); }
+  // v1.15 #7 红绿灯（灯杆/灯箱动态闪烁，置于角色之下）
+  try{ drawTrafficLights(); }catch(e){ window.__showErr&&window.__showErr('lights: '+e.message); }
   try{
     const arr=[
       {px:player.x,py:player.y,draw:()=>drawPlayer()},
@@ -2427,9 +2712,12 @@ function render(){
       ...SQUIRRELS.map(s=>({px:s.x,py:s.y,draw:()=>drawSquirrel(s)})),
       ...FROGS.map(fr=>({px:fr.x,py:fr.y,draw:()=>drawFrog(fr)})),
       ...CATS.map(c=>({px:c.x,py:c.y,draw:()=>drawCat(c)})),
-      ...FIXED_CATS.map(c=>({px:c.x,py:c.y,draw:()=>drawCat(c)}))];
+      ...FIXED_CATS.map(c=>({px:c.x,py:c.y,draw:()=>drawCat(c)})),
+      ...VEHICLES.map(v=>({px:v.axis==='h'?v.pos:v.lane, py:v.axis==='h'?v.lane:v.pos, draw:()=>drawVehicle(v)}))];
     arr.sort((a,b)=>a.py-b.py); arr.forEach(o=>o.draw());
   }catch(e){ window.__showErr&&window.__showErr('chars: '+e.message); }
+  // v1.15 夜间光源（路灯/萤火虫）叠加在场景之上
+  try{ drawLightSources(); }catch(e){ window.__showErr&&window.__showErr('lights: '+e.message); }
   ctx.restore();
   // v1.12 文本覆盖层：名牌/招牌/校门/建筑名始终置顶（不被角色/树木遮挡）
   try{ drawTextOverlay(); }catch(e){ window.__showErr&&window.__showErr('text: '+e.message); }
@@ -2482,6 +2770,7 @@ function loop(t){
   const dt=Math.min(32,t-lastT)/16; lastT=t;
   updateStudents(dt);
   updateAnimals(dt);
+  updateVehicles(dt);
   updateWeather(performance.now());
   if(villainCD>0)villainCD--;
   else if(!dialogOpen&&!splashing){
@@ -2520,6 +2809,7 @@ function loop(t){
   requestAnimationFrame(loop);
 }
 spawnAnimals();
+spawnVehicles();
 if(kImg.complete) kReady=true;   // v1.11 首次全图预渲染（贴图就绪则同步构建，否则由 onload 触发）
 if(kReady) buildFullMap(); else invalidateCache();
 requestAnimationFrame(loop);

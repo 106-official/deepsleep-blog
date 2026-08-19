@@ -1927,11 +1927,11 @@ function drawNPC(n){
     const sh=sheet.naturalHeight;
     const sx=n.spriteIdx*sw;
     const bob=Math.sin(Date.now()/380+n.spriteIdx)*2.5;
-    const dh=56;
+    const dh=64;                    // on-screen character height (≈2 tiles)
     const dw=dh*(sw/sh);
-    // shadow on ground
-    ctx.fillStyle='rgba(0,0,0,.18)';
-    ctx.beginPath();ctx.ellipse(n.px+SUN.shadowDX*0.5,n.py+2,14,4,0,0,Math.PI*2);ctx.fill();
+    // ground contact shadow
+    ctx.fillStyle='rgba(0,0,0,.20)';
+    ctx.beginPath();ctx.ellipse(n.px+SUN.shadowDX*0.5,n.py+2,16,5,0,0,Math.PI*2);ctx.fill();
     const smooth=ctx.imageSmoothingEnabled;
     ctx.imageSmoothingEnabled=false;
     ctx.drawImage(sheet,sx,0,sw,sh,n.px-dw/2,n.py-dh+bob,dw,dh);
@@ -1942,7 +1942,7 @@ function drawNPC(n){
   drawNPCTag(n);
   const d=Math.hypot(player.x-n.px,player.y-n.py);
   if(d<90){ctx.fillStyle='#d98a1f';ctx.font='bold 20px sans-serif';
-    ctx.fillText('!',n.px,n.py-50+Math.sin(Date.now()/300)*3);}
+    ctx.fillText('!',n.px,n.py-58+Math.sin(Date.now()/300)*3);}
 }
 /* v1.12 人物名牌单独抽出：文本覆盖层始终置顶重绘 */
 function drawNPCTag(n){

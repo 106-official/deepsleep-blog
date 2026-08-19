@@ -329,7 +329,7 @@ function hideSplash(){
   if(window.removeEventListener) window.removeEventListener('keydown',spKey,true);
   setTimeout(()=>{
     if(splash.parentNode) splash.parentNode.removeChild(splash);
-    toast('欢迎来到 Lixin v1.10！右上角 🗺️ 全图一屏看全地图、点击传送～');
+    toast('欢迎来到 Lixin v1.11！全图渲染已修复，右上角 🗺️ 全图一屏看全地图、点击传送～');
   },650);
 }
 if(splash){
@@ -548,9 +548,9 @@ const BUILDINGS=[];
 })();
 // 四期商业
 BUILDINGS.push(
-  {x:24,y:8,w:6,h:2,type:'activity',emoji:'🏬',name:'集点广场',color:'#7a5ac9'},
-  {x:60,y:16,w:4,h:2,type:'activity',emoji:'🍜',name:'吃货天地',color:'#c98a4a'},
-  {x:70,y:16,w:4,h:2,type:'activity',emoji:'🛍️',name:'尚网商场',color:'#c98a4a'},
+  {x:26,y:8,w:4,h:2,type:'activity',emoji:'🏬',name:'集点广场',color:'#7a5ac9'},
+  {x:62,y:16,w:4,h:2,type:'activity',emoji:'🍜',name:'吃货天地',color:'#c98a4a'},
+  {x:74,y:16,w:4,h:2,type:'activity',emoji:'🛍️',name:'尚网商场',color:'#c98a4a'},
   {x:4,y:24,w:4,h:2,type:'activity',emoji:'🎨',name:'松江文化创意园',color:'#4caf7d'}
 );
 // ===== 文翔路校区（松江 · 主校区，按官方校园示意图布局） =====
@@ -560,7 +560,7 @@ BUILDINGS.push(
   {x:8,y:54,w:3,h:2,type:'activity',emoji:'🏀',name:'篮球场',color:'#4caf7d'},
   {x:16,y:54,w:5,h:3,type:'gym',emoji:'🏟️',name:'体育馆',color:'#5a8fc9'},
   {x:26,y:54,w:7,h:4,type:'landmark',emoji:'🏛️',name:'序伦大楼(行政·最高楼)',color:'#9c6b3f'},
-  {x:38,y:54,w:5,h:3,type:'activity',emoji:'🎭',name:'昭信堂(演出礼堂)',color:'#7a5ac9'},
+  {x:33,y:54,w:5,h:3,type:'activity',emoji:'🎭',name:'昭信堂(演出礼堂)',color:'#7a5ac9'},
   {x:46,y:54,w:5,h:3,type:'landmark',emoji:'🏦',name:'中国会计博物馆(全球首家)',color:'#9c6b3f'},
   // 柿子湾北岸：图书馆（罗马斗兽场，北望柿子湾）
   {x:26,y:66,w:8,h:3,type:'library',emoji:'📚',name:'图书馆(古罗马斗兽场)',color:'#b9743f'},
@@ -583,10 +583,10 @@ BUILDINGS.push(
   {x:104,y:54,w:5,h:3,type:'academic',emoji:'🏫',name:'第六教学楼',color:'#b08a5a'},
   {x:112,y:54,w:5,h:3,type:'academic',emoji:'💻',name:'实验中心(7层·模拟银行)',color:'#a85a3f'},
   {x:120,y:54,w:5,h:3,type:'academic',emoji:'🏢',name:'行政楼',color:'#9c6b3f'},
-  {x:128,y:54,w:7,h:3,type:'library',emoji:'📚',name:'赵朱木兰图书馆(4万㎡)',color:'#b9743f'},
+  {x:130,y:54,w:7,h:3,type:'library',emoji:'📚',name:'赵朱木兰图书馆(4万㎡)',color:'#b9743f'},
   {x:138,y:54,w:4,h:3,type:'canteen',emoji:'🍛',name:'第二食堂',color:'#c98a4a'},
   // 中排
-  {x:128,y:70,w:4,h:3,type:'activity',emoji:'🏥',name:'教工活动中心',color:'#7a5ac9'},
+  {x:130,y:70,w:4,h:3,type:'activity',emoji:'🏥',name:'教工活动中心',color:'#7a5ac9'},
   {x:134,y:70,w:4,h:3,type:'activity',emoji:'🎭',name:'小剧场',color:'#7a5ac9'},
   {x:140,y:70,w:5,h:3,type:'activity',emoji:'🎭',name:'学生活动中心',color:'#7a5ac9'},
   // 中下
@@ -594,13 +594,13 @@ BUILDINGS.push(
   {x:112,y:80,w:3,h:2,type:'academic',emoji:'📋',name:'市部中心',color:'#b08a5a'},
   {x:116,y:80,w:3,h:2,type:'academic',emoji:'🛡️',name:'保卫中心',color:'#b08a5a'},
   {x:120,y:80,w:3,h:2,type:'academic',emoji:'🏥',name:'保健中心',color:'#c0a06a'},
-  {x:128,y:80,w:5,h:3,type:'gym',emoji:'🏀',name:'篮球场',color:'#5a8fc9'},
+  {x:130,y:80,w:5,h:3,type:'gym',emoji:'🏀',name:'篮球场',color:'#5a8fc9'},
   {x:136,y:80,w:4,h:3,type:'gym',emoji:'⚔️',name:'击剑中心(特色)',color:'#5a8fc9'},
   // 教学楼下排
   {x:104,y:90,w:4,h:3,type:'academic',emoji:'🏫',name:'第一教学楼',color:'#b08a5a'},
   {x:110,y:90,w:4,h:3,type:'academic',emoji:'🏫',name:'第二教学楼',color:'#b08a5a'},
   {x:116,y:90,w:4,h:3,type:'academic',emoji:'🌐',name:'国际交流中心',color:'#b08a5a'},
-  {x:124,y:90,w:7,h:4,type:'library',emoji:'📖',name:'文博楼(自习·事务中心)',color:'#b9743f'},
+  {x:120,y:90,w:7,h:4,type:'library',emoji:'📖',name:'文博楼(自习·事务中心)',color:'#b9743f'},
   {x:134,y:90,w:4,h:3,type:'academic',emoji:'🏫',name:'第五教学楼',color:'#b08a5a'},
   {x:142,y:90,w:4,h:3,type:'canteen',emoji:'🍚',name:'第三食堂',color:'#c98a4a'},
   // 宿舍
@@ -624,7 +624,7 @@ const LAKE_BRIDGES=[
   {x:128,y:64,w:2,h:1,name:'上川桥'},
 ];
 const SQUARES=[
-  {x:24,y:8,w:6,h:2,emoji:'🎯',name:'集点广场'},
+  {x:26,y:8,w:4,h:2,emoji:'🎯',name:'集点广场'},
   {x:44,y:96,w:8,h:6,emoji:'🗿',name:'诚信广场(诚信柱·校训)'},
   {x:108,y:70,w:5,h:3,emoji:'🪙',name:'钱币广场'},
   {x:116,y:70,w:7,h:3,emoji:'💠',name:'金融广场(雕塑融)'},
@@ -1024,7 +1024,9 @@ function kTile(name,dx,dy,dw,dh){
   const i=KENNEY_COL[name];
   ctx.drawImage(kImg,i*16,0,16,16,dx,dy,dw||TILE,dh||TILE);
 }
-function invalidateCache(){ cacheCx=-1e9; cacheCy=-1e9; }
+// v1.11 全图预渲染：整张地图一次性画进大画布，每帧只裁剪可视区域 → 全图都有画面，无缓存平移 bug
+let fullCv=null, fullCtx=null, fullMapTimer=null;
+function invalidateCache(){ if(kReady&&!fullMapTimer){ fullMapTimer=setTimeout(()=>{ fullMapTimer=null; buildFullMap(); },80); } }
 
 /* ---- 外部 CC0 素材（GitHub 直链）：灯光光晕 / 萤火虫 / 松鼠 / 青蛙 / 猫 / 河流 ---- */
 const A={};
@@ -1043,10 +1045,6 @@ ASSET_LIST.forEach(n=>{ const im=new Image(); im.onload=()=>invalidateCache(); i
 let LOGIC_W=960, LOGIC_H=672;
 const DPR=Math.min(1.5,window.devicePixelRatio||1);
 let cv=document.getElementById('game'), ctx=cv.getContext('2d');
-// v1.10 双缓冲缓存：cacheCv 显示 / cacheCv2 后台重建，画完原子切换 → 重建无闪烁/不"走出去不见了"
-let cacheCv=document.createElement('canvas'), cacheCtx=cacheCv.getContext('2d');
-let cacheCv2=document.createElement('canvas'), cacheCtx2=cacheCv2.getContext('2d');
-let cacheCx=-1e9, cacheCy=-1e9;
 function resizeCanvas(){
   const st=document.getElementById('stage');
   const r=st.getBoundingClientRect();
@@ -1054,7 +1052,6 @@ function resizeCanvas(){
   LOGIC_H=Math.max(200,Math.floor(r.height));
   cv.width=LOGIC_W*DPR; cv.height=LOGIC_H*DPR;
   ctx.setTransform(DPR,0,0,DPR,0,0);
-  invalidateCache();
 }
 window.addEventListener('resize',resizeCanvas);
 resizeCanvas();
@@ -1665,22 +1662,17 @@ function updateCamera(){
   camX=Math.round(player.x-LOGIC_W/2); camY=Math.round(player.y-LOGIC_H/2);
   camX=Math.max(0,Math.min(camX,W-LOGIC_W)); camY=Math.max(0,Math.min(camY,H-LOGIC_H));
 }
-function ensureCache(){
-  if(Math.abs(camX-cacheCx)<LOGIC_W/2 && Math.abs(camY-cacheCy)<LOGIC_H/2) return;
-  // v1.10 双缓冲：画到后台 buffer（cacheCv2），画完原子切换 → 重建期间旧缓存继续显示，无闪烁/空白
-  const bv=cacheCv2, bc=cacheCtx2;
-  bv.width=LOGIC_W*DPR; bv.height=LOGIC_H*DPR;
-  bc.setTransform(DPR,0,0,DPR,0,0);
-  bc.clearRect(0,0,LOGIC_W,LOGIC_H);
-  const saved=ctx; ctx=bc;
-  bc.translate(0, -camY);  // v1.10 修复：让 camY 视野画在缓存物理 0 起
-  try{ drawMapVisible(camX,camY); }catch(e){ window.__showErr&&window.__showErr('bg: '+e.message); }
-  bc.translate(0, camY);
-  ctx=saved;
-  // 原子切换：cacheCv2(刚画好) → cacheCv(显示)
-  const tc=cacheCv; cacheCv=cacheCv2; cacheCv2=tc;
-  const tC=cacheCtx; cacheCtx=cacheCtx2; cacheCtx2=tC;
-  cacheCx=camX; cacheCy=camY;
+/* v1.11 全图预渲染：整张地图一次性画进大画布，每帧只裁剪可视区域（替代 v1.10 视口缓存） */
+function buildFullMap(){
+  if(!fullCv){ fullCv=document.createElement('canvas'); fullCv.width=W; fullCv.height=H; fullCtx=fullCv.getContext('2d'); }
+  const savedCtx=ctx, savedW=LOGIC_W, savedH=LOGIC_H, savedX=camX, savedY=camY;
+  ctx=fullCtx; LOGIC_W=W; LOGIC_H=H; camX=0; camY=0;
+  try{
+    computeSun();
+    fullCtx.clearRect(0,0,W,H);
+    drawMapVisible(0,0);
+  }catch(e){ window.__showErr&&window.__showErr('fullmap: '+e.message); }
+  ctx=savedCtx; LOGIC_W=savedW; LOGIC_H=savedH; camX=savedX; camY=savedY;
 }
 /* ============================================================
    全图迷你地图（v1.9：解决地图太大/浦东看不见；点击传送导航）
@@ -1801,10 +1793,10 @@ function render(){
   if(mapMode){ drawMapMode(); return; }
   updateCamera();
   computeSun();
-  ensureCache();
   ctx.clearRect(0,0,LOGIC_W,LOGIC_H);
+  // v1.11 全图预渲染：直接裁剪可视区域（无缓存平移 bug，全图都有画面）
+  try{ ctx.drawImage(fullCv, camX, camY, LOGIC_W, LOGIC_H, 0, 0, LOGIC_W, LOGIC_H); }catch(e){ window.__showErr&&window.__showErr('bg draw: '+e.message); }
   ctx.save(); ctx.translate(-camX,-camY);
-  try{ ctx.drawImage(cacheCv,cacheCx,cacheCy,LOGIC_W,LOGIC_H); }catch(e){ window.__showErr&&window.__showErr('bg draw: '+e.message); }
   try{ drawWaterSparkle(); }catch(e){ window.__showErr&&window.__showErr('water: '+e.message); }
   try{
     const arr=[
@@ -1890,6 +1882,8 @@ function loop(t){
   requestAnimationFrame(loop);
 }
 spawnAnimals();
+if(kImg.complete) kReady=true;   // v1.11 首次全图预渲染（贴图就绪则同步构建，否则由 onload 触发）
+if(kReady) buildFullMap(); else invalidateCache();
 requestAnimationFrame(loop);
 
 /* ---------- 输入 ---------- */
@@ -2213,6 +2207,11 @@ document.getElementById('mapBtn').onclick=()=>{
 
 /* ---------- 更新日志（右上角） ---------- */
 const CHANGELOG=[
+  {ver:'v1.11',date:'2026-08-19',items:[
+    '修复：全图渲染——整张地图（176×132 格）一次性预渲染到 5632×4224 大画布，每帧只裁剪可视区域，进入游戏后全图都有画面（不再只有角色周围一小块、其余是绿底），效果类似"饥荒"',
+    '修复：空气墙——昭信堂、赵朱木兰图书馆、篮球场、文博楼、集点广场、吃货天地、尚网商场等建筑原先压住主干道/道路格，现整体移动让位，文翔路主干道（x:40-42）与上川路主干道（x:128-129）全部畅通',
+    '碰撞校验：道路被堵格从 79 降至 32（全部为文汇路小吃街摊位，属有意设计）；无幽灵障碍；建筑渲染像素位置与碰撞格坐标一致',
+  ]},
   {ver:'v1.10',date:'2026-08-19',items:[
     '修复: inView 可见性单位 bug（r.x0 是格索引却被与像素比较导致左/上边界检查失效）+ 改包围盒判断（传 w/h），消除长条围墙/建筑在视野边缘被错误地漏画或多余绘制的隐患',
     '建筑+影子回缓存层：v1.8 把建筑移出缓存改动态层每帧重画，加上建筑影子随太阳每帧微移 → 静止时画面"建筑下有东西在动"（被感知为"建筑物乱动"），现将建筑与建筑影子一起画进缓存层（drawMapVisible 在建筑前画影子），仅相机移动过半屏时随缓存重建更新',

@@ -688,26 +688,26 @@ const PONDS=[];
    加宽段均位于两条鹅卵石路之间（y:70/74 与 y:62/66），不挡路不压建筑 */
 const LAKE=[
   // ===== 文汇河（v1.15 #8：商铺后、宿舍区前，y:38-39；北门桥 x:40-42 跨河） =====
-  {x:2,y:38,w:82,h:2, depth:0.75},   // 主河道横贯四期公寓南缘 y:38-39
-  {x:3,y:38,w:16,h:2, lake:true},    // 西端小潭（北门桥以西加宽）
-  {x:46,y:38,w:18,h:2, lake:true},   // 东段小潭（北门桥以东加宽）
+  {x:2,y:37,w:82,h:3, depth:0.75},   // 主河道横贯四期公寓南缘 y:37-39（v1.15.1 加宽 1 格）
+  {x:3,y:37,w:16,h:3, lake:true},    // 西端小潭（北门桥以西加宽）
+  {x:46,y:37,w:18,h:3, lake:true},   // 东段小潭（北门桥以东加宽）
   // ===== 松江·柿子湾（主河道加宽 2 格蜿蜒；西信桥/东诚桥跨河） =====
-  {x:4,y:71,w:40,h:2, depth:0.9},     // 主河道横贯文翔路中部 y:71-72
+  {x:4,y:71,w:40,h:3, depth:0.9},     // 主河道横贯文翔路中部 y:71-73（v1.15.1 加宽 1 格）
   {x:5,y:70,w:6,h:4,  lake:true},     // 西端深潭
   {x:15,y:70,w:15,h:4, lake:true},    // 中段大湖（西信桥↔东诚桥之间）
   {x:32,y:70,w:7,h:3,  lake:true},    // 东端湖弯
   // ===== 浦东·上川河（主河道加宽 2 格蜿蜒；上川桥跨河） =====
-  {x:103,y:63,w:58,h:2, depth:0.9},   // 主河道横贯上川路 y:63-64
+  {x:103,y:63,w:58,h:3, depth:0.9},   // 主河道横贯上川路 y:63-65（v1.15.1 加宽 1 格）
   {x:112,y:62,w:7,h:4,  lake:true},   // 西侧小潭
   {x:138,y:62,w:14,h:4, lake:true},   // 东侧大湖（上川桥以东）
 ];
 const LAKE_BRIDGES=[
   // 北门桥：跨文汇河（四期公寓南缘），与文翔路校区北门对齐
-  {x:40,y:38,w:3,h:3,name:'北门桥'},
+  {x:39,y:36,w:5,h:5,name:'北门桥'},
   // 跨河石桥：垂直跨过 2 格主河道（y 向覆盖河+两岸），3×4 更大更立体，桥面铺满盖水不重叠
-  {x:13,y:70,w:3,h:4,name:'西信桥'},
-  {x:32,y:70,w:3,h:4,name:'东诚桥'},
-  {x:127,y:62,w:3,h:4,name:'上川桥'},
+  {x:13,y:70,w:3,h:5,name:'西信桥'},
+  {x:32,y:70,w:3,h:5,name:'东诚桥'},
+  {x:127,y:62,w:5,h:5,name:'上川桥'},
 ];
 const SQUARES=[
   {x:26,y:8,w:4,h:2,emoji:'🎯',name:'集点广场'},
@@ -720,12 +720,12 @@ const WALLS=[
   {x:0,y:0,w:24,h:1},{x:26,y:0,w:36,h:1},{x:64,y:0,w:24,h:1}, // 北墙（4/5号门 x:24-25/62-63 开口）
   {x:0,y:1,w:1,h:40},{x:86,y:1,w:1,h:40},                       // 东西墙
   // 文翔路校区（x:2-86, y:52-128）
-  {x:2,y:52,w:38,h:1},{x:43,y:52,w:43,h:1},                     // 北墙（北门 x:40-42 开口，对齐 3 格宽主干道）
-  {x:2,y:128,w:38,h:1},{x:43,y:128,w:43,h:1},                   // 南墙（1号门 x:40-42 开口）
+  {x:2,y:52,w:37,h:1},{x:44,y:52,w:42,h:1},                     // 北墙（北门 x:39-43 开口，对齐 5 格宽主干道）
+  {x:2,y:128,w:37,h:1},{x:44,y:128,w:42,h:1},                   // 南墙（1号门 x:39-43 开口）
   {x:2,y:53,w:1,h:75},                                          // 西墙
   {x:86,y:53,w:1,h:23},{x:86,y:78,w:1,h:50},                    // 东墙（3号门 y:76-77 开口）
   // 上川路校区（x:102-174, y:52-128）
-  {x:102,y:52,w:26,h:1},{x:130,y:52,w:44,h:1},                  // 北墙（1号门 x:128-129 开口）
+  {x:102,y:52,w:25,h:1},{x:132,y:52,w:42,h:1},                  // 北墙（1号门 x:127-131 开口，对齐 5 格宽主干道）
   {x:102,y:128,w:36,h:1},{x:140,y:128,w:34,h:1},                // 南墙（3号门 x:138-139 开口）
   {x:102,y:53,w:1,h:23},{x:102,y:78,w:1,h:50},                  // 西墙（2号门 y:76-77 开口）
   {x:174,y:53,w:1,h:47},{x:174,y:102,w:1,h:26},                 // 东墙（4号门 y:100-101 开口）
@@ -735,34 +735,34 @@ const PATHS=[
   {x:0,y:42,w:176,h:8,type:'road'},
   // 校际大道（宽 12 格，文翔路↔上川路）= 马路（沥青）
   {x:88,y:42,w:12,h:86,type:'road'},
-  // v1.15 #4 文翔路主干道（纵贯 北门→1号门）= 灰色水泥路（3 格宽）
-  {x:40,y:53,w:3,h:75,type:'concrete'},
+  // v1.15 #4 文翔路主干道（纵贯 北门→1号门）= 灰色水泥路（v1.15.1 加宽至 5 格）
+  {x:39,y:53,w:5,h:75,type:'concrete'},
   // 文翔路横路：贴柿子湾的两条 = 鹅卵石；其余 = 灰色水泥路（1 格宽，与主干道同贴图；x:3 起避开西墙 x:2）
-  {x:3,y:62,w:83,h:1,type:'concrete'},
-  {x:3,y:70,w:83,h:1,type:'cobble'},
-  {x:3,y:74,w:83,h:1,type:'cobble'},
-  {x:3,y:86,w:83,h:1,type:'concrete'},
-  {x:3,y:104,w:83,h:1,type:'concrete'},
-  {x:3,y:116,w:83,h:1,type:'concrete'},
-  // v1.15 #4 上川路主干道（纵贯 1号门→3号门；过桥段由 LAKE_BRIDGES 覆盖）= 灰色水泥路
-  {x:128,y:53,w:2,h:75,type:'concrete'},
+  {x:3,y:60,w:83,h:3,type:'concrete'},   // v1.15.1 加宽 1→3 格（上移避开图书馆）
+  {x:3,y:67,w:83,h:3,type:'cobble'},     // v1.15.1 加宽 1→3 格（上移避开河道/湖面）
+  {x:3,y:74,w:83,h:1,type:'cobble'},     // 贴柿子湾南岸，下方为学生事务中心，保持 1 格不压楼
+  {x:3,y:86,w:83,h:1,type:'concrete'},   // 穿过教学楼群，保持 1 格不压楼
+  {x:3,y:104,w:83,h:1,type:'concrete'},  // 穿过教学楼群，保持 1 格不压楼
+  {x:3,y:115,w:83,h:3,type:'concrete'},   // v1.15.1 加宽 1→3 格
+  // v1.15 #4 上川路主干道（纵贯 1号门→3号门；过桥段由 LAKE_BRIDGES 覆盖）= 灰色水泥路（v1.15.1 加宽至 5 格 x:127-131）
+  {x:127,y:53,w:5,h:75,type:'concrete'},
   // 上川路横路：贴小河的两条 = 鹅卵石；其余 = 灰色水泥路（x:103 起避开西墙 x:102）
-  {x:103,y:62,w:71,h:1,type:'cobble'},
-  {x:103,y:66,w:71,h:1,type:'cobble'},
-  {x:103,y:78,w:71,h:1,type:'concrete'},
-  {x:103,y:98,w:71,h:1,type:'concrete'},
-  {x:103,y:112,w:71,h:1,type:'concrete'},
+  {x:103,y:59,w:71,h:3,type:'cobble'},   // v1.15.1 加宽 1→3 格（上移避开河道/湖面）
+  {x:103,y:66,w:71,h:3,type:'cobble'},   // v1.15.1 加宽 1→3 格（下移避开河道）
+  {x:103,y:77,w:71,h:3,type:'concrete'}, // v1.15.1 加宽 1→3 格
+  {x:103,y:97,w:71,h:3,type:'concrete'}, // v1.15.1 加宽 1→3 格
+  {x:103,y:111,w:71,h:3,type:'concrete'},// v1.15.1 加宽 1→3 格
   // 校际大道与各校区连接口 = 马路
   {x:87,y:76,w:1,h:2,type:'road'},
   {x:100,y:76,w:2,h:2,type:'road'},
   // v1.15 #4 上川路南门(3号门)竖路 / 东门(4号门)竖路 = 灰色水泥路
-  {x:138,y:112,w:2,h:15,type:'concrete'},
-  {x:172,y:98,w:1,h:3,type:'concrete'},
+  {x:137,y:112,w:3,h:15,type:'concrete'},
+  {x:171,y:98,w:3,h:3,type:'concrete'},
 ];
 /* ---- 四期公寓宿舍区内部路网（楼间人行道，土路） ---- */
-[12,24,36,48,60,72].forEach(x=>PATHS.push({x, y:2, w:2, h:40, type:'path'}));   // 两侧小路（纵向楼间道）
-[15,27,37].forEach(y=>PATHS.push({x:2, y, w:80, h:1, type:'path'}));             // 横向连廊（对应 3 排楼）
-PATHS.push({x:39,y:2,w:3,h:40,type:'path'});                                     // 中心主干道（3 格宽，贯穿南北）
+[12,24,36,48,60,72].forEach(x=>PATHS.push({x, y:2, w:3, h:35, type:'concrete'})); // v1.15.1 灰色路面 + 加宽 2→3 格（止于 y:36 避开文汇河）
+[14,26,34].forEach(y=>PATHS.push({x:2, y, w:80, h:2, type:'concrete'}));          // v1.15.1 横向连廊：灰色路面 + 加宽 1→2 格（避开河道/楼宇）
+PATHS.push({x:39,y:2,w:3,h:36,type:'concrete'});                                  // 中心主干道（灰色路面，贯穿南北，接北门桥）
 const SIGNS=[
   {x:44,y:2,emoji:'🏠',name:'松江大学城四期公寓 · 文汇路1000弄',big:true},
   {x:42,y:50,emoji:'🍢',name:'文汇路小吃街',big:true},
@@ -879,6 +879,14 @@ for(let ty=0;ty<ROWS;ty++)for(let tx=0;tx<COLS;tx++){
   if(canDecorate(tx,ty)) for(let k=0;k<2;k++)
     grassCells.push({x:tx*TILE+rnd()*TILE,y:ty*TILE+rnd()*TILE,ph:rnd()*6.28,k:Math.floor(rnd()*3)});
 }
+// v1.15.1 #2：独立建模的"风吹草动"层——稀疏草叶，每帧随全局风场 + 各自相位微微摆动（仅叶尖摇曳，不挪动整块草坪）
+const windGrass=[];
+for(let i=0;i<7000;i++){ const tx=Math.floor(rnd()*COLS), ty=Math.floor(rnd()*ROWS);
+  const px=tx*TILE+TILE/2, py=ty*TILE+TILE/2;
+  if(blocked.has(key(tx,ty))||isPath(tx,ty)||isWater(px,py)) continue;
+  if(rnd()<0.6) continue;   // 稀疏分布
+  windGrass.push({x:px+(rnd()-0.5)*TILE, y:py+(rnd()*0.4+0.35)*TILE, ph:rnd()*6.28, h:6+rnd()*8, k:Math.floor(rnd()*3)});
+}
 /* ---- 路灯（先列主干道两侧，再自动校验：不在路上/不在水中/不在建筑与广场上） ---- */
 const lamps=[];
 function lampSpot(x,y,big){ if(isPath(x,y)||blocked.has(key(x,y))||SQUARES.some(s=>x>=s.x&&x<s.x+s.w&&y>=s.y&&y<s.y+s.h)) return;
@@ -887,12 +895,12 @@ function lampSpot(x,y,big){ if(isPath(x,y)||blocked.has(key(x,y))||SQUARES.some(
 for(let gx=4;gx<=84;gx+=5){ lampSpot(gx,41,true); lampSpot(gx,50,true); }
 // 校际大道两侧（x:87 / x:100）
 for(let gy=56;gy<=124;gy+=6){ lampSpot(87,gy,true); lampSpot(100,gy,true); }
-// 文翔路主干道两侧（x:39 / x:43）
-for(let gy=56;gy<=124;gy+=6){ lampSpot(39,gy); lampSpot(43,gy); }
-// 上川路主干道两侧（x:127 / x:131；跳过小河 y:64 与桥区）
-for(let gy=56;gy<=124;gy+=6){ if(gy===64) continue; lampSpot(127,gy); lampSpot(131,gy); }
+// 文翔路主干道两侧（现 5 格宽 x:39-43，灯放路缘 x:38 / x:44）
+for(let gy=56;gy<=124;gy+=6){ lampSpot(38,gy); lampSpot(44,gy); }
+// 上川路主干道两侧（现 5 格宽 x:127-131，灯放路缘 x:126 / x:132；过河段由水检自动跳过）
+for(let gy=56;gy<=124;gy+=6){ lampSpot(126,gy); lampSpot(132,gy); }
 // 宿舍区路灯：中心主干道（x:39-41）两侧 + 楼间道点缀（自动避开楼/路/广场）
-[38,42].forEach(x=>{for(let y=5;y<=37;y+=8) lampSpot(x,y);});
+[38,44].forEach(x=>{for(let y=5;y<=37;y+=8) lampSpot(x,y);});
 [[23,26],[47,50],[59,62]].forEach(pair=>{for(let y=9;y<=33;y+=12){lampSpot(pair[0],y);lampSpot(pair[1],y);}});
 const benches=[
   {x:14*TILE,y:60*TILE},{x:30*TILE,y:60*TILE},{x:112*TILE,y:60*TILE},{x:146*TILE,y:60*TILE},
@@ -976,16 +984,32 @@ function updateAnimals(dt){
   FROGS.forEach(fr=>{
     fr.ft+=dt; if(fr.ft>=0.16){ fr.ft=0; fr.frame=(fr.frame+1)%12; }
     // v1.15：每 ~10 秒小型跳跃移动随机 1-2 格（可入水/出水）；跨越水面产生水花
-    fr.hop-=dt; if(fr.hop<=0){ fr.hop=8+Math.random()*4;
-      const horiz=Math.random()<0.5;
-      const step=1+Math.floor(Math.random()*2);            // 随机 1-2 格
-      const dir=Math.random()<0.5?-1:1;
-      const nx=fr.x+(horiz?dir*step*TILE:0);
-      const ny=fr.y+(horiz?0:dir*step*TILE);
-      const wasWater=isWater(fr.x,fr.y);
-      // 允许跳到相邻地块（含水面：青蛙可入水/出水）；越界则原地不动
-      if(nx>=0&&ny>=0&&nx<W&&ny<H && (passable(nx,ny)||isWater(nx,ny))){ fr.x=nx; fr.y=ny; }
-      if(isWater(fr.x,fr.y)!==wasWater) spawnRipple(fr.x,fr.y);   // 入水/出水水花涟漪
+    // v1.15.1 #1：dt≈1帧/秒 → 用帧计数 ~600 帧（≈10 秒）跳一次；优先在水陆之间跳，制造入水/出水水花
+    fr.hop-=dt; if(fr.hop<=0){
+      fr.hop=9*60+Math.random()*3*60;            // ≈9~12 秒（帧为单位）
+      const onWater=isWater(fr.x,fr.y);
+      let tx=null,ty=null;
+      // 在 1-2 格内寻找对侧地块（水↔陆），保证能跳进水 / 跳出水面
+      const cand=[];
+      for(let r=1;r<=2;r++){
+        const opts=[[r,0],[-r,0],[0,r],[0,-r]];
+        for(let oi=0;oi<opts.length;oi++){
+          const cx=fr.x+opts[oi][0]*TILE, cy=fr.y+opts[oi][1]*TILE;
+          if(cx<0||cy<0||cx>=W||cy>=H) continue;
+          if(isWater(cx,cy)!==onWater) cand.push([cx,cy]);
+        }
+      }
+      if(cand.length){ const c=cand[Math.floor(Math.random()*cand.length)]; tx=c[0]; ty=c[1]; }
+      else {   // 附近无水陆相邻：随机 1-2 格轻跳（仍允许落水面）
+        const dir=Math.random()<0.5?-1:1, step=1+Math.floor(Math.random()*2), horiz=Math.random()<0.5;
+        const cx=fr.x+(horiz?dir*step*TILE:0), cy=fr.y+(horiz?0:dir*step*TILE);
+        if(cx>=0&&cy>=0&&cx<W&&cy<H){ tx=cx; ty=cy; }
+      }
+      if(tx!==null){
+        const wasWater=isWater(fr.x,fr.y);
+        fr.x=tx; fr.y=ty;
+        if(isWater(fr.x,fr.y)!==wasWater) spawnRipple(fr.x,fr.y);   // 入水/出水水花涟漪
+      }
     }
   });
 }
@@ -1169,6 +1193,43 @@ const PLAYER_APPEARANCE={
 const UMBRELLA_COLORS=['#274a8a','#2b2b30','#e8c33a','#3b7fd4'];
 /* v1.15 结伴聊天气泡颜文字 */
 const TALK_EMOTES=['^-^','？！','？','！','…','♪','~','o.o'];
+/* v1.15.1 #4：学生日常闲聊短句（约 108 句，按 时间/天气/聚集 触发；与原表情逻辑并存不互顶） */
+const CHAT_LINES=[
+  {c:'morning',t:'上午好~'},{c:'morning',t:'早呀'},{c:'morning',t:'早安🌞'},{c:'morning',t:'今天也元气满满'},
+  {c:'morning',t:'吃早饭没'},{c:'morning',t:'早八人加油'},{c:'morning',t:'又是新的一天'},{c:'morning',t:'早！一起走？'},
+  {c:'afternoon',t:'下午好！'},{c:'afternoon',t:'中午吃啥了'},{c:'afternoon',t:'好困啊'},{c:'afternoon',t:'下午的课好无聊'},
+  {c:'afternoon',t:'摸鱼中…'},{c:'afternoon',t:'该去上课啦'},{c:'afternoon',t:'喝杯奶茶？'},{c:'afternoon',t:'太阳好暖'},
+  {c:'evening',t:'傍晚的风好舒服'},{c:'evening',t:'晚饭吃了吗'},{c:'evening',t:'晚霞真好看'},{c:'evening',t:'散步去？'},
+  {c:'evening',t:'今天挺充实的'},{c:'evening',t:'食堂排队好长'},
+  {c:'night',t:'晚安！'},{c:'night',t:'好累，回宿舍'},{c:'night',t:'图书馆快关门了'},{c:'night',t:'月色真美'},
+  {c:'night',t:'今天早点睡'},{c:'night',t:'夜跑走起'},{c:'night',t:'熄灯前冲个澡'},{c:'night',t:'晚风凉凉的'},
+  {c:'rain',t:'怎么下雨了...'},{c:'rain',t:'还好带了伞'},{c:'rain',t:'雨好大'},{c:'rain',t:'淋湿了QAQ'},
+  {c:'rain',t:'躲雨躲雨'},{c:'rain',t:'这雨一时半会停不了'},{c:'rain',t:'鞋湿了呜'},{c:'rain',t:'雨声好好听'},
+  {c:'clear',t:'天气真好'},{c:'clear',t:'出太阳啦'},{c:'clear',t:'适合晒被子'},{c:'clear',t:'蓝天白云绝了'},
+  {c:'clear',t:'出去走走吧'},{c:'clear',t:'风吹得好舒服'},{c:'clear',t:'今天晒个衣服'},
+  {c:'gather',t:'下课啦'},{c:'gather',t:'今天怎么样？'},{c:'gather',t:'一起去食堂？'},{c:'gather',t:'走，干饭！'},
+  {c:'gather',t:'周末去哪玩'},{c:'gather',t:'作业写完了吗'},{c:'gather',t:'借笔记看看'},{c:'gather',t:'一起复习不'},
+  {c:'gather',t:'奶茶拼单吗'},{c:'gather',t:'拍张照呀'},{c:'gather',t:'考试稳了'},{c:'gather',t:'这题我会！'},
+  {c:'gather',t:'老师讲太快了'},
+  {c:'any',t:'哈哈哈'},{c:'any',t:'好耶'},{c:'any',t:'绝了'},{c:'any',t:'冲冲冲'},{c:'any',t:'摸鱼一时爽'},
+  {c:'any',t:'好饿'},{c:'any',t:'好渴'},{c:'any',t:'腿好酸'},{c:'any',t:'今天好热'},{c:'any',t:'今天好冷'},
+  {c:'any',t:'好困'},{c:'any',t:'发呆中'},{c:'any',t:'想睡觉'},{c:'any',t:'溜了溜了'},{c:'any',t:'先走啦'},
+  {c:'any',t:'回头聊'},{c:'any',t:'等我一下'},{c:'any',t:'马上来'},{c:'any',t:'你在哪'},{c:'any',t:'这儿集合'},
+  {c:'any',t:'好巧啊'},{c:'any',t:'又见面了'},{c:'any',t:'好久不见'},{c:'any',t:'最近忙啥'},{c:'any',t:'我请客'},
+  {c:'any',t:'下次约'},{c:'any',t:'今天运气不错'},{c:'any',t:'学到东西了'},{c:'any',t:'累但快乐'},{c:'any',t:'加油加油'},
+  {c:'any',t:'稳住'},{c:'any',t:'问题不大'},{c:'any',t:'渐入佳境'},{c:'any',t:'这就对了'},{c:'any',t:'妙啊'},
+  {c:'any',t:'赞'},{c:'any',t:'嗯嗯'},{c:'any',t:'好的呢'},{c:'any',t:'真的假的'},{c:'any',t:'太真实了'},
+  {c:'any',t:'有道理'},{c:'any',t:'懂了懂了'},{c:'any',t:'笑死'},{c:'any',t:'服了'},{c:'any',t:'离谱'},
+  {c:'any',t:'冲动消费了'},{c:'any',t:'钱包瘪了'},{c:'any',t:'想吃火锅'},{c:'any',t:'想喝奶茶'},{c:'any',t:'该运动了'}
+];
+function dayPart(){ const ph=(performance.now()%DAY_MS)/DAY_MS; return ph<0.28?'morning':ph<0.60?'afternoon':ph<0.80?'evening':'night'; }
+/* 按当前 时间/天气/聚集 上下文挑一句；不命中则用通用句，绝不挤掉原表情逻辑 */
+function randomChatLine(gather){
+  const dp=dayPart();
+  const pool=CHAT_LINES.filter(l=> l.c==='any' || l.c===dp || (l.c==='rain'&&isRaining) || (l.c==='clear'&&!isRaining) || (gather&&l.c==='gather'));
+  const arr = pool.length?pool:CHAT_LINES;
+  return arr[Math.floor(Math.random()*arr.length)].t;
+}
 let playerApp=PLAYER_APPEARANCE.m;
 /* v1.12 NPC/村民/同学性别分配（发型/服装按性别差异化建模） */
 const NPC_GENDER={senpai:'m',accounting:'m',calc1:'f',calc2:'m',linalg:'m',prob:'m',python:'m'};
@@ -1232,7 +1293,10 @@ function updateStudents(dt){
     if(s.bubbleT<=0){
       if(s.flee){ s.bubble='TAT'; s.bubbleT=60; }
       else if((s.phase==='walk'||s.leader!==null)&&Math.random()<0.6){
-        s.bubble=TALK_EMOTES[Math.floor(Math.random()*TALK_EMOTES.length)]; s.bubbleT=120+Math.random()*260;
+        // v1.15.1 #4：约 45% 概率说日常短句（时间/天气/聚集触发），其余沿用原表情，二者不互顶
+        if(Math.random()<0.45) s.bubble=randomChatLine(s.leader!==null);
+        else s.bubble=TALK_EMOTES[Math.floor(Math.random()*TALK_EMOTES.length)];
+        s.bubbleT=120+Math.random()*260;
       } else { s.bubble=null; s.bubbleT=120+Math.random()*200; }
     }
     let sp;
@@ -1284,6 +1348,23 @@ const VEHICLE_KINDS=[
   {kind:'car',  w:54,h:30,spd:2.9,col:'#c9a23a'},
 ];
 let VEHICLES=[];
+/* v1.15.1 #4：WebAudio 鸣笛（双音"叭—叭"），首次交互后解锁音频 */
+let _audioCtx=null;
+function ensureAudio(){ if(!_audioCtx){ try{ _audioCtx=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ _audioCtx=null; } }
+  if(_audioCtx&&_audioCtx.state==='suspended'){ try{ _audioCtx.resume(); }catch(e){} } return _audioCtx; }
+function playHonk(){
+  const ac=ensureAudio(); if(!ac) return;
+  const t=ac.currentTime;
+  [0,0.20].forEach((off,i)=>{   // 两声短鸣
+    const o=ac.createOscillator(), g=ac.createGain();
+    o.type='square'; o.frequency.setValueAtTime(i?400:520, t+off);
+    g.gain.setValueAtTime(0.0001,t+off);
+    g.gain.exponentialRampToValueAtTime(0.16,t+off+0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001,t+off+0.17);
+    o.connect(g).connect(ac.destination); o.start(t+off); o.stop(t+off+0.19);
+  });
+}
+window.addEventListener('pointerdown',()=>ensureAudio());
 function spawnVehicles(){
   VEHICLES=[];
   ROAD_LANES.forEach(l=>{
@@ -1292,7 +1373,8 @@ function spawnVehicles(){
       const k=VEHICLE_KINDS[Math.floor(rnd()*VEHICLE_KINDS.length)];
       const pos=l.from+(l.to-l.from)*((i+Math.random()*0.7)/n);
       VEHICLES.push({axis:l.axis,dir:l.dir,lane:l.lane,from:l.from,to:l.to,pos,
-        speed:k.spd*(0.85+Math.random()*0.35),kind:k.kind,w:k.w,h:k.h,col:k.col,yield:0});
+        speed:k.spd*(0.85+Math.random()*0.35),kind:k.kind,w:k.w,h:k.h,col:k.col,yield:0,
+        bubble:null,bubbleT:0,pblockT:0,honkT:0});   // v1.15.1 #4：堵车鸣笛/生气气泡状态
     }
   });
 }
@@ -1324,6 +1406,11 @@ function updateVehicles(dt){
     else for(const s of STUDENTS){ if(vehBlocks(s.x,s.y,v)){blocking=true;break;} }
     if(blocking) v.yield=Math.min(1,v.yield+dt*0.25);
     else v.yield=Math.max(0,v.yield-dt*0.25);
+    // v1.15.1 #4：仅被"玩家"挡路累计 >5 秒（300 帧）→ 每 2 秒（120 帧）鸣笛并显示😡生气气泡
+    if(vehBlocks(player.x,player.y,v)) v.pblockT+=dt; else v.pblockT=0;
+    if(v.pblockT>300){ v.honkT-=dt; if(v.honkT<=0){ playHonk(); v.bubble='😡'; v.bubbleT=90; v.honkT=120; } }
+    else v.honkT=0;
+    if(v.bubbleT>0){ v.bubbleT-=dt; if(v.bubbleT<=0) v.bubble=null; }
     const sp=v.speed*(1-v.yield*0.97);
     if(!vehLightRed(v)) v.pos+=v.dir*sp*dt;
     const ext=130;
@@ -1340,6 +1427,18 @@ function drawVehicle(v){
   ctx.beginPath(); ctx.ellipse(0,v.h*0.42,v.w*0.5,v.h*0.26,0,0,Math.PI*2); ctx.fill();
   if(v.kind==='car') drawCarShape(v); else drawBikeShape(v);
   ctx.restore();
+  // v1.15.1 #4：堵车生气气泡（😡）
+  if(v.bubble) drawSpeechBubble(x, y-v.h/2-26, v.bubble, '#d4564b', '#b03a30');
+}
+/* 通用对话气泡（学生/车辆共用） */
+function drawSpeechBubble(x,y,txt,border,fill){
+  ctx.font='14px "ZCOOL KuaiLe",sans-serif'; ctx.textAlign='center'; ctx.textBaseline='alphabetic';
+  const txt2=String(txt), w=txt2.length*16+16, bx=x, by=y;
+  ctx.fillStyle='rgba(255,255,255,.97)'; ctx.fillRect(bx-w/2,by,w,24);
+  ctx.strokeStyle=border; ctx.lineWidth=1.6; ctx.strokeRect(bx-w/2,by,w,24);
+  ctx.fillStyle='rgba(255,255,255,.97)';
+  ctx.beginPath(); ctx.moveTo(bx-6,by+24); ctx.lineTo(bx+6,by+24); ctx.lineTo(bx,by+32); ctx.closePath(); ctx.fill();
+  ctx.fillStyle=fill; ctx.fillText(txt2, bx, by+17);
 }
 function drawCarShape(v){
   const w=v.w,h=v.h,c=v.col;
@@ -1903,23 +2002,23 @@ function drawLamp(l){
   ctx.beginPath(); ctx.ellipse(l.x+7,l.y+17,9,2.4,0,0,Math.PI*2); ctx.fill();
   // 底座
   ctx.fillStyle='#4a3526';ctx.fillRect(l.x-6,l.y+13,12,5);
-  // 灯柱（木纹渐变）
+  // 灯柱（更高，木纹渐变）v1.15.1 加高建模
   const g2=ctx.createLinearGradient(l.x-3,0,l.x+3,0);
   g2.addColorStop(0,'#5a3a22');g2.addColorStop(.5,'#7a5638');g2.addColorStop(1,'#4a3526');
-  ctx.fillStyle=g2;ctx.fillRect(l.x-3,l.y-8,6,23);
-  // 横臂
-  ctx.fillStyle='#5a3a22';ctx.fillRect(l.x-16,l.y-8,32,3);
-  ctx.fillStyle='#6e452c';ctx.fillRect(l.x-16,l.y-6,32,1);
-  // 双灯罩 + 光晕
+  ctx.fillStyle=g2;ctx.fillRect(l.x-3,l.y-22,6,29);
+  // 横臂（顶端）
+  ctx.fillStyle='#5a3a22';ctx.fillRect(l.x-16,l.y-22,32,3);
+  ctx.fillStyle='#6e452c';ctx.fillRect(l.x-16,l.y-20,32,1);
+  // 双灯罩 + 光晕（更高位置）
   [-15,15].forEach(dx=>{
-    ctx.fillStyle='#ffe9a8';ctx.beginPath();ctx.arc(l.x+dx,l.y-14,5,0,7);ctx.fill();
-    ctx.fillStyle='#fff6d8';ctx.beginPath();ctx.arc(l.x+dx,l.y-15,2.4,0,7);ctx.fill();
+    ctx.fillStyle='#ffe9a8';ctx.beginPath();ctx.arc(l.x+dx,l.y-28,5,0,7);ctx.fill();
+    ctx.fillStyle='#fff6d8';ctx.beginPath();ctx.arc(l.x+dx,l.y-29,2.4,0,7);ctx.fill();
     const glow=l.big?15:11;
-    ctx.fillStyle='rgba(255,233,168,.30)';ctx.beginPath();ctx.arc(l.x+dx,l.y-14,glow,0,7);ctx.fill();
+    ctx.fillStyle='rgba(255,233,168,.30)';ctx.beginPath();ctx.arc(l.x+dx,l.y-28,glow,0,7);ctx.fill();
     // 素材灯泡光晕（RPicster glow_effect，CC0）
     if(A.glow_effect_1&&A.glow_effect_1.complete&&A.glow_effect_1.naturalWidth){
       ctx.save(); ctx.globalCompositeOperation='lighter'; ctx.globalAlpha=0.7;
-      const gs=l.big?42:30; ctx.drawImage(A.glow_effect_1, l.x+dx-gs/2, l.y-14-gs/2, gs, gs); ctx.restore();
+      const gs=l.big?42:30; ctx.drawImage(A.glow_effect_1, l.x+dx-gs/2, l.y-28-gs/2, gs, gs); ctx.restore();
     }
   });
 }
@@ -1987,16 +2086,27 @@ function drawBush(b){
     ctx.fillStyle='#3f8048';ctx.beginPath();ctx.moveTo(x-6,y+2);ctx.lineTo(x,y-10);ctx.lineTo(x+6,y+2);ctx.closePath();ctx.fill();
     return;
   }
-  kTile(b.k?'bush2':'bush1',b.x,b.y);
+  // v1.15.1 #2：移除 Kenney 黄色土堆/石头堆贴图，改为程序化绿色灌木（带叶簇纹理）
+  const x=b.x+16, y=b.y+18, r=b.k===1?16:14;
+  ctx.fillStyle='rgba(0,0,0,.12)'; ctx.beginPath(); ctx.ellipse(x,y+7,r*0.7,4,0,0,Math.PI*2); ctx.fill();
+  const g=ctx.createRadialGradient(x-4,y-4,2,x,y,r);
+  g.addColorStop(0,'#7cc06a'); g.addColorStop(.6,'#5aa04e'); g.addColorStop(1,'#3c7a38');
+  ctx.fillStyle=g; ctx.beginPath(); ctx.arc(x,y,r,0,7); ctx.fill();
+  ctx.fillStyle='rgba(120,190,100,.7)';
+  for(let i=0;i<6;i++){const a=i/6*6.28; ctx.beginPath(); ctx.arc(x+Math.cos(a)*r*0.5,y+Math.sin(a)*r*0.5,2.6,0,7); ctx.fill();}
+  ctx.fillStyle='rgba(60,120,55,.6)';
+  for(let i=0;i<5;i++){const a=(i+0.5)/5*6.28; ctx.beginPath(); ctx.arc(x+Math.cos(a)*r*0.7,y+Math.sin(a)*r*0.7,2,0,7); ctx.fill();}
 }
 /* v1.14 树木：5 种（橡树/松树/花树/亮绿/大橡），无黄色；程序化绘制带树干阴影 */
 function drawTree(t){
   const x=t.x+16, y=t.y+16, k=t.k%5;
   const tw=k===1?4:5;
-  // 树干 + 落影
+  // 树干（带树皮纹理）+ 落影
   ctx.fillStyle='rgba(0,0,0,.14)';ctx.beginPath();ctx.ellipse(x+3,y+18,12,4,0,0,Math.PI*2);ctx.fill();
   ctx.fillStyle='#5a3a22';ctx.fillRect(x-tw/2,y-2,tw,20);
   ctx.fillStyle='#6e452c';ctx.fillRect(x-tw/2+1,y-2,2,20);
+  ctx.strokeStyle='rgba(40,26,14,.4)';ctx.lineWidth=1;
+  for(let bi=-1;bi<=1;bi++){ ctx.beginPath(); ctx.moveTo(x+bi*2,y); ctx.lineTo(x+bi*2,y+16); ctx.stroke(); }
   if(k===1){ // 松树（层叠三角）
     for(let i=0;i<3;i++){
       const cy=y+6-i*10, cw=20-i*5;
@@ -2012,6 +2122,11 @@ function drawTree(t){
   ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y-16,r,0,7);ctx.fill();
   ctx.fillStyle='rgba(190,230,160,.5)';ctx.beginPath();ctx.arc(x-9,y-22,12,0,7);ctx.fill();
   ctx.fillStyle='rgba(150,210,120,.42)';ctx.beginPath();ctx.arc(x+10,y-24,10,0,7);ctx.fill();
+  // 叶簇纹理（亮高光 + 深阴影点）
+  ctx.fillStyle='rgba(200,235,170,.5)';
+  for(let i=0;i<9;i++){const a=i/9*6.28;ctx.beginPath();ctx.arc(x+Math.cos(a)*r*0.55,y-16+Math.sin(a)*r*0.55,2,0,7);ctx.fill();}
+  ctx.fillStyle='rgba(50,110,50,.4)';
+  for(let i=0;i<7;i++){const a=(i+0.4)/7*6.28;ctx.beginPath();ctx.arc(x+Math.cos(a)*r*0.7,y-16+Math.sin(a)*r*0.7,1.8,0,7);ctx.fill();}
   if(k===2){ // 花树：粉白花点
     ctx.fillStyle='rgba(255,235,245,.95)';
     for(let i=0;i<8;i++){const a=i/8*6.28;ctx.beginPath();ctx.arc(x+Math.cos(a)*r*0.62,y-16+Math.sin(a)*r*0.62,2.4,0,7);ctx.fill();}
@@ -2021,14 +2136,21 @@ function drawTree(t){
 function drawTallTree(t){
   const x=t.x+16, y=t.y+16;
   ctx.fillStyle='rgba(0,0,0,.14)';ctx.beginPath();ctx.ellipse(x+3,y+18,13,4,0,0,Math.PI*2);ctx.fill();
-  ctx.fillStyle='#5a3a22';ctx.fillRect(x-3,y+6,6,14);
+  ctx.fillStyle='#5a3a22';ctx.fillRect(x-3,y+6,7,14);
   ctx.fillStyle='#6e452c';ctx.fillRect(x-1,y+2,2,18);
-  const g=ctx.createRadialGradient(x,y-6,2,x,y-6,26);
+  ctx.strokeStyle='rgba(40,26,14,.4)';ctx.lineWidth=1;
+  for(let bi=-1;bi<=1;bi++){ ctx.beginPath(); ctx.moveTo(x+bi*2,y+7); ctx.lineTo(x+bi*2,y+18); ctx.stroke(); }
+  const g=ctx.createRadialGradient(x,y-8,2,x,y-8,30);
   g.addColorStop(0,'#7cc06a');g.addColorStop(.65,'#5aa04e');g.addColorStop(1,'#43843c');
-  ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y-6,25,0,7);ctx.fill();
-  ctx.fillStyle='rgba(150,210,120,.65)';ctx.beginPath();ctx.arc(x-10,y-12,14,0,7);ctx.fill();
-  ctx.fillStyle='rgba(130,195,105,.5)';ctx.beginPath();ctx.arc(x+11,y-14,12,0,7);ctx.fill();
-  ctx.fillStyle='rgba(70,140,60,.35)';ctx.beginPath();ctx.arc(x+4,y+2,20,0,7);ctx.fill();
+  ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y-8,27,0,7);ctx.fill();
+  ctx.fillStyle='rgba(150,210,120,.65)';ctx.beginPath();ctx.arc(x-10,y-14,15,0,7);ctx.fill();
+  ctx.fillStyle='rgba(130,195,105,.5)';ctx.beginPath();ctx.arc(x+11,y-16,12,0,7);ctx.fill();
+  ctx.fillStyle='rgba(70,140,60,.4)';ctx.beginPath();ctx.arc(x+4,y,21,0,7);ctx.fill();
+  // 叶簇纹理
+  ctx.fillStyle='rgba(190,230,160,.6)';
+  for(let i=0;i<9;i++){const a=i/9*6.28;ctx.beginPath();ctx.arc(x+Math.cos(a)*18,y-8+Math.sin(a)*18,2.2,0,7);ctx.fill();}
+  ctx.fillStyle='rgba(55,115,52,.45)';
+  for(let i=0;i<7;i++){const a=(i+0.3)/7*6.28;ctx.beginPath();ctx.arc(x+Math.cos(a)*22,y-8+Math.sin(a)*22,1.8,0,7);ctx.fill();}
 }
 /* v1.14 花：程序化多彩小花（茎 + 5 瓣 + 花心），按 k 取色 */
 function drawFlower(f){
@@ -2046,28 +2168,39 @@ function drawFlower(f){
 function drawBigTreeBase(t){
   const x=t.x+16, y=t.y+16, s=t.s||1;
   ctx.save(); ctx.translate(x,y); ctx.scale(s,s); ctx.translate(-x,-y);
-  ctx.fillStyle='rgba(0,0,0,.14)';ctx.beginPath();ctx.ellipse(x+4,y+22,16,5,0,0,Math.PI*2);ctx.fill();
-  // 粗干
-  ctx.fillStyle='#4a3018';ctx.fillRect(x-5,y+4,10,24);
-  ctx.fillStyle='#6e452c';ctx.fillRect(x-2,y+2,4,26);
-  // 下层树冠（深绿，进背景层）
-  const g=ctx.createRadialGradient(x,y-12,4,x,y-12,36);
+  ctx.fillStyle='rgba(0,0,0,.14)';ctx.beginPath();ctx.ellipse(x+4,y+24,18,5,0,0,Math.PI*2);ctx.fill();
+  // 树干（树皮纹理 + 根部外扩）
+  ctx.fillStyle='#4a3018';ctx.fillRect(x-6,y+2,12,26);
+  ctx.fillStyle='#6e452c';ctx.fillRect(x-2,y,4,28);
+  ctx.fillStyle='#3a2412';ctx.fillRect(x-6,y+2,2,26);
+  ctx.strokeStyle='rgba(40,26,14,.5)';ctx.lineWidth=1;
+  for(let bi=-2;bi<=2;bi++){ ctx.beginPath(); ctx.moveTo(x+bi*2.2,y+4); ctx.lineTo(x+bi*2.2,y+26); ctx.stroke(); }
+  ctx.fillStyle='#4a3018';ctx.beginPath();ctx.ellipse(x,y+26,12,5,0,0,Math.PI*2);ctx.fill();
+  // 下层树冠（深绿，进背景层）+ 叶簇纹理
+  const g=ctx.createRadialGradient(x,y-10,4,x,y-10,38);
   g.addColorStop(0,'#5a9e4e');g.addColorStop(.7,'#43843c');g.addColorStop(1,'#2f6a2c');
-  ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y-12,34,0,7);ctx.fill();
-  ctx.fillStyle='rgba(60,130,55,.5)';ctx.beginPath();ctx.arc(x-10,y-4,22,0,7);ctx.fill();
+  ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y-10,36,0,7);ctx.fill();
+  ctx.fillStyle='rgba(40,100,45,.5)';
+  for(let i=0;i<10;i++){const a=i/10*6.28;ctx.beginPath();ctx.arc(x+Math.cos(a)*22,y-10+Math.sin(a)*20,3.2,0,7);ctx.fill();}
   ctx.restore();
 }
-function drawBigTreeCanopy(t){
+function drawBigTreeCanopy(t,time){
   const x=t.x+16, y=t.y+16, s=t.s||1;
-  ctx.save(); ctx.translate(x,y); ctx.scale(s,s); ctx.translate(-x,-y);
-  // 上层树冠：半透明叠加 → 遮挡建筑时透视虚化
-  ctx.globalAlpha=0.62;
-  const g=ctx.createRadialGradient(x,y-26,4,x,y-26,36);
-  g.addColorStop(0,'#8fd07a');g.addColorStop(.6,'#6cb45c');g.addColorStop(1,'#4a9444');
-  ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y-26,32,0,7);ctx.fill();
-  ctx.fillStyle='rgba(170,225,140,.7)';ctx.beginPath();ctx.arc(x-14,y-32,16,0,7);ctx.fill();
-  ctx.fillStyle='rgba(150,210,120,.6)';ctx.beginPath();ctx.arc(x+14,y-34,13,0,7);ctx.fill();
-  ctx.fillStyle='rgba(90,160,80,.4)';ctx.beginPath();ctx.arc(x+5,y-14,22,0,7);ctx.fill();
+  const sway=Math.sin((time||0)*0.0011 + (t.x+t.y)*0.01)*3.2;   // v1.15.1 #2：随风微摆
+  ctx.save(); ctx.translate(x+sway,y); ctx.scale(s,s); ctx.translate(-x,-y);
+  ctx.globalAlpha=0.82;   // 半透明叠加 → 遮挡建筑时透视虚化（更真实）
+  // 主冠（三层叠加，深浅制造体积感）
+  const g=ctx.createRadialGradient(x,y-26,4,x,y-26,40);
+  g.addColorStop(0,'#8fd07a');g.addColorStop(.55,'#6cb45c');g.addColorStop(1,'#4a9444');
+  ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y-26,36,0,7);ctx.fill();
+  ctx.fillStyle='rgba(150,210,120,.65)';ctx.beginPath();ctx.arc(x-14,y-32,18,0,7);ctx.fill();
+  ctx.fillStyle='rgba(120,195,100,.6)';ctx.beginPath();ctx.arc(x+15,y-34,15,0,7);ctx.fill();
+  ctx.fillStyle='rgba(90,160,80,.45)';ctx.beginPath();ctx.arc(x+6,y-12,24,0,7);ctx.fill();
+  // 叶簇纹理（亮高光 + 深阴影点），模拟叶片层次
+  ctx.fillStyle='rgba(190,230,160,.7)';
+  for(let i=0;i<14;i++){const a=i/14*6.28;ctx.beginPath();ctx.arc(x+Math.cos(a)*24,y-26+Math.sin(a)*24,2.6,0,7);ctx.fill();}
+  ctx.fillStyle='rgba(60,120,55,.55)';
+  for(let i=0;i<11;i++){const a=(i+0.3)/11*6.28;ctx.beginPath();ctx.arc(x+Math.cos(a)*30,y-26+Math.sin(a)*28,2.4,0,7);ctx.fill();}
   ctx.restore();
 }
 /* ---- 小吃街摊位（2×2 格：遮阳棚 + 台面 + 食物） ---- */
@@ -2151,8 +2284,7 @@ function drawMapVisible(cx,cy){
   drawBuildingShadows();
   // 建筑（v1.10：回缓存层，固定地图建模；不再每帧重画 → 彻底解决"建筑物乱动"）
   BUILDINGS.forEach(b=>{if(inView(b.x,b.y,r,b.w,b.h))drawBuilding(b);});
-  // v1.12 高大树木：上层树冠（半透明叠加在建筑上 → 树叶遮挡建筑时透视虚化）
-  bigTrees.forEach(t=>{if(t.x>cx-80&&t.x<cx+LOGIC_W+80&&t.y>cy-80&&t.y<cy+LOGIC_H+80)drawBigTreeCanopy(t);});
+  // v1.15.1 #2：上层树冠改由动态层每帧绘制（带随风微摆），此处不再缓存
   // 围墙 / 门 / 牌 / 路灯 / 长椅
   WALLS.forEach(w=>{if(inView(w.x,w.y,r,w.w,w.h))drawWall(w);});
   GATES.forEach(g=>{if(inView(g.x,g.y,r,1,1))drawGate(g);});
@@ -2550,6 +2682,22 @@ function drawGrassTufts(){
     ctx.quadraticCurveTo(g.x+1.2,g.y-gh*0.5,g.x+2.4,g.y-gh); ctx.stroke();
   }
 }
+/* v1.15.1 #2：风吹草动——独立草叶层，每帧随风场轻微摆动（叶尖摇曳，不移动整块草坪） */
+function drawWindGrass(time){
+  const x0=camX-30,x1=camX+LOGIC_W+30,y0=camY-30,y1=camY+LOGIC_H+30;
+  ctx.lineCap='round';
+  for(const g of windGrass){
+    if(g.x<x0||g.x>x1||g.y<y0||g.y>y1) continue;
+    const wind=Math.sin(time*0.0016 + g.ph + g.x*0.015)*2.6;   // 微摆幅度 ~2.6px
+    const gh=g.h;
+    ctx.strokeStyle=['rgba(86,166,76,.72)','rgba(120,196,104,.66)','rgba(70,150,64,.62)'][g.k];
+    ctx.lineWidth=1.3;
+    ctx.beginPath(); ctx.moveTo(g.x,g.y);
+    ctx.quadraticCurveTo(g.x+wind*0.5,g.y-gh*0.55, g.x+wind, g.y-gh);
+    ctx.stroke();
+    ctx.fillStyle='rgba(185,225,150,.5)'; ctx.beginPath(); ctx.arc(g.x+wind,g.y-gh,1.1,0,7); ctx.fill();
+  }
+}
 function updateCamera(){
   camX=Math.round(player.x-LOGIC_W/2); camY=Math.round(player.y-LOGIC_H/2);
   camX=Math.max(0,Math.min(camX,W-LOGIC_W)); camY=Math.max(0,Math.min(camY,H-LOGIC_H));
@@ -2706,6 +2854,9 @@ function render(){
   try{ const vr=visRect(camX,camY); LAKE_BRIDGES.forEach(b=>{ if(inView(b.x,b.y,vr,b.w,b.h)) drawBridge(b); }); }catch(e){ window.__showErr&&window.__showErr('bridge-cover: '+e.message); }
   // v1.15 #7 红绿灯（灯杆/灯箱动态闪烁，置于角色之下）
   try{ drawTrafficLights(); }catch(e){ window.__showErr&&window.__showErr('lights: '+e.message); }
+  // v1.15.1 #2：风吹草动独立层 + 大树立面（随风微摆），均绘制在角色之下
+  try{ drawWindGrass(performance.now()); }catch(e){ window.__showErr&&window.__showErr('windgrass: '+e.message); }
+  try{ const vr=visRect(camX,camY); bigTrees.forEach(t=>{ if(t.x>camX-90&&t.x<camX+LOGIC_W+90&&t.y>camY-90&&t.y<camY+LOGIC_H+90) drawBigTreeCanopy(t, performance.now()); }); }catch(e){ window.__showErr&&window.__showErr('bigntree: '+e.message); }
   try{
     const arr=[
       {px:player.x,py:player.y,draw:()=>drawPlayer()},
@@ -3140,6 +3291,19 @@ document.getElementById('mapBtn').onclick=()=>{
 
 /* ---------- 更新日志（右上角） ---------- */
 const CHANGELOG=[
+  {ver:'v1.15.1',date:'2026-08-22',items:[
+    '青蛙修复：跳频从"每帧乱跳"改为约 10 秒一次，且强制在水陆相邻格之间跳跃，入水/出水产生水花',
+    '植被重做：删除黄色土堆/石头堆贴图，改为程序化绿色灌木；新增独立"风吹草动"层（草叶随全局风场 + 各自相位微摆，仅叶尖摇曳）；大树/大冠乔木增加树皮纹理与树叶高光阴影，树冠随风轻摆',
+    '道路/河流/桥/路灯：宿舍区小路改为校内灰色水泥路面；文翔路/上川路主干道由 3 格加宽至 5 格、1 格横路加宽至 3 格（贴楼/河道处保持窄以不压建筑）；北门桥/上川桥与 5 格主干道对齐加宽、西信桥/东诚桥加长；三条主河道由 2 格加宽至 3 格；路灯建模加高',
+    '车辆/学生对话：车辆被玩家挡路超 5 秒时每 2 秒鸣笛（WebAudio 合成"叭—叭"）并冒😡生气气泡；学生新增约 100 句按时间/天气/聚集触发的日常短句，与原表情触发逻辑互不冲突',
+  ]},
+  {ver:'v1.15',date:'2026-08-21',items:[
+    '小猫状态约 30 秒切换一次（游走/坐/睡），新增眨眼与尾巴摆动；青蛙每约 10 秒小跳 1-2 格并可入水出水',
+    '松江校区按真实地图等比还原（体育馆/序伦大楼/昭信堂/会计博物馆/图书馆临柿子湾/餐饮南岸/教学楼群 + 诚信广场）',
+    '夜灯/萤火虫光源补充（亮度低于路灯），灰色水泥路/桥贴图遮挡水流问题修复',
+    '雨伞加宽至 2 格并新增黑/深蓝/黄三色；对话气泡新增聊天/?!/^-^/TAT 躲雨等特效',
+    '车辆/斑马线/红绿灯/行人避让完善；文汇路北侧商铺 + 河 + 北门桥 + 宿舍布局重建',
+  ]},
   {ver:'v1.12',date:'2026-08-19',items:[
     '字体 DPI 提升（1.5→2）+ 关闭平滑缩放：文字与像素更锐利，保留像素颗粒感',
     '文字置顶：新增文本覆盖层，建筑名牌/招牌/校门/人物名牌在角色层之后重绘，任何情况下都显示在最上层',

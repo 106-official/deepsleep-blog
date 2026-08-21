@@ -34,6 +34,8 @@
   .hud h1{font-size:22px;margin:0;color:var(--wood-d);letter-spacing:1px;
     text-shadow:1px 1px 0 #fff;}
   .hud .hint{font-size:13px;color:#6b5a44;opacity:.85;overflow:hidden;text-overflow:ellipsis;}
+  .hud .clock{font-family:'VT323',monospace;font-size:20px;color:var(--wood-d);background:rgba(255,255,255,.55);
+    border:2px solid var(--wood);border-radius:8px;padding:2px 10px;min-width:64px;text-align:center;}
   .hud .spacer{flex:1;}
   .btn{
     font-family:inherit;cursor:pointer;border:none;border-radius:999px;
@@ -113,15 +115,22 @@
   canvas{image-rendering:pixelated;background:#7cb86a;border-radius:14px;
     box-shadow:0 10px 30px var(--shadow), inset 0 0 0 4px var(--wood);
     width:100%;height:100%;touch-action:none;display:block;}
-  /* 全图迷你地图（v1.9：解决地图太大、浦东/宿舍看不到；点击传送） */
-  #minimap{position:absolute;right:12px;bottom:12px;width:180px;min-width:180px;height:135px;min-height:135px;
-    background:rgba(158,199,138,.95);border:3px solid var(--wood);border-radius:10px;
-    box-shadow:0 6px 18px var(--shadow);z-index:7;cursor:pointer;display:block;
-    image-rendering:pixelated;}
-  .minimap-label{position:absolute;right:18px;font:bold 11px 'ZCOOL KuaiLe',sans-serif;
-    color:var(--wood-d);text-shadow:1px 1px 0 #fff;pointer-events:none;z-index:8;}
-  .minimap-label.top{bottom:155px;}
-  .minimap-label.bot{bottom:4px;}
+  /* v1.15.2 小地图：顶部栏小按钮，点击全屏调出 */
+  #minimapBtn{position:relative;width:36px;height:30px;border-radius:8px;background:linear-gradient(180deg,#9ec78a,#7cb86a);
+    border:2px solid var(--wood);box-shadow:0 2px 0 var(--wood-d);cursor:pointer;display:flex;align-items:center;justify-content:center;}
+  #minimapBtn::before{content:'🗺️';font-size:18px;}
+  #minimapBtn:active{transform:translateY(2px);box-shadow:none;}
+  #minimapModal{position:fixed;inset:0;background:rgba(40,30,20,.78);z-index:50;display:none;align-items:center;justify-content:center;padding:20px;}
+  #minimapModal.show{display:flex;}
+  .minimap-wrap{position:relative;background:rgba(158,199,138,.95);border:4px solid var(--wood);border-radius:14px;
+    box-shadow:0 12px 40px rgba(0,0,0,.4);overflow:hidden;max-width:96vw;max-height:86vh;aspect-ratio:176/132;}
+  #minimap{image-rendering:pixelated;width:100%;height:100%;display:block;cursor:crosshair;}
+  .minimap-close{position:absolute;top:10px;right:10px;width:34px;height:34px;border-radius:50%;background:#d4564b;
+    color:#fff;border:3px solid #fff;font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;
+    box-shadow:0 3px 8px rgba(0,0,0,.35);z-index:2;}
+  .minimap-close:hover{background:#b03a30;}
+  .minimap-title{position:absolute;top:10px;left:14px;background:rgba(255,250,240,.92);border:2px solid var(--wood);border-radius:8px;
+    padding:5px 12px;font:13px 'ZCOOL KuaiLe',sans-serif;color:var(--wood-d);z-index:2;pointer-events:none;}
   .map-legend{position:absolute;left:14px;bottom:14px;background:rgba(255,250,240,.92);
     border:2px solid var(--wood);border-radius:8px;padding:5px 8px;
     font:11px 'ZCOOL KuaiLe',sans-serif;color:var(--wood-d);z-index:7;
@@ -235,8 +244,8 @@
     .near-tip{font-size:12px;padding:4px 12px;bottom:8px;}
     .changelog{right:6px;top:6px;width:92vw;max-height:80%;}
     .settings{right:6px;top:6px;width:84vw;}
-    #minimap{width:120px;height:90px;right:6px;bottom:6px;}
-    .minimap-label.top{bottom:104px;}
+    #minimapBtn{width:30px;height:26px;}
+    #minimapBtn::before{font-size:15px;}
     .map-legend{font-size:10px;padding:3px 6px;left:6px;bottom:6px;}
   }
 </style>
@@ -269,10 +278,12 @@
   <div class="hud">
     <h1>🌾 Lixin</h1>
     <span class="hint">点地面走动 · 点学长问全站 · 点村民聊单科 · 低头迅速走开摆脱校园搭讪</span>
+    <span class="clock" id="gameClock" title="游戏内 24 小时制时间">06:00</span>
     <span class="familiarity">熟悉度：<b id="famVal">0</b></span>
     <span class="spacer"></span>
     <button class="btn ghost sm" id="codexBtn">📖<span class="lbl"> 村民图鉴</span></button>
     <button class="btn ghost sm" id="helpBtn">❓<span class="lbl"> 玩法</span></button>
+    <div id="minimapBtn" title="小地图 · 点击传送"></div>
     <button class="btn ghost sm" id="mapBtn">🗺️<span class="lbl"> 全图</span></button>
     <button class="btn ghost sm" id="logBtn">📜<span class="lbl"> 更新日志</span></button>
     <button class="btn ghost sm" id="setBtn">⚙<span class="lbl"> 设置</span></button>
@@ -280,8 +291,13 @@
 
   <div class="stage" id="stage">
     <canvas id="game"></canvas>
-    <canvas id="minimap" width="200" height="150" title="点击传送 / Click to teleport"></canvas>
-    <div class="minimap-label top">🗺️ 小地图 · 点击传送</div>
+    <div id="minimapModal">
+      <div class="minimap-wrap">
+        <div class="minimap-title">🗺️ 小地图 · 点击任意位置传送 · 右上角关闭</div>
+        <div class="minimap-close" id="minimapClose">✕</div>
+        <canvas id="minimap" width="352" height="264" title="点击传送 / Click to teleport"></canvas>
+      </div>
+    </div>
     <div class="map-legend"><b>🧑 你</b> 在松江·文汇路<br>右下方是<b>浦东</b>校区 👉 校际大道直达</div>
     <div class="near-tip" id="nearTip">按 <b>空格</b> 或点击村民对话</div>
 
@@ -881,11 +897,11 @@ for(let ty=0;ty<ROWS;ty++)for(let tx=0;tx<COLS;tx++){
 }
 // v1.15.1 #2：独立建模的"风吹草动"层——稀疏草叶，每帧随全局风场 + 各自相位微微摆动（仅叶尖摇曳，不挪动整块草坪）
 const windGrass=[];
-for(let i=0;i<7000;i++){ const tx=Math.floor(rnd()*COLS), ty=Math.floor(rnd()*ROWS);
+for(let i=0;i<12000;i++){ const tx=Math.floor(rnd()*COLS), ty=Math.floor(rnd()*ROWS);
   const px=tx*TILE+TILE/2, py=ty*TILE+TILE/2;
   if(blocked.has(key(tx,ty))||isPath(tx,ty)||isWater(px,py)) continue;
-  if(rnd()<0.6) continue;   // 稀疏分布
-  windGrass.push({x:px+(rnd()-0.5)*TILE, y:py+(rnd()*0.4+0.35)*TILE, ph:rnd()*6.28, h:6+rnd()*8, k:Math.floor(rnd()*3)});
+  if(rnd()<0.42) continue;   // v1.15.2 #5：稍密一些，风动效更明显
+  windGrass.push({x:px+(rnd()-0.5)*TILE, y:py+(rnd()*0.4+0.35)*TILE, ph:rnd()*6.28, h:6+rnd()*10, k:Math.floor(rnd()*4)});
 }
 /* ---- 路灯（先列主干道两侧，再自动校验：不在路上/不在水中/不在建筑与广场上） ---- */
 const lamps=[];
@@ -1344,8 +1360,11 @@ const ROAD_LANES=[
 const VEHICLE_KINDS=[
   {kind:'bike', w:30,h:18,spd:1.5,col:'#d94f4f'},
   {kind:'ebike',w:34,h:22,spd:2.2,col:'#3f7fd4'},
+  {kind:'scooter',w:26,h:16,spd:2.0,col:'#4caf7a'},
   {kind:'car',  w:54,h:30,spd:2.9,col:'#2f2f36'},
   {kind:'car',  w:54,h:30,spd:2.9,col:'#c9a23a'},
+  {kind:'car',  w:54,h:30,spd:2.9,col:'#5a7aa8'},
+  {kind:'truck',w:74,h:34,spd:2.2,col:'#8a5a3a'},
 ];
 let VEHICLES=[];
 /* v1.15.1 #4：WebAudio 鸣笛（双音"叭—叭"），首次交互后解锁音频 */
@@ -1425,7 +1444,10 @@ function drawVehicle(v){
   if(v.dir<0) ctx.scale(-1,1);
   ctx.fillStyle='rgba(0,0,0,.20)';
   ctx.beginPath(); ctx.ellipse(0,v.h*0.42,v.w*0.5,v.h*0.26,0,0,Math.PI*2); ctx.fill();
-  if(v.kind==='car') drawCarShape(v); else drawBikeShape(v);
+  if(v.kind==='car') drawCarShape(v);
+  else if(v.kind==='truck') drawTruckShape(v);
+  else if(v.kind==='scooter') drawScooterShape(v);
+  else drawBikeShape(v);
   ctx.restore();
   // v1.15.1 #4：堵车生气气泡（😡）
   if(v.bubble) drawSpeechBubble(x, y-v.h/2-26, v.bubble, '#d4564b', '#b03a30');
@@ -1442,12 +1464,27 @@ function drawSpeechBubble(x,y,txt,border,fill){
 }
 function drawCarShape(v){
   const w=v.w,h=v.h,c=v.col;
+  // 车身阴影
+  ctx.fillStyle='rgba(0,0,0,.18)'; ctx.beginPath(); ctx.ellipse(0,h*0.46,w*0.52,h*0.22,0,0,Math.PI*2); ctx.fill();
+  // 主体
   rr(ctx,-w/2,-h/2,w,h,6); ctx.fillStyle=c; ctx.fill();
-  rr(ctx,-w/2+8,-h/2-7,w-24,12,4); ctx.fillStyle=shade(c,22); ctx.fill();
-  ctx.fillStyle='rgba(180,220,240,.85)'; rr(ctx,-w/2+11,-h/2-5,w-28,7,2); ctx.fill();
+  ctx.strokeStyle='rgba(0,0,0,.12)'; ctx.lineWidth=1; rr(ctx,-w/2,-h/2,w,h,6); ctx.stroke();
+  // 车顶（稍亮）
+  rr(ctx,-w/2+8,-h/2-7,w-24,12,4); ctx.fillStyle=shade(c,28); ctx.fill();
+  // 前后挡风玻璃
+  ctx.fillStyle='rgba(190,225,245,.88)'; rr(ctx,-w/2+11,-h/2-5,w-28,7,2); ctx.fill();
+  // 车门线
+  ctx.strokeStyle='rgba(0,0,0,.15)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(-2,-h/2+2); ctx.lineTo(-2,h/2-3); ctx.stroke();
+  // 车轮
   ctx.fillStyle='#15151a'; ctx.beginPath();
   ctx.arc(-w/2+13,h/2-1,6,0,Math.PI*2); ctx.arc(w/2-13,h/2-1,6,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='#6a6a6a'; ctx.beginPath();
+  ctx.arc(-w/2+13,h/2-1,3,0,Math.PI*2); ctx.arc(w/2-13,h/2-1,3,0,Math.PI*2); ctx.fill();
+  // 前灯（车头方向为 +x）
   ctx.fillStyle='rgba(255,245,180,.95)'; ctx.fillRect(w/2-4,-3,4,7);
+  // 尾灯
+  ctx.fillStyle='rgba(220,60,60,.85)'; ctx.fillRect(-w/2+1,-3,3,7);
 }
 function drawBikeShape(v){
   const w=v.w,h=v.h,c=v.col;
@@ -1463,6 +1500,44 @@ function drawBikeShape(v){
     ctx.strokeStyle='#cfcabb'; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(w/2-7,-6,4,0,Math.PI*2); ctx.stroke();
   }
   ctx.fillStyle='rgba(255,245,180,.9)'; ctx.fillRect(w/2-3,-5,4,5);
+}
+function drawTruckShape(v){
+  const w=v.w,h=v.h,c=v.col;
+  // 货箱
+  ctx.fillStyle=c; ctx.fillRect(-w/2+2,-h/2+2,w-26,h-4);
+  ctx.strokeStyle='rgba(0,0,0,.15)'; ctx.lineWidth=1; ctx.strokeRect(-w/2+2,-h/2+2,w-26,h-4);
+  // 车箱条纹
+  ctx.strokeStyle='rgba(255,255,255,.18)'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(-w/2+8,-h/2+6); ctx.lineTo(-w/2+8,h/2-6); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(-w/2+22,-h/2+6); ctx.lineTo(-w/2+22,h/2-6); ctx.stroke();
+  // 驾驶室
+  ctx.fillStyle=shade(c,18); ctx.fillRect(w/2-24,-h/2+2,22,h-4);
+  ctx.fillStyle='rgba(190,225,245,.85)'; ctx.fillRect(w/2-20,-h/2+4,12,10);
+  // 车轮
+  ctx.fillStyle='#15151a'; ctx.beginPath();
+  ctx.arc(-w/2+12,h/2-1,6,0,Math.PI*2); ctx.arc(w/2-12,h/2-1,6,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='#6a6a6a'; ctx.beginPath();
+  ctx.arc(-w/2+12,h/2-1,3,0,Math.PI*2); ctx.arc(w/2-12,h/2-1,3,0,Math.PI*2); ctx.fill();
+  // 前灯 / 尾灯
+  ctx.fillStyle='rgba(255,245,180,.95)'; ctx.fillRect(w/2-3,-3,3,7);
+  ctx.fillStyle='rgba(220,60,60,.85)'; ctx.fillRect(-w/2+1,-3,3,7);
+}
+function drawScooterShape(v){
+  const w=v.w,h=v.h,c=v.col;
+  // 阴影
+  ctx.fillStyle='rgba(0,0,0,.15)'; ctx.beginPath(); ctx.ellipse(0,h*0.42,w*0.55,h*0.28,0,0,Math.PI*2); ctx.fill();
+  // 车轮
+  ctx.fillStyle='#15151a'; ctx.beginPath();
+  ctx.arc(-w/2+6,h/2-1,6,0,Math.PI*2); ctx.arc(w/2-6,h/2-1,6,0,Math.PI*2); ctx.fill();
+  // 车身
+  ctx.fillStyle=c; ctx.beginPath(); ctx.ellipse(0,-2,w*0.55,h*0.42,0,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle='rgba(255,255,255,.25)'; ctx.lineWidth=1; ctx.stroke();
+  // 座椅
+  ctx.fillStyle='#3a3030'; ctx.fillRect(-4,-6,14,6);
+  // 车把
+  ctx.strokeStyle='#cfcabb'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(w/2-8,-2); ctx.lineTo(w/2-2,-8); ctx.stroke();
+  // 前灯
+  ctx.fillStyle='rgba(255,245,180,.95)'; ctx.beginPath(); ctx.arc(w/2-3,-2,2.5,0,Math.PI*2); ctx.fill();
 }
 /* ---- 斑马线（主干道路面上的白色条纹，行人横穿处） ---- */
 const CROSSINGS=[
@@ -1493,7 +1568,7 @@ function onMainRoad(tx,ty){ return PATHS.some(p=>p.type==='road'&&tx>=p.x&&tx<p.
    背景用「视野缓存」：相机移动过半屏才重建，内存只占一屏
    ============================================================ */
 const KENNEY_B64="iVBORw0KGgoAAAANSUhEUgAAAQAAAAAQCAYAAAD506FJAAAE/ElEQVR42u1bQWsTQRR+SUTbqympjYeQWuyhKHpbRdFUWsFzoQcLzUnqHxAC4kGU/AHB0lMKvQj9ATVC01KQRSihQsAENOzBrC3Ga6NQ9dDOdnYyOzszO7O7ER8snezum9k3896b7703Tbx4//gPDDA9vfk6EYQ/qPxPb75O3Ll83eljpmLATtNynt+ezLnef1c0nfZ2qy797fiYQfrC5X/UToW+fpmHrxI65ROdx6HSWN+aIdppWtAr29TvQf2sFQ8ha0xR+TtmAxYqw0CTS5Sf5EMkyp9UNZHnzo/AufMjfW0RKvUOoNQ7YL5jtbuuv6yFxa8wlHmoNOZp+LR3VCmt171Bpajlwx04654XdcwG17048J+Jy6IvbtUATjzX4lYNVu8WqO/l8mmw2l3I5dPCCiS6i5BOBo3p53xEFUbWOGYqhgtVyMgYZ+MXkc/LQfjNx0zFcKEyVevHY7Cby+OQmq5L86M+ppe+SPMrQwCt3Sa0dpt9bd6dP2tMQbKwDsnCOmSNKSYSYBk/OTmby+PCsljtLljtLryEjOui3afR7cmcc+kiZBxkW5asdhdW8kexcQQi8rHQAQ9yIPvXsW4kLJfRS5aes8YKxQHk8mnX7sxrpGHARxFlwA2cJPz+18/fQoemPGPJfo+XM4vL2nm9g/9+kzvrumTnBO3+Kh2BCIRXNRaPI0iqHlzG8JfsFHTMBvyuzcHv2hx0zAYs2alACoR7RRFvy2sIFy9doO4iLOioKizAdyzUZ1AUsJI/4gptwt79d5oW7DQtX/m2Htxy2qNVs+8e75goyUdbL/yZF5FJPtozlj7y8LNQAP4O6XRo/NpyAAgJ+MXryGms5gsO7F+9W4AgvneteCj9zSC5E74rmk6CT1f87xVuqKI4oABZ2m98OG3PGn33RKoKyNCfzR6v5/Oq7ZtX2G7VnWoQMjQvfq9cBS+/X15DhF+bA+A1fhIJHPMGG3uhMgybhjdK8JpAGQPAFy4KeEyDq0GTgV8/f+tDOFHJR3NwNPnQro+Mf7RqOm1RPUDreq9VF9YF/DfOz6MjLH4ZveThT+pcVNFwQFXuAIdYCAbxhgEoto8rsVCGihIjLbyJQj4aDBeRj2b8frkBVfOnA53q6jsJA0Q85wTAJ/uqU/l5YkSed0Sgv+5qQ9TEK9v+rMHc8VE+YLRqCuUG/nUaGAewuFWjtnXQyMQ1GJm4JgX9emWbauTk/SAQPehBlbiTjHzz1i+Yt35BYzINjcm085vMEezPGq7cQBTzp6MiINtnaAeB0MnAnz++u9q8Oz+cnBMAAMjCHJR6B1AeyjBjLK9yCC3+O66Dp6WPw5K5gF7Zlk7iyBpJUFrJH8GjdiqSHICsfOS8X7lxEupV7cjmMUwnELSfpKqMP3CekNNNrFgff0Y6DDwBuPd2A/bebkg5Ady4r9wYP1VIynOVsFhFGIDWL2rjF5WFZ05JdPCfFCIAnow/OhmYy6ddbZ6S4ZKdgmfWR8jCnOP1nueu+lYLaPH/WvGQWg89rYNnIjeAqEIA8pBTVPMgIwtyApmHdc8KA4kOtlv1xH0Y+/PfAYSQ8SeNXcSBBD0n0DEbjjNgHaYYhDp4r2x7ZqtVJRj/NflYziHs+VuoDGurBLB0O/IcgJ+j4Cn/yZ4ToCEBnf80w6twsjkGmYMqEPMyYJjy4fRkV2///gd9PgXqt9UZD/T9fwFgeyZVQsUXngAAAABJRU5ErkJggg==";
-const KENNEY_COL={grassA:0,grassB:1,grassAf:2,grassBf:3,dirtA:4,treeG1:5,treeG2:6,treeO:7,bush1:8,bush2:9,mush:10,flower:11,brg0:12,brg1:13,brg2:14,brg3:15};
+const KENNEY_COL={grassA:0,grassB:1,grassAf:2,grassBf:3,treeG1:5,treeG2:6,treeO:7,bush1:8,bush2:9,mush:10,flower:11,brg0:12,brg1:13,brg2:14,brg3:15};
 const kImg=new Image(); let kReady=false;
 kImg.onload=()=>{kReady=true;invalidateCache();};
 kImg.src='data:image/png;base64,'+KENNEY_B64;
@@ -1554,33 +1629,43 @@ function drawGrassTile(x,y){
   let name='grassA';
   if(h===0)name='grassB'; else if(h===3)name='grassAf'; else if(h===7)name='grassBf';
   kTile(name,x*TILE,y*TILE);
-  // v1.12 程序化草坪层次：绿色草簇 + 橙黄干草簇（重新建模，更显眼、层次更丰富）
+  // v1.15.2 #5：更真实细致的草坪——底色微斑 + 多色草簇 + 少量枯草点缀
   const px=x*TILE, py=y*TILE;
-  if(h===1||h===5||h===9){
-    ctx.fillStyle='rgba(70,150,60,.30)'; ctx.fillRect(px+3,py+9,3,7); ctx.fillRect(px+13,py+20,3,9); ctx.fillRect(px+24,py+5,3,8);
-    ctx.fillStyle='rgba(130,200,100,.28)'; ctx.fillRect(px+9,py+15,2,6); ctx.fillRect(px+21,py+10,2,5);
-  } else if(h===2||h===6||h===10){
-    ctx.fillStyle='rgba(100,170,80,.25)'; ctx.fillRect(px+7,py+17,3,8); ctx.fillRect(px+19,py+8,3,7);
-    ctx.fillStyle='rgba(60,140,55,.20)'; ctx.fillRect(px+15,py+24,3,6);
-  } else {
-    ctx.fillStyle='rgba(90,165,75,.18)'; ctx.fillRect(px+11,py+12,3,7);
-  }
-  // v1.12 橙黄干草簇（秋季草色点缀，画在草皮之上、树/灌木之下，不再被完全遮挡）
+  // 随机底色微斑（模拟草皮深浅）
+  const tint=['rgba(55,130,48,.12)','rgba(80,160,65,.10)','rgba(100,180,80,.08)','rgba(65,145,55,.11)','rgba(90,170,72,.09)'][h%5];
+  ctx.fillStyle=tint; ctx.fillRect(px+2,py+2,TILE-4,TILE-4);
+  // 短草簇（不同深浅的绿色小叶片）
+  const blades=[
+    [3,10,2,7,70,150,60],[12,22,2,8,90,180,75],[22,8,2,6,55,140,52],[8,6,2,5,85,170,70],[18,16,2,7,65,155,58],[25,20,2,5,95,185,78]
+  ];
+  blades.forEach((b,i)=>{
+    if(i%5!==h%5) return;
+    ctx.fillStyle='rgba('+b[4]+','+b[5]+','+b[6]+',.45)'; ctx.fillRect(px+b[0],py+b[1],b[2],b[3]);
+    ctx.fillStyle='rgba('+b[4]+','+b[5]+','+b[6]+',.28)'; ctx.fillRect(px+b[0]+1,py+b[1]-2,b[2],b[3]-2);
+  });
+  // 少量枯黄草点缀（比例降低，不再像土堆）
   if(h===4||h===8){
-    ctx.fillStyle='rgba(214,172,84,.55)'; ctx.fillRect(px+6,py+18,2,7); ctx.fillRect(px+11,py+15,2,9); ctx.fillRect(px+16,py+20,2,6);
-    ctx.fillStyle='rgba(232,192,96,.42)'; ctx.fillRect(px+8,py+17,1,6); ctx.fillRect(px+13,py+14,1,7);
+    ctx.fillStyle='rgba(195,165,95,.30)'; ctx.fillRect(px+7,py+19,2,6); ctx.fillRect(px+12,py+16,2,8); ctx.fillRect(px+17,py+21,2,5);
+    ctx.fillStyle='rgba(210,180,110,.22)'; ctx.fillRect(px+9,py+18,1,5); ctx.fillRect(px+14,py+15,1,6);
   }
 }
 function drawPathTile(x,y,p){
   const px=x*TILE, py=y*TILE, type=p.type||'path';
   if(type==='road'){
     const horizontal = p.w>=p.h;
-    // v1.15 真实柏油马路：深沥青底 + 细微噪点
+    // v1.15.2 #5：更真实柏油马路——沥青底 + 细密噪点 +  occasional 井盖
     ctx.fillStyle='#2c3036'; ctx.fillRect(px,py,TILE,TILE);
-    const hsh=(x*13+y*7)%5;
-    ctx.fillStyle='rgba(255,255,255,.04)'; if(hsh===0)ctx.fillRect(px+5,py+7,3,3);
-    ctx.fillStyle='rgba(0,0,0,.18)'; if(hsh===2)ctx.fillRect(px+18,py+20,4,3);
-    ctx.fillStyle='rgba(255,255,255,.03)'; if(hsh===4)ctx.fillRect(px+10,py+22,2,2);
+    const hsh=(x*13+y*7)%7;
+    const noises=[
+      [5,7,3,3,255,255,255,10],[18,20,4,3,0,0,0,45],[10,22,2,2,255,255,255,8],
+      [22,5,2,2,255,255,255,6],[8,18,4,2,0,0,0,30],[15,10,3,3,255,255,255,7]
+    ];
+    noises.forEach((n,i)=>{ if(hsh===i){ ctx.fillStyle='rgba('+n[4]+','+n[5]+','+n[6]+','+(n[7]/255)+')'; ctx.fillRect(px+n[0],py+n[1],n[2],n[3]); } });
+    // 随机井盖
+    if(hsh===5){
+      ctx.fillStyle='rgba(90,90,95,.55)'; ctx.beginPath(); ctx.arc(px+16,py+16,6,0,Math.PI*2); ctx.fill();
+      ctx.strokeStyle='rgba(60,60,65,.55)'; ctx.lineWidth=1; ctx.beginPath(); ctx.arc(px+16,py+16,4,0,Math.PI*2); ctx.stroke();
+    }
     // 路缘（混凝土人行道）：沿路长方向的两条边
     ctx.fillStyle='#6f7378';
     if(horizontal){ ctx.fillRect(px,py,TILE,3); ctx.fillRect(px,py+TILE-3,TILE,3); }
@@ -1590,22 +1675,27 @@ function drawPathTile(x,y,p){
     if(horizontal){ if(y===p.y+((p.h/2)|0)){ ctx.beginPath(); ctx.moveTo(px,py+TILE/2); ctx.lineTo(px+TILE,py+TILE/2); ctx.stroke(); } }
     else { if(x===p.x+((p.w/2)|0)){ ctx.beginPath(); ctx.moveTo(px+TILE/2,py); ctx.lineTo(px+TILE/2,py+TILE); ctx.stroke(); } }
     ctx.setLineDash([]);
-    // v1.15 #7 斑马线：主干道上、斑马线范围内的白色条纹
+    // v1.15.2 #1 斑马线：白线改为与路面平行（横向路画横向条纹，纵向路画纵向条纹）
     if(inCrossing(x,y)){
       ctx.fillStyle='rgba(245,245,245,.82)';
-      for(let i=0;i<2;i++){ const bx=px+5+i*16; ctx.fillRect(bx,py+5,8,TILE-10); }
+      if(horizontal){
+        for(let i=0;i<2;i++){ const by=py+5+i*16; ctx.fillRect(px+4,by,TILE-8,8); }
+      }else{
+        for(let i=0;i<2;i++){ const bx=px+5+i*16; ctx.fillRect(bx,py+5,8,TILE-10); }
+      }
     }
     return;
   }
   if(type==='concrete'){
-    // v1.15 #4 灰色水泥路：水泥板 + 伸缩缝 + 少量裂纹
-    ctx.fillStyle='#9a9ba0'; ctx.fillRect(px,py,TILE,TILE);
-    ctx.fillStyle='rgba(255,255,255,.22)'; ctx.fillRect(px,py,TILE,2);
-    ctx.strokeStyle='rgba(70,70,78,.40)'; ctx.lineWidth=1;
+    // v1.15.2 #5：更真实灰色水泥路——水泥板 + 伸缩缝 + 污渍/裂纹
+    ctx.fillStyle='#9899a0'; ctx.fillRect(px,py,TILE,TILE);
+    ctx.fillStyle='rgba(255,255,255,.18)'; ctx.fillRect(px,py,TILE,2);
+    ctx.strokeStyle='rgba(65,65,73,.38)'; ctx.lineWidth=1;
     ctx.strokeRect(px+0.5,py+0.5,TILE-1,TILE-1);
-    const hs=(x*7+y*13)%4;
-    if(hs===0){ ctx.fillStyle='rgba(126,126,132,.55)'; ctx.fillRect(px+6,py+6,18,18); }
-    if(hs===2){ ctx.fillStyle='rgba(60,60,66,.5)'; ctx.fillRect(px+10,py+20,9,3); ctx.fillRect(px+14,py+23,3,4); }
+    const hs=(x*7+y*13)%5;
+    if(hs===0){ ctx.fillStyle='rgba(120,120,126,.45)'; ctx.fillRect(px+6,py+6,18,18); }
+    if(hs===2){ ctx.fillStyle='rgba(55,55,62,.45)'; ctx.fillRect(px+10,py+20,9,3); ctx.fillRect(px+14,py+23,3,4); }
+    if(hs===3){ ctx.fillStyle='rgba(110,110,116,.30)'; ctx.fillRect(px+4,py+12,24,6); }
     return;
   }
   if(type==='cobble'){
@@ -1619,8 +1709,16 @@ function drawPathTile(x,y,p){
     }
     return;
   }
-  // 土路（默认）：Kenney dirtA
-  kTile('dirtA',px,py);
+  // v1.15.2 #2：删除 Kenney 黄色圆锥形土堆贴图（dirtA），改为程序化灰褐土路
+  ctx.fillStyle='#9d8b6f'; ctx.fillRect(px,py,TILE,TILE);
+  const hs=((x*11+y*7)%5);
+  ctx.fillStyle=['#a89375','#968465','#8f7d62','#9b8769','#a28e70'][hs];
+  ctx.fillRect(px+2,py+2,TILE-4,TILE-4);
+  // 细小石子
+  ctx.fillStyle='rgba(70,62,52,.35)';
+  const pebbles=[[6,8,3,2],[18,20,4,2],[10,22,2,2],[22,7,3,2],[14,14,2,3]];
+  pebbles.forEach(p=>ctx.fillRect(px+p[0],py+p[1],p[2],p[3]));
+  ctx.strokeStyle='rgba(80,72,60,.22)'; ctx.lineWidth=1; ctx.strokeRect(px+0.5,py+0.5,TILE-1,TILE-1);
 }
 function drawRoof(b,x,y,w,h){
   const rh=Math.max(14,Math.min(26,h*0.5));
@@ -2566,6 +2664,15 @@ function computeSun(){
   SUN={ph,dl,shadowDX:shDX,shadowLen:shLen};
   return SUN;
 }
+/* v1.15.2 #4：顶部栏 24 小时制游戏时间（与现实游玩时间同步，一昼夜 = DAY_MS） */
+function updateClock(){
+  const ph=(performance.now()%DAY_MS)/DAY_MS;
+  const totalMins=Math.floor((ph*24+6)*60);
+  const h=(Math.floor(totalMins/60))%24;
+  const m=totalMins%60;
+  const el=document.getElementById('gameClock');
+  if(el) el.textContent=(h<10?'0':'')+h+':'+(m<10?'0':'')+m;
+}
 function updateWeather(now){
   if(weatherState==='clear'&&now>=nextRainAt){
     weatherState='rain'; rainEndAt=now+5*60*1000; isRaining=true;
@@ -2620,53 +2727,82 @@ function drawWeather(){
   }
   ctx.restore();
 }
-/* v1.14 屏幕级光照（类 Minecraft 光影材质包氛围）：暗角(vignette) + 正午暖光晕(bloom) + 夜间冷调降亮 */
+/* v1.15.2 #3：真实光影——模拟方向性太阳/天光/环境光遮蔽，替代简单提亮。
+   用 Canvas 2D 渐变 + additive/multiply 混合实现 Three.js 级光照效果（无 WebGL 重构开销）。 */
 function drawLighting(){
-  const dl=SUN.dl;
-  // 暗角：夜晚更深，营造四周虚化聚焦
-  const g=ctx.createRadialGradient(LOGIC_W/2,LOGIC_H*0.46,Math.min(LOGIC_W,LOGIC_H)*0.30,
-                                    LOGIC_W/2,LOGIC_H*0.5,Math.max(LOGIC_W,LOGIC_H)*0.80);
-  g.addColorStop(0,'rgba(0,0,0,0)');
-  g.addColorStop(1,'rgba(8,12,30,'+(0.15+0.22*(1-Math.max(0,dl)))+')');
-  ctx.fillStyle=g; ctx.fillRect(0,0,LOGIC_W,LOGIC_H);
-  // 正午暖光晕：轻微 bloom 提亮画面中心
-  if(dl>0.15){
-    ctx.save(); ctx.globalCompositeOperation='lighter';
-    const bg=ctx.createRadialGradient(LOGIC_W/2,LOGIC_H*0.32,20, LOGIC_W/2,LOGIC_H*0.32, Math.max(LOGIC_W,LOGIC_H)*0.62);
-    bg.addColorStop(0,'rgba(255,244,205,'+(0.055*dl)+')'); bg.addColorStop(1,'rgba(255,244,205,0)');
-    ctx.fillStyle=bg; ctx.fillRect(0,0,LOGIC_W,LOGIC_H); ctx.restore();
-  }
-  // 地面全局环境冷影：白天淡淡蓝绿压暗远景，夜间更冷
-  const amb=0.05+0.05*(1-Math.max(0,dl));
+  const dl=SUN.dl, ph=SUN.ph;
+  // 1) 全局天空色温：清晨/傍晚暖橙，正午偏白，夜晚深蓝
+  let skyTint, skyA;
+  if(dl>0.6){ skyTint=[255,245,215]; skyA=0.06; }               // 正午：暖白
+  else if(dl>0.2){ skyTint=[255,200,140]; skyA=0.10; }          // 晨昏：金橙
+  else if(dl>-0.2){ skyTint=[180,150,255]; skyA=0.12; }         // 薄暮：紫蓝
+  else { skyTint=[60,90,180]; skyA=0.28; }                      // 深夜：深蓝
   ctx.save(); ctx.globalCompositeOperation='multiply';
-  ctx.fillStyle='rgba(150,170,200,'+amb+')'; ctx.fillRect(0,0,LOGIC_W,LOGIC_H); ctx.restore();
+  ctx.fillStyle='rgba('+skyTint[0]+','+skyTint[1]+','+skyTint[2]+','+skyA+')';
+  ctx.fillRect(0,0,LOGIC_W,LOGIC_H); ctx.restore();
+
+  // 2) 太阳光源方向光（从屏幕太阳位置射向地面），随时间移动
+  const sunT=(ph+0.75)%1;            // 0=地平线东，0.25=正午南顶，0.5=西落
+  const sunX=LOGIC_W*(0.1+sunT*0.8), sunY=LOGIC_H*(0.15+0.55*Math.pow(Math.abs(sunT-0.25)*4,1.4));
+  const dayFac=Math.max(0,dl+0.3)/1.3;  // 夜间关闭方向光
+  if(dayFac>0.02){
+    ctx.save(); ctx.globalCompositeOperation='lighter';
+    const sg=ctx.createRadialGradient(sunX,sunY,8,sunX,sunY,Math.max(LOGIC_W,LOGIC_H)*0.85);
+    sg.addColorStop(0,'rgba(255,240,190,'+(0.18*dayFac)+')');
+    sg.addColorStop(0.35,'rgba(255,230,170,'+(0.06*dayFac)+')');
+    sg.addColorStop(1,'rgba(255,230,170,0)');
+    ctx.fillStyle=sg; ctx.fillRect(0,0,LOGIC_W,LOGIC_H); ctx.restore();
+
+    // 地面平行光晕（模拟太阳斜射的柔和亮带）
+    ctx.save(); ctx.globalCompositeOperation='overlay';
+    const gg=ctx.createLinearGradient(0,0,0,LOGIC_H);
+    gg.addColorStop(0,'rgba(255,250,220,'+(0.10*dayFac)+')');
+    gg.addColorStop(0.55,'rgba(255,250,220,0)');
+    gg.addColorStop(1,'rgba(60,80,120,'+(0.08*dayFac)+')');
+    ctx.fillStyle=gg; ctx.fillRect(0,0,LOGIC_W,LOGIC_H); ctx.restore();
+  }
+
+  // 3) 环境光遮蔽 / 暗角：四周压暗，夜晚更深
+  const vig=0.12+0.20*(1-Math.max(0,dl));
+  const vg=ctx.createRadialGradient(LOGIC_W/2,LOGIC_H*0.46,Math.min(LOGIC_W,LOGIC_H)*0.28,
+                                    LOGIC_W/2,LOGIC_H*0.5,Math.max(LOGIC_W,LOGIC_H)*0.85);
+  vg.addColorStop(0,'rgba(0,0,0,0)');
+  vg.addColorStop(1,'rgba(8,14,32,'+vig+')');
+  ctx.fillStyle=vg; ctx.fillRect(0,0,LOGIC_W,LOGIC_H);
 }
-/* v1.15 夜间光源：路灯（暖色强光源）与萤火虫（移动光源，亮度更小）随入夜叠加发光。
-   用 canvas 2D additive 混合实现，不引入 three.js，避免重构成 WebGL 层。 */
+/* v1.15.2 #3：夜间点光源——路灯（暖色强点光）与萤火虫（移动弱光）用 additive 混合模拟真实发光。
+   在 Canvas 2D 中实现方向光 + 点光源 + 自发光，避免引入 Three.js/WebGL 重构。 */
 function drawLightSources(){
   const nf=Math.max(0,1-Math.max(0,SUN.dl));   // 夜晚强度：白天 0 → 深夜 1
   if(nf<=0.02) return;
   ctx.save(); ctx.globalCompositeOperation='lighter';
-  // 路灯：暖色、范围大、最亮
+  // 路灯：暖色点光源 + 地面光锥
   lamps.forEach(l=>{
-    if(l.x<camX-90||l.x>camX+LOGIC_W+90||l.y<camY-90||l.y>camY+LOGIC_H+90) return;
-    const R=(l.big?160:120)*nf;
-    const g=ctx.createRadialGradient(l.x,l.y-6,4,l.x,l.y-6,R);
-    g.addColorStop(0,'rgba(255,228,150,'+(0.60*nf)+')');
-    g.addColorStop(.45,'rgba(255,205,110,'+(0.24*nf)+')');
-    g.addColorStop(1,'rgba(255,205,110,0)');
-    ctx.fillStyle=g; ctx.beginPath(); ctx.arc(l.x,l.y-6,R,0,7); ctx.fill();
+    if(l.x<camX-110||l.x>camX+LOGIC_W+110||l.y<camY-110||l.y>camY+LOGIC_H+110) return;
+    const R=(l.big?190:145)*nf;
+    const ly=l.y-28; // 灯泡位置（加高后）
+    // 地面光锥
+    const cg=ctx.createRadialGradient(l.x,ly,2,l.x,ly+10,R);
+    cg.addColorStop(0,'rgba(255,235,170,'+(0.55*nf)+')');
+    cg.addColorStop(.35,'rgba(255,210,120,'+(0.22*nf)+')');
+    cg.addColorStop(1,'rgba(255,200,100,0)');
+    ctx.fillStyle=cg; ctx.beginPath(); ctx.arc(l.x,ly+8,R,0,7); ctx.fill();
+    // 灯泡核心高光
+    const bg=ctx.createRadialGradient(l.x,ly-2,1,l.x,ly-2,18*nf);
+    bg.addColorStop(0,'rgba(255,250,220,'+(0.95*nf)+')');
+    bg.addColorStop(1,'rgba(255,250,220,0)');
+    ctx.fillStyle=bg; ctx.beginPath(); ctx.arc(l.x,ly-2,18*nf,0,7); ctx.fill();
   });
-  // 萤火虫：移动光源，亮度显著小于路灯
+  // 萤火虫：移动弱光源，带脉冲
   FIREFLIES.forEach(f=>{
     if(f.x<camX-90||f.x>camX+LOGIC_W+90||f.y<camY-90||f.y>camY+LOGIC_H+90) return;
     const pulse=0.5+0.5*Math.sin(Date.now()/300+f.ph);
-    const R=(42+12*pulse)*nf;
-    const a=0.5*nf*(0.45+0.55*pulse);
+    const R=(46+14*pulse)*nf;
+    const a=0.55*nf*(0.45+0.55*pulse);
     const g=ctx.createRadialGradient(f.x,f.y,1,f.x,f.y,R);
-    g.addColorStop(0,'rgba(195,255,130,'+a+')');
-    g.addColorStop(.5,'rgba(150,230,90,'+(0.16*nf)+')');
-    g.addColorStop(1,'rgba(150,230,90,0)');
+    g.addColorStop(0,'rgba(210,255,150,'+a+')');
+    g.addColorStop(.5,'rgba(160,235,95,'+(0.18*nf)+')');
+    g.addColorStop(1,'rgba(160,235,95,0)');
     ctx.fillStyle=g; ctx.beginPath(); ctx.arc(f.x,f.y,R,0,7); ctx.fill();
   });
   ctx.restore();
@@ -2682,20 +2818,22 @@ function drawGrassTufts(){
     ctx.quadraticCurveTo(g.x+1.2,g.y-gh*0.5,g.x+2.4,g.y-gh); ctx.stroke();
   }
 }
-/* v1.15.1 #2：风吹草动——独立草叶层，每帧随风场轻微摆动（叶尖摇曳，不移动整块草坪） */
+/* v1.15.2 #5：风吹草动——独立草叶层，每帧随全局风场 + 阵风扰动轻微摆动（叶尖摇曳，不移动整块草坪） */
 function drawWindGrass(time){
   const x0=camX-30,x1=camX+LOGIC_W+30,y0=camY-30,y1=camY+LOGIC_H+30;
   ctx.lineCap='round';
+  const gust=Math.sin(time*0.0007)*0.6;   // 缓慢阵风叠加
   for(const g of windGrass){
     if(g.x<x0||g.x>x1||g.y<y0||g.y>y1) continue;
-    const wind=Math.sin(time*0.0016 + g.ph + g.x*0.015)*2.6;   // 微摆幅度 ~2.6px
+    const wind=(Math.sin(time*0.0016 + g.ph + g.x*0.015)+gust)*2.8;
     const gh=g.h;
-    ctx.strokeStyle=['rgba(86,166,76,.72)','rgba(120,196,104,.66)','rgba(70,150,64,.62)'][g.k];
+    const cols=['rgba(86,166,76,.70)','rgba(120,196,104,.64)','rgba(70,150,64,.60)','rgba(145,210,120,.58)'];
+    ctx.strokeStyle=cols[g.k];
     ctx.lineWidth=1.3;
     ctx.beginPath(); ctx.moveTo(g.x,g.y);
     ctx.quadraticCurveTo(g.x+wind*0.5,g.y-gh*0.55, g.x+wind, g.y-gh);
     ctx.stroke();
-    ctx.fillStyle='rgba(185,225,150,.5)'; ctx.beginPath(); ctx.arc(g.x+wind,g.y-gh,1.1,0,7); ctx.fill();
+    ctx.fillStyle='rgba(185,225,150,.45)'; ctx.beginPath(); ctx.arc(g.x+wind,g.y-gh,1.1,0,7); ctx.fill();
   }
 }
 function updateCamera(){
@@ -2718,11 +2856,12 @@ function buildFullMap(){
    全图迷你地图（v1.9：解决地图太大/浦东看不见；点击传送导航）
    ============================================================ */
 const mmCv=document.getElementById('minimap');
-mmCv.width=200; mmCv.height=150;  // v1.10 修复：强制 buffer 尺寸（防止 attribute 丢失导致 minimap 空白）
 const mctx=mmCv.getContext('2d');
 mctx.imageSmoothingEnabled=false;
 const MM_W=mmCv.width, MM_H=mmCv.height;
 const MM_SX=MM_W/COLS, MM_SY=MM_H/ROWS;
+const minimapModal=document.getElementById('minimapModal');
+let minimapOpen=false;
 function drawMinimap(){
   mctx.clearRect(0,0,MM_W,MM_H);
   // 草地底
@@ -2881,8 +3020,8 @@ function render(){
   try{ drawWeather(); }catch(e){ window.__showErr&&window.__showErr('weather: '+e.message); }
   try{ drawSky(); }catch(e){ window.__showErr&&window.__showErr('sky: '+e.message); }
   try{ drawLighting(); }catch(e){ window.__showErr&&window.__showErr('lighting: '+e.message); }
-  // 全图迷你地图（屏幕空间，独立 canvas）
-  try{ drawMinimap(); }catch(e){ window.__showErr&&window.__showErr('minimap: '+e.message); }
+  // v1.15.2 小地图改为全屏弹窗：仅在打开时绘制
+  if(minimapOpen) try{ drawMinimap(); }catch(e){ window.__showErr&&window.__showErr('minimap: '+e.message); }
 }
 
 /* v1.12 文本覆盖层：所有地图文字在角色层之后重绘 → 字体始终显示在最上层 */
@@ -2928,6 +3067,7 @@ function loop(t){
   updateAnimals(dt);
   updateVehicles(dt);
   updateWeather(performance.now());
+  updateClock();
   if(villainCD>0)villainCD--;
   else if(!dialogOpen&&!splashing){
     for(const v of VILLAINS){
@@ -2992,7 +3132,12 @@ cv.addEventListener('pointerdown',e=>{
   if(dialogOpen) return;
   moveTo(mx,my);
 });
-/* ---- 小地图点击瞬移（v1.9：点击地图任意位置传送到对应格） ---- */
+/* ---- v1.15.2 小地图：顶部栏按钮打开全屏弹窗，点击地图瞬移，红叉/Esc 关闭 ---- */
+function openMinimap(){ minimapOpen=true; minimapModal.classList.add('show'); drawMinimap(); }
+function closeMinimap(){ minimapOpen=false; minimapModal.classList.remove('show'); }
+document.getElementById('minimapBtn').onclick=(e)=>{ e.stopPropagation(); openMinimap(); };
+document.getElementById('minimapClose').onclick=(e)=>{ e.stopPropagation(); closeMinimap(); };
+minimapModal.addEventListener('pointerdown',e=>{ if(e.target===minimapModal) closeMinimap(); });
 mmCv.addEventListener('pointerdown',e=>{
   e.stopPropagation();
   const r=mmCv.getBoundingClientRect();
@@ -3000,10 +3145,11 @@ mmCv.addEventListener('pointerdown',e=>{
   const tx=Math.floor(mx/MM_W*COLS), ty=Math.floor(my/MM_H*ROWS);
   if(tx<0||ty<0||tx>=COLS||ty>=ROWS) return;
   warpTo(tx*TILE+TILE/2, ty*TILE+TILE/2);
+  closeMinimap();
 });
 window.addEventListener('keydown',e=>{
   if(splashing) return;
-  if(e.code==='Escape'&&mapMode){ mapMode=false; return; }
+  if(e.code==='Escape'){ if(minimapOpen){ closeMinimap(); return; } if(mapMode){ mapMode=false; return; } }
   if(e.code==='Space'&&!dialogOpen){
     let near=null;NPCS.forEach(n=>{if(Math.hypot(player.x-n.px,player.y-n.py)<90)near=n;});
     if(near) openDialog(near);
@@ -3283,14 +3429,18 @@ cg.querySelectorAll('[data-id]').forEach(b=>{
 
 /* ---------- 玩法 ---------- */
 document.getElementById('helpBtn').onclick=()=>toast('点地面走 · 点村民聊 · Grill me 摸底');
-/* ---------- 全图导航模式（v1.10：整图一屏显示，点击传送） ---------- */
-document.getElementById('mapBtn').onclick=()=>{
-  mapMode=!mapMode;
-  toast(mapMode?'🗺️ 全图模式：整张地图固定显示，点击任意位置传送':'已返回游戏视角');
-};
+/* ---------- 全图导航（v1.15.2：统一到小地图弹窗） ---------- */
+document.getElementById('mapBtn').onclick=(e)=>{ e.stopPropagation(); openMinimap(); };
 
 /* ---------- 更新日志（右上角） ---------- */
 const CHANGELOG=[
+  {ver:'v1.15.2',date:'2026-08-22',items:[
+    '车辆细化：新增卡车、电动车、更多汽车配色；汽车增加车灯/车窗/车门细节；斑马线白线改为与路面平行',
+    '删除 Kenney 黄色圆锥形土堆贴图（dirtA），默认土路改为程序化灰褐路面',
+    '真实光影：用 Canvas 2D 模拟方向性太阳/天光/环境光遮蔽 + 路灯点光源光锥 + 萤火虫发光，替代简单提亮',
+    '顶部栏 24 小时制游戏时间（与现实游玩同步，一昼夜 15 分钟）；小地图改为顶部栏按钮，点击全屏弹窗，支持点击传送与红叉/Esc 关闭',
+    '草坪/路面贴图重做：草皮增加深浅微斑与多色草簇，柏油路增加噪点/井盖，水泥路增加污渍，风动草层更密且带阵风叠加',
+  ]},
   {ver:'v1.15.1',date:'2026-08-22',items:[
     '青蛙修复：跳频从"每帧乱跳"改为约 10 秒一次，且强制在水陆相邻格之间跳跃，入水/出水产生水花',
     '植被重做：删除黄色土堆/石头堆贴图，改为程序化绿色灌木；新增独立"风吹草动"层（草叶随全局风场 + 各自相位微摆，仅叶尖摇曳）；大树/大冠乔木增加树皮纹理与树叶高光阴影，树冠随风轻摆',

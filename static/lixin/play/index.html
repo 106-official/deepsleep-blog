@@ -975,12 +975,17 @@ function updateAnimals(dt){
   FIXED_CATS.forEach(c=>{ catState(c,dt); c.ph+=0.02; c.blinkPhase+=dt; c.x=c.hx+Math.cos(c.ph)*14; c.y=c.hy+Math.sin(c.ph*1.7)*8; c.dir=Math.cos(c.ph)>0?1:-1; });
   FROGS.forEach(fr=>{
     fr.ft+=dt; if(fr.ft>=0.16){ fr.ft=0; fr.frame=(fr.frame+1)%12; }
-    // v1.15：每 ~10 秒小型跳跃移动 1-2 格；入水/出水产生水花
-    fr.hop-=dt; if(fr.hop<=0){ fr.hop=10000; const dir=rnd()<0.5?-1:1; const step=1+Math.floor(rnd()*2);
-      const nx=fr.x+dir*step*TILE;
+    // v1.15：每 ~10 秒小型跳跃移动随机 1-2 格（可入水/出水）；跨越水面产生水花
+    fr.hop-=dt; if(fr.hop<=0){ fr.hop=8+Math.random()*4;
+      const horiz=Math.random()<0.5;
+      const step=1+Math.floor(Math.random()*2);            // 随机 1-2 格
+      const dir=Math.random()<0.5?-1:1;
+      const nx=fr.x+(horiz?dir*step*TILE:0);
+      const ny=fr.y+(horiz?0:dir*step*TILE);
       const wasWater=isWater(fr.x,fr.y);
-      if(passable(nx,fr.y)) fr.x=nx;
-      if(isWater(fr.x,fr.y)!==wasWater) spawnRipple(fr.x,fr.y);
+      // 允许跳到相邻地块（含水面：青蛙可入水/出水）；越界则原地不动
+      if(nx>=0&&ny>=0&&nx<W&&ny<H && (passable(nx,ny)||isWater(nx,ny))){ fr.x=nx; fr.y=ny; }
+      if(isWater(fr.x,fr.y)!==wasWater) spawnRipple(fr.x,fr.y);   // 入水/出水水花涟漪
     }
   });
 }

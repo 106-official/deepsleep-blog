@@ -819,6 +819,16 @@ BUILDINGS.push(
 
 const blocked=new Set();
 const key=(x,y)=>x+','+y;
+// v1.15.3 编辑器贴图 override：管理面板拖拽保存的逐格地形，游戏启动时加载并生效
+// overrides: { "gx,gy": {t:'road'|'concrete'|'cobble'|'dirt'|'grass'|'water'} }
+let OVERRIDES={};
+function ovApply(){ buildBlocked(); invalidateCache(); }
+function drawOverrideWater(x,y){
+  const px=x*TILE, py=y*TILE;
+  ctx.fillStyle='#3f86c4'; ctx.fillRect(px,py,TILE,TILE);
+  ctx.fillStyle='rgba(255,255,255,.10)'; ctx.fillRect(px+4,py+6,TILE-8,3);
+  ctx.fillStyle='rgba(255,255,255,.07)'; ctx.fillRect(px+6,py+18,TILE-12,2);
+}
 function buildBlocked(){
   blocked.clear();
   BUILDINGS.forEach(b=>{for(let i=b.x;i<b.x+b.w;i++)for(let j=b.y;j<b.y+b.h;j++)blocked.add(key(i,j));});
@@ -829,6 +839,8 @@ function buildBlocked(){
     blocked.add(key(i,j));
   }});
   WALLS.forEach(w=>{for(let i=w.x;i<w.x+w.w;i++)for(let j=w.y;j<w.y+w.h;j++)blocked.add(key(i,j));});
+  // v1.15.3 编辑器水格 override → 不可通行
+  for(const k in OVERRIDES){ if(OVERRIDES[k]&&OVERRIDES[k].t==='water'){ const sp=k.split(','); blocked.add(key(+sp[0],+sp[1])); } }
 }
 function isPath(x,y){
   return PATHS.some(p=>x>=p.x&&x<p.x+p.w&&y>=p.y&&y<p.y+p.h)
@@ -842,6 +854,7 @@ function passable(px,py){
 /* v1.15：判断某世界坐标是否在水面（不含桥面） */
 function isWater(px,py){
   const tx=Math.floor(px/TILE), ty=Math.floor(py/TILE);
+  if(OVERRIDES[key(tx,ty)]&&OVERRIDES[key(tx,ty)].t==='water') return true;
   return LAKE.some(p=>tx>=p.x&&tx<p.x+p.w&&ty>=p.y&&ty<p.y+p.h)
     && !LAKE_BRIDGES.some(b=>tx>=b.x&&tx<b.x+b.w&&ty>=b.y&&ty<b.y+b.h);
 }
@@ -2351,6 +2364,14 @@ function drawMapVisible(cx,cy){
   const r=visRect(cx,cy);
   // 地面草皮 / 道路（三类：马路 / 土路 / 鹅卵石）
   for(let y=r.y0;y<=r.y1;y++)for(let x=r.x0;x<=r.x1;x++){
+    // v1.15.3 编辑器 override：优先使用面板保存的逐格地形
+    const ov=OVERRIDES[key(x,y)];
+    if(ov){
+      if(ov.t==='grass'){ drawGrassTile(x,y); }
+      else if(ov.t==='water'){ drawOverrideWater(x,y); }
+      else { drawPathTile(x,y,{type:ov.t}); }
+      continue;
+    }
     let path=null;
     for(const p of PATHS) if(x>=p.x&&x<p.x+p.w&&y>=p.y&&y<p.y+p.h){path=p;break;}
     if(path){drawPathTile(x,y,path);continue;}
@@ -3109,6 +3130,11 @@ spawnVehicles();
 if(kImg.complete) kReady=true;   // v1.11 首次全图预渲染（贴图就绪则同步构建，否则由 onload 触发）
 if(kReady) buildFullMap(); else invalidateCache();
 requestAnimationFrame(loop);
+// v1.15.3 加载编辑器逐格贴图 override（管理面板拖拽保存的结果），加载后重算通行与缓存
+fetch('tile-overrides.json').then(r=>r.ok?r.json():null).then(d=>{
+  if(d&&d.overrides){ OVERRIDES=d.overrides; }
+  ovApply();
+}).catch(()=>{ /* 无 override 文件则忽略，不影响游戏 */ });
 
 /* ---------- 输入 ---------- */
 cv.addEventListener('pointerdown',e=>{
@@ -3434,6 +3460,11 @@ document.getElementById('mapBtn').onclick=(e)=>{ e.stopPropagation(); openMinima
 
 /* ---------- 更新日志（右上角） ---------- */
 const CHANGELOG=[
+  {ver:'v1.15.3',date:'2026-08-22',items:[
+    '新增贴图编辑器后端（tile-editor/）：拖拽式逐格编辑地形，支持草地/柏油路/灰水泥路/鹅卵石路/土路/水面与橡皮擦，松开自动保存',
+    '游戏按 tile-overrides.json 加载编辑器覆盖：改动的格子真实生效（含水面不可通行、河流动画、道路贴图），刷新即见',
+    '编辑器底图叠加现有水面/道路/建筑/围墙，黄框标记已覆盖格，可一键清空全部覆盖',
+  ]},
   {ver:'v1.15.2',date:'2026-08-22',items:[
     '车辆细化：新增卡车、电动车、更多汽车配色；汽车增加车灯/车窗/车门细节；斑马线白线改为与路面平行',
     '删除 Kenney 黄色圆锥形土堆贴图（dirtA），默认土路改为程序化灰褐路面',

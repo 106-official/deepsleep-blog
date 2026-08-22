@@ -615,7 +615,7 @@ let camX=0, camY=0;
 /* ---- 四期公寓宿舍楼（立信 1-18 栋：按真实宿舍区简化 3 排 × 6 列，楼间距宽敞） ---- */
 const DORM_COLS=[6,18,30,42,54,66];
 const DORM_ROWS=[8,20,32];
-const BUILDINGS=[];
+let BUILDINGS=[];
 (function(){
   let n=1;
   DORM_ROWS.forEach((ry)=>{
@@ -702,7 +702,7 @@ const TRACKS=[ {x:20,y:108,w:6,h:5}, {x:120,y:108,w:6,h:4} ]; // 文翔路操场
 const PONDS=[];
 /* v1.12 河流湖泊美化：主河道 + 湖面加宽段（小湖），不再是笔直一条线；
    加宽段均位于两条鹅卵石路之间（y:70/74 与 y:62/66），不挡路不压建筑 */
-const LAKE=[
+let LAKE=[
   // ===== 文汇河（v1.15 #8：商铺后、宿舍区前，y:38-39；北门桥 x:40-42 跨河） =====
   {x:2,y:37,w:82,h:3, depth:0.75},   // 主河道横贯四期公寓南缘 y:37-39（v1.15.1 加宽 1 格）
   {x:3,y:37,w:16,h:3, lake:true},    // 西端小潭（北门桥以西加宽）
@@ -717,7 +717,7 @@ const LAKE=[
   {x:112,y:62,w:7,h:4,  lake:true},   // 西侧小潭
   {x:138,y:62,w:14,h:4, lake:true},   // 东侧大湖（上川桥以东）
 ];
-const LAKE_BRIDGES=[
+let LAKE_BRIDGES=[
   // 北门桥：跨文汇河（四期公寓南缘），与文翔路校区北门对齐
   {x:39,y:36,w:5,h:5,name:'北门桥'},
   // 跨河石桥：垂直跨过 2 格主河道（y 向覆盖河+两岸），3×4 更大更立体，桥面铺满盖水不重叠
@@ -731,7 +731,7 @@ const SQUARES=[
   {x:108,y:70,w:5,h:3,emoji:'🪙',name:'钱币广场'},
   {x:116,y:70,w:7,h:3,emoji:'💠',name:'金融广场(雕塑融)'},
 ];
-const WALLS=[
+let WALLS=[
   // 四期公寓（北，y:0-40；南面向文汇路开放）
   {x:0,y:0,w:24,h:1},{x:26,y:0,w:36,h:1},{x:64,y:0,w:24,h:1}, // 北墙（4/5号门 x:24-25/62-63 开口）
   {x:0,y:1,w:1,h:40},{x:86,y:1,w:1,h:40},                       // 东西墙
@@ -746,7 +746,7 @@ const WALLS=[
   {x:102,y:53,w:1,h:23},{x:102,y:78,w:1,h:50},                  // 西墙（2号门 y:76-77 开口）
   {x:174,y:53,w:1,h:47},{x:174,y:102,w:1,h:26},                 // 东墙（4号门 y:100-101 开口）
 ];
-const PATHS=[
+let PATHS=[
   // 文汇路小吃街（宽 8 格，横贯北区，宿舍↔校区）= 马路（沥青）
   {x:0,y:42,w:176,h:8,type:'road'},
   // 校际大道（宽 12 格，文翔路↔上川路）= 马路（沥青）
@@ -823,6 +823,16 @@ const key=(x,y)=>x+','+y;
 // overrides: { "gx,gy": {t:'road'|'concrete'|'cobble'|'dirt'|'grass'|'water'} }
 let OVERRIDES={};
 function ovApply(){ buildBlocked(); invalidateCache(); }
+// v1.15.4 地图编辑器结构层 override：map-data.json 可整体替换道路/水域/桥梁/围墙/建筑/路灯
+function applyMapData(md){
+  if(!md||typeof md!=='object') return;
+  if(Array.isArray(md.paths)) PATHS=md.paths;
+  if(Array.isArray(md.lakes)) LAKE=md.lakes;
+  if(Array.isArray(md.bridges)) LAKE_BRIDGES=md.bridges;
+  if(Array.isArray(md.walls)) WALLS=md.walls;
+  if(Array.isArray(md.buildings)) BUILDINGS=md.buildings;
+  if(Array.isArray(md.lamps)) lamps=md.lamps.map(l=>({x:l.x*TILE+TILE/2,y:l.y*TILE+TILE/2,big:!!l.big}));
+}
 function drawOverrideWater(x,y){
   const px=x*TILE, py=y*TILE;
   ctx.fillStyle='#3f86c4'; ctx.fillRect(px,py,TILE,TILE);
@@ -917,7 +927,7 @@ for(let i=0;i<12000;i++){ const tx=Math.floor(rnd()*COLS), ty=Math.floor(rnd()*R
   windGrass.push({x:px+(rnd()-0.5)*TILE, y:py+(rnd()*0.4+0.35)*TILE, ph:rnd()*6.28, h:6+rnd()*10, k:Math.floor(rnd()*4)});
 }
 /* ---- 路灯（先列主干道两侧，再自动校验：不在路上/不在水中/不在建筑与广场上） ---- */
-const lamps=[];
+let lamps=[];
 function lampSpot(x,y,big){ if(isPath(x,y)||blocked.has(key(x,y))||SQUARES.some(s=>x>=s.x&&x<s.x+s.w&&y>=s.y&&y<s.y+s.h)) return;
   lamps.push({x:x*TILE+TILE/2,y:y*TILE+TILE/2,big:!!big}); }
 // 文汇路小吃街两侧（宿舍侧 y:41 / 校区侧 y:50）
@@ -3130,11 +3140,18 @@ spawnVehicles();
 if(kImg.complete) kReady=true;   // v1.11 首次全图预渲染（贴图就绪则同步构建，否则由 onload 触发）
 if(kReady) buildFullMap(); else invalidateCache();
 requestAnimationFrame(loop);
-// v1.15.3 加载编辑器逐格贴图 override（管理面板拖拽保存的结果），加载后重算通行与缓存
-fetch('tile-overrides.json').then(r=>r.ok?r.json():null).then(d=>{
-  if(d&&d.overrides){ OVERRIDES=d.overrides; }
+// v1.15.3/4 加载地图编辑器产物：map-data.json（结构层：道路/水域/桥梁/围墙/建筑/路灯 + 逐格地形）
+// 与旧版 tile-overrides.json（仅逐格地形）兼容。加载后重算通行与缓存，刷新即生效。
+Promise.all([
+  fetch('map-data.json').then(r=>r.ok?r.json():null).catch(()=>null),
+  fetch('tile-overrides.json').then(r=>r.ok?r.json():null).catch(()=>null)
+]).then(([md,ov])=>{
+  applyMapData(md);
+  const o=(ov&&ov.overrides)?ov.overrides:{};
+  if(md&&md.overrides) Object.assign(o,md.overrides);   // map-data.json 的覆盖优先
+  if(Object.keys(o).length) OVERRIDES=o;
   ovApply();
-}).catch(()=>{ /* 无 override 文件则忽略，不影响游戏 */ });
+}).catch(()=>{ /* 无编辑器文件则用默认地图，不影响游戏 */ });
 
 /* ---------- 输入 ---------- */
 cv.addEventListener('pointerdown',e=>{
@@ -3460,6 +3477,11 @@ document.getElementById('mapBtn').onclick=(e)=>{ e.stopPropagation(); openMinima
 
 /* ---------- 更新日志（右上角） ---------- */
 const CHANGELOG=[
+  {ver:'v1.15.4',date:'2026-08-22',items:[
+    '贴图编辑器升级为完整「地图编辑器」：可拖拽绘制/删除 道路矩形（柏油/水泥/鹅卵石/土路）、水域矩形、桥梁矩形、围墙矩形、建筑矩形（带名称），单击放置路灯（大/小），保留逐格地形笔与橡皮擦',
+    '新增结构层数据 map-data.json：游戏启动时加载并整体替换道路/水域/桥梁/围墙/建筑/路灯，配合 tile-overrides.json 逐格地形，刷新即生效；编辑结果写入 map-data.json（结构+地形一体化）',
+    '编辑器新增右侧结构列表（按图层展示、可逐项删除）、保存/重新加载/清空地形覆盖/还原默认地图按钮；非法矩形（零尺寸）自动过滤',
+  ]},
   {ver:'v1.15.3',date:'2026-08-22',items:[
     '新增贴图编辑器后端（tile-editor/）：拖拽式逐格编辑地形，支持草地/柏油路/灰水泥路/鹅卵石路/土路/水面与橡皮擦，松开自动保存',
     '游戏按 tile-overrides.json 加载编辑器覆盖：改动的格子真实生效（含水面不可通行、河流动画、道路贴图），刷新即见',

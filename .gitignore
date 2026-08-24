@@ -26,7 +26,7 @@ Thumbs.db
 .workbuddy/
 
 # Lixin RPG editor runtime data
-static/lixin/play/map-data.json
+# map-data.json is now tracked (cross-device sync via git)
 static/lixin/play/tile-overrides.json
 
 /node_modules/

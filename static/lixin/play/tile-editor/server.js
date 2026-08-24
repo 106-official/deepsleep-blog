@@ -43,7 +43,11 @@ function writeMap(obj){
     out.overrides={};
     for(const k in obj.overrides){
       const v=obj.overrides[k];
-      if(v&&typeof v==='object'&&v.t) out.overrides[k]={t:v.t};
+      if(v&&typeof v==='object'&&v.t){
+        out.overrides[k]={t:v.t};
+        if(Number.isFinite(v.w)&&v.w>0) out.overrides[k].w=Math.floor(v.w);
+        if(Number.isFinite(v.h)&&v.h>0) out.overrides[k].h=Math.floor(v.h);
+      }
     }
   }
   // 还原默认：写空对象 {}，readMap 会因无有效键自动回退到 map-base.json；游戏 applyMapData({}) 也为空操作

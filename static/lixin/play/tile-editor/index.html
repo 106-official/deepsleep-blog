@@ -119,6 +119,57 @@ const TERRAIN=[
 ];
 function terrainHex(t){ const f=TERRAIN.find(x=>x.t===t); return f?f.hex:'#4a9a40'; }
 function isGrass(t){ return t==='grass'||(t&&t.indexOf('grass')===0); }
+// 统一中文显示名（贴图按钮不再出现英文 key）
+function terrainName(t){
+  if(GV[t]&&GV[t].name) return GV[t].name;
+  if(TEX_ATLAS[t]&&TEX_ATLAS[t].name) return TEX_ATLAS[t].name;
+  return ({road:'柏油路',concrete:'水泥路',cobble:'鹅卵石路',dirt:'土路',water:'水面',grass:'草地'})[t]||t;
+}
+/* ---------- 贴图按钮悬浮预览 ---------- */
+let chipPreviewBox=null;
+function ensureChipPreview(){
+  if(chipPreviewBox) return chipPreviewBox;
+  chipPreviewBox=document.createElement('div');
+  chipPreviewBox.id='chipPreview';
+  chipPreviewBox.style.cssText='position:fixed;z-index:9999;pointer-events:none;display:none;background:#fff;border:2px solid #6b4f2a;border-radius:8px;padding:6px;box-shadow:0 6px 18px rgba(0,0,0,.35);text-align:center;font-size:12px;color:#333;';
+  document.body.appendChild(chipPreviewBox);
+  return chipPreviewBox;
+}
+function showChipPreview(el,html,label){
+  const b=ensureChipPreview();
+  b.innerHTML='<div style="width:64px;height:64px;display:flex;align-items:center;justify-content:center;">'+html+'</div><div style="margin-top:3px;font-weight:bold;">'+label+'</div>';
+  b.style.display='block';
+  const r=el.getBoundingClientRect();
+  let x=r.right+10, y=r.top-10;
+  if(x+96>window.innerWidth) x=r.left-96;
+  if(y+96>window.innerHeight) y=window.innerHeight-100;
+  b.style.left=Math.max(4,x)+'px'; b.style.top=Math.max(4,y)+'px';
+}
+function hideChipPreview(){ if(chipPreviewBox) chipPreviewBox.style.display='none'; }
+// 地形贴图缩略图（64×64）
+function thumbHTML(t){
+  const S=64, c=document.createElement('canvas'); c.width=S; c.height=S; const g=c.getContext('2d'); g.imageSmoothingEnabled=false;
+  if(TEX_ATLAS[t]){ const a=TEX_ATLAS[t], im=TEX_IMGS[a.sheet];
+    if(im&&im.complete&&im.naturalWidth){ const d=TEX_DIMS[a.sheet]; const cw=im.naturalWidth/d.cols, ch=im.naturalHeight/d.rows; g.drawImage(im,a.c*cw,a.r*ch,cw,ch,0,0,S,S); return '<img src="'+c.toDataURL()+'">'; }
+    g.fillStyle='#8a8a8a'; g.fillRect(0,0,S,S); return '<img src="'+c.toDataURL()+'">';
+  }
+  if(GV[t]){ const v=GV[t]; g.fillStyle='rgb('+v.base.join(',')+')'; g.fillRect(0,0,S,S);
+    g.fillStyle='rgba(255,255,255,.25)'; for(let i=0;i<30;i++) g.fillRect((i*53)%S,(i*29)%S,2,3);
+    return '<img src="'+c.toDataURL()+'">'; }
+  const col=({road:'#2c3036',concrete:'#9899a0',cobble:'#8d8a82',dirt:'#9d8b6f',water:'#3f86c4',grass:'#4a9a40'})[t];
+  if(col){ g.fillStyle=col; g.fillRect(0,0,S,S); return '<img src="'+c.toDataURL()+'">'; }
+  return '<div style="font-size:11px;color:#999;">无预览</div>';
+}
+// 物件贴图缩略图（透明 PNG 或简笔占位）
+function objPreviewHTML(t){
+  const def=OBJ_DEF[t]; if(def&&def.file){ const im=objImgEditor(def.file);
+    if(im.complete&&im.naturalWidth) return '<img src="'+def.file+'" style="max-width:64px;max-height:64px;">';
+  }
+  const c=document.createElement('canvas'); c.width=64; c.height=64; const g=c.getContext('2d'); g.imageSmoothingEnabled=false;
+  g.fillStyle='rgba(120,180,90,.85)'; g.beginPath(); g.arc(32,40,18,0,7); g.fill();
+  g.fillStyle='#6b4f2a'; g.fillRect(28,40,8,18);
+  return '<img src="'+c.toDataURL()+'">';
+}
 /* 编辑器 v0.3：写实像素地表贴图图集（与游戏共享 assets/tiles/ 目录） */
 const TEX_ATLAS={
   gravel:{sheet:'../assets/tiles/floors.png',c:0,r:0,name:'碎石'},
@@ -140,9 +191,42 @@ const TEX_DIMS={'../assets/tiles/floors.png':{cols:18,rows:3},'../assets/tiles/g
 const TEX_IMGS={};
 function texImg(src){ let im=TEX_IMGS[src]; if(!im){ im=new Image(); im.src=src; TEX_IMGS[src]=im; } return im; }
 for(const k in TEX_ATLAS) texImg(TEX_ATLAS[k].sheet);
-/* 编辑器 v0.3：可放置物件类型 */
-const OBJ_TYPES={o_tree:'树',o_pine:'松树',o_rock:'岩石',o_bush:'灌木',o_flower:'花',o_mushroom:'蘑菇',o_barrel:'木桶',o_crate:'木箱',o_sign:'告示牌',o_fence_h:'横栅栏',o_fence_v:'竖栅栏',o_lamp:'地灯'};
-let objType='o_tree';
+/* 编辑器 v0.4：可放置物件（名称 / 占地 / 障碍 / 透明贴图） */
+const OBJ_DEF={
+  t_oak:{name:'橡树',w:3,h:5,obstacle:'trunk',file:'../assets/obj/t_oak.png'},
+  t_pine:{name:'松树',w:2,h:6,obstacle:'trunk',file:'../assets/obj/t_pine.png'},
+  t_maple:{name:'枫树',w:3,h:5,obstacle:'trunk',file:'../assets/obj/t_maple.png'},
+  t_willow:{name:'柳树',w:4,h:5,obstacle:'trunk',file:'../assets/obj/t_willow.png'},
+  t_palm:{name:'棕榈树',w:2,h:6,obstacle:'trunk',file:'../assets/obj/t_palm.png'},
+  t_birch:{name:'白桦',w:2,h:5,obstacle:'trunk',file:'../assets/obj/t_birch.png'},
+  f_tulip:{name:'郁金香',w:1,h:1,obstacle:'none',file:'../assets/obj/f_tulip.png'},
+  f_rose:{name:'玫瑰',w:1,h:1,obstacle:'none',file:'../assets/obj/f_rose.png'},
+  f_daisy:{name:'雏菊',w:1,h:1,obstacle:'none',file:'../assets/obj/f_daisy.png'},
+  f_lavender:{name:'薰衣草',w:1,h:1,obstacle:'none',file:'../assets/obj/f_lavender.png'},
+  f_sunflower:{name:'向日葵',w:1,h:1,obstacle:'none',file:'../assets/obj/f_sunflower.png'},
+  f_clover:{name:'三叶草',w:1,h:1,obstacle:'none',file:'../assets/obj/f_clover.png'},
+  g_clump:{name:'草丛',w:1,h:1,obstacle:'none',file:'../assets/obj/g_clump.png'},
+  g_fern:{name:'蕨类',w:1,h:1,obstacle:'none',file:'../assets/obj/g_fern.png'},
+  g_reed:{name:'芦苇',w:1,h:1,obstacle:'none',file:'../assets/obj/g_reed.png'},
+  g_moss:{name:'苔藓',w:1,h:1,obstacle:'none',file:'../assets/obj/g_moss.png'},
+  d_rock:{name:'岩石',w:2,h:1,obstacle:'all',file:'../assets/obj/d_rock.png'},
+  d_bush:{name:'灌木',w:2,h:1,obstacle:'all',file:'../assets/obj/d_bush.png'},
+  d_mushroom:{name:'蘑菇',w:1,h:1,obstacle:'none',file:'../assets/obj/d_mushroom.png'},
+  d_barrel:{name:'木桶',w:1,h:1,obstacle:'all'},
+  d_crate:{name:'木箱',w:1,h:1,obstacle:'all'},
+  d_sign:{name:'告示牌',w:1,h:1,obstacle:'none'},
+  d_lamp:{name:'地灯',w:1,h:1,obstacle:'none'},
+  d_fence_h:{name:'横栅栏',w:1,h:1,obstacle:'none'},
+  d_fence_v:{name:'竖栅栏',w:1,h:1,obstacle:'none'}
+};
+const OBJ_LEGACY=['o_tree','o_pine','o_rock','o_bush','o_flower','o_mushroom','o_barrel','o_crate','o_sign','o_fence_h','o_fence_v','o_lamp'];
+const OBJ_TYPES={}; for(const k in OBJ_DEF) OBJ_TYPES[k]=1; OBJ_LEGACY.forEach(k=>OBJ_TYPES[k]=1);
+const OBJ_NAMES={}; for(const k in OBJ_DEF) OBJ_NAMES[k]=OBJ_DEF[k].name; OBJ_LEGACY.forEach(k=>{ if(!OBJ_NAMES[k]) OBJ_NAMES[k]=k.replace('o_',''); });
+function objDefOf(t){ return OBJ_DEF[t]||(OBJ_LEGACY.includes(t)?{w:1,h:1}:null); }
+function isObject(t){ return !!OBJ_TYPES[t]; }
+const OBJ_IMGS={};
+function objImgEditor(file){ let im=OBJ_IMGS[file]; if(!im){ im=new Image(); im.onload=()=>draw(); im.src=file; OBJ_IMGS[file]=im; } return im; }
+let objType='t_oak';
 
 /* 结构层元信息 */
 const LAYER_META={
@@ -202,8 +286,10 @@ function renderSubbar(){
       const d=document.createElement('div');
       d.className='tool'+(brushType===t.t?' active':''); d.dataset.t=t.t;
       d.style.cssText='padding:3px 8px;font-size:12px;';
-      d.innerHTML='<span class="sw" style="background:'+t.hex+'"></span>'+(GV[t.t]?GV[t.t].name:t.t);
+      d.innerHTML='<span class="sw" style="background:'+t.hex+'"></span>'+terrainName(t.t);
       d.onclick=()=>{ brushType=t.t; renderSubbar(); };
+      d.onmouseenter=()=>showChipPreview(d, thumbHTML(t.t), terrainName(t.t));
+      d.onmouseleave=hideChipPreview;
       subbarEl.appendChild(d);
     });
   } else if(tool==='road'){
@@ -211,7 +297,7 @@ function renderSubbar(){
     subbarEl.appendChild(lbl);
     const sel=document.createElement('select');
     ['concrete','road','cobble','dirt'].forEach(t=>{
-      const o=document.createElement('option'); o.value=t; o.textContent=t; sel.appendChild(o);
+      const o=document.createElement('option'); o.value=t; o.textContent=terrainName(t); sel.appendChild(o);
     });
     sel.value=roadType;
     sel.onchange=()=>{ roadType=sel.value; };
@@ -230,12 +316,15 @@ function renderSubbar(){
   } else if(tool==='object'){
     const lbl=document.createElement('span'); lbl.className='lbl'; lbl.textContent='物件：';
     subbarEl.appendChild(lbl);
-    Object.keys(OBJ_TYPES).forEach(t=>{
+    Object.keys(OBJ_DEF).forEach(t=>{
       const d=document.createElement('div');
+      const def=OBJ_DEF[t];
       d.className='tool'+(objType===t?' active':''); d.dataset.t=t;
       d.style.cssText='padding:3px 8px;font-size:12px;';
-      d.textContent=OBJ_TYPES[t];
+      d.textContent=def.name+(def.w>1||def.h>1?(' ('+def.w+'×'+def.h+')'):'');
       d.onclick=()=>{ objType=t; renderSubbar(); };
+      d.onmouseenter=()=>showChipPreview(d, objPreviewHTML(t), def.name+(def.w>1||def.h>1?(' 占地 '+def.w+'×'+def.h+' 格'):''));
+      d.onmouseleave=hideChipPreview;
       subbarEl.appendChild(d);
     });
     const tip=document.createElement('span'); tip.className='lbl'; tip.textContent='（单击放置，可拖拽连续放置）';
@@ -386,11 +475,15 @@ function draw(){
   });
   (state.walls||[]).forEach(w=>{ ctx.fillStyle='#5a4a3a'; ctx.fillRect(w.x*SCALE,w.y*SCALE,w.w*SCALE,w.h*SCALE); });
   (state.lamps||[]).forEach(l=>{ ctx.fillStyle='#ffe28a'; ctx.beginPath(); ctx.arc((l.x+0.5)*SCALE,(l.y+0.5)*SCALE,l.big?3:2,0,7); ctx.fill(); });
-  // 编辑器 v0.3：物件覆盖层
+  // 编辑器 v0.4：物件覆盖层（按占地矩形绘制透明贴图，未加载时简笔占位）
   if(state.overrides) for(const k in state.overrides){
     const v=state.overrides[k]; if(!OBJ_TYPES[v.t]) continue;
     const [x,y]=k.split(',').map(Number); if(x>=cols||y>=rows) continue;
-    drawObjectIcon(v.t,x*SCALE,y*SCALE,SCALE);
+    const def=objDefOf(v.t)||{w:1,h:1}; const w=v.w||def.w, h=v.h||def.h;
+    const px=x*SCALE, py=y*SCALE;
+    if(def.file){ const im=objImgEditor(def.file); if(im.complete&&im.naturalWidth){ ctx.imageSmoothingEnabled=false; ctx.drawImage(im,px,py,w*SCALE,h*SCALE); continue; } }
+    ctx.fillStyle='rgba(110,170,80,.85)'; ctx.beginPath(); ctx.arc(px+w*SCALE/2,py+h*SCALE-10,Math.min(w,h)*SCALE*0.35,0,7); ctx.fill();
+    ctx.strokeStyle='rgba(243,210,122,.9)'; ctx.lineWidth=1; ctx.strokeRect(px+0.5,py+0.5,w*SCALE-1,h*SCALE-1);
   }
   // 覆盖格黄框
   ctx.strokeStyle='rgba(243,210,122,.9)'; ctx.lineWidth=1;
@@ -420,6 +513,11 @@ function findTopStructure(x,y){
     const arr=state[layer]||[]; let best=null,area=1e9;
     for(let i=0;i<arr.length;i++){ const r=arr[i]; if(inRect(x,y,r)&&r.w*r.h<area){ area=r.w*r.h; best={layer,idx:i,label:r.name||r.type||layer}; } }
     if(best) return best;
+  }
+  // 物件（按占地矩形判定，便于橡皮擦删除占多格的树木）
+  if(state.overrides) for(const k in state.overrides){ const v=state.overrides[k]; if(!OBJ_TYPES[v.t]) continue;
+    const [ox,oy]=k.split(',').map(Number); const def=objDefOf(v.t)||{w:1,h:1}; const w=v.w||def.w, h=v.h||def.h;
+    if(ox<=x&&x<ox+w&&oy<=y&&y<oy+h) return {layer:'overrides',idx:k,label:OBJ_NAMES[v.t]||v.t};
   }
   return null;
 }
@@ -456,13 +554,14 @@ function paintCell(c){
   const k=c.x+','+c.y;
   if(tool==='erase'){
     if(state.overrides&&state.overrides[k]){ delete state.overrides[k]; }
-    else{ const hit=findTopStructure(c.x,c.y); if(hit){ removeAt(hit.layer,hit.idx); toast('已删除 '+LAYER_META[hit.layer].name+'：'+hit.label); return; } }
+    else{ const hit=findTopStructure(c.x,c.y); if(hit){ if(hit.layer==='overrides') delete state.overrides[hit.idx]; else removeAt(hit.layer,hit.idx); toast('已删除 '+((LAYER_META[hit.layer]&&LAYER_META[hit.layer].name)||'物件')+'：'+hit.label); return; } }
     draw(); scheduleSave(); renderList(); return;
   }
   state.overrides=state.overrides||{};
   if(tool==='object'){
+    const def=objDefOf(objType)||{w:1,h:1};
     if(state.overrides[k]&&state.overrides[k].t===objType) return;
-    state.overrides[k]={t:objType};
+    state.overrides[k]={t:objType,w:def.w,h:def.h};
   } else {
     if(state.overrides[k]&&state.overrides[k].t===brushType) return;
     state.overrides[k]={t:brushType};
@@ -488,14 +587,15 @@ function commitRect(r){
 }
 
 /* ---------- 地图尺寸：追加 / 插入行列 ---------- */
+// 在 colPos 列 / rowPos 行【之后】插入：只有严格大于该位置的结构才整体平移，被插入的位置本身不动
 function shiftStructures(colPos,rowPos,dCol,dRow){
-  const f=r=>{ if(r.x>=colPos) r.x+=dCol; if(r.y>=rowPos) r.y+=dRow; };
+  const f=r=>{ if(r.x>colPos) r.x+=dCol; if(r.y>rowPos) r.y+=dRow; };
   ['paths','lakes','bridges','walls','buildings'].forEach(L=>(state[L]||[]).forEach(f));
-  (state.lamps||[]).forEach(l=>{ if(l.x>=colPos)l.x+=dCol; if(l.y>=rowPos)l.y+=dRow; });
+  (state.lamps||[]).forEach(l=>{ if(l.x>colPos)l.x+=dCol; if(l.y>rowPos)l.y+=dRow; });
   const no={};
   for(const k in (state.overrides||{})){
     const [x,y]=k.split(',').map(Number); let nx=x,ny=y;
-    if(x>=colPos)nx+=dCol; if(y>=rowPos)ny+=dRow; no[nx+','+ny]=state.overrides[k];
+    if(x>colPos)nx+=dCol; if(y>rowPos)ny+=dRow; no[nx+','+ny]=state.overrides[k];
   }
   state.overrides=no;
 }
@@ -503,14 +603,15 @@ function afterDims(msg){ cols=state.cols; rows=state.rows; resizeCanvas(); draw(
   dimLabel.textContent=state.cols+' × '+state.rows; statusEl.textContent=msg+' → '+state.cols+' × '+state.rows; }
 function appendCols(n){ state.cols+=n; afterDims('右端追加 '+n+' 列'); }
 function appendRows(n){ state.rows+=n; afterDims('下端追加 '+n+' 行'); }
-function insertCols(n,pos){ shiftStructures(pos,0,n,0); state.cols+=n; afterDims('第 '+(pos+1)+' 列后插入 '+n+' 列'); }
-function insertRows(n,pos){ shiftStructures(0,pos,0,n); state.rows+=n; afterDims('第 '+(pos+1)+' 行后插入 '+n+' 行'); }
+function insertCols(n,pos){ shiftStructures(pos,0,n,0); state.cols+=n; afterDims('第 '+(pos)+' 列之后插入 '+n+' 列（下方内容已平移）'); }
+function insertRows(n,pos){ shiftStructures(0,pos,0,n); state.rows+=n; afterDims('第 '+(pos)+' 行之后插入 '+n+' 行（下方内容已平移）'); }
 function askCount(verb){ const s=prompt(verb+'几行/列？（正整数）','1'); const n=parseInt(s,10); return (Number.isFinite(n)&&n>0)?n:null; }
+// 插入位置：默认取鼠标当前所在的列/行（指向哪里插哪里），否则提示输入，默认中间
 function insertPos(axis){
-  if(hover) return axis==='col'?hover.x:hover.y;
-  const s=prompt('插入到哪一'+(axis==='col'?'列':'行')+'之后？（0-based 序号，留空=末尾）', axis==='col'?String(cols-1):String(rows-1));
-  if(s==null||s.trim()==='') return axis==='col'?cols-1:rows-1;
-  const p=parseInt(s,10); return Number.isFinite(p)?p:(axis==='col'?cols-1:rows-1);
+  const def=hover? (axis==='col'?hover.x:hover.y) : Math.floor((axis==='col'?cols:rows)/2);
+  const s=prompt('在哪一'+(axis==='col'?'列':'行')+'的【后面】插入？（0-based 序号，默认 '+def+'）', String(def));
+  if(s==null||s.trim()==='') return def;
+  const p=parseInt(s,10); return Number.isFinite(p)?Math.max(0,p):def;
 }
 document.getElementById('addCol').onclick=()=>{ const n=askCount('右端追加列'); if(n) appendCols(n); };
 document.getElementById('addRow').onclick=()=>{ const n=askCount('下端追加行'); if(n) appendRows(n); };

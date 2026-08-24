@@ -608,8 +608,8 @@ const VILLAGERS=[
    地图：v1.5 超大版（176×132 = 4 倍面积，楼间距 3 格以上）
    北=四期公寓 + 文汇路小吃街 / 左下=文翔路 / 右下=上川路 / 中间=校际大道
    ============================================================ */
-const TILE=32, COLS=176, ROWS=132;
-const W=COLS*TILE, H=ROWS*TILE;
+const TILE=32; let COLS=176, ROWS=132;          // v1.15.5：编辑器可扩展地图，改为可变
+let W=COLS*TILE, H=ROWS*TILE;
 let camX=0, camY=0;
 
 /* ---- 四期公寓宿舍楼（立信 1-18 栋：按真实宿舍区简化 3 排 × 6 列，楼间距宽敞） ---- */
@@ -822,10 +822,15 @@ const key=(x,y)=>x+','+y;
 // v1.15.3 编辑器贴图 override：管理面板拖拽保存的逐格地形，游戏启动时加载并生效
 // overrides: { "gx,gy": {t:'road'|'concrete'|'cobble'|'dirt'|'grass'|'water'} }
 let OVERRIDES={};
-function ovApply(){ buildBlocked(); invalidateCache(); }
+function ovApply(){ buildBlocked(); buildEdObjects(); invalidateCache(); }
 // v1.15.4 地图编辑器结构层 override：map-data.json 可整体替换道路/水域/桥梁/围墙/建筑/路灯
 function applyMapData(md){
   if(!md||typeof md!=='object') return;
+  // v1.15.5：编辑器可扩展地图面积（追加/插入行列），这里同步世界尺寸
+  if(Number.isFinite(md.cols)&&md.cols>4){ COLS=Math.floor(md.cols); }
+  if(Number.isFinite(md.rows)&&md.rows>4){ ROWS=Math.floor(md.rows); }
+  W=COLS*TILE; H=ROWS*TILE;
+  if(typeof MM_SX!=='undefined'){ MM_SX=MM_W/COLS; MM_SY=MM_H/ROWS; }
   if(Array.isArray(md.paths)) PATHS=md.paths;
   if(Array.isArray(md.lakes)) LAKE=md.lakes;
   if(Array.isArray(md.bridges)) LAKE_BRIDGES=md.bridges;
@@ -1614,9 +1619,133 @@ const ASSET_LIST=[
   'frog_00','frog_01','frog_02','frog_03','frog_04','frog_05','frog_06','frog_07','frog_08','frog_09','frog_10','frog_11',
   'squirrel_idle_1','squirrel_idle_2','squirrel_idle_3','squirrel_idle_4','squirrel_idle_5','squirrel_idle_6',
   'squirrel_run_1','squirrel_run_2','squirrel_run_3','squirrel_run_4','squirrel_run_5','squirrel_run_6','squirrel_run_7','squirrel_run_8',
-  'water_calm','npc_sprites','player_sprites','villager_sprites'
+  'water_calm','npc_sprites','player_sprites','villager_sprites',
+  'tiles/floors','tiles/grassdirt'
 ];
 ASSET_LIST.forEach(n=>{ const im=new Image(); im.onload=()=>invalidateCache(); im.onerror=()=>{}; im.src='assets/'+n+'.png'; A[n]=im; });
+
+/* ---- 编辑器 v0.3 新增：写实像素地表贴图图集（32px tile sheets） ---- */
+const TEX_ATLAS={
+  // floors.png: 18 cols × 3 rows
+  gravel:{sheet:'tiles/floors',c:0,r:0,name:'碎石'},
+  darkstone:{sheet:'tiles/floors',c:1,r:0,name:'暗石'},
+  stone:{sheet:'tiles/floors',c:2,r:0,name:'岩石'},
+  soil:{sheet:'tiles/floors',c:3,r:0,name:'泥土'},
+  mud:{sheet:'tiles/floors',c:4,r:0,name:'泥泞'},
+  darksoil:{sheet:'tiles/floors',c:5,r:0,name:'深土'},
+  // grassdirt.png: 2 cols × 4 rows
+  grass_path:{sheet:'tiles/grassdirt',c:0,r:0,name:'草皮'},
+  dark_grass:{sheet:'tiles/grassdirt',c:1,r:0,name:'深草'},
+  grass_dirt_top:{sheet:'tiles/grassdirt',c:0,r:1,name:'草顶土'},
+  dirt_path:{sheet:'tiles/grassdirt',c:1,r:1,name:'土路'},
+  grass_dirt_bottom:{sheet:'tiles/grassdirt',c:0,r:2,name:'草底土'},
+  dirt_grass:{sheet:'tiles/grassdirt',c:1,r:2,name:'土边草'},
+  grass_dirt_left:{sheet:'tiles/grassdirt',c:0,r:3,name:'草左土'},
+  grass_dirt_right:{sheet:'tiles/grassdirt',c:1,r:3,name:'草右土'}
+};
+const TEX_SHEET_DIMS={'tiles/floors':{cols:18,rows:3},'tiles/grassdirt':{cols:2,rows:4}};
+function drawTexTile(type,x,y){
+  const a=TEX_ATLAS[type]; if(!a){ drawPathTile(x,y,{type:type}); return; }
+  const img=A[a.sheet]; const px=x*TILE, py=y*TILE;
+  if(img&&img.complete&&img.naturalWidth){
+    const dims=TEX_SHEET_DIMS[a.sheet]; const cw=img.naturalWidth/dims.cols, ch=img.naturalHeight/dims.rows;
+    ctx.drawImage(img,a.c*cw,a.r*ch,cw,ch,px,py,TILE,TILE); return;
+  }
+  const fb={gravel:'#a8a8a8',darkstone:'#4a4a4a',stone:'#808080',soil:'#9d7e58',mud:'#6e563e',darksoil:'#3d2f22',
+            grass_path:'#5fa83f',dark_grass:'#3e6e2d',grass_dirt_top:'#6f9e45',dirt_path:'#8f7048',
+            grass_dirt_bottom:'#6f9e45',dirt_grass:'#7f8a45',grass_dirt_left:'#6f9e45',grass_dirt_right:'#6f9e45'}[type]||'#6a6a6a';
+  ctx.fillStyle=fb; ctx.fillRect(px,py,TILE,TILE);
+  ctx.fillStyle='rgba(0,0,0,0.12)'; for(let i=0;i<5;i++) ctx.fillRect(px+((x*7+i*13)%28),py+((y*11+i*7)%28),2,2);
+  ctx.fillStyle='rgba(255,255,255,0.08)'; for(let i=0;i<5;i++) ctx.fillRect(px+((x*13+i*7)%28),py+((y*7+i*13)%28),2,2);
+}
+const OBJ_TYPES={o_tree:1,o_pine:1,o_rock:1,o_bush:1,o_flower:1,o_mushroom:1,o_barrel:1,o_crate:1,o_sign:1,o_fence_h:1,o_fence_v:1,o_lamp:1};
+const OBJ_NAMES={o_tree:'树',o_pine:'松树',o_rock:'岩石',o_bush:'灌木',o_flower:'花',o_mushroom:'蘑菇',o_barrel:'木桶',o_crate:'木箱',o_sign:'告示牌',o_fence_h:'横栅栏',o_fence_v:'竖栅栏',o_lamp:'地灯'};
+let ED_OBJECTS=[];
+function buildEdObjects(){
+  const arr=[];
+  for(const k in OVERRIDES){ const v=OVERRIDES[k]; if(v&&v.t&&OBJ_TYPES[v.t]){ const [x,y]=k.split(',').map(Number); arr.push({x,y,t:v.t}); } }
+  ED_OBJECTS=arr.sort((a,b)=>a.y-b.y||a.x-b.x);
+}
+function drawEdObjects(cx,cy){
+  const r=visRect(cx,cy);
+  for(const o of ED_OBJECTS){
+    const px=o.x*TILE, py=o.y*TILE;
+    if(px+TILE>r.x0*TILE&&px<r.x1*TILE+TILE&&py+TILE>r.y0*TILE&&py<r.y1*TILE+TILE) drawObjectSprite(o.t,px,py);
+  }
+}
+function drawObjectSprite(t,px,py){
+  const c=ctx; const h=(px*3+py*5)%7;
+  c.save(); c.translate(px+TILE/2,py+TILE); c.imageSmoothingEnabled=false;
+  switch(t){
+    case 'o_tree':{
+      c.fillStyle='#5a3a22'; c.fillRect(-3,-10,6,10);
+      c.fillStyle='rgba(74,154,64,.95)'; c.beginPath(); c.ellipse(0,-22,18,22,0,0,7); c.fill();
+      c.fillStyle='rgba(90,180,74,.85)'; c.beginPath(); c.arc(0,-28,10,0,7); c.fill();
+      c.fillStyle='rgba(0,0,0,.20)'; c.beginPath(); c.ellipse(0,2,14,4,0,0,7); c.fill();
+    }break;
+    case 'o_pine':{
+      c.fillStyle='#4a2e1a'; c.fillRect(-2,-8,4,8);
+      for(let i=0;i<3;i++){ c.fillStyle=['#2f6b2a','#3a8030','#45903a'][i]; const y=-10-i*10, w=16-i*4; c.beginPath(); c.moveTo(0,y-12); c.lineTo(w,y+4); c.lineTo(-w,y+4); c.fill(); }
+      c.fillStyle='rgba(0,0,0,.20)'; c.beginPath(); c.ellipse(0,2,12,3,0,0,7); c.fill();
+    }break;
+    case 'o_rock':{
+      const shade=['#7a7a7a','#666','#555'][h%3]; c.fillStyle=shade; c.beginPath(); c.moveTo(-14,0); c.lineTo(-8,-10); c.lineTo(2,-14); c.lineTo(12,-8); c.lineTo(16,0); c.closePath(); c.fill();
+      c.fillStyle='rgba(255,255,255,.18)'; c.beginPath(); c.moveTo(-6,-8); c.lineTo(2,-12); c.lineTo(8,-6); c.lineTo(0,-4); c.closePath(); c.fill();
+      c.fillStyle='rgba(0,0,0,.25)'; c.beginPath(); c.ellipse(0,2,13,3,0,0,7); c.fill();
+    }break;
+    case 'o_bush':{
+      c.fillStyle='rgba(0,0,0,.20)'; c.beginPath(); c.ellipse(0,2,14,4,0,0,7); c.fill();
+      c.fillStyle='#4a9a34'; c.beginPath(); c.arc(0,-8,14,0,7); c.fill();
+      c.fillStyle='#5fb843'; c.beginPath(); c.arc(-6,-10,8,0,7); c.fill();
+      c.fillStyle='#3e802a'; c.beginPath(); c.arc(7,-6,7,0,7); c.fill();
+    }break;
+    case 'o_flower':{
+      c.strokeStyle='#4a9a34'; c.lineWidth=2; c.beginPath(); c.moveTo(0,0); c.quadraticCurveTo(2,-8,0,-14); c.stroke();
+      const col=['#ffd24d','#ff6b8a','#a78bfa','#4fc3f7'][h%4]; c.fillStyle=col;
+      for(let i=0;i<5;i++){ const ang=i*1.257; c.beginPath(); c.ellipse(Math.cos(ang)*3,-14+Math.sin(ang)*3,3,6,ang,0,7); c.fill(); }
+      c.fillStyle='#fff7cc'; c.beginPath(); c.arc(0,-14,2,0,7); c.fill();
+    }break;
+    case 'o_mushroom':{
+      c.fillStyle='#e8e0c8'; c.fillRect(-2,-8,4,8);
+      c.fillStyle='#c94a4a'; c.beginPath(); c.arc(0,-10,10,Math.PI,0); c.lineTo(6,-8); c.lineTo(-6,-8); c.fill();
+      c.fillStyle='rgba(255,255,255,.25)'; c.beginPath(); c.ellipse(-3,-13,3,2,0,0,7); c.fill();
+      c.fillStyle='rgba(0,0,0,.20)'; c.beginPath(); c.ellipse(0,2,9,2,0,0,7); c.fill();
+    }break;
+    case 'o_barrel':{
+      c.fillStyle='#6b4f2a'; c.beginPath(); c.ellipse(0,-16,10,3,0,0,7); c.fill();
+      c.fillRect(-10,-16,20,16); c.fillStyle='#4a361d'; c.fillRect(-10,-14,20,2); c.fillRect(-10,-6,20,2);
+      c.fillStyle='rgba(0,0,0,.25)'; c.beginPath(); c.ellipse(0,0,10,3,0,0,7); c.fill();
+    }break;
+    case 'o_crate':{
+      c.fillStyle='#8a6a42'; c.fillRect(-12,-14,24,14); c.strokeStyle='#4a361d'; c.lineWidth=2;
+      c.beginPath(); c.moveTo(-12,-14); c.lineTo(12,0); c.stroke(); c.beginPath(); c.moveTo(12,-14); c.lineTo(-12,0); c.stroke();
+      c.strokeRect(-12,-14,24,14); c.fillStyle='rgba(0,0,0,.20)'; c.beginPath(); c.ellipse(0,0,12,3,0,0,7); c.fill();
+    }break;
+    case 'o_sign':{
+      c.fillStyle='#6b4f2a'; c.fillRect(-2,-16,4,16);
+      c.fillStyle='#8a6a42'; c.fillRect(-11,-28,22,13); c.strokeStyle='#4a361d'; c.lineWidth=1; c.strokeRect(-11,-28,22,13);
+      c.fillStyle='#3d2f22'; c.font='bold 8px sans-serif'; c.textAlign='center'; c.fillText('→',0,-18);
+      c.fillStyle='rgba(0,0,0,.20)'; c.beginPath(); c.ellipse(0,0,10,2,0,0,7); c.fill();
+    }break;
+    case 'o_fence_h':{
+      c.strokeStyle='#6b4f2a'; c.lineWidth=3; c.beginPath(); c.moveTo(-16,-6); c.lineTo(16,-6); c.stroke(); c.beginPath(); c.moveTo(-16,-12); c.lineTo(16,-12); c.stroke();
+      for(let x=-12;x<=12;x+=12){ c.fillStyle='#6b4f2a'; c.fillRect(x-1,-16,2,16); }
+      c.fillStyle='rgba(0,0,0,.15)'; c.fillRect(-16,0,32,2);
+    }break;
+    case 'o_fence_v':{
+      c.strokeStyle='#6b4f2a'; c.lineWidth=3; c.beginPath(); c.moveTo(-6,-6); c.lineTo(-6,-16); c.stroke(); c.beginPath(); c.moveTo(6,-6); c.lineTo(6,-16); c.stroke();
+      for(let y=-8;y>=-18;y-=6){ c.fillStyle='#6b4f2a'; c.fillRect(-10,y,20,2); }
+      c.fillStyle='rgba(0,0,0,.15)'; c.beginPath(); c.ellipse(0,0,5,2,0,0,7); c.fill();
+    }break;
+    case 'o_lamp':{
+      c.fillStyle='#2a2a2a'; c.fillRect(-2,-14,4,14); c.fillStyle='#4a4a4a'; c.fillRect(-5,-18,10,5);
+      c.fillStyle='rgba(255,230,150,.9)'; c.beginPath(); c.arc(0,-20,5,0,7); c.fill();
+      c.fillStyle='rgba(255,230,100,.25)'; c.beginPath(); c.arc(0,-16,12,0,7); c.fill();
+      c.fillStyle='rgba(0,0,0,.20)'; c.beginPath(); c.ellipse(0,0,8,2,0,0,7); c.fill();
+    }break;
+  }
+  c.restore();
+}
 
 let LOGIC_W=960, LOGIC_H=672;
 // v1.12 提升 DPI（1.5→2）让字体/像素更锐利；关闭平滑缩放保持像素颗粒感
@@ -1670,6 +1799,50 @@ function drawGrassTile(x,y){
   if(h===4||h===8){
     ctx.fillStyle='rgba(195,165,95,.30)'; ctx.fillRect(px+7,py+19,2,6); ctx.fillRect(px+12,py+16,2,8); ctx.fillRect(px+17,py+21,2,5);
     ctx.fillStyle='rgba(210,180,110,.22)'; ctx.fillRect(px+9,py+18,1,5); ctx.fillRect(px+14,py+15,1,6);
+  }
+}
+/* v1.15.5 编辑器可绘制的写实草地变体（高细节程序化贴图，避免引入外部二进制资源） */
+const GV={
+  grass:      {base:[74,154,64],  tip:[110,190,90],  dry:0,   flower:0},
+  grass_spring:{base:[124,194,74],tip:[170,224,120], dry:0,   flower:0},
+  grass_summer:{base:[63,158,52], tip:[110,200,80],  dry:0,   flower:0},
+  grass_forest:{base:[47,107,42], tip:[80,150,66],   dry:0,   flower:0},
+  grass_dry:   {base:[182,162,78],tip:[214,190,112], dry:1,   flower:0},
+  grass_moss:  {base:[95,143,78], tip:[124,176,104], dry:0.35,flower:0},
+  grass_flower:{base:[111,184,63],tip:[150,214,110], dry:0,   flower:1},
+  grass_light: {base:[155,208,90],tip:[198,236,142], dry:0,   flower:0}
+};
+const GV_BLADES=[[3,9],[11,21],[21,7],[7,5],[17,15],[25,19],[13,12],[5,22],[23,3],[19,25]];
+function drawGrassVariant(x,y,variant){
+  const px=x*TILE, py=y*TILE;
+  const g=GV[variant]||GV.grass;
+  ctx.fillStyle='rgb('+g.base[0]+','+g.base[1]+','+g.base[2]+')'; ctx.fillRect(px,py,TILE,TILE);
+  const h=((x*73856093)^(y*19349663))>>>0;
+  // 色调斑块（模拟草皮深浅）
+  const patches=[[2,2,12,12],[18,16,10,10],[8,20,14,8]];
+  patches.forEach((p,i)=>{ if(((h>>i)&1)===0){ ctx.fillStyle='rgba('+(g.base[0]+10)+','+(g.base[1]+12)+','+(g.base[2]+8)+','+(0.10+0.05*((h>>(i+3))&3))+')'; ctx.fillRect(px+p[0],py+p[1],p[2],p[3]); } });
+  // 短草叶（不同深浅绿，枯黄变体偏黄）
+  GV_BLADES.forEach((b,i)=>{
+    const on=((h>>(i*2))&3); if(on===0) return;
+    const bx=px+b[0]+((h>>(i+1))&3), by=py+b[1];
+    const col=g.dry&&((h>>(i+4))&1)?'rgba('+(g.tip[0]+18)+','+(g.tip[1]-34)+','+(g.tip[2]-22)+',0.5)':'rgba('+g.tip[0]+','+g.tip[1]+','+g.tip[2]+',0.5)';
+    ctx.fillStyle=col; ctx.fillRect(bx,by,2,6);
+    ctx.fillStyle='rgba('+g.tip[0]+','+g.tip[1]+','+g.tip[2]+',0.32)'; ctx.fillRect(bx+1,by-2,2,4);
+  });
+  // 枯黄草点缀（dry 变体更强）
+  if(g.dry||((h&7)===3)){
+    ctx.fillStyle='rgba(220,190,110,'+(g.dry?0.4:0.22)+')';
+    ctx.fillRect(px+7,py+19,2,6); ctx.fillRect(px+12,py+16,2,8); ctx.fillRect(px+17,py+21,2,5);
+  }
+  // 花甸：彩色小花
+  if(g.flower){
+    const fc=['#ffd24d','#ff7eb6','#fff3a0','#ff6b6b','#c9a0ff'];
+    for(let i=0;i<3;i++){
+      if(((h>>(i*3+2))&3)!==1) continue;
+      const fx=px+4+((h>>(i*2))&0x1f), fy=py+4+((h>>(i*2+1))&0x1f);
+      ctx.fillStyle=fc[(h+i)%fc.length]; ctx.beginPath(); ctx.arc(fx,fy,2,0,7); ctx.fill();
+      ctx.fillStyle='rgba(255,255,255,.5)'; ctx.beginPath(); ctx.arc(fx,fy,0.8,0,7); ctx.fill();
+    }
   }
 }
 function drawPathTile(x,y,p){
@@ -2377,9 +2550,11 @@ function drawMapVisible(cx,cy){
     // v1.15.3 编辑器 override：优先使用面板保存的逐格地形
     const ov=OVERRIDES[key(x,y)];
     if(ov){
-      if(ov.t==='grass'){ drawGrassTile(x,y); }
-      else if(ov.t==='water'){ drawOverrideWater(x,y); }
-      else { drawPathTile(x,y,{type:ov.t}); }
+      const t=ov.t;
+      if(t==='water'){ drawOverrideWater(x,y); }
+      else if(t==='grass'||(t&&t.indexOf('grass')===0)){ drawGrassVariant(x,y,t==='grass'?'grass':t); }
+      else if(TEX_ATLAS[t]){ drawTexTile(t,x,y); }
+      else if(!OBJ_TYPES[t]){ drawPathTile(x,y,{type:t}); }
       continue;
     }
     let path=null;
@@ -2401,6 +2576,8 @@ function drawMapVisible(cx,cy){
   LAKE_BRIDGES.forEach(b=>{if(inView(b.x,b.y,r,b.w,b.h))drawBridge(b);});
   // 操场
   TRACKS.forEach(t=>{if(inView(t.x,t.y,r,t.w,t.h))drawTrack(t);});
+  // 编辑器 v0.3 放置的物件（在地面、运动场之上，树木之下）
+  drawEdObjects(cx,cy);
   // 树（画在草地/装饰之上）
   trees.forEach(t=>{if(t.x>cx-40&&t.x<cx+LOGIC_W+40&&t.y>cy-40&&t.y<cy+LOGIC_H+40)drawTree(t);});
   // 宿舍区高大乔木
@@ -2873,7 +3050,8 @@ function updateCamera(){
 }
 /* v1.11 全图预渲染：整张地图一次性画进大画布，每帧只裁剪可视区域（替代 v1.10 视口缓存） */
 function buildFullMap(){
-  if(!fullCv){ fullCv=document.createElement('canvas'); fullCv.width=W; fullCv.height=H; fullCtx=fullCv.getContext('2d'); fullCtx.imageSmoothingEnabled=false; }
+  // v1.15.5：地图扩展后 W/H 可能变大，画布尺寸需同步调整
+  if(!fullCv||fullCv.width!==W||fullCv.height!==H){ fullCv=document.createElement('canvas'); fullCv.width=W; fullCv.height=H; fullCtx=fullCv.getContext('2d'); fullCtx.imageSmoothingEnabled=false; }
   const savedCtx=ctx, savedW=LOGIC_W, savedH=LOGIC_H, savedX=camX, savedY=camY;
   ctx=fullCtx; LOGIC_W=W; LOGIC_H=H; camX=0; camY=0;
   try{
@@ -2890,7 +3068,7 @@ const mmCv=document.getElementById('minimap');
 const mctx=mmCv.getContext('2d');
 mctx.imageSmoothingEnabled=false;
 const MM_W=mmCv.width, MM_H=mmCv.height;
-const MM_SX=MM_W/COLS, MM_SY=MM_H/ROWS;
+let MM_SX=MM_W/COLS, MM_SY=MM_H/ROWS;   // v1.15.5：地图扩展时随 COLS/ROWS 重算
 const minimapModal=document.getElementById('minimapModal');
 let minimapOpen=false;
 function drawMinimap(){

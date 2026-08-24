@@ -1,6 +1,6 @@
 // Lixin RPG 地图编辑器后端（零依赖 Node）
 // 启动：node server.js  → 打开 http://localhost:8787
-// 编辑结果写入 ../map-data.json（结构层+逐格地形），游戏 index.html 启动时自动加载并生效。
+// 编辑结果写入 ../map-data.json（cols/rows + 结构层 + 逐格地形），游戏 index.html 启动时自动加载并生效。
 const http=require('http');
 const fs=require('fs');
 const path=require('path');
@@ -10,6 +10,7 @@ const DIR=__dirname;
 const MAP_DATA_FILE=path.join(DIR,'..','map-data.json'); // 游戏读取的地图数据文件
 const MAP_BASE_FILE=path.join(DIR,'map-base.json');      // 默认底图（从 index.html 抽取）
 const OV_FILE=path.join(DIR,'..','tile-overrides.json'); // 旧版逐格 override（兼容）
+const ASSETS_DIR=path.join(DIR,'..','assets');           // 编辑器 v0.3 贴图资源目录
 
 const RECT_KEYS=['paths','lakes','bridges','walls','buildings'];
 
@@ -21,13 +22,16 @@ function readOverrides(){ const d=readJSON(OV_FILE); return (d&&d.overrides)||{}
 // 读取当前地图：优先 map-data.json（编辑器保存的），否则用默认底图
 function readMap(){
   const md=readJSON(MAP_DATA_FILE);
-  if(md&&(md.paths||md.lakes||md.lamps||md.overrides)) return md;
+  if(md&&(md.paths||md.lakes||md.lamps||md.overrides||md.cols||md.rows)) return md;
   const base=readJSON(MAP_BASE_FILE)||{};
   return Object.assign({overrides:{}},base);
 }
 function writeMap(obj){
   // 只保留合法字段，结构矩形做基本校验
   const out={};
+  // v0.2：地图尺寸（编辑器可扩展行列）
+  if(Number.isFinite(obj.cols)&&obj.cols>4) out.cols=Math.floor(obj.cols);
+  if(Number.isFinite(obj.rows)&&obj.rows>4) out.rows=Math.floor(obj.rows);
   for(const k of RECT_KEYS){
     if(Array.isArray(obj[k])){
       out[k]=obj[k].filter(r=>r&&typeof r.x==='number'&&typeof r.y==='number'
@@ -114,6 +118,13 @@ const server=http.createServer((req,res)=>{
       return;
     }
     res.writeHead(405); res.end('method not allowed'); return;
+  }
+  // v0.3：贴图资源目录
+  if(u.startsWith('/assets/')){
+    const rel=u.slice('/assets/'.length);
+    const fp=path.normalize(path.join(ASSETS_DIR,rel));
+    if(fp.startsWith(ASSETS_DIR)){ sendFile(res,fp); return; }
+    res.writeHead(403); res.end('forbidden'); return;
   }
   // 其它静态文件（仅限本目录内）
   const fp=path.normalize(path.join(DIR,u));

@@ -25,6 +25,10 @@ Thumbs.db
 # Local agent workspace notes (not for the public Pages site)
 .workbuddy/
 
+# Lixin RPG editor runtime data
+static/lixin/play/map-data.json
+static/lixin/play/tile-overrides.json
+
 /node_modules/
 **/node_modules/
 

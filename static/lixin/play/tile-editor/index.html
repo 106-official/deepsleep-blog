@@ -83,7 +83,7 @@
   <div class="wrap"><canvas id="cv"></canvas></div>
   <div class="side" id="side"></div>
 </div>
-<div class="legend">左键：按当前工具绘制；按住拖拽 = 连续/矩形；建筑放置时会询问名称。草地笔刷可选多种写实草色（春/夏/深林/枯黄/苔地/花甸/浅草），v0.3 新增碎石/岩石/泥土/泥泞/草皮/土路等写实地表贴图与树/石/栅栏/木桶等可放置物件。右侧列表可逐项删除。橡皮擦先擦地形覆盖/物件，再删除所指最上层结构。滚轮缩放，拖动空白处可平移。</div>
+<div class="legend">左键：按当前工具绘制；按住拖拽 = 连续/矩形。📍 检视：单击格子显示其行/列，格子旁可「下侧增加行 / 右侧增加列」，按住拖动则平移地图视角（缩放不变）。草地笔刷可选多种写实草色（春/夏/深林/枯黄/苔地/花甸/浅草），v0.3 新增碎石/岩石/泥土/泥泞/草皮/土路等写实地表贴图与树/石/栅栏/木桶等可放置物件。右侧列表可逐项删除。橡皮擦可直接擦除地形覆盖/物件/路灯（大灯小灯均可），再删所指最上层结构。滚轮缩放。</div>
 
 <script>
 /* ============ 基础常量 ============ */
@@ -246,6 +246,7 @@ const TOOLS=[
   {t:'building',name:'🏢 建筑矩形', sw:'#8a8a92'},
   {t:'lamp',   name:'💡 路灯', sw:'#ffe28a'},
   {t:'object', name:'🌲 物件', sw:'#6ba832'},
+  {t:'pick',   name:'📍 检视', sw:'#7fe0e0'},
   {t:'erase',  name:'🧽 橡皮擦', sw:'#cccccc'}
 ];
 
@@ -265,6 +266,8 @@ const statusEl=document.getElementById('status');
 const toastEl=document.getElementById('toast');
 const zoomLabel=document.getElementById('zoomLabel');
 const dimLabel=document.getElementById('dimLabel');
+const wrap=document.querySelector('.wrap');
+let panning=false, dragging=false, panStart=null, picked=null, cellBubble=null;
 
 /* ---------- 工具条 ---------- */
 TOOLS.forEach(tl=>{
@@ -272,7 +275,7 @@ TOOLS.forEach(tl=>{
   d.className='tool'+(tl.t===tool?' active':'');
   d.dataset.t=tl.t;
   d.innerHTML='<span class="sw" style="background:'+tl.sw+'"></span>'+tl.name;
-  d.onclick=()=>{ tool=tl.t; [...toolsEl.children].forEach(c=>c.classList.toggle('active',c.dataset.t===tool)); renderSubbar(); statusEl.textContent='已选：'+tl.name; };
+  d.onclick=()=>{ tool=tl.t; hideCellBubble(); [...toolsEl.children].forEach(c=>c.classList.toggle('active',c.dataset.t===tool)); renderSubbar(); statusEl.textContent='已选：'+tl.name; };
   toolsEl.appendChild(d);
 });
 
@@ -329,8 +332,11 @@ function renderSubbar(){
     });
     const tip=document.createElement('span'); tip.className='lbl'; tip.textContent='（单击放置，可拖拽连续放置）';
     subbarEl.appendChild(tip);
+  } else if(tool==='pick'){
+    const tip=document.createElement('span'); tip.className='lbl'; tip.textContent='（单击格子显示其行列，格子旁可“下侧增加行 / 右侧增加列”；按住拖动 = 平移地图视角，缩放不变）';
+    subbarEl.appendChild(tip);
   } else if(tool==='erase'){
-    const tip=document.createElement('span'); tip.className='lbl'; tip.textContent='（先擦地形覆盖/物件，再删所指最上层结构）';
+    const tip=document.createElement('span'); tip.className='lbl'; tip.textContent='（可直接擦除地形覆盖/物件/路灯，再删所指最上层结构）';
     subbarEl.appendChild(tip);
   }
 }
@@ -526,6 +532,13 @@ function findTopStructure(x,y){
 let painting=false;
 cv.addEventListener('pointerdown',e=>{
   const c=cellFromEvent(e); if(!c) return;
+  if(tool==='pick'){
+    panning=true; dragging=false;
+    panStart={x:e.clientX,y:e.clientY,sl:wrap.scrollLeft,st:wrap.scrollTop};
+    hideCellBubble();
+    cv.setPointerCapture(e.pointerId);
+    return;
+  }
   if(tool==='brush'||tool==='object'||tool==='erase'){ painting=true; paintCell(c); }
   else if(tool==='lamp'){ placeLamp(c); }
   else { anchor=c; painting=true; }
@@ -533,11 +546,23 @@ cv.addEventListener('pointerdown',e=>{
 });
 cv.addEventListener('pointermove',e=>{
   const c=cellFromEvent(e); hover=c;
+  if(tool==='pick'&&panning){
+    const dx=e.clientX-panStart.x, dy=e.clientY-panStart.y;
+    if(Math.abs(dx)>3||Math.abs(dy)>3) dragging=true;
+    wrap.scrollLeft=panStart.sl-dx; wrap.scrollTop=panStart.st-dy;
+    return;
+  }
   if(painting&&(tool==='brush'||tool==='object'||tool==='erase')) paintCell(c);
   else if(painting&&anchor&&tool!=='lamp') preview=normRect(anchor,c);
   draw();
 });
 cv.addEventListener('pointerup',e=>{
+  if(tool==='pick'&&panning){
+    panning=false;
+    if(!dragging){ const c=cellFromEvent(e); if(c) pickCell(c); }
+    cv.releasePointerCapture(e.pointerId);
+    return;
+  }
   const c=cellFromEvent(e);
   if(painting&&anchor&&tool!=='brush'&&tool!=='object'&&tool!=='erase'&&tool!=='lamp'){
     const r=normRect(anchor,c); if(r.w>0&&r.h>0) commitRect(r);
@@ -553,8 +578,10 @@ function normRect(a,b){
 function paintCell(c){
   const k=c.x+','+c.y;
   if(tool==='erase'){
-    if(state.overrides&&state.overrides[k]){ delete state.overrides[k]; }
-    else{ const hit=findTopStructure(c.x,c.y); if(hit){ if(hit.layer==='overrides') delete state.overrides[hit.idx]; else removeAt(hit.layer,hit.idx); toast('已删除 '+((LAYER_META[hit.layer]&&LAYER_META[hit.layer].name)||'物件')+'：'+hit.label); return; } }
+    if(state.lamps&&removeLampAt(c.x,c.y)) return;
+    if(state.overrides&&state.overrides[k]){ delete state.overrides[k]; draw(); scheduleSave(); renderList(); return; }
+    const hit=findTopStructure(c.x,c.y);
+    if(hit){ if(hit.layer==='overrides') delete state.overrides[hit.idx]; else removeAt(hit.layer,hit.idx); toast('已删除 '+((LAYER_META[hit.layer]&&LAYER_META[hit.layer].name)||'物件')+'：'+hit.label); return; }
     draw(); scheduleSave(); renderList(); return;
   }
   state.overrides=state.overrides||{};
@@ -567,6 +594,41 @@ function paintCell(c){
     state.overrides[k]={t:brushType};
   }
   draw(); scheduleSave(); renderList();
+}
+/* ---------- 路灯删除 + 检视气泡 ---------- */
+function removeLampAt(x,y){
+  if(!state.lamps||!state.lamps.length) return false;
+  const i=state.lamps.findIndex(l=>l.x===x&&l.y===y);
+  if(i<0) return false;
+  state.lamps.splice(i,1); scheduleSave(); draw(); renderList();
+  toast('已删除路灯 ('+x+','+y+')'); return true;
+}
+function hideCellBubble(){ if(cellBubble) cellBubble.style.display='none'; picked=null; }
+function ensureCellBubble(){
+  if(cellBubble) return cellBubble;
+  cellBubble=document.createElement('div');
+  cellBubble.id='cellBubble';
+  cellBubble.style.cssText='position:fixed;z-index:9999;display:none;background:#1f1f24;border:2px solid #f3d27a;border-radius:10px;padding:10px 12px;box-shadow:0 8px 24px rgba(0,0,0,.45);color:#eee;font-size:13px;min-width:160px;';
+  cellBubble.innerHTML='<div id="cbInfo" style="margin-bottom:8px;font-weight:bold;color:#f3d27a;"></div>'
+    +'<div style="display:flex;gap:8px;flex-wrap:wrap;">'
+    +'<button id="cbAddRow" class="btn mini">下侧增加行</button>'
+    +'<button id="cbAddCol" class="btn mini">右侧增加列</button>'
+    +'</div>';
+  document.body.appendChild(cellBubble);
+  cellBubble.querySelector('#cbAddRow').onclick=()=>{ if(picked){ insertRows(1,picked.y); hideCellBubble(); } };
+  cellBubble.querySelector('#cbAddCol').onclick=()=>{ if(picked){ insertCols(1,picked.x); hideCellBubble(); } };
+  return cellBubble;
+}
+function pickCell(c){
+  picked={x:c.x,y:c.y};
+  const b=ensureCellBubble();
+  b.querySelector('#cbInfo').textContent='第 '+(c.y+1)+' 行 / 第 '+(c.x+1)+' 列';
+  const r=cv.getBoundingClientRect();
+  let x=r.left+(c.x+1)*SCALE+6, y=r.top+c.y*SCALE;
+  if(x+190>window.innerWidth) x=r.left+(c.x)*SCALE-196;
+  if(y+96>window.innerHeight) y=window.innerHeight-100;
+  b.style.left=Math.max(4,x)+'px'; b.style.top=Math.max(4,y)+'px';
+  b.style.display='block';
 }
 function placeLamp(c){
   state.lamps=state.lamps||[];

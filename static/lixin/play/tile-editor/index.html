@@ -105,7 +105,7 @@
 <body>
 <header>
   <h1>🌾 Lixin 地图编辑器</h1>
-  <span class="hint">编辑立信 RPG 整张地图：拖拽画道路/水域/桥梁/围墙/建筑，点放路灯与物件，刷多种写实草地/地表贴图；结果保存到 <b>map-data.json</b>，游戏刷新即生效</span>
+  <span class="hint">编辑立信 RPG 整张地图：笔刷拖拽成矩形，一键铺设地表贴图与道路/水域/桥梁/围墙/建筑等结构；点放路灯与物件，刷多种写实草地/地表贴图；结果保存到 <b>map-data.json</b>，游戏刷新即生效</span>
 </header>
 <div class="toolbar" id="tools"></div>
 <div class="subbar" id="subbar"></div>
@@ -137,7 +137,7 @@
   <div class="wrap"><canvas id="cv"></canvas></div>
   <div class="side" id="side"></div>
 </div>
-<div class="legend">左键：按当前工具绘制；按住拖拽 = 连续/矩形。📍 检视：单击格子显示其行/列，格子旁可「下侧增加行 / 右侧增加列」，按住拖动则平移地图视角（缩放不变）。草地笔刷可选多种写实草色（春/夏/深林/枯黄/苔地/花甸/浅草），v0.3 新增碎石/岩石/泥土/泥泞/草皮/土路等写实地表贴图与树/石/栅栏/木桶等可放置物件。右侧列表可逐项删除。橡皮擦可直接擦除地形覆盖/物件/路灯（大灯小灯均可），再删所指最上层结构。滚轮缩放。</div>
+<div class="legend">左键：按当前工具绘制。🖌 笔刷 = 统一矩形填充：单击铺一格，按住拖拽成矩形松开生效；笔刷含「地表」（草/路/水/碎石/各写实地面等，写入逐格地形）与「结构」（道路/水域/桥梁/围墙/建筑，写入对应结构层，桥梁可跨水通行）。💡 路灯单击放置；🌲 物件单击/拖拽连续放置；📍 检视单击显示行列并可加行/加列、按住拖动平移视角；🧽 橡皮擦直接擦除地形覆盖/物件/路灯。滚轮缩放。</div>
 
 <script>
 /* ============ 基础常量 ============ */
@@ -326,11 +326,6 @@ const LAYER_META={
 };
 const TOOLS=[
   {t:'brush',  name:'🖌 笔刷', sw:'#4a9a40'},
-  {t:'road',   name:'🛣 道路矩形', sw:'#2c3036'},
-  {t:'lake',   name:'💧 水域矩形', sw:'#3f86c4'},
-  {t:'bridge', name:'🌉 桥梁矩形', sw:'#c9a86a'},
-  {t:'wall',   name:'🧱 围墙矩形', sw:'#5a4a3a'},
-  {t:'building',name:'🏢 建筑矩形', sw:'#8a8a92'},
   {t:'lamp',   name:'💡 路灯', sw:'#ffe28a'},
   {t:'object', name:'🌲 物件', sw:'#6ba832'},
   {t:'pick',   name:'📍 检视', sw:'#7fe0e0'},
@@ -338,8 +333,20 @@ const TOOLS=[
 ];
 
 let tool='brush';
-let brushType='grass';        // 笔刷地形（可为 grass_* / road / ...）
-let roadType='concrete';      // 道路矩形类型
+let brushType='grass';        // 兼容旧 paintCell 引用（笔刷已改用 brushSel）
+let roadType='concrete';      // 兼容旧引用
+/* 笔刷统一为「拖拽成矩形」：地表贴图写入 overrides，结构类写入对应结构层 */
+const BRUSH_STRUCT=[
+  {layer:'paths', type:'road',     name:'柏油路',   hex:'#2c3036'},
+  {layer:'paths', type:'concrete', name:'水泥路',   hex:'#9899a0'},
+  {layer:'paths', type:'cobble',   name:'鹅卵石路', hex:'#8d8a82'},
+  {layer:'paths', type:'dirt',     name:'土路',     hex:'#9d8b6f'},
+  {layer:'lakes',    name:'水域',   hex:'#3f86c4'},
+  {layer:'bridges',  name:'桥梁',   hex:'#c9a86a'},
+  {layer:'walls',    name:'围墙',   hex:'#5a4a3a'},
+  {layer:'buildings',name:'建筑',   hex:'#8a8a92'}
+];
+let brushSel={kind:'tex', t:'grass'};
 let state=null;               // {cols,rows,paths,lakes,bridges,walls,buildings,lamps,overrides}
 let cols=DEFAULT_COLS, rows=DEFAULT_ROWS;
 let hover=null, anchor=null, preview=null;
@@ -370,32 +377,34 @@ TOOLS.forEach(tl=>{
 function renderSubbar(){
   subbarEl.innerHTML='';
   if(tool==='brush'){
-    const lbl=document.createElement('span'); lbl.className='lbl'; lbl.textContent='地形：';
-    subbarEl.appendChild(lbl);
+    // 地表 / 贴图（拖拽成矩形写入 overrides）
+    const lbl1=document.createElement('span'); lbl1.className='lbl'; lbl1.textContent='地表：';
+    subbarEl.appendChild(lbl1);
     TERRAIN.forEach(t=>{
       const d=document.createElement('div');
-      d.className='tool'+(brushType===t.t?' active':''); d.dataset.t=t.t;
+      d.className='tool'+(brushSel.kind==='tex'&&brushSel.t===t.t?' active':''); d.dataset.t=t.t;
       d.style.cssText='padding:3px 8px;font-size:12px;';
       d.innerHTML='<span class="sw" style="background:'+t.hex+'"></span>'+terrainName(t.t);
-      d.onclick=()=>{ brushType=t.t; renderSubbar(); };
+      d.onclick=()=>{ brushSel={kind:'tex',t:t.t}; renderSubbar(); };
       d.onmouseenter=()=>showChipPreview(d, thumbHTML(t.t), terrainName(t.t));
       d.onmouseleave=hideChipPreview;
       subbarEl.appendChild(d);
     });
-  } else if(tool==='road'){
-    const lbl=document.createElement('span'); lbl.className='lbl'; lbl.textContent='路面类型：';
-    subbarEl.appendChild(lbl);
-    const sel=document.createElement('select');
-    ['concrete','road','cobble','dirt'].forEach(t=>{
-      const o=document.createElement('option'); o.value=t; o.textContent=terrainName(t); sel.appendChild(o);
+    // 结构（拖拽成矩形写入对应结构层）
+    const lbl2=document.createElement('span'); lbl2.className='lbl'; lbl2.textContent='结构：';
+    subbarEl.appendChild(lbl2);
+    BRUSH_STRUCT.forEach(s=>{
+      const active=brushSel.kind==='struct'&&brushSel.layer===s.layer&&(s.type?brushSel.type===s.type:true);
+      const d=document.createElement('div');
+      d.className='tool'+(active?' active':'');
+      d.style.cssText='padding:3px 8px;font-size:12px;';
+      d.innerHTML='<span class="sw" style="background:'+s.hex+'"></span>'+s.name;
+      d.onclick=()=>{ brushSel={kind:'struct',layer:s.layer,type:s.type}; renderSubbar(); };
+      d.onmouseenter=()=>showChipPreview(d, '<div style="width:64px;height:64px;background:'+s.hex+';border-radius:6px;"></div>', s.name+'（结构矩形）');
+      d.onmouseleave=hideChipPreview;
+      subbarEl.appendChild(d);
     });
-    sel.value=roadType;
-    sel.onchange=()=>{ roadType=sel.value; };
-    subbarEl.appendChild(sel);
-    const tip=document.createElement('span'); tip.className='lbl'; tip.textContent='（按住拖拽画矩形，松开生成）';
-    subbarEl.appendChild(tip);
-  } else if(tool==='building'){
-    const tip=document.createElement('span'); tip.className='lbl'; tip.textContent='（按住拖拽画建筑占地，松开后输入名称）';
+    const tip=document.createElement('span'); tip.className='lbl'; tip.textContent='（单击铺一格；按住拖拽 = 矩形填充，松开生效）';
     subbarEl.appendChild(tip);
   } else if(tool==='lamp'){
     const tip=document.createElement('span'); tip.className='lbl'; tip.textContent='（单击放置路灯；大灯：勾选）';
@@ -632,9 +641,9 @@ cv.addEventListener('pointerdown',e=>{
     cv.setPointerCapture(e.pointerId);
     return;
   }
-  if(tool==='brush'||tool==='object'||tool==='erase'){ painting=true; paintCell(c); }
+  if(tool==='brush'){ anchor=c; painting=true; preview=normRect(c,c); }
+  else if(tool==='object'||tool==='erase'){ painting=true; paintCell(c); }
   else if(tool==='lamp'){ placeLamp(c); }
-  else { anchor=c; painting=true; }
   cv.setPointerCapture(e.pointerId);
 });
 cv.addEventListener('pointermove',e=>{
@@ -645,8 +654,8 @@ cv.addEventListener('pointermove',e=>{
     wrap.scrollLeft=panStart.sl-dx; wrap.scrollTop=panStart.st-dy;
     return;
   }
-  if(painting&&(tool==='brush'||tool==='object'||tool==='erase')) paintCell(c);
-  else if(painting&&anchor&&tool!=='lamp') preview=normRect(anchor,c);
+  if(painting&&(tool==='object'||tool==='erase')) paintCell(c);
+  else if(painting&&anchor&&tool==='brush') preview=normRect(anchor,c);
   draw();
 });
 cv.addEventListener('pointerup',e=>{
@@ -657,9 +666,7 @@ cv.addEventListener('pointerup',e=>{
     return;
   }
   const c=cellFromEvent(e);
-  if(painting&&anchor&&tool!=='brush'&&tool!=='object'&&tool!=='erase'&&tool!=='lamp'){
-    const r=normRect(anchor,c); if(r.w>0&&r.h>0) commitRect(r);
-  }
+  if(painting&&anchor&&tool==='brush'){ const r=normRect(anchor,c); if(r.w>0&&r.h>0) commitBrushRect(r); }
   painting=false; anchor=null; preview=null; draw();
 });
 cv.addEventListener('pointerleave',()=>{ hover=null; draw(); });
@@ -730,15 +737,26 @@ function placeLamp(c){
   draw(); renderList(); scheduleSave();
   toast('已放置路灯 ('+c.x+','+c.y+')'+(big?' 大灯':''));
 }
-function commitRect(r){
-  if(tool==='road'){ addRect('paths',{x:r.x,y:r.y,w:r.w,h:r.h,type:roadType}); }
-  else if(tool==='lake'){ addRect('lakes',{x:r.x,y:r.y,w:r.w,h:r.h}); }
-  else if(tool==='bridge'){ addRect('bridges',{x:r.x,y:r.y,w:r.w,h:r.h,name:'桥'}); }
-  else if(tool==='wall'){ addRect('walls',{x:r.x,y:r.y,w:r.w,h:r.h}); }
-  else if(tool==='building'){
-    const nm=prompt('建筑名称：','建筑'); const name=(nm==null?'':nm.trim())||'建筑';
-    addRect('buildings',{x:r.x,y:r.y,w:r.w,h:r.h,type:'building',name:name,emoji:'🏢',color:'#8a8a92'});
+/* 笔刷拖拽矩形提交：地表 → overrides 整块填充；结构 → 对应结构层一个矩形 */
+function commitBrushRect(r){
+  if(brushSel.kind==='struct'){
+    if(brushSel.layer==='paths') addRect('paths',{x:r.x,y:r.y,w:r.w,h:r.h,type:brushSel.type});
+    else if(brushSel.layer==='lakes') addRect('lakes',{x:r.x,y:r.y,w:r.w,h:r.h});
+    else if(brushSel.layer==='bridges') addRect('bridges',{x:r.x,y:r.y,w:r.w,h:r.h,name:'桥'});
+    else if(brushSel.layer==='walls') addRect('walls',{x:r.x,y:r.y,w:r.w,h:r.h});
+    else if(brushSel.layer==='buildings'){
+      const nm=prompt('建筑名称：','建筑'); const name=(nm==null?'':nm.trim())||'建筑';
+      addRect('buildings',{x:r.x,y:r.y,w:r.w,h:r.h,type:'building',name:name,emoji:'🏢',color:'#8a8a92'});
+    }
+    return;
   }
+  // 地表贴图：整块矩形填充到 overrides
+  state.overrides=state.overrides||{};
+  for(let y=r.y;y<r.y+r.h;y++) for(let x=r.x;x<r.x+r.w;x++){
+    if(x<0||y<0||x>=cols||y>=rows) continue;
+    state.overrides[x+','+y]={t:brushSel.t};
+  }
+  draw(); scheduleSave(); renderList();
 }
 
 /* ---------- 地图尺寸：追加 / 插入行列 ---------- */

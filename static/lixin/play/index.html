@@ -1658,24 +1658,39 @@ const TEX_ATLAS={
   grass_dirt_bottom:{sheet:'tiles/grassdirt',c:0,r:2,name:'草底土'},
   dirt_grass:{sheet:'tiles/grassdirt',c:1,r:2,name:'土边草'},
   grass_dirt_left:{sheet:'tiles/grassdirt',c:0,r:3,name:'草左土'},
-  grass_dirt_right:{sheet:'tiles/grassdirt',c:1,r:3,name:'草右土'}
+  grass_dirt_right:{sheet:'tiles/grassdirt',c:1,r:3,name:'草右土'},
+  // v1.15.8 新增单文件地面贴图
+  g_cobble:{file:'tiles/g_cobble',name:'鹅卵石地'},
+  g_brick:{file:'tiles/g_brick',name:'红砖地'},
+  g_wood:{file:'tiles/g_wood',name:'木板地'},
+  g_sand:{file:'tiles/g_sand',name:'沙地'},
+  g_tile:{file:'tiles/g_tile',name:'瓷砖地'},
+  g_moss:{file:'tiles/g_moss',name:'青苔石地'}
 };
 const TEX_SHEET_DIMS={'tiles/floors':{cols:18,rows:3},'tiles/grassdirt':{cols:2,rows:4}};
+const TEX_FILE_IMGS={};
+function texFileImg(file){ let im=TEX_FILE_IMGS[file]; if(!im){ im=new Image(); im.onload=()=>invalidateCache(); im.onerror=()=>{}; im.src='assets/'+file+'.png'; TEX_FILE_IMGS[file]=im; } return im; }
 function drawTexTile(type,x,y){
   const a=TEX_ATLAS[type]; if(!a){ drawPathTile(x,y,{type:type}); return; }
-  const img=A[a.sheet]; const px=x*TILE, py=y*TILE;
+  const px=x*TILE, py=y*TILE;
+  if(a.file){
+    const img=texFileImg(a.file);
+    if(img&&img.complete&&img.naturalWidth){ ctx.drawImage(img,px,py,TILE,TILE); return; }
+  }
+  const img=A[a.sheet];
   if(img&&img.complete&&img.naturalWidth){
     const dims=TEX_SHEET_DIMS[a.sheet]; const cw=img.naturalWidth/dims.cols, ch=img.naturalHeight/dims.rows;
     ctx.drawImage(img,a.c*cw,a.r*ch,cw,ch,px,py,TILE,TILE); return;
   }
   const fb={gravel:'#a8a8a8',darkstone:'#4a4a4a',stone:'#808080',soil:'#9d7e58',mud:'#6e563e',darksoil:'#3d2f22',
             grass_path:'#5fa83f',dark_grass:'#3e6e2d',grass_dirt_top:'#6f9e45',dirt_path:'#8f7048',
-            grass_dirt_bottom:'#6f9e45',dirt_grass:'#7f8a45',grass_dirt_left:'#6f9e45',grass_dirt_right:'#6f9e45'}[type]||'#6a6a6a';
+            grass_dirt_bottom:'#6f9e45',dirt_grass:'#7f8a45',grass_dirt_left:'#6f9e45',grass_dirt_right:'#6f9e45',
+            g_cobble:'#909090',g_brick:'#a85a4a',g_wood:'#8f6a42',g_sand:'#d4c08a',g_tile:'#8aa8a8',g_moss:'#6a7a5a'}[type]||'#6a6a6a';
   ctx.fillStyle=fb; ctx.fillRect(px,py,TILE,TILE);
   ctx.fillStyle='rgba(0,0,0,0.12)'; for(let i=0;i<5;i++) ctx.fillRect(px+((x*7+i*13)%28),py+((y*11+i*7)%28),2,2);
   ctx.fillStyle='rgba(255,255,255,0.08)'; for(let i=0;i<5;i++) ctx.fillRect(px+((x*13+i*7)%28),py+((y*7+i*13)%28),2,2);
 }
-/* v1.15.7 / 编辑器 v0.6：柏油路相交转弯衔接 + 物件贴图重洗（透明像素风）
+/* v1.15.8 / 编辑器 v0.8：新增写实装饰、建筑、地面贴图 + 单文件地形扩展
    - 支持多格树木（2×5 ~ 4×5）与单格花草装饰
    - obstacle: 'all'=整块不可通行；'trunk'=仅底部树干1~2格；'none'=可穿过
    - file 缺省则走程序化兜底绘制 */
@@ -1708,7 +1723,29 @@ const OBJ_DEF={
   d_sign:{name:'告示牌',w:1,h:1,obstacle:'none'},
   d_lamp:{name:'地灯',w:1,h:1,obstacle:'none'},
   d_fence_h:{name:'横栅栏',w:1,h:1,obstacle:'none'},
-  d_fence_v:{name:'竖栅栏',w:1,h:1,obstacle:'none'}
+  d_fence_v:{name:'竖栅栏',w:1,h:1,obstacle:'none'},
+  // v1.15.8 新增装饰与建筑
+  d_bench:{name:'长椅',w:2,h:1,obstacle:'all',file:'obj/d_bench'},
+  d_fountain:{name:'喷泉',w:2,h:2,obstacle:'all',file:'obj/d_fountain'},
+  d_statue:{name:'雕像',w:1,h:2,obstacle:'all',file:'obj/d_statue'},
+  d_streetlamp:{name:'街灯',w:1,h:2,obstacle:'none',file:'obj/d_streetlamp'},
+  d_mailbox:{name:'邮筒',w:1,h:1,obstacle:'all',file:'obj/d_mailbox'},
+  d_flowerpot:{name:'花盆',w:1,h:1,obstacle:'none',file:'obj/d_flowerpot'},
+  d_well:{name:'水井',w:2,h:1,obstacle:'all',file:'obj/d_well'},
+  d_tent:{name:'帐篷',w:2,h:2,obstacle:'all',file:'obj/d_tent'},
+  d_umbrella:{name:'遮阳伞',w:1,h:2,obstacle:'none',file:'obj/d_umbrella'},
+  d_banner:{name:'旗帜',w:1,h:2,obstacle:'none',file:'obj/d_banner'},
+  d_haybale:{name:'草垛',w:1,h:1,obstacle:'all',file:'obj/d_haybale'},
+  d_chest:{name:'宝箱',w:1,h:1,obstacle:'all',file:'obj/d_chest'},
+  d_bridge:{name:'小桥',w:2,h:1,obstacle:'all',file:'obj/d_bridge'},
+  d_hedge:{name:'树篱',w:2,h:1,obstacle:'all',file:'obj/d_hedge'},
+  d_portal:{name:'传送阵',w:1,h:1,obstacle:'none',file:'obj/d_portal'},
+  b_cottage:{name:'小屋',w:3,h:3,obstacle:'all',file:'obj/b_cottage'},
+  b_tower:{name:'钟楼',w:2,h:4,obstacle:'all',file:'obj/b_tower'},
+  b_gate:{name:'大门',w:2,h:3,obstacle:'all',file:'obj/b_gate'},
+  b_pavilion:{name:'凉亭',w:3,h:3,obstacle:'all',file:'obj/b_pavilion'},
+  b_shed:{name:'棚屋',w:2,h:2,obstacle:'all',file:'obj/b_shed'},
+  b_wall:{name:'砖墙段',w:3,h:2,obstacle:'all',file:'obj/b_wall'}
 };
 const OBJ_DEF_LEGACY={o_tree:1,o_pine:1,o_rock:1,o_bush:1,o_flower:1,o_mushroom:1,o_barrel:1,o_crate:1,o_sign:1,o_fence_h:1,o_fence_v:1,o_lamp:1};
 const OBJ_TYPES=Object.assign({},OBJ_DEF_LEGACY); for(const k in OBJ_DEF) OBJ_TYPES[k]=1;

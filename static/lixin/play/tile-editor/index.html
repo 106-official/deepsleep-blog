@@ -169,7 +169,10 @@ const TERRAIN=[
   {t:'gravel',hex:'#a8a8a8'},{t:'darkstone',hex:'#4a4a4a'},{t:'stone',hex:'#808080'},{t:'soil',hex:'#9d7e58'},
   {t:'mud',hex:'#6e563e'},{t:'darksoil',hex:'#3d2f22'},{t:'grass_path',hex:'#5fa83f'},{t:'dark_grass',hex:'#3e6e2d'},
   {t:'grass_dirt_top',hex:'#6f9e45'},{t:'dirt_path',hex:'#8f7048'},{t:'grass_dirt_bottom',hex:'#6f9e45'},
-  {t:'dirt_grass',hex:'#7f8a45'},{t:'grass_dirt_left',hex:'#6f9e45'},{t:'grass_dirt_right',hex:'#6f9e45'}
+  {t:'dirt_grass',hex:'#7f8a45'},  {t:'grass_dirt_left',hex:'#6f9e45'},{t:'grass_dirt_right',hex:'#6f9e45'},
+  // v0.8 新增写实地面贴图
+  {t:'g_cobble',hex:'#909090'},{t:'g_brick',hex:'#a85a4a'},{t:'g_wood',hex:'#8f6a42'},
+  {t:'g_sand',hex:'#d4c08a'},{t:'g_tile',hex:'#8aa8a8'},{t:'g_moss',hex:'#6a7a5a'}
 ];
 function terrainHex(t){ const f=TERRAIN.find(x=>x.t===t); return f?f.hex:'#4a9a40'; }
 function isGrass(t){ return t==='grass'||(t&&t.indexOf('grass')===0); }
@@ -203,8 +206,9 @@ function hideChipPreview(){ if(chipPreviewBox) chipPreviewBox.style.display='non
 // 地形贴图缩略图（64×64）
 function thumbHTML(t){
   const S=64, c=document.createElement('canvas'); c.width=S; c.height=S; const g=c.getContext('2d'); g.imageSmoothingEnabled=false;
-  if(TEX_ATLAS[t]){ const a=TEX_ATLAS[t], im=TEX_IMGS[a.sheet];
-    if(im&&im.complete&&im.naturalWidth){ const d=TEX_DIMS[a.sheet]; const cw=im.naturalWidth/d.cols, ch=im.naturalHeight/d.rows; g.drawImage(im,a.c*cw,a.r*ch,cw,ch,0,0,S,S); return '<img src="'+c.toDataURL()+'">'; }
+  if(TEX_ATLAS[t]){ const a=TEX_ATLAS[t];
+    if(a.file){ const im=TEX_IMGS[a.file]; if(im&&im.complete&&im.naturalWidth){ g.imageSmoothingEnabled=false; g.drawImage(im,0,0,S,S); return '<img src="'+c.toDataURL()+'">'; } }
+    if(a.sheet){ const im=TEX_IMGS[a.sheet]; if(im&&im.complete&&im.naturalWidth){ const d=TEX_DIMS[a.sheet]; const cw=im.naturalWidth/d.cols, ch=im.naturalHeight/d.rows; g.drawImage(im,a.c*cw,a.r*ch,cw,ch,0,0,S,S); return '<img src="'+c.toDataURL()+'">'; } }
     g.fillStyle='#8a8a8a'; g.fillRect(0,0,S,S); return '<img src="'+c.toDataURL()+'">';
   }
   if(GV[t]){ const v=GV[t]; g.fillStyle='rgb('+v.base.join(',')+')'; g.fillRect(0,0,S,S);
@@ -239,12 +243,19 @@ const TEX_ATLAS={
   grass_dirt_bottom:{sheet:'../assets/tiles/grassdirt.png',c:0,r:2,name:'草底土'},
   dirt_grass:{sheet:'../assets/tiles/grassdirt.png',c:1,r:2,name:'土边草'},
   grass_dirt_left:{sheet:'../assets/tiles/grassdirt.png',c:0,r:3,name:'草左土'},
-  grass_dirt_right:{sheet:'../assets/tiles/grassdirt.png',c:1,r:3,name:'草右土'}
+  grass_dirt_right:{sheet:'../assets/tiles/grassdirt.png',c:1,r:3,name:'草右土'},
+  // v0.8 新增单文件地面贴图
+  g_cobble:{file:'../assets/tiles/g_cobble.png',name:'鹅卵石地'},
+  g_brick:{file:'../assets/tiles/g_brick.png',name:'红砖地'},
+  g_wood:{file:'../assets/tiles/g_wood.png',name:'木板地'},
+  g_sand:{file:'../assets/tiles/g_sand.png',name:'沙地'},
+  g_tile:{file:'../assets/tiles/g_tile.png',name:'瓷砖地'},
+  g_moss:{file:'../assets/tiles/g_moss.png',name:'青苔石地'}
 };
 const TEX_DIMS={'../assets/tiles/floors.png':{cols:18,rows:3},'../assets/tiles/grassdirt.png':{cols:2,rows:4}};
 const TEX_IMGS={};
 function texImg(src){ let im=TEX_IMGS[src]; if(!im){ im=new Image(); im.src=src; TEX_IMGS[src]=im; } return im; }
-for(const k in TEX_ATLAS) texImg(TEX_ATLAS[k].sheet);
+for(const k in TEX_ATLAS){ const a=TEX_ATLAS[k]; if(a.sheet) texImg(a.sheet); if(a.file) texImg(a.file); }
 /* 编辑器 v0.4：可放置物件（名称 / 占地 / 障碍 / 透明贴图） */
 const OBJ_DEF={
   t_oak:{name:'橡树',w:3,h:5,obstacle:'trunk',file:'../assets/obj/t_oak.png'},
@@ -271,7 +282,29 @@ const OBJ_DEF={
   d_sign:{name:'告示牌',w:1,h:1,obstacle:'none'},
   d_lamp:{name:'地灯',w:1,h:1,obstacle:'none'},
   d_fence_h:{name:'横栅栏',w:1,h:1,obstacle:'none'},
-  d_fence_v:{name:'竖栅栏',w:1,h:1,obstacle:'none'}
+  d_fence_v:{name:'竖栅栏',w:1,h:1,obstacle:'none'},
+  // v0.8 新增装饰与建筑
+  d_bench:{name:'长椅',w:2,h:1,obstacle:'all',file:'../assets/obj/d_bench.png'},
+  d_fountain:{name:'喷泉',w:2,h:2,obstacle:'all',file:'../assets/obj/d_fountain.png'},
+  d_statue:{name:'雕像',w:1,h:2,obstacle:'all',file:'../assets/obj/d_statue.png'},
+  d_streetlamp:{name:'街灯',w:1,h:2,obstacle:'none',file:'../assets/obj/d_streetlamp.png'},
+  d_mailbox:{name:'邮筒',w:1,h:1,obstacle:'all',file:'../assets/obj/d_mailbox.png'},
+  d_flowerpot:{name:'花盆',w:1,h:1,obstacle:'none',file:'../assets/obj/d_flowerpot.png'},
+  d_well:{name:'水井',w:2,h:1,obstacle:'all',file:'../assets/obj/d_well.png'},
+  d_tent:{name:'帐篷',w:2,h:2,obstacle:'all',file:'../assets/obj/d_tent.png'},
+  d_umbrella:{name:'遮阳伞',w:1,h:2,obstacle:'none',file:'../assets/obj/d_umbrella.png'},
+  d_banner:{name:'旗帜',w:1,h:2,obstacle:'none',file:'../assets/obj/d_banner.png'},
+  d_haybale:{name:'草垛',w:1,h:1,obstacle:'all',file:'../assets/obj/d_haybale.png'},
+  d_chest:{name:'宝箱',w:1,h:1,obstacle:'all',file:'../assets/obj/d_chest.png'},
+  d_bridge:{name:'小桥',w:2,h:1,obstacle:'all',file:'../assets/obj/d_bridge.png'},
+  d_hedge:{name:'树篱',w:2,h:1,obstacle:'all',file:'../assets/obj/d_hedge.png'},
+  d_portal:{name:'传送阵',w:1,h:1,obstacle:'none',file:'../assets/obj/d_portal.png'},
+  b_cottage:{name:'小屋',w:3,h:3,obstacle:'all',file:'../assets/obj/b_cottage.png'},
+  b_tower:{name:'钟楼',w:2,h:4,obstacle:'all',file:'../assets/obj/b_tower.png'},
+  b_gate:{name:'大门',w:2,h:3,obstacle:'all',file:'../assets/obj/b_gate.png'},
+  b_pavilion:{name:'凉亭',w:3,h:3,obstacle:'all',file:'../assets/obj/b_pavilion.png'},
+  b_shed:{name:'棚屋',w:2,h:2,obstacle:'all',file:'../assets/obj/b_shed.png'},
+  b_wall:{name:'砖墙段',w:3,h:2,obstacle:'all',file:'../assets/obj/b_wall.png'}
 };
 const OBJ_LEGACY=['o_tree','o_pine','o_rock','o_bush','o_flower','o_mushroom','o_barrel','o_crate','o_sign','o_fence_h','o_fence_v','o_lamp'];
 const OBJ_TYPES={}; for(const k in OBJ_DEF) OBJ_TYPES[k]=1; OBJ_LEGACY.forEach(k=>OBJ_TYPES[k]=1);
@@ -429,12 +462,18 @@ function drawGrass(px,py,type){
 /* ---------- 编辑器 v0.3：地表贴图与物件绘制 ---------- */
 function drawAtlasTile(px,py,type){
   const a=TEX_ATLAS[type]; if(!a) return;
-  const img=texImg(a.sheet);
-  if(img.complete&&img.naturalWidth){
-    const dims=TEX_DIMS[a.sheet]; const cw=img.naturalWidth/dims.cols, ch=img.naturalHeight/dims.rows;
-    ctx.imageSmoothingEnabled=false;
-    ctx.drawImage(img,a.c*cw,a.r*ch,cw,ch,px,py,SCALE,SCALE);
-    return;
+  if(a.file){
+    const img=texImg(a.file);
+    if(img.complete&&img.naturalWidth){ ctx.imageSmoothingEnabled=false; ctx.drawImage(img,px,py,SCALE,SCALE); return; }
+  }
+  if(a.sheet){
+    const img=texImg(a.sheet);
+    if(img.complete&&img.naturalWidth){
+      const dims=TEX_DIMS[a.sheet]; const cw=img.naturalWidth/dims.cols, ch=img.naturalHeight/dims.rows;
+      ctx.imageSmoothingEnabled=false;
+      ctx.drawImage(img,a.c*cw,a.r*ch,cw,ch,px,py,SCALE,SCALE);
+      return;
+    }
   }
   ctx.fillStyle=terrainHex(type); ctx.fillRect(px,py,SCALE,SCALE);
 }

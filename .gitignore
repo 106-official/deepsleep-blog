@@ -21,6 +21,15 @@ Thumbs.db
 # Brainstorm skill temp
 .superpowers/
 
+# Local agent workspace notes (not for the public Pages site)
+.workbuddy/
+
+# Lixin RPG editor runtime data
+# map-data.json is now tracked (cross-device sync via git)
+static/lixin/play/tile-overrides.json
+# AI sprite generation workspace (source 1024x images and scripts, not needed in git)
+static/lixin/play/assets/_gen/
+
 /node_modules/
 **/node_modules/
 

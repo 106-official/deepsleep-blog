@@ -1,6 +1,5 @@
 {{ define "main" }}
 <div class="learn-page">
-  <div class="learn-read-progress"></div>
   <button class="learn-menu-toggle" aria-label="打开目录">
     <span class="learn-menu-toggle-bar"></span>
     <span class="learn-menu-toggle-bar"></span>
@@ -86,9 +85,9 @@
 
 <style>
 :root {
-  --learn-gold: #9aa1ab;
-  --learn-gold-light: #e8eaed;
-  --learn-gold-dark: #4b4f57;
+  --learn-gold: #D4AF37;
+  --learn-gold-light: #F4E5B2;
+  --learn-gold-dark: #B8960C;
   --learn-bg: #fafafa;
   --learn-surface: #ffffff;
   --learn-text: #2d2d2d;
@@ -131,11 +130,6 @@
   color: var(--learn-text);
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
-.learn-read-progress {
-  position: fixed; top: 0; left: 0; height: 3px; width: 0%;
-  background: linear-gradient(90deg, var(--learn-gold-dark), var(--learn-gold));
-  z-index: 300; transition: width 80ms linear;
-}
 
 /* ========== Mobile Toggle ========== */
 .learn-menu-toggle {
@@ -144,8 +138,8 @@
   top: 14px;
   left: 14px;
   z-index: 200;
-  width: clamp(42px, 38px + 0.5vw, 44px);
-  height: clamp(42px, 38px + 0.5vw, 44px);
+  width: 42px;
+  height: 42px;
   padding: 0;
   border: none;
   background: var(--learn-surface);
@@ -235,8 +229,8 @@
   margin-bottom: 0.3rem;
   transition: color var(--learn-transition), background var(--learn-transition);
 }
-.learn-nav-group-title:hover { color: var(--learn-gold-dark); background: rgba(123,130,142,0.06); }
-.learn-nav-group-title.current { color: var(--learn-gold-dark); background: rgba(123,130,142,0.08); }
+.learn-nav-group-title:hover { color: var(--learn-gold-dark); background: rgba(212,175,55,0.06); }
+.learn-nav-group-title.current { color: var(--learn-gold-dark); background: rgba(212,175,55,0.08); }
 .learn-nav-group-icon { font-size: 1rem; }
 
 .learn-nav-link {
@@ -255,12 +249,12 @@
 }
 .learn-nav-link:hover {
   color: var(--learn-text);
-  background: rgba(123,130,142,0.06);
+  background: rgba(212,175,55,0.06);
   border-left-color: var(--learn-gold-light);
 }
 .learn-nav-link.active {
   color: var(--learn-gold-dark);
-  background: linear-gradient(90deg, rgba(123,130,142,0.12), transparent);
+  background: linear-gradient(90deg, rgba(212,175,55,0.12), transparent);
   border-left-color: var(--learn-gold);
   font-weight: 600;
 }
@@ -310,12 +304,12 @@
   transform: rotate(90deg);
 }
 .learn-nav-subject-title:hover {
-  background: rgba(123,130,142,0.06);
+  background: rgba(212,175,55,0.06);
   color: var(--learn-gold-dark);
 }
 .learn-nav-subject-title.current {
   color: var(--learn-gold-dark);
-  background: rgba(123,130,142,0.08);
+  background: rgba(212,175,55,0.08);
   border-left-color: var(--learn-gold-light);
 }
 .learn-nav-subject-icon {
@@ -344,7 +338,7 @@
 .learn-nav-subject-title.current .learn-nav-count {
   color: var(--learn-gold-dark);
   border-color: var(--learn-gold-light);
-  background: rgba(123,130,142,0.08);
+  background: rgba(212,175,55,0.08);
 }
 .learn-nav-chapters {
   padding: 0.15rem 0 0.4rem;
@@ -403,7 +397,7 @@
   margin-bottom: 0.8rem;
   text-transform: uppercase;
 }
-.learn-cert-badge-cpa { background: linear-gradient(135deg, #6b7079, #3a3e45); color: #fff; }
+.learn-cert-badge-cpa { background: linear-gradient(135deg, #D4AF37, #B8960C); color: #fff; }
 .learn-cert-badge-acca { background: linear-gradient(135deg, #2d5b8a, #1a3d5e); color: #fff; }
 
 .learn-title {
@@ -472,7 +466,7 @@
 }
 .learn-toc .toc a:hover {
   color: var(--learn-gold-dark);
-  background: rgba(123,130,142,0.08);
+  background: rgba(212,175,55,0.08);
 }
 
 /* ========== Content Typography ========== */
@@ -553,7 +547,7 @@
   border: 1px solid var(--learn-border);
   font-family: 'SF Mono', Consolas, monospace;
 }
-[data-theme="dark"] .learn-content code { background: #333; color: #d2d6db; }
+[data-theme="dark"] .learn-content code { background: #333; color: #f4e5b2; }
 .learn-content pre {
   margin: 1.2rem 0;
   padding: 1.2rem;
@@ -563,6 +557,19 @@
 }
 .learn-content pre code { background: none; padding: 0; border: none; color: #abb2bf; }
 .learn-content img { max-width: 100%; border-radius: 8px; margin: 1rem 0; }
+/* 公式/题目图片：白底卡片，保证暗色主题下可见且不被背景吞掉 */
+.learn-content img.formula-img {
+  display: block;
+  margin: 1.1rem auto;
+  max-width: min(100%, 780px);
+  width: auto;
+  background: #ffffff;
+  border: 1px solid var(--learn-border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  box-shadow: var(--learn-shadow);
+}
+.learn-content img.formula-img + img.formula-img { margin-top: 0.4rem; }
 
 /* ========== Tables ========== */
 .learn-content table {
@@ -589,7 +596,7 @@
 .learn-content table td { color: var(--learn-text-secondary); }
 .learn-content table tr:nth-child(even) td { background: var(--learn-bg); }
 [data-theme="dark"] .learn-content table th {
-  background: linear-gradient(135deg, #7c828c, #4b4f57);
+  background: linear-gradient(135deg, #8a7210, #b8960c);
   color: #fff;
 }
 [data-theme="dark"] .learn-content table td { color: #ccc; }
@@ -636,7 +643,7 @@
 .learn-pager .paginav a:hover {
   border-color: var(--learn-gold);
   color: var(--learn-gold-dark);
-  box-shadow: 0 4px 12px rgba(123,130,142,0.12);
+  box-shadow: 0 4px 12px rgba(212,175,55,0.12);
   transform: translateY(-2px);
 }
 .learn-pager .paginav .prev { text-align: left; }
@@ -650,7 +657,6 @@
 /* ========== Responsive ========== */
 @media (max-width: 1024px) {
   .learn-menu-toggle { display: flex; }
-  .learn-nav-link, .learn-nav-group-title, .learn-nav-subject-title { min-height: 44px; }
   .learn-sidebar {
     position: fixed;
     top: 0;
@@ -731,27 +737,6 @@
     var active = sidebar && sidebar.querySelector('.learn-nav-link.active');
     if (active) active.scrollIntoView({ block: 'center', behavior: 'instant' });
   });
-
-  // Reading progress bar
-  var progressBar = document.querySelector('.learn-read-progress');
-  if (progressBar) {
-    var ticking = false;
-    function updateProgress() {
-      var doc = document.documentElement;
-      var scrollTop = window.pageYOffset || doc.scrollTop || document.body.scrollTop || 0;
-      var scrollHeight = doc.scrollHeight - window.innerHeight;
-      var pct = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
-      progressBar.style.width = pct + '%';
-      ticking = false;
-    }
-    window.addEventListener('scroll', function() {
-      if (!ticking) {
-        window.requestAnimationFrame(updateProgress);
-        ticking = true;
-      }
-    }, { passive: true });
-    updateProgress();
-  }
 })();
 </script>
 {{ end }}

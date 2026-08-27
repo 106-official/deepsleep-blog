@@ -2,8 +2,7 @@
   learn_pager.html — 课程内「上一节/下一节」导航
   替换 PaperMod 全局 post_nav_links（全站排序会串到其他教材）：
   - lixin-learn 区: 限定在 /lixin-learn/ 内
-  - learn 区: 限定在所在教材（/learn/<教材段>/）内，按路径动态取段，
-              自动覆盖 cpa/acca/network-protocols/three-js/llm-from-scratch/network-security 等
+  - learn 区: 限定在所在证书（cpa/acca/network-protocols）内
   - 顺序: 按文件路径排序（目录数字前缀即课程顺序）
   - section 概览页不渲染翻页
   ============================================================ */ -}}
@@ -20,12 +19,15 @@
     {{- end -}}
   {{- end -}}
 {{- else if eq .Section "learn" -}}
-  {{- $rest := strings.TrimPrefix "/learn/" .RelPermalink -}}
-  {{- $seg := index (split $rest "/") 0 -}}
-  {{- $prefix := printf "/learn/%s/" $seg -}}
-  {{- range site.RegularPages -}}
-    {{- if strings.HasPrefix .RelPermalink $prefix -}}
-      {{- $pages = $pages | append . -}}
+  {{- $prefix := "" -}}
+  {{- if hasPrefix .RelPermalink "/learn/cpa/" }}{{ $prefix = "/learn/cpa/" }}{{ end -}}
+  {{- if hasPrefix .RelPermalink "/learn/acca/" }}{{ $prefix = "/learn/acca/" }}{{ end -}}
+  {{- if hasPrefix .RelPermalink "/learn/network-protocols/" }}{{ $prefix = "/learn/network-protocols/" }}{{ end -}}
+  {{- if $prefix -}}
+    {{- range site.RegularPages -}}
+      {{- if strings.HasPrefix .RelPermalink $prefix -}}
+        {{- $pages = $pages | append . -}}
+      {{- end -}}
     {{- end -}}
   {{- end -}}
 {{- end -}}

@@ -114,13 +114,13 @@
     box-shadow:0 10px 30px var(--shadow), inset 0 0 0 4px var(--wood);
     width:100%;height:100%;touch-action:none;display:block;}
   /* 全图迷你地图（v1.9：解决地图太大、浦东/宿舍看不到；点击传送） */
-  #minimap{position:absolute;right:12px;bottom:12px;width:180px;min-width:180px;height:135px;min-height:135px;
+  #minimap{position:absolute;right:12px;top:40px;width:180px;min-width:180px;height:135px;min-height:135px;
     background:rgba(158,199,138,.95);border:3px solid var(--wood);border-radius:10px;
     box-shadow:0 6px 18px var(--shadow);z-index:7;cursor:pointer;display:block;
     image-rendering:pixelated;}
   .minimap-label{position:absolute;right:18px;font:bold 11px 'ZCOOL KuaiLe',sans-serif;
     color:var(--wood-d);text-shadow:1px 1px 0 #fff;pointer-events:none;z-index:8;}
-  .minimap-label.top{bottom:155px;}
+  .minimap-label.top{top:8px;}
   .minimap-label.bot{bottom:4px;}
   .map-legend{position:absolute;left:14px;bottom:14px;background:rgba(255,250,240,.92);
     border:2px solid var(--wood);border-radius:8px;padding:5px 8px;
@@ -235,8 +235,8 @@
     .near-tip{font-size:12px;padding:4px 12px;bottom:8px;}
     .changelog{right:6px;top:6px;width:92vw;max-height:80%;}
     .settings{right:6px;top:6px;width:84vw;}
-    #minimap{width:120px;height:90px;right:6px;bottom:6px;}
-    .minimap-label.top{bottom:104px;}
+    #minimap{width:120px;height:90px;right:6px;top:34px;}
+    .minimap-label.top{top:6px;}
     .map-legend{font-size:10px;padding:3px 6px;left:6px;bottom:6px;}
   }
 </style>
@@ -337,13 +337,36 @@
 
 <script>
 /* ============================================================
-   Lixin · 学习 RPG  v1.12
-   - 地图扩大 4 倍（176×132，楼间距拉大，便于后续细化）
-   - 引入 Kenney Tiny Town（CC0）素材：草地/泥路/树/灌木/花/桥
-   - 文汇路小吃街（摊位 + 路灯 + 招牌）
-   - 小坏人可见化（地图上渲染形象 + 名牌）
-   - 手机端适配（紧凑 HUD + 动态逻辑分辨率）
-   - 修复：路灯不再落在路中央 / 道路不再与河流重叠
+   Lixin · 学习 RPG  v1.16.2  (基于 v1.15 校区真实布局大改)
+   累计历史:
+   - v1.12 基础大地图(176×132)、素材、街道、小坏人可见化
+   - v1.13 校区重排(4/5/6/7 号楼 E 字楼群)、柿子湾与上川河、NPC 像素精灵图
+   - v1.14 牌坊校门(中式飞檐)、校园大乔木分层绘制、河水蜿蜒与桥
+   - v1.15 松江校区真实布局(路面交通/斑马线/红绿灯/北门桥+商铺)、学生结伴聊天
+   v1.16 本次变更:
+     1. 校门重构:中式牌坊(高窄)→ 天安门简化版(矮宽稳重, 红墙+金匾+平檐)
+     2. 角色精灵修复:player_sprites 清除 37k 灰色噪点(遮脸);villager cols 14→7(消除"半边"切片错位)
+     3. 四期公寓重构:1-18 栋小楼 → 2×2 排布的 4/5/6/7 号楼(medieval 大型典雅楼群),路网同步
+     4. 草坪装饰:删除"黄草簇"伪贴图(实为秋季干草误以为树)
+     5. 新增:文翔路校区 4号门(东北侧面向北, x:71 y:51)
+     6. 文汇河重构:从西墙 x:2 蔓延到东墙 x:176, 略向南倾斜(y:36→39), 北门桥同步到 y:36
+   v1.16.2 追加:
+     1. 宿舍内部路网改为与学校一致的灰色水泥路(concrete),主干道对齐北门桥(x:40-43, 4 格宽)
+     2. 主角改用程序化绘制(drawChar),弃用面部残缺的 AI 精灵图;黄色花 #ffd54a 移除
+     3. 学校主干道加宽(文翔路 4 格/上川路 3 格),横路 2 格,围墙开口同步
+     4. 柿子湾河从西墙 x:2 蔓延到东墙 x:86, 略向南倾(y:71→73);新增东湖桥+诚信桥,上川桥加宽
+     5. 路灯/萤火虫白天不开光, 夜晚才发光且增强(亮度与光晕半径提升)
+   v1.16.3 追加:
+     1. 精致二次元像素角色重做(drawCharCtx):走路/跑步腿手交替摆动(Shift 跑步加速),4 种表情(正常/微笑/惊讶/眨眼),头发高光/腮红/鞋头高光
+     2. 小地图移到右上角;视野上下左右各 +5 格(逻辑分辨率 +320)
+     3. 彻底移除草坪橙/黄花(#ff8a5b/黄心#ffe27a 改白,黄草簇代码删除)
+     4. 校门重做为中式门楼(左右墙垛+门洞+半开朱红门扇+横梁匾额+檐),不再是实心墙
+   v1.16.4 追加:
+     1. 屏幕内太阳/月亮移除,改顶部 HUD 24h 时间(7-19 ☀️, 19-7 🌙);DAY_MS=8*60*1000(1 现实秒≈3 游戏分)
+     2. 车挡路:被挡时(玩家/学生)愤怒气泡 😠;玩家挡路 ≥10s 弹 toast"长时间挡路..."+ 熟悉度 +1
+     3. 删除草坪沙黄石头堆(Kenney grassBf):drawGrassTile 不再引用 h===7
+     4. 自行车/电瓶车靠马路一侧(lane 偏 -1.5 格),汽车走中间
+     5. 猫状态:walk 25-35 秒(平均 30s 一次睡眠),sleep 5-10 秒(短睡);walk 切 sleep 概率 30%,不再频繁
    ============================================================ */
 (function(){
   var bar=document.getElementById('errBar');
@@ -596,15 +619,16 @@ const TILE=32, COLS=176, ROWS=132;
 const W=COLS*TILE, H=ROWS*TILE;
 let camX=0, camY=0;
 
-/* ---- 四期公寓宿舍楼（立信 1-18 栋：按真实宿舍区简化 3 排 × 6 列，楼间距宽敞） ---- */
-const DORM_COLS=[6,18,30,42,54,66];
-const DORM_ROWS=[8,20,32];
+/* ---- v1.16 四期公寓：换成 4 栋 medieval 大型典雅楼群(立信真实 4-7 号楼样式)，
+   2 排 × 2 列布局，避开中央主干道 x:39-42 与北门桥通道 x:39-42,y:36-40 ---- */
+const DORM_COLS=[10,34];
+const DORM_ROWS=[8,24];
 const BUILDINGS=[];
 (function(){
-  let n=1;
+  let n=4;                                // 从 4 号楼开始
   DORM_ROWS.forEach((ry)=>{
     DORM_COLS.forEach((rx)=>{
-      BUILDINGS.push({x:rx,y:ry,w:3,h:3,type:'dorm',emoji:'🛏️',name:n+'栋',color:'#c0a06a'});
+      BUILDINGS.push({x:rx,y:ry,w:5,h:4,type:'medieval',emoji:'🏛️',name:n+'号楼',color:'#efe9dc'});
       n++;
     });
   });
@@ -687,27 +711,37 @@ const PONDS=[];
 /* v1.12 河流湖泊美化：主河道 + 湖面加宽段（小湖），不再是笔直一条线；
    加宽段均位于两条鹅卵石路之间（y:70/74 与 y:62/66），不挡路不压建筑 */
 const LAKE=[
-  // ===== 文汇河（v1.15 #8：商铺后、宿舍区前，y:38-39；北门桥 x:40-42 跨河） =====
-  {x:2,y:38,w:82,h:2, depth:0.75},   // 主河道横贯四期公寓南缘 y:38-39
-  {x:3,y:38,w:16,h:2, lake:true},    // 西端小潭（北门桥以西加宽）
-  {x:46,y:38,w:18,h:2, lake:true},   // 东段小潭（北门桥以东加宽）
-  // ===== 松江·柿子湾（主河道加宽 2 格蜿蜒；西信桥/东诚桥跨河） =====
-  {x:4,y:71,w:40,h:2, depth:0.9},     // 主河道横贯文翔路中部 y:71-72
-  {x:5,y:70,w:6,h:4,  lake:true},     // 西端深潭
-  {x:15,y:70,w:15,h:4, lake:true},    // 中段大湖（西信桥↔东诚桥之间）
-  {x:32,y:70,w:7,h:3,  lake:true},    // 东端湖弯
+  // ===== 文汇河(v1.16 重构:从西墙 x:2 蔓延到东墙 x:176, 略向南倾斜 y:36→39) =====
+  {x:2,   y:36, w:36, h:2, depth:0.75},   // 西段(略偏北, y:36-37)
+  {x:38,  y:37, w:36, h:2, depth:0.75},   // 中西段(y:37-38)
+  {x:74,  y:38, w:34, h:2, depth:0.75},   // 中东段(y:38-39)
+  {x:108, y:39, w:34, h:2, depth:0.75},   // 东段(略偏南, y:39-40)
+  {x:142, y:39, w:34, h:2, depth:0.75},   // 浦东段(稳在 y:39-40)
+  // 加宽小潭(西端 + 中段)
+  {x:3,   y:35, w:14, h:4, lake:true},    // 西端小潭(北门桥以西加宽, 上下扩 1)
+  {x:84,  y:37, w:18, h:4, lake:true},    // 中段大湖(东西桥之间)
+  // ===== 松江·柿子湾(v1.16.2 从西墙 x:2 蔓延到东墙 x:86, 略向南倾 y:71→73; 西信/东诚/东湖/诚信桥跨河) =====
+  {x:2,y:71,w:11,h:2, depth:0.9},
+  {x:13,y:71,w:19,h:2, depth:0.9},
+  {x:32,y:72,w:21,h:2, depth:0.9},
+  {x:53,y:73,w:33,h:2, depth:0.9},
+  {x:11,y:70,w:7,h:4,  lake:true},
+  {x:30,y:70,w:5,h:4,  lake:true},
+  {x:68,y:70,w:5,h:4,  lake:true},
   // ===== 浦东·上川河（主河道加宽 2 格蜿蜒；上川桥跨河） =====
   {x:103,y:63,w:58,h:2, depth:0.9},   // 主河道横贯上川路 y:63-64
   {x:112,y:62,w:7,h:4,  lake:true},   // 西侧小潭
   {x:138,y:62,w:14,h:4, lake:true},   // 东侧大湖（上川桥以东）
 ];
 const LAKE_BRIDGES=[
-  // 北门桥：跨文汇河（四期公寓南缘），与文翔路校区北门对齐
-  {x:40,y:38,w:3,h:3,name:'北门桥'},
-  // 跨河石桥：垂直跨过 2 格主河道（y 向覆盖河+两岸），3×4 更大更立体，桥面铺满盖水不重叠
+  // 北门桥：跨文汇河(四期公寓南缘), 与宿舍主干道 x:40-43 对齐, 4 格宽
+  {x:40,y:36,w:4,h:3,name:'北门桥'},
+  // v1.16.2 柿子湾桥:西信/东诚/东湖(东段新增) + 诚信桥(跨主干道 x:40-43); 上川桥加宽到 4 格对齐 3 格主干道
   {x:13,y:70,w:3,h:4,name:'西信桥'},
   {x:32,y:70,w:3,h:4,name:'东诚桥'},
-  {x:127,y:62,w:3,h:4,name:'上川桥'},
+  {x:70,y:70,w:3,h:4,name:'东湖桥'},
+  {x:40,y:70,w:4,h:4,name:'诚信桥'},
+  {x:127,y:62,w:4,h:4,name:'上川桥'},
 ];
 const SQUARES=[
   {x:26,y:8,w:4,h:2,emoji:'🎯',name:'集点广场'},
@@ -720,13 +754,13 @@ const WALLS=[
   {x:0,y:0,w:24,h:1},{x:26,y:0,w:36,h:1},{x:64,y:0,w:24,h:1}, // 北墙（4/5号门 x:24-25/62-63 开口）
   {x:0,y:1,w:1,h:40},{x:86,y:1,w:1,h:40},                       // 东西墙
   // 文翔路校区（x:2-86, y:52-128）
-  {x:2,y:52,w:38,h:1},{x:43,y:52,w:43,h:1},                     // 北墙（北门 x:40-42 开口，对齐 3 格宽主干道）
-  {x:2,y:128,w:38,h:1},{x:43,y:128,w:43,h:1},                   // 南墙（1号门 x:40-42 开口）
+  {x:2,y:52,w:38,h:1},{x:44,y:52,w:27,h:1},{x:73,y:52,w:13,h:1},           // 北墙（北门 x:40-43 开口；4号门 x:71-72 开口，文翔路校区东北侧面向北）
+  {x:2,y:128,w:38,h:1},{x:44,y:128,w:42,h:1},                   // 南墙（1号门 x:40-43 开口）
   {x:2,y:53,w:1,h:75},                                          // 西墙
   {x:86,y:53,w:1,h:23},{x:86,y:78,w:1,h:50},                    // 东墙（3号门 y:76-77 开口）
   // 上川路校区（x:102-174, y:52-128）
-  {x:102,y:52,w:26,h:1},{x:130,y:52,w:44,h:1},                  // 北墙（1号门 x:128-129 开口）
-  {x:102,y:128,w:36,h:1},{x:140,y:128,w:34,h:1},                // 南墙（3号门 x:138-139 开口）
+  {x:102,y:52,w:26,h:1},{x:131,y:52,w:43,h:1},                  // 北墙（1号门 x:128-130 开口）
+  {x:102,y:128,w:36,h:1},{x:141,y:128,w:33,h:1},                // 南墙（3号门 x:138-140 开口）
   {x:102,y:53,w:1,h:23},{x:102,y:78,w:1,h:50},                  // 西墙（2号门 y:76-77 开口）
   {x:174,y:53,w:1,h:47},{x:174,y:102,w:1,h:26},                 // 东墙（4号门 y:100-101 开口）
 ];
@@ -735,34 +769,37 @@ const PATHS=[
   {x:0,y:42,w:176,h:8,type:'road'},
   // 校际大道（宽 12 格，文翔路↔上川路）= 马路（沥青）
   {x:88,y:42,w:12,h:86,type:'road'},
-  // v1.15 #4 文翔路主干道（纵贯 北门→1号门）= 灰色水泥路（3 格宽）
-  {x:40,y:53,w:3,h:75,type:'concrete'},
-  // 文翔路横路：贴柿子湾的两条 = 鹅卵石；其余 = 灰色水泥路（1 格宽，与主干道同贴图；x:3 起避开西墙 x:2）
-  {x:3,y:62,w:83,h:1,type:'concrete'},
+  // v1.16.2 文翔路主干道（纵贯 北门→1号门）= 灰色水泥路（4 格宽）
+  {x:40,y:53,w:4,h:75,type:'concrete'},
+  // 文翔路横路：贴柿子湾的两条 = 鹅卵石；其余 = 灰色水泥路（2 格宽，与主干道同贴图；x:3 起避开西墙 x:2）
+  {x:3,y:62,w:83,h:2,type:'concrete'},
   {x:3,y:70,w:83,h:1,type:'cobble'},
-  {x:3,y:74,w:83,h:1,type:'cobble'},
-  {x:3,y:86,w:83,h:1,type:'concrete'},
-  {x:3,y:104,w:83,h:1,type:'concrete'},
-  {x:3,y:116,w:83,h:1,type:'concrete'},
-  // v1.15 #4 上川路主干道（纵贯 1号门→3号门；过桥段由 LAKE_BRIDGES 覆盖）= 灰色水泥路
-  {x:128,y:53,w:2,h:75,type:'concrete'},
+  {x:3,y:74,w:83,h:2,type:'cobble'},
+  {x:3,y:86,w:83,h:2,type:'concrete'},
+  {x:3,y:104,w:83,h:2,type:'concrete'},
+  {x:3,y:116,w:83,h:2,type:'concrete'},
+  // v1.16.2 上川路主干道（纵贯 1号门→3号门；过桥段由 LAKE_BRIDGES 覆盖）= 灰色水泥路（3 格宽）
+  {x:128,y:53,w:3,h:75,type:'concrete'},
   // 上川路横路：贴小河的两条 = 鹅卵石；其余 = 灰色水泥路（x:103 起避开西墙 x:102）
   {x:103,y:62,w:71,h:1,type:'cobble'},
-  {x:103,y:66,w:71,h:1,type:'cobble'},
-  {x:103,y:78,w:71,h:1,type:'concrete'},
-  {x:103,y:98,w:71,h:1,type:'concrete'},
-  {x:103,y:112,w:71,h:1,type:'concrete'},
+  {x:103,y:66,w:71,h:2,type:'cobble'},
+  {x:103,y:78,w:71,h:2,type:'concrete'},
+  {x:103,y:98,w:71,h:2,type:'concrete'},
+  {x:103,y:112,w:71,h:2,type:'concrete'},
   // 校际大道与各校区连接口 = 马路
   {x:87,y:76,w:1,h:2,type:'road'},
   {x:100,y:76,w:2,h:2,type:'road'},
-  // v1.15 #4 上川路南门(3号门)竖路 / 东门(4号门)竖路 = 灰色水泥路
-  {x:138,y:112,w:2,h:15,type:'concrete'},
+  // v1.16.2 上川路南门(3号门)竖路(3 格宽) / 东门(4号门)竖路 = 灰色水泥路
+  {x:138,y:112,w:3,h:15,type:'concrete'},
   {x:172,y:98,w:1,h:3,type:'concrete'},
 ];
-/* ---- 四期公寓宿舍区内部路网（楼间人行道，土路） ---- */
-[12,24,36,48,60,72].forEach(x=>PATHS.push({x, y:2, w:2, h:40, type:'path'}));   // 两侧小路（纵向楼间道）
-[15,27,37].forEach(y=>PATHS.push({x:2, y, w:80, h:1, type:'path'}));             // 横向连廊（对应 3 排楼）
-PATHS.push({x:39,y:2,w:3,h:40,type:'path'});                                     // 中心主干道（3 格宽，贯穿南北）
+/* ---- v1.16.2 四期公寓内部路网:与学校一致的灰色水泥路(concrete),加宽,主干道对齐北门桥 ---- */
+// 楼外纵向通道(避开 4 栋楼 x:10-14/34-38 与中央主干道 x:40-43),3 格宽
+[4,22,46,60,80].forEach(x=>PATHS.push({x, y:2, w:3, h:34, type:'concrete'}));
+// 横向连廊(北/楼间/南),2 格宽;南侧 y:34 避开文汇河 y:36-39
+[6,17,34].forEach(y=>PATHS.push({x:2, y, w:84, h:2, type:'concrete'}));
+// 中心主干道(对齐北门桥 x:40-43, 4 格宽, 连北墙与文汇路)
+PATHS.push({x:40,y:2,w:4,h:40,type:'concrete'});
 const SIGNS=[
   {x:44,y:2,emoji:'🏠',name:'松江大学城四期公寓 · 文汇路1000弄',big:true},
   {x:42,y:50,emoji:'🍢',name:'文汇路小吃街',big:true},
@@ -778,6 +815,7 @@ const GATES=[
   {x:40,y:51,name:'文翔路校区 北门',big:true},
   {x:40,y:127,name:'文翔路校区 1号门(正门)',big:true},
   {x:86,y:76,name:'文翔路校区 3号门(东)'},
+  {x:71,y:51,name:'文翔路校区 4号门(东北)',big:false},
   {x:128,y:51,name:'上川路校区 1号门(北)',big:true},
   {x:101,y:76,name:'上川路校区 2号门(西)'},
   {x:138,y:127,name:'上川路校区 3号门(南)',big:true},
@@ -925,10 +963,10 @@ const CAT_COLORS=[
 function catState(c,dt){
   c.stateT-=dt;
   if(c.stateT<=0){
-    // v1.15：状态约 30 秒切换一次（不在移动/睡觉间高频抖动）
-    if(c.state==='walk'){ c.state=Math.random()<0.5?'idle':'sleep'; c.stateT=26+Math.random()*8; }
-    else if(c.state==='sleep'){ c.state='walk'; c.stateT=26+Math.random()*8; }
-    else { c.state='walk'; c.stateT=26+Math.random()*8; }
+    // v1.16.4 猫状态: walk 25-35 秒(平均 30 秒一次睡眠), sleep 仅 5-10 秒(短睡); walk 切 sleep 概率降至 30%, 不再频繁切换
+    if(c.state==='walk'){ c.state=Math.random()<0.3?'sleep':'idle'; c.stateT=c.state==='sleep'?(5+Math.random()*5):(20+Math.random()*8); }
+    else if(c.state==='sleep'){ c.state='walk'; c.stateT=25+Math.random()*10; }
+    else { c.state='walk'; c.stateT=25+Math.random()*10; }
   }
 }
 [[6,8],[18,8],[30,8],[42,8],[54,8]].forEach(([rx,ry],i)=>{
@@ -984,13 +1022,23 @@ function updateAnimals(dt){
     }
   });
 }
+/* v1.16.2 萤火虫:白天不发光, 夜晚发光且更亮(加外光晕) */
 function drawFirefly(f){
+  const night=SUN.dl<-0.12;
+  if(!night) return;
   ctx.save();
-  const pulse=0.55+0.45*(0.5+0.5*Math.sin(Date.now()/300+f.ph));
+  const pulse=0.8+0.2*(0.5+0.5*Math.sin(Date.now()/300+f.ph));
   ctx.globalAlpha=pulse;
   const im=A.firefly_pixel;
   if(im&&im.complete&&im.naturalWidth){ const s=18; ctx.drawImage(im,f.x-s/2,f.y-s/2,s,s); }
   else { ctx.fillStyle='rgba(220,255,140,1)'; ctx.beginPath(); ctx.arc(f.x,f.y,2.6,0,7); ctx.fill(); }
+  // 外光晕(夜晚增强)
+  ctx.globalCompositeOperation='lighter';
+  const halo=ctx.createRadialGradient(f.x,f.y,0,f.x,f.y,14);
+  halo.addColorStop(0,'rgba(255,220,120,.7)');
+  halo.addColorStop(1,'rgba(255,220,120,0)');
+  ctx.fillStyle=halo;
+  ctx.beginPath(); ctx.arc(f.x,f.y,14,0,Math.PI*2); ctx.fill();
   ctx.restore();
 }
 function drawSquirrel(s){
@@ -1146,7 +1194,7 @@ const VILLAINS=[
 ];
 VILLAINS.forEach(v=>{v.x=v.tile.x*TILE+TILE/2; v.y=v.tile.y*TILE+TILE/2;});
 const STUDENTS=[];
-const player={x:24*TILE+TILE/2,y:46*TILE+TILE/2,tx:24*TILE+TILE/2,ty:46*TILE+TILE/2,dir:0,walk:0};
+const player={x:24*TILE+TILE/2,y:46*TILE+TILE/2,tx:24*TILE+TILE/2,ty:46*TILE+TILE/2,dir:0,walk:0,running:false};
 /* debug/截图入口：URL ?pos=tx,ty 指定出生 tile */
 const urlPos=new URLSearchParams(location.search).get('pos');
 if(urlPos){
@@ -1183,7 +1231,7 @@ STUDENT_GROUPS.forEach(g=>{
       name:STUDENT_NAMES[idx],
       color:STUDENT_COLORS[idx%STUDENT_COLORS.length],
       hair:['#5a3a22','#3a2f25','#7a4a22','#2f3a4a','#8a5a3b'][idx%5],
-      spriteIdx: idx % 14,
+      spriteIdx: idx % 7,
       umbrella:UMBRELLA_COLORS[Math.floor(Math.random()*UMBRELLA_COLORS.length)],
       noUmbrella:false,
       bubble:null, bubbleT:200+Math.random()*400, flee:false,
@@ -1286,8 +1334,12 @@ function spawnVehicles(){
     for(let i=0;i<n;i++){
       const k=VEHICLE_KINDS[Math.floor(rnd()*VEHICLE_KINDS.length)];
       const pos=l.from+(l.to-l.from)*((i+Math.random()*0.7)/n);
-      VEHICLES.push({axis:l.axis,dir:l.dir,lane:l.lane,from:l.from,to:l.to,pos,
-        speed:k.spd*(0.85+Math.random()*0.35),kind:k.kind,w:k.w,h:k.h,col:k.col,yield:0});
+      // v1.16.4 自行车/电瓶车靠马路一侧(偏 lane -1.5 格, 48px),汽车走中间
+      const isBike=(k.kind==='bike'||k.kind==='ebike');
+      const laneOff=isBike?-TILE*1.5:0;
+      VEHICLES.push({axis:l.axis,dir:l.dir,lane:l.lane+laneOff,from:l.from,to:l.to,pos,
+        speed:k.spd*(0.85+Math.random()*0.35),kind:k.kind,w:k.w,h:k.h,col:k.col,yield:0,
+        playerBlockT:0,angry:false});
     }
   });
 }
@@ -1314,11 +1366,23 @@ function vehLightRed(v){
 }
 function updateVehicles(dt){
   VEHICLES.forEach(v=>{
+    // v1.16.4 单独识别"玩家挡路"(学生挡不算), 用于 10s 提示 + 熟悉度
+    const playerBlocking=vehBlocks(player.x,player.y,v);
     let blocking=false;
-    if(vehBlocks(player.x,player.y,v)) blocking=true;
+    if(playerBlocking) blocking=true;
     else for(const s of STUDENTS){ if(vehBlocks(s.x,s.y,v)){blocking=true;break;} }
     if(blocking) v.yield=Math.min(1,v.yield+dt*0.25);
     else v.yield=Math.max(0,v.yield-dt*0.25);
+    // 玩家挡路计时
+    if(playerBlocking) v.playerBlockT+=dt; else v.playerBlockT=0;
+    if(v.playerBlockT>=10){
+      v.playerBlockT=0;
+      toast('长时间挡路，你已经是合格的立信学生了！');
+      familiarity++; localStorage.setItem(FAM_KEY,familiarity);
+      const famEl=document.getElementById('famVal'); if(famEl) famEl.textContent=familiarity;
+    }
+    // 愤怒气泡(yield>0.4 显示)
+    v.angry=v.yield>0.4;
     const sp=v.speed*(1-v.yield*0.97);
     if(!vehLightRed(v)) v.pos+=v.dir*sp*dt;
     const ext=130;
@@ -1335,6 +1399,20 @@ function drawVehicle(v){
   ctx.beginPath(); ctx.ellipse(0,v.h*0.42,v.w*0.5,v.h*0.26,0,0,Math.PI*2); ctx.fill();
   if(v.kind==='car') drawCarShape(v); else drawBikeShape(v);
   ctx.restore();
+  // v1.16.4 愤怒气泡:被挡(yield>0.4)时, 车头方向显示 😠 气泡
+  if(v.angry){
+    const bx=x+v.dir*(v.w*0.5+14), by=y-24;
+    ctx.fillStyle='rgba(255,255,255,.96)';
+    ctx.strokeStyle='#d4564b'; ctx.lineWidth=1.5;
+    rr(ctx,bx-14,by-10,28,18,6); ctx.fill(); ctx.stroke();
+    // 尾巴(指向车)
+    ctx.beginPath();
+    ctx.moveTo(bx-5,by+8); ctx.lineTo(bx,by+16); ctx.lineTo(bx+5,by+8);
+    ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.fillStyle='#3a2f25'; ctx.font='bold 14px sans-serif';
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText('😠',bx,by);
+  }
 }
 function drawCarShape(v){
   const w=v.w,h=v.h,c=v.col;
@@ -1423,8 +1501,9 @@ let cv=document.getElementById('game'), ctx=cv.getContext('2d');
 function resizeCanvas(){
   const st=document.getElementById('stage');
   const r=st.getBoundingClientRect();
-  LOGIC_W=Math.max(280,Math.floor(r.width));
-  LOGIC_H=Math.max(200,Math.floor(r.height));
+  // v1.16.3 视野扩大: 上下左右各 +5 格(宽/高各 +10 格 = +320 逻辑像素), 看得更远
+  LOGIC_W=Math.max(280,Math.floor(r.width)+10*TILE);
+  LOGIC_H=Math.max(200,Math.floor(r.height)+10*TILE);
   cv.width=LOGIC_W*DPR; cv.height=LOGIC_H*DPR;
   ctx.setTransform(DPR,0,0,DPR,0,0);
   ctx.imageSmoothingEnabled=false;
@@ -1448,7 +1527,7 @@ function rr(c,x,y,w,h,r){
 function drawGrassTile(x,y){
   const h=(x*7+y*13)%11;
   let name='grassA';
-  if(h===0)name='grassB'; else if(h===3)name='grassAf'; else if(h===7)name='grassBf';
+  if(h===0)name='grassB'; else if(h===3)name='grassAf';
   kTile(name,x*TILE,y*TILE);
   // v1.12 程序化草坪层次：绿色草簇 + 橙黄干草簇（重新建模，更显眼、层次更丰富）
   const px=x*TILE, py=y*TILE;
@@ -1461,11 +1540,7 @@ function drawGrassTile(x,y){
   } else {
     ctx.fillStyle='rgba(90,165,75,.18)'; ctx.fillRect(px+11,py+12,3,7);
   }
-  // v1.12 橙黄干草簇（秋季草色点缀，画在草皮之上、树/灌木之下，不再被完全遮挡）
-  if(h===4||h===8){
-    ctx.fillStyle='rgba(214,172,84,.55)'; ctx.fillRect(px+6,py+18,2,7); ctx.fillRect(px+11,py+15,2,9); ctx.fillRect(px+16,py+20,2,6);
-    ctx.fillStyle='rgba(232,192,96,.42)'; ctx.fillRect(px+8,py+17,1,6); ctx.fillRect(px+13,py+14,1,7);
-  }
+  // v1.16.3 橙黄干草簇代码已彻底删除(原 h===4/8 分支), 草坪不再有黄色贴图
 }
 function drawPathTile(x,y,p){
   const px=x*TILE, py=y*TILE, type=p.type||'path';
@@ -1835,64 +1910,85 @@ function drawSignText(s){
   ctx.fillStyle='#6e452c';ctx.font=(s.big?'bold 15px':'13px')+' "ZCOOL KuaiLe",sans-serif';ctx.textAlign='center';
   ctx.fillText(s.emoji+' '+s.name,x,y-14);
 }
-/* v1.14 校门重做：中式牌坊（红漆立柱 + 青瓦檐顶 + 匾额），主校门加高加重檐 */
+/* v1.16 校门重做:天安门简化版(红墙+金匾+两侧立柱+平檐),矮宽稳重
+   big 门 span=160 ph=70 (宽高 2.3:1), 替代原牌坊的又高又窄 */
+/* v1.16.3 校门重做:中式门楼/牌坊(左右墙垛 + 中间门洞 + 半开朱红门扇 + 横梁匾额 + 檐), 不再是实心墙 */
 function drawGate(g){
   const x=g.x*TILE, y=g.y*TILE;
   const big=!!g.big;
-  const cx=x+TILE/2;
-  const span=big?TILE*3.2:TILE*2;
-  const ph=big?TILE*4.2:TILE*1.7;
-  const lx=cx-span/2, rx=cx+span/2, pw=big?12:8;
-  // 落影
+  const span=big?TILE*5:TILE*3.5;
+  const ph=big?TILE*2.4:TILE*1.8;
+  const halfSpan=span/2, halfPh=ph/2;
+  const wallW=big?14:10;           // 墙垛宽
+  const doorW=span*0.5;            // 门洞宽(中间留空)
+  const halfDoorW=doorW/2;
+  const wallH=ph;
+  const wallXLeft=x-halfSpan, wallXRight=x+halfSpan;
+  const wallYTop=y-halfPh, wallYBot=y+halfPh;
+  // 地面阴影
   ctx.fillStyle='rgba(0,0,0,.16)';
-  ctx.fillRect(lx-pw/2+3,y-ph+4,pw,ph+8); ctx.fillRect(rx-pw/2+3,y-ph+4,pw,ph+8);
-  // 立柱
-  ctx.fillStyle='#9c3b34'; ctx.fillRect(lx-pw/2,y-ph,pw,ph+8); ctx.fillStyle='#b1463d'; ctx.fillRect(lx-pw/2,y-ph,3,ph+8);
-  ctx.fillStyle='#9c3b34'; ctx.fillRect(rx-pw/2,y-ph,pw,ph+8); ctx.fillStyle='#b1463d'; ctx.fillRect(rx-pw/2,y-ph,3,ph+8);
-  ctx.fillStyle='#caa46a'; ctx.fillRect(lx-pw/2-3,y-2,pw+6,6); ctx.fillRect(rx-pw/2-3,y-2,pw+6,6);
-  // 额枋
-  const beamY=y-ph-16;
-  ctx.fillStyle='#7a2e28'; ctx.fillRect(lx-pw/2-6,beamY,span+pw+12,16);
-  ctx.fillStyle='#caa46a'; ctx.fillRect(lx-pw/2-6,beamY,span+pw+12,4);
-  // 檐顶（青瓦悬山）
+  ctx.fillRect(x-halfSpan-4, y+halfPh-4, span+8, 8);
+  // 左右墙垛（外宽内窄，带高光）
+  ctx.fillStyle='#b53a32';
+  ctx.fillRect(wallXLeft, wallYTop, wallW, wallH);
+  ctx.fillRect(wallXRight-wallW, wallYTop, wallW, wallH);
+  ctx.fillStyle='#d4564b';
+  ctx.fillRect(wallXLeft, wallYTop, wallW/2, wallH);
+  ctx.fillRect(wallXRight-wallW/2, wallYTop, wallW/2, wallH);
+  // 门洞门槛条
+  ctx.fillStyle='#caa46a';
+  ctx.fillRect(x-halfDoorW, wallYBot-2, doorW, 2);
+  // 半开朱红门扇（左右各半, 中间留缝见背景）
+  ctx.fillStyle='#8a2f28';
+  const doorH=wallH-4;
+  const doorY=wallYTop+2;
+  const doorLeafW=doorW*0.45;
+  ctx.fillRect(x-halfDoorW, doorY, doorLeafW, doorH);
+  ctx.fillRect(x+halfDoorW-doorLeafW, doorY, doorLeafW, doorH);
+  // 门扇高光
+  ctx.fillStyle='#b54a3a';
+  ctx.fillRect(x-halfDoorW, doorY, doorLeafW/2, doorH);
+  ctx.fillRect(x+halfDoorW-doorLeafW/2, doorY, doorLeafW/2, doorH);
+  // 横梁（匾额底，深棕）
+  const beamH=big?8:6;
   ctx.fillStyle='#3a2c1f';
-  ctx.beginPath();ctx.moveTo(lx-pw/2-16,beamY);ctx.lineTo(cx,beamY-22);ctx.lineTo(rx+pw/2+16,beamY);ctx.closePath();ctx.fill();
-  ctx.fillStyle='#5a4636'; ctx.fillRect(lx-pw/2-16,beamY-2,span+pw+32,3);
-  if(big){
-    const beamY2=beamY-30;
-    ctx.fillStyle='#6e452c'; ctx.fillRect(lx-pw/2-12,beamY2,span+pw+24,14);
-    ctx.fillStyle='#caa46a'; ctx.fillRect(lx-pw/2-12,beamY2,span+pw+24,3);
-    ctx.fillStyle='#3a2c1f';
-    ctx.beginPath();ctx.moveTo(lx-pw/2-22,beamY2);ctx.lineTo(cx,beamY2-20);ctx.lineTo(rx+pw/2+22,beamY2);ctx.closePath();ctx.fill();
-    ctx.fillStyle='#d9b24a'; ctx.beginPath();ctx.arc(cx,beamY2-22,4,0,7);ctx.fill();
+  ctx.fillRect(x-halfSpan, wallYTop-beamH, span, beamH);
+  // 匾额（深底金框金字, 挂于横梁上方）
+  const name=g.name||'校门';
+  const fontSize=big?20:14;
+  const tw=big?name.length*14+32:name.length*13+24;
+  const plaqueH=big?36:24;
+  const plaqueY=wallYTop-beamH-plaqueH;
+  const plaqueX=x-tw/2;
+  ctx.fillStyle='#241a10';
+  ctx.fillRect(plaqueX, plaqueY, tw, plaqueH);
+  ctx.strokeStyle='#caa46a'; ctx.lineWidth=2;
+  ctx.strokeRect(plaqueX+1, plaqueY+1, tw-2, plaqueH-2);
+  ctx.font=`bold ${fontSize}px "ZCOOL KuaiLe",sans-serif`;
+  ctx.fillStyle='#f3d27a'; ctx.textAlign='center'; ctx.textBaseline='alphabetic';
+  ctx.fillText(name, x, plaqueY+plaqueH-6);
+  // 顶部檐（青瓦平檐, 瓦片分格）
+  const roofH=big?6:4;
+  ctx.fillStyle='#3a2c1f';
+  ctx.fillRect(x-halfSpan-2, wallYTop-roofH, span+4, roofH);
+  ctx.strokeStyle='#d4b86a'; ctx.lineWidth=1;
+  const tileCount=Math.ceil(span/12);
+  for(let i=1;i<tileCount;i++){
+    const lx=x-halfSpan+(span/tileCount)*i;
+    ctx.beginPath();ctx.moveTo(lx, wallYTop-roofH);ctx.lineTo(lx, wallYTop);ctx.stroke();
   }
-  // 匾额（校门名）
-  const by=big?beamY+2:y-30;
-  const tw=g.name.length*13+28;
-  ctx.fillStyle='#241a10'; ctx.fillRect(cx-tw/2,by-16,tw,18);
-  ctx.strokeStyle='#caa46a'; ctx.lineWidth=2; ctx.strokeRect(cx-tw/2,by-16,tw,18);
-  ctx.fillStyle='#f3d27a'; ctx.font=(big?'bold 14px':'13px')+' "ZCOOL KuaiLe",sans-serif';
-  ctx.textAlign='center'; ctx.textBaseline='alphabetic';
-  ctx.fillText(g.name,cx,by-3);
+  // big 门: 二重檐 + 顶珠
+  if(big){
+    ctx.fillStyle='#5a3a2a';
+    ctx.fillRect(x-halfSpan-4, wallYTop-roofH-4, span+8, 4);
+    ctx.fillStyle='#caa46a';
+    ctx.beginPath(); ctx.arc(x, wallYTop-roofH-4, 4, 0, Math.PI*2); ctx.fill();
+  }
 }
 /* v1.12 校门文字单独抽出：文本覆盖层始终置顶重绘（牌坊已在 drawGate 内绘制匾额，这里不再重复） */
 function drawGateText(g){}
+/* v1.16.2 路灯:白天只亮灯罩, 夜晚才发光效(地面渐变 + 灯罩光晕 + 素材光晕, 全部增强) */
 function drawLamp(l){
-  // 地面投射渐变光效（程序化）
-  ctx.save(); ctx.translate(l.x,l.y+10); ctx.scale(1.6,0.8);
-  const g=ctx.createRadialGradient(0,0,2,0,0,26);
-  g.addColorStop(0,'rgba(255,222,150,.50)');
-  g.addColorStop(.6,'rgba(255,222,150,.18)');
-  g.addColorStop(1,'rgba(255,222,150,0)');
-  ctx.fillStyle=g; ctx.beginPath(); ctx.arc(0,0,26,0,7); ctx.fill();
-  ctx.restore();
-  // 素材光晕（RPicster glow，CC0）：地面暖光叠加
-  if(A.glow_spotlight_1&&A.glow_spotlight_1.complete&&A.glow_spotlight_1.naturalWidth){
-    ctx.save(); ctx.globalCompositeOperation='lighter'; ctx.globalAlpha=0.5;
-    const s=l.big?130:95;
-    ctx.drawImage(A.glow_spotlight_1, l.x-s/2, l.y+10-s/2, s, s);
-    ctx.restore();
-  }
   // 灯柱投影
   ctx.fillStyle='rgba(0,0,0,.15)';
   ctx.beginPath(); ctx.ellipse(l.x+7,l.y+17,9,2.4,0,0,Math.PI*2); ctx.fill();
@@ -1905,18 +2001,39 @@ function drawLamp(l){
   // 横臂
   ctx.fillStyle='#5a3a22';ctx.fillRect(l.x-16,l.y-8,32,3);
   ctx.fillStyle='#6e452c';ctx.fillRect(l.x-16,l.y-6,32,1);
-  // 双灯罩 + 光晕
+  // 双灯罩(白天也亮灯罩本体)
   [-15,15].forEach(dx=>{
     ctx.fillStyle='#ffe9a8';ctx.beginPath();ctx.arc(l.x+dx,l.y-14,5,0,7);ctx.fill();
     ctx.fillStyle='#fff6d8';ctx.beginPath();ctx.arc(l.x+dx,l.y-15,2.4,0,7);ctx.fill();
-    const glow=l.big?15:11;
-    ctx.fillStyle='rgba(255,233,168,.30)';ctx.beginPath();ctx.arc(l.x+dx,l.y-14,glow,0,7);ctx.fill();
-    // 素材灯泡光晕（RPicster glow_effect，CC0）
-    if(A.glow_effect_1&&A.glow_effect_1.complete&&A.glow_effect_1.naturalWidth){
-      ctx.save(); ctx.globalCompositeOperation='lighter'; ctx.globalAlpha=0.7;
-      const gs=l.big?42:30; ctx.drawImage(A.glow_effect_1, l.x+dx-gs/2, l.y-14-gs/2, gs, gs); ctx.restore();
-    }
   });
+  // 夜晚:发光效(增强)
+  const night=SUN.dl<-0.12;
+  if(night){
+    // 地面投射渐变光效(增强: radius 34, alpha .8)
+    ctx.save(); ctx.translate(l.x,l.y+10); ctx.scale(1.6,0.8);
+    const g=ctx.createRadialGradient(0,0,2,0,0,34);
+    g.addColorStop(0,'rgba(255,222,150,.80)');
+    g.addColorStop(.6,'rgba(255,222,150,.30)');
+    g.addColorStop(1,'rgba(255,222,150,0)');
+    ctx.fillStyle=g; ctx.beginPath(); ctx.arc(0,0,34,0,7); ctx.fill();
+    ctx.restore();
+    // 灯罩光晕(增强: glow 22/16, alpha .55) + 素材灯泡光晕(glow_effect)
+    [-15,15].forEach(dx=>{
+      const glow=l.big?22:16;
+      ctx.fillStyle='rgba(255,233,168,.55)';ctx.beginPath();ctx.arc(l.x+dx,l.y-14,glow,0,7);ctx.fill();
+      if(A.glow_effect_1&&A.glow_effect_1.complete&&A.glow_effect_1.naturalWidth){
+        ctx.save(); ctx.globalCompositeOperation='lighter'; ctx.globalAlpha=0.85;
+        const gs=l.big?52:38; ctx.drawImage(A.glow_effect_1, l.x+dx-gs/2, l.y-14-gs/2, gs, gs); ctx.restore();
+      }
+    });
+    // 素材光晕(地面暖光叠加, 增强: alpha .8, size 160/120)
+    if(A.glow_spotlight_1&&A.glow_spotlight_1.complete&&A.glow_spotlight_1.naturalWidth){
+      ctx.save(); ctx.globalCompositeOperation='lighter'; ctx.globalAlpha=0.8;
+      const s=l.big?160:120;
+      ctx.drawImage(A.glow_spotlight_1, l.x-s/2, l.y+10-s/2, s, s);
+      ctx.restore();
+    }
+  }
 }
 /* ---- 围墙：砖石基座 + 铁艺栅栏（半透明，不挡视野） ---- */
 function drawWall(w){
@@ -2028,13 +2145,14 @@ function drawTallTree(t){
 /* v1.14 花：程序化多彩小花（茎 + 5 瓣 + 花心），按 k 取色 */
 function drawFlower(f){
   const x=f.x, y=f.y;
-  const cols=['#ff7eb0','#ffd54a','#ff8a5b','#c08bff','#ff5b7a','#ffffff','#7ec8ff','#ff9ec4'];
+  // v1.16.3 彻底移除橙/黄色花(#ffd54a/#ff8a5b/黄心#ffe27a 全去), 草坪不再有橙黄贴图感
+  const cols=['#ff7eb0','#ffffff','#c08bff','#ff5b7a','#ffffff','#7ec8ff','#ff9ec4','#b8e08a'];
   const c=cols[f.k%cols.length];
   ctx.strokeStyle='rgba(70,140,60,.85)';ctx.lineWidth=1.4;
   ctx.beginPath();ctx.moveTo(x,y+1);ctx.lineTo(x,y-9);ctx.stroke();
   ctx.fillStyle=c;
   for(let i=0;i<5;i++){const a=i/5*6.28;ctx.beginPath();ctx.arc(x+Math.cos(a)*4,y-12+Math.sin(a)*4,2.6,0,7);ctx.fill();}
-  ctx.fillStyle='#ffe27a';ctx.beginPath();ctx.arc(x,y-12,2.1,0,7);ctx.fill();
+  ctx.fillStyle='#ffffff';ctx.beginPath();ctx.arc(x,y-12,2.1,0,7);ctx.fill();
   ctx.fillStyle='rgba(255,255,255,.5)';ctx.beginPath();ctx.arc(x-1,y-13,0.8,0,7);ctx.fill();
 }
 /* ---- v1.12 高大树木：分两层绘制（树干层进背景 / 树冠层半透明叠加在建筑上） ---- */
@@ -2233,79 +2351,129 @@ function drawUmbrella(c,px,py,color){
   for(let i=-2;i<=2;i++){ c.beginPath(); c.moveTo(cx, top-2); c.lineTo(cx+i*uw/5, top+6); c.stroke(); }
   c.fillStyle='#6b4f2a'; c.fillRect(cx-1, top-22, 2, 6);
 }
-function drawCharCtx(c,px,py,color,faceDir,walkPhase,hair,gender,umb){
-  const bob=Math.sin(walkPhase)*3;
+function drawCharCtx(c,px,py,color,faceDir,walkPhase,hair,gender,umb,run=false,face=0){
+  // v1.16.3 精致二次元像素角色: 走路/跑步腿手摆动(前后交替), 4 种表情(0正常/1微笑/2惊讶/3眨眼), 男女差异
+  const bob=Math.sin(walkPhase)*(run?6:3);
   const skin='#f4c9a0';
   const g=gender==='f';
-  // 影子：随太阳水平位置偏移（太阳在东影子朝西，反之亦然）
+  const amp=run?1.8:1;
+  const front=Math.sin(walkPhase)*amp;
+  const back=-front;
+  const legLift=10*0.35*Math.max(0,front);
+  const legLiftB=10*0.35*Math.max(0,back);
+  const armSwingL=Math.sin(walkPhase)*amp*3;
+  const armSwingR=-Math.sin(walkPhase)*amp*3;
+  const lean=run?2:0;
+  // 影子：随太阳水平位置偏移
   c.fillStyle='rgba(0,0,0,.18)';
   c.beginPath();c.ellipse(px+SUN.shadowDX, py+22-Math.abs(SUN.shadowDX)*0.12, 16,6,0,0,Math.PI*2);c.fill();
-  // 腿 + 鞋
-  c.fillStyle='#3a3a44';c.fillRect(px-7,py+13+bob,6,9);c.fillRect(px+1,py+13+bob,6,9);
-  c.fillStyle='#2f2f38';c.fillRect(px-8,py+20+bob,7,3);c.fillRect(px+1,py+20+bob,7,3);
-  // 身体（上衣 + 领口）
-  c.fillStyle=color;c.fillRect(px-12,py-4+bob,24,18);
-  c.fillStyle='rgba(255,255,255,.22)';c.fillRect(px-12,py-4+bob,24,4);
-  c.fillStyle='rgba(255,255,255,.38)';c.fillRect(px-4,py-4+bob,8,3);
+  // 腿 + 鞋(交替摆动: 一腿抬一腿落)
+  c.fillStyle='#3a3a44';
+  c.fillRect(px-7,py+13+bob-legLift,6,9);
+  c.fillRect(px+1,py+13+bob-legLiftB,6,9);
+  c.fillStyle='#2f2f38';
+  c.fillRect(px-8,py+20+bob-legLift,7,3);
+  c.fillRect(px+1,py+20+bob-legLiftB,7,3);
+  // 身体（上衣 + 领口高光, 跑步前倾 lean）
+  c.fillStyle=color;
+  c.fillRect(px-12,py-4+bob-lean,24,18);
+  c.fillStyle='rgba(255,255,255,.22)';
+  c.fillRect(px-12,py-4+bob-lean,24,4);
+  c.fillStyle='rgba(255,255,255,.38)';
+  c.fillRect(px-4,py-4+bob-lean,8,3);
   if(g){
     // 女生裙摆（A 字裙）
     c.fillStyle=color;
-    c.beginPath();c.moveTo(px-12,py+8+bob);c.lineTo(px+12,py+8+bob);
-    c.lineTo(px+7,py+17+bob);c.lineTo(px-7,py+17+bob);c.closePath();c.fill();
-    c.fillStyle='rgba(255,255,255,.18)';c.fillRect(px-12,py+8+bob,24,2);
+    c.beginPath();c.moveTo(px-12,py+8+bob-lean);c.lineTo(px+12,py+8+bob-lean);
+    c.lineTo(px+7,py+17+bob-lean);c.lineTo(px-7,py+17+bob-lean);c.closePath();c.fill();
+    c.fillStyle='rgba(255,255,255,.18)';
+    c.fillRect(px-12,py+8+bob-lean,24,2);
   }
-  // 手臂 + 手
-  c.fillStyle=color;c.fillRect(px-15,py-2+bob,4,10);c.fillRect(px+11,py-2+bob,4,10);
-  c.fillStyle=skin;c.fillRect(px-16,py+6+bob,4,4);c.fillRect(px+12,py+6+bob,4,4);
+  // 手臂 + 手(反向摆动)
+  c.fillStyle=color;
+  c.fillRect(px-15,py-2+bob-lean+armSwingL,4,10);
+  c.fillRect(px+11,py-2+bob-lean+armSwingR,4,10);
+  c.fillStyle=skin;
+  c.fillRect(px-16,py+6+bob-lean+armSwingL,4,4);
+  c.fillRect(px+12,py+6+bob-lean+armSwingR,4,4);
   // 头
-  c.fillStyle=skin;c.beginPath();c.arc(px,py-16+bob,12,0,7);c.fill();
-  // 头发（性别差异）
+  c.fillStyle=skin;
+  c.beginPath();c.arc(px,py-16+bob-lean,12,0,7);c.fill();
+  // 头发（性别差异 + 高光层）
   c.fillStyle=hair||'#5a3a22';
+  c.beginPath();c.arc(px,py-19+bob-lean,12,Math.PI,0);c.fill();
   if(g){
-    // 女生长发：头顶 + 两侧长发 + 刘海 + 发饰
-    c.beginPath();c.arc(px,py-19+bob,12,Math.PI,0);c.fill();
-    c.fillRect(px-12,py-18+bob,4,17);c.fillRect(px+8,py-18+bob,4,17);
-    c.fillRect(px-11,py-15+bob,22,3);
-    c.fillStyle='#ff8fb0';c.fillRect(px+8,py-20+bob,3,3);
+    // 女生长发: 头顶 + 两侧长发 + 刘海 + 发饰 + 高光
+    c.fillRect(px-12,py-18+bob-lean,4,17);
+    c.fillRect(px+8,py-18+bob-lean,4,17);
+    c.fillRect(px-11,py-15+bob-lean,22,3);
+    c.fillStyle='#ff8fb0';c.fillRect(px+8,py-20+bob-lean,3,3);
+    c.fillStyle=hair;
+    c.fillRect(px-10,py-22+bob-lean,2,4);
+    c.fillRect(px+8,py-22+bob-lean,2,4);
+    c.fillStyle='rgba(255,255,255,.25)';
+    c.fillRect(px-9,py-21+bob-lean,1,2);
+    c.fillRect(px+9,py-21+bob-lean,1,2);
   } else {
-    // 男生短发
-    c.beginPath();c.arc(px,py-19+bob,12,Math.PI,0);c.fill();
-    c.fillRect(px-12,py-18+bob,4,5);c.fillRect(px+8,py-18+bob,4,5);
-    c.fillRect(px-10,py-15+bob,20,2);
+    // 男生短发: 碎发 + 高光
+    c.fillRect(px-12,py-18+bob-lean,4,5);
+    c.fillRect(px+8,py-18+bob-lean,4,5);
+    c.fillRect(px-10,py-15+bob-lean,20,2);
+    c.fillStyle=hair;
+    c.fillRect(px-11,py-17+bob-lean,2,3);
+    c.fillRect(px+9,py-17+bob-lean,2,3);
+    c.fillStyle='rgba(255,255,255,.25)';
+    c.fillRect(px-10,py-16+bob-lean,1,2);
+    c.fillRect(px+10,py-16+bob-lean,1,2);
   }
-  // 眼睛
+  // 表情(face): 0正常 1微笑 2惊讶 3眨眼
   c.fillStyle='#3a2f25';
   const ex=faceDir*3;
-  c.beginPath();c.arc(px-4+ex,py-15+bob,1.8,0,7);c.fill();
-  c.beginPath();c.arc(px+4+ex,py-15+bob,1.8,0,7);c.fill();
-  // 嘴
-  c.fillStyle='#c97b5a';c.fillRect(px-1,py-12+bob,2,1);
-  // v1.15 下雨时撑伞：加宽到 2 格，黑/深蓝/黄等颜色（程序化绘制）
+  switch(face){
+    case 0:
+      c.beginPath();c.arc(px-4+ex,py-15+bob-lean,1.8,0,7);c.fill();
+      c.beginPath();c.arc(px+4+ex,py-15+bob-lean,1.8,0,7);c.fill();
+      c.fillStyle='#fff';c.fillRect(px-5+ex,py-16+bob-lean,1,1);c.fillRect(px+3+ex,py-16+bob-lean,1,1);
+      c.fillRect(px-1,py-12+bob-lean,2,1);
+      break;
+    case 1: // 微笑: 眯眼 + 上扬嘴
+      c.fillRect(px-6+ex,py-15+bob-lean,4,2);c.fillRect(px+2+ex,py-15+bob-lean,4,2);
+      c.fillStyle='#fff';c.fillRect(px-5+ex,py-14+bob-lean,1,1);c.fillRect(px+3+ex,py-14+bob-lean,1,1);
+      c.fillStyle='#3a2f25';c.fillRect(px-2,py-11+bob-lean,4,2);c.fillRect(px-2,py-9+bob-lean,4,1);
+      break;
+    case 2: // 惊讶: 大眼 + 圆嘴
+      c.beginPath();c.arc(px-4+ex,py-15+bob-lean,2.2,0,7);c.fill();
+      c.beginPath();c.arc(px+4+ex,py-15+bob-lean,2.2,0,7);c.fill();
+      c.fillStyle='#fff';c.fillRect(px-5+ex,py-16+bob-lean,1,1);c.fillRect(px+3+ex,py-16+bob-lean,1,1);
+      c.beginPath();c.arc(px,py-10+bob-lean,1.5,0,7);c.fill();
+      c.fillStyle='#3a2f25';c.beginPath();c.arc(px,py-10+bob-lean,0.8,0,7);c.fill();
+      break;
+    case 3: // 眨眼: 左眼闭右眼开 + 微笑嘴
+      c.fillRect(px-6+ex,py-15+bob-lean,3,1);
+      c.beginPath();c.arc(px+4+ex,py-15+bob-lean,1.8,0,7);c.fill();
+      c.fillStyle='#fff';c.fillRect(px+3+ex,py-16+bob-lean,1,1);
+      c.fillStyle='#3a2f25';c.fillRect(px-2,py-11+bob-lean,4,2);c.fillRect(px-2,py-9+bob-lean,4,1);
+      break;
+  }
+  // 腮红(女生)
+  if(g){
+    c.fillStyle='rgba(255,120,140,.35)';
+    c.fillRect(px-8,py-13+bob-lean,2,2);
+    c.fillRect(px+6,py-13+bob-lean,2,2);
+  }
+  // 鞋头高光
+  c.fillStyle='#fff';
+  c.fillRect(px-7,py+24+bob-lean-legLift,2,1);
+  c.fillRect(px+1,py+24+bob-lean-legLiftB,2,1);
+  // 下雨撑伞
   if(isRaining&&umb){ drawUmbrella(c,px,py,umb); }
 }
-function drawChar(px,py,color,faceDir,walkPhase,emoji,hair,gender,umb){
-  drawCharCtx(ctx,px,py,color,faceDir,walkPhase,hair,gender,umb);
+function drawChar(px,py,color,faceDir,walkPhase,emoji,hair,gender,umb,run,face){
+  drawCharCtx(ctx,px,py,color,faceDir,walkPhase,hair,gender,umb,run,face);
 }
 function drawPlayer(){
-  const sheet=A.player_sprites;
-  if(sheet&&sheet.complete&&sheet.naturalWidth){
-    const cols=2;
-    const sw=Math.floor(sheet.naturalWidth/cols);
-    const sh=sheet.naturalHeight;
-    const spriteIdx=(playerApp.gender==='f')?1:0;
-    const sx=spriteIdx*sw;
-    const bob=Math.sin(player.walk)*2.5;
-    const dh=64;
-    const dw=dh*(sw/sh);
-    ctx.fillStyle='rgba(0,0,0,.20)';
-    ctx.beginPath();ctx.ellipse(player.x+SUN.shadowDX*0.5,player.y+2,16,5,0,0,Math.PI*2);ctx.fill();
-    const smooth=ctx.imageSmoothingEnabled;
-    ctx.imageSmoothingEnabled=false;
-    ctx.drawImage(sheet,sx,0,sw,sh,player.x-dw/2,player.y-dh+bob,dw,dh);
-    ctx.imageSmoothingEnabled=smooth;
-  } else {
-    drawChar(player.x,player.y,playerApp.shirt,player.dir,player.walk,'🧑',playerApp.hair,playerApp.gender, playerApp.umbrella);
-  }
+  // v1.16.3 主角程序化绘制 + 跑步动画(Shift 按住): 走路/跑步腿手摆动, 未来可扩展表情(face)
+  drawChar(player.x,player.y,playerApp.shirt,player.dir,player.walk,'🧑',playerApp.hair,playerApp.gender, playerApp.umbrella, player.running, 1);
 }
 function drawNPC(n){
   const sheet=A.npc_sprites;
@@ -2343,7 +2511,7 @@ function drawNPCTag(n){
 function drawStudent(s){
   const sheet=A.villager_sprites;
   if(sheet&&sheet.complete&&sheet.naturalWidth&&typeof s.spriteIdx==='number'){
-    const cols=14;
+    const cols=7;
     const sw=Math.floor(sheet.naturalWidth/cols);
     const sh=sheet.naturalHeight;
     const sx=s.spriteIdx*sw;
@@ -2402,7 +2570,7 @@ function drawVillainTag(v){
    时间流动（15 分钟昼夜循环）+ 天气（7~10 分钟一场 5 分钟雨）
    影子随太阳水平位置偏移；昼夜用屏幕叠层 tint + 日/月弧线
    ============================================================ */
-const DAY_MS=15*60*1000;
+const DAY_MS=8*60*1000;
 let SUN={ph:0,dl:1,shadowDX:0,shadowLen:4};
 /* v1.12 开屏性别预览：用 drawCharCtx 在预览画布上渲染男女形象（需在 isRaining 声明后调用） */
 function drawGenderPreviews(){
@@ -2454,23 +2622,12 @@ function drawBuildingShadows(){
     }
   });
 }
+/* v1.16.4 天空:只画夜/黄昏暗度(去掉屏幕内的太阳与月亮, 改在顶部 HUD 显示时间+图标) */
 function drawSky(){
   const ph=SUN.ph, dl=SUN.dl;
   if(dl<0){ ctx.fillStyle='rgba(12,20,58,'+(-dl*0.55)+')'; ctx.fillRect(0,0,LOGIC_W,LOGIC_H); }
   const tw=Math.max(0,1-Math.abs(dl)*4);
   if(tw>0.01){ ctx.fillStyle='rgba(255,150,70,'+(tw*0.26)+')'; ctx.fillRect(0,0,LOGIC_W,LOGIC_H); }
-  const t=(ph%0.5)/0.5, cx=LOGIC_W*(0.12+0.76*t), cy=46-34*Math.sin(t*Math.PI);
-  if(ph<0.5){
-    ctx.save(); ctx.globalCompositeOperation='lighter';
-    const g=ctx.createRadialGradient(cx,cy,2,cx,cy,26);
-    g.addColorStop(0,'rgba(255,240,180,.9)'); g.addColorStop(1,'rgba(255,240,180,0)');
-    ctx.fillStyle=g; ctx.beginPath(); ctx.arc(cx,cy,26,0,7); ctx.fill();
-    ctx.globalCompositeOperation='source-over'; ctx.fillStyle='#ffe79a'; ctx.beginPath(); ctx.arc(cx,cy,9,0,7); ctx.fill();
-    ctx.restore();
-  } else {
-    ctx.save(); ctx.fillStyle='#eef2ff'; ctx.beginPath(); ctx.arc(cx,cy,8,0,7); ctx.fill();
-    ctx.fillStyle='rgba(12,20,58,1)'; ctx.beginPath(); ctx.arc(cx+3,cy-2,7,0,7); ctx.fill(); ctx.restore();
-  }
 }
 function drawWeather(){
   if(!isRaining) return;
@@ -2681,6 +2838,16 @@ function render(){
   if(mapMode){ drawMapMode(); return; }
   updateCamera();
   computeSun();
+  // v1.16.4 顶部 HUD 24h 时间: 7-19 白天 ☀️, 反之 🌙; DAY_MS=8*60*1000 (1 现实秒=3 游戏分)
+  {
+    const ph=SUN.ph;
+    const gt=(7+ph*24)%24;
+    const hh=Math.floor(gt);
+    const mm=Math.floor((gt-hh)*60);
+    const isDay=hh>=7&&hh<19;
+    const el=document.getElementById('hudTime');
+    if(el) el.textContent=(isDay?'☀️ ':'🌙 ')+String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0');
+  }
   ctx.clearRect(0,0,LOGIC_W,LOGIC_H);
   // v1.11 全图预渲染：直接裁剪可视区域（无缓存平移 bug，全图都有画面）
   // v1.13 修复 bg draw：fullCv 可能尚未构建 / 相机钳制后源矩形越界 → 保底 build + 钳制到合法区间
@@ -2782,7 +2949,8 @@ function loop(t){
   }
   const dx=player.tx-player.x, dy=player.ty-player.y, dist=Math.hypot(dx,dy);
   if(dist>1.5){
-    const sp=3.2*dt, step=Math.min(sp,dist);
+    // v1.16.3 跑步: Shift 按住 3.2→4.6 速, 动画相位加速
+    const sp=(player.running?4.6:3.2)*dt, step=Math.min(sp,dist);
     const sx=dx/dist*step, sy=dy/dist*step;
     // 滑动碰撞：x/y 分别试探，贴墙时自动沿墙滑行；全部被挡则原地停（不会穿楼/卡回）
     let mx=0,my=0;
@@ -2791,7 +2959,7 @@ function loop(t){
     if(mx||my){
       player.x+=mx; player.y+=my;
       if(dx) player.dir=dx>0?1:-1;
-      player.walk+=0.3*dt;
+      player.walk+=(player.running?0.5:0.3)*dt;
     } else { player.walk=0; }
   } else { player.walk=0; }
   let near=null, snear=null, vnear=null, nnear=null;
@@ -2865,6 +3033,11 @@ window.addEventListener('keydown',e=>{
     }
   }
   if(e.code==='Escape'&&dialogOpen) closeDialog();
+  // v1.16.3 跑步: Shift 按住加速(移动速度与动画幅度提升)
+  if(e.code==='ShiftLeft'||e.code==='ShiftRight') player.running=true;
+});
+window.addEventListener('keyup',e=>{
+  if(e.code==='ShiftLeft'||e.code==='ShiftRight') player.running=false;
 });
 
 /* ============================================================
@@ -3259,5 +3432,6 @@ logEl.addEventListener('click',e=>{if(e.target===logEl)closeLog();});
 // 初始提示
 // 初始提示已改由开屏动画结束后（hideSplash）显示
 </script>
+<div id="hudTime" style="position:absolute; left:50%; top:8px; transform:translateX(-50%); z-index:50; background:rgba(255,250,240,.92); border:2px solid var(--wood); border-radius:18px; padding:4px 14px; font:bold 14px 'ZCOOL KuaiLe',sans-serif; color:#6e452c; box-shadow:0 2px 8px var(--shadow);">☀️ 07:00</div>
 </body>
 </html>

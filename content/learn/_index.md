@@ -1,6 +1,6 @@
 ---
 title: "学习路径"
-description: "系统化学习路径 — CPA / ACCA / 网络协议 / Three.js Web 3D / 从零训练 LLM / 网络安全 / Unity 游戏开发 / 数据结构与算法"
+description: "财会证书系统化学习路径 — CPA / ACCA"
 slug: "learn"
 ---
 
@@ -43,71 +43,6 @@ slug: "learn"
       <span>30 个常用协议</span>
       <span>OSI 分层</span>
       <span>原理 + 实战</span>
-    </div>
-    <span class="learn-card-btn">查看路径 →</span>
-  </a>
-
-  <a href="/learn/three-js/" class="learn-card learn-card-web">
-    <div class="learn-card-icon">🎮</div>
-    <div class="learn-card-cert">WEB</div>
-    <h2 class="learn-card-title">Three.js 教程</h2>
-    <p class="learn-card-en">Web 3D with Three.js</p>
-    <div class="learn-card-meta">
-      <span>8 章完整教程</span>
-      <span>场景到优化</span>
-      <span>可运行示例</span>
-    </div>
-    <span class="learn-card-btn">查看路径 →</span>
-  </a>
-
-  <a href="/learn/llm-from-scratch/" class="learn-card learn-card-llm">
-    <div class="learn-card-icon">🤖</div>
-    <div class="learn-card-cert">LLM</div>
-    <h2 class="learn-card-title">从零训练大模型</h2>
-    <p class="learn-card-en">Train LLM from Scratch</p>
-    <div class="learn-card-meta">
-      <span>8 章完整教程</span>
-      <span>数据到部署</span>
-      <span>可运行示例</span>
-    </div>
-    <span class="learn-card-btn">查看路径 →</span>
-  </a>
-
-  <a href="/learn/network-security/" class="learn-card learn-card-sec">
-    <div class="learn-card-icon">🛡️</div>
-    <div class="learn-card-cert">SEC</div>
-    <h2 class="learn-card-title">网络安全</h2>
-    <p class="learn-card-en">Network Security</p>
-    <div class="learn-card-meta">
-      <span>10 章完整教程</span>
-      <span>攻防闭环</span>
-      <span>防御视角</span>
-    </div>
-    <span class="learn-card-btn">查看路径 →</span>
-  </a>
-
-  <a href="/learn/unity/" class="learn-card learn-card-unity">
-    <div class="learn-card-icon">🎮</div>
-    <div class="learn-card-cert">UNITY</div>
-    <h2 class="learn-card-title">Unity 游戏开发</h2>
-    <p class="learn-card-en">Game Dev with Unity</p>
-    <div class="learn-card-meta">
-      <span>8 章完整教程</span>
-      <span>编辑器到打包</span>
-      <span>可运行示例</span>
-    </div>
-    <span class="learn-card-btn">查看路径 →</span>
-  </a>
-
-  <a href="/learn/algorithm/" class="learn-card learn-card-algo">
-    <div class="learn-card-icon">🧮</div>
-    <div class="learn-card-cert">ALGO</div>
-    <h2 class="learn-card-title">数据结构与算法</h2>
-    <p class="learn-card-en">Data Structures & Algorithms</p>
-    <div class="learn-card-meta">
-      <span>8 章完整教程</span>
-      <span>复杂度到 DP</span>
-      <span>可运行示例</span>
     </div>
     <span class="learn-card-btn">查看路径 →</span>
   </a>

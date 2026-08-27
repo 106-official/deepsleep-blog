@@ -2,7 +2,6 @@
 public/
 /resources/
 .hugo_build.lock
-.hugocache/
 
 # OS
 .DS_Store
@@ -22,9 +21,6 @@ Thumbs.db
 # Brainstorm skill temp
 .superpowers/
 
-# Local agent workspace notes (not for the public Pages site)
-.workbuddy/
-
 /node_modules/
 **/node_modules/
 
@@ -33,3 +29,6 @@ docs/cpa-source/textbooks/
 docs/cpa-source/past-papers/
 docs/cpa-source/exercises/
 docs/cpa-source/exams/
+
+# Corrupted git backup (2026-08-18 incident)
+.git-corrupted-20260818/

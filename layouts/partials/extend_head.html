@@ -2,6 +2,15 @@
 <link rel="stylesheet" href="{{ "css/custom.css" | relURL }}" />
 <link rel="stylesheet" href="{{ "css/community.css" | relURL }}" />
 
+{{- if .IsHome }}
+<!-- 首页 3D 毛玻璃场景（Three.js） -->
+<link rel="stylesheet" href="{{ "css/home-3d.css" | relURL }}" />
+<script type="importmap">
+{ "imports": { "three": "/js/three.module.min.js" } }
+</script>
+<script type="module" src="{{ "js/home-3d.js" | relURL }}"></script>
+{{- end }}
+
 <!-- KaTeX 数学公式样式（CPA 等学习章节 LaTeX 渲染） -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" />
 

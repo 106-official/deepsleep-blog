@@ -1,0 +1,45 @@
+{{- define "main" -}}
+{{- $posts := where .Site.RegularPages "Section" "posts" | first 6 -}}
+{{- with .Site.Params.profileMode -}}
+<canvas id="bg-scene" aria-hidden="true"></canvas>
+
+<div class="ds-home">
+  <!-- ==================== 首屏 Hero：毛玻璃大卡 + 3D 背景 ==================== -->
+  <section class="ds-hero glass">
+    <span class="ds-hero-orb" aria-hidden="true"></span>
+    <h1 class="ds-hero-title">{{ .title | default site.Title }}</h1>
+    <p class="ds-hero-sub">{{ .subtitle | markdownify }}</p>
+    <div class="ds-hero-social">{{ partial "social_icons.html" }}</div>
+    {{- with .buttons }}
+    <div class="ds-hero-buttons">
+      {{- range . }}
+      <a class="ds-btn" href="{{ trim .url " " }}">{{ .name }}</a>
+      {{- end }}
+    </div>
+    {{- end }}
+    <div class="ds-scroll-hint" aria-hidden="true">向下滚动</div>
+  </section>
+
+  <!-- ==================== 最近文章：毛玻璃卡片瀑布 ==================== -->
+  {{- if $posts }}
+  <section class="ds-latest">
+    <h2 class="ds-section-title">最近文章</h2>
+    <div class="ds-grid">
+      {{- range $posts }}
+      <a class="glass ds-card" href="{{ .RelPermalink }}">
+        <h3 class="ds-card-title">{{ .Title }}</h3>
+        <time class="ds-card-date">{{ .Date.Format "2006-01-02" }}</time>
+        {{- with .Params.description }}
+        <p class="ds-card-summary">{{ . | plainify | truncate 96 }}</p>
+        {{- else }}
+        <p class="ds-card-summary">{{ .Summary | plainify | truncate 96 }}</p>
+        {{- end }}
+        <span class="ds-card-more">阅读 →</span>
+      </a>
+      {{- end }}
+    </div>
+  </section>
+  {{- end }}
+</div>
+{{- end }}
+{{- end }}

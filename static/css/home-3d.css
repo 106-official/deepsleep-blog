@@ -4,7 +4,7 @@
    canvas 在 DOM 下层，卡片 backdrop-filter 模糊它
    ============================================ */
 
-/* ---- 3D 背景画布：fixed 铺满视口，位于内容下层 ---- */
+/* 该页面的 3D 背景画布：fixed 铺满视口，位于面板下方 */
 #bg-scene {
   position: fixed;
   inset: 0;
@@ -13,6 +13,40 @@
   z-index: 0;
   display: block;
 }
+
+/* ---- 其它导航页面的毛玻璃面板（posts/resources/learn/me/profile/community/play） ---- */
+body.ds3d-active #bg-scene { z-index: 0; }
+
+.ds-glass-page {
+  position: relative;
+  z-index: 1;
+  max-width: 1120px;
+  margin: 5vh auto 5rem;
+  padding: 2.2rem clamp(1rem, 4vw, 2.8rem) 3rem;
+  border-radius: 24px;
+  min-height: 60vh;
+  background: rgba(250, 250, 250, 0.55);
+  -webkit-backdrop-filter: blur(18px) saturate(1.4);
+  backdrop-filter: blur(18px) saturate(1.4);
+  border: 1px solid rgba(212, 175, 55, 0.22);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.6) inset,
+    0 20px 60px rgba(0, 0, 0, 0.10);
+}
+[data-theme="dark"] .ds-glass-page {
+  background: rgba(24, 24, 27, 0.5);
+  border-color: rgba(212, 175, 55, 0.18);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.05) inset,
+    0 20px 60px rgba(0, 0, 0, 0.45);
+}
+
+/* 底部 footer 提升到画布之上，避免被 fixed 画布遮住 */
+body.ds3d-active > footer,
+body.ds3d-active footer { position: relative; z-index: 1; }
+
+/* 面板出场动画 */
+.ds-glass-page { animation: ds-rise 0.6s ease-out both; }
 
 /* 内容层浮在画布上方 */
 .ds-home {

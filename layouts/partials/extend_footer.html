@@ -281,3 +281,26 @@
   tryLoad(0);
 })();
 </script>
+
+{{- $dsPages := slice "/posts/" "/resources/" "/learn/" "/me/" "/profile/" "/community/" "/play/" -}}
+{{- if (in $dsPages .RelPermalink) }}
+<!-- 该页面的 3D 毛玻璃背景（与首页同款 Three.js 场景） -->
+<canvas id="bg-scene" aria-hidden="true"></canvas>
+<link rel="stylesheet" href="{{ "css/home-3d.css" | relURL }}" />
+<script type="importmap">
+{ "imports": { "three": "/js/three.module.min.js" } }
+</script>
+<script type="module" src="{{ "js/home-3d.js" | relURL }}"></script>
+<script>
+(function () {
+  var main = document.querySelector('main');
+  if (!main) return;
+  if (main.querySelector('.ds-glass-page')) return; // 防重复包裹
+  var panel = document.createElement('div');
+  panel.className = 'ds-glass-page';
+  while (main.firstChild) panel.appendChild(main.firstChild);
+  main.appendChild(panel);
+  document.body.classList.add('ds3d-active');
+})();
+</script>
+{{- end }}

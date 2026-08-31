@@ -353,7 +353,7 @@
 
 <script>
 /* ============================================================
-   Lixin · 学习 RPG  v1.12
+   Lixin · 学习 RPG  v1.15.4
    - 地图扩大 4 倍（176×132，楼间距拉大，便于后续细化）
    - 引入 Kenney Tiny Town（CC0）素材：草地/泥路/树/灌木/花/桥
    - 文汇路小吃街（摊位 + 路灯 + 招牌）
@@ -401,7 +401,7 @@ function hideSplash(){
   if(window.removeEventListener) window.removeEventListener('keydown',spKey,true);
   setTimeout(()=>{
     if(splash.parentNode) splash.parentNode.removeChild(splash);
-    toast('欢迎来到 Lixin v1.12！已选择'+(playerApp.gender==='f'?'女生':'男生')+'形象，全图渲染已修复，右上角 🗺️ 全图一屏看全地图、点击传送～');
+    toast('欢迎来到 Lixin v1.15.4！已选择'+(playerApp.gender==='f'?'女生':'男生')+'形象，全图渲染已修复，右上角 🗺️ 全图一屏看全地图、点击传送～');
   },650);
 }
 if(splash){
@@ -426,6 +426,31 @@ const LIXIN_KB = `「立信学习」（Lixin Learn）是上海立信会计金融
 5. 概率论与数理统计（经管）：按题型(选择/填空/计算/应用)归类 2016–2021 七套卷；2022-2023/2023-2024/2024-2025 三套完整卷；公式 LaTeX。
 6. Python 程序设计基础：语法/数据类型/流程控制/组合数据类型；单选题/判断题/编程题/扫描讲义；含闯关训练、阶段/期中/期末。
 站点还内置一个星露谷风格的 RPG 小游戏（Lixin）：点地面让小人走动、点村民对话，每位村民对应一门课，对话可选「💬自由问答」或「🔥Grill me 摸底」（村民先划清知识边界再逐题考你）。`;
+
+// ---------- 选课避雷知识库：运行时从 course-kb.json 加载 ----------
+let LIXIN_COURSE_DATA = null;
+let LIXIN_COURSE_KB_INDEX = '';
+(function loadCourseKB(){
+  fetch('course-kb.json').then(r=>r.ok?r.json():null).then(d=>{
+    if(!d||!d.teachers) return;
+    LIXIN_COURSE_DATA = d;
+    const names = d.teachers.map(t=>t.name).slice(0,60).join('、');
+    LIXIN_COURSE_KB_INDEX = '\n[立信选课避雷]已收录 ' + d.count +
+      ' 位教师的真实学生评价（' + names + ' 等）。用户问及具体老师时，请在下方匹配该老师评价作答；若未指明老师，可先提示用户说出老师姓名。';
+  }).catch(()=>{});
+})();
+// 轻量检索：问题含教师名则只注入该教师评价，否则给名册索引
+function retrieveCourseKB(q){
+  if(!LIXIN_COURSE_DATA || !q) return LIXIN_COURSE_KB_INDEX;
+  const m = LIXIN_COURSE_DATA.teachers.filter(t=>t.name && t.name.length>=2 && q.includes(t.name));
+  if(m.length){
+    return '\n[立信选课避雷·学生真实评价]\n' + m.map(t=>{
+      const head = t.name + (t.course?('（'+t.course+'）'):'');
+      return '【'+head+'】' + (t.reviews||[]).join('；');
+    }).join('\n');
+  }
+  return LIXIN_COURSE_KB_INDEX;
+}
 
 const NPCS = [
   {
@@ -3685,8 +3710,8 @@ function buildMessages(npc,mode,userText,quiz){
   let sys;
   if(npc.id==='senpai'){
     sys = mode==='grill'
-      ? `[身份]你是「学长」，上海立信会计金融学院的在校生向导，热情、熟悉学校与「立信学习」站点全部内容。\n[知识库]${LIXIN_KB}\n[边界]只介绍站点里真实存在的内容与学校公开信息；站点没有的资料或题目，请诚实说“这个我不确定 / 站点里没有”，不要编造。\n[MODE:GRILL]用户刚回答了一道关于立信学习平台 / 校区 / 课程的问题。题目：${quiz?quiz.q:'-'} 参考要点：${quiz?quiz.a:'-'}。用 2-3 句点评，肯定正确、指出遗漏，不敷衍。`
-      : `[身份]你是「学长」，上海立信会计金融学院的在校生向导，热情、熟悉学校与「立信学习」站点全部内容。\n[知识库]${LIXIN_KB}\n[自由问答]用简洁易懂的中文回答用户关于立信学习平台、各门课程板块、校区、备考 / 刷题路径的问题；站点没有的请诚实说明，不要编造。`;
+      ? `[身份]你是「学长」，上海立信会计金融学院的在校生向导，热情、熟悉学校与「立信学习」站点全部内容，也了解立信选课避雷（学生真实教师评价）。\n[知识库]${LIXIN_KB}\n[边界]只介绍站点里真实存在的内容、学校公开信息与选课避雷评价；站点没有的资料或题目，请诚实说"这个我不确定 / 站点里没有"，不要编造。\n[MODE:GRILL]用户刚回答了一道关于立信学习平台 / 校区 / 课程 / 选课避雷的问题。题目：${quiz?quiz.q:'-'} 参考要点：${quiz?quiz.a:'-'}。用 2-3 句点评，肯定正确、指出遗漏，不敷衍。${retrieveCourseKB(userText)}`
+      : `[身份]你是「学长」，上海立信会计金融学院的在校生向导，热情、熟悉学校与「立信学习」站点全部内容，也了解立信选课避雷（学生真实教师评价）。\n[知识库]${LIXIN_KB}\n[自由问答]用简洁易懂的中文回答用户关于立信学习平台、各门课程板块、校区、备考 / 刷题路径，以及选课 / 教师避雷（如"XX 老师给分高吗""XX 老师避雷吗"）的问题；站点没有的请诚实说明，不要编造。${retrieveCourseKB(userText)}`;
   } else {
     sys = mode==='grill'
       ? `[身份]你是「${npc.name}」，${npc.title}，性格亲切但严谨。\n[知识边界]你只负责：${npc.scope}。超出范围的，礼貌说明不在你的职责内，不编造。\n[MODE:GRILL]现在进行“Grill me 摸底”：用户刚回答了一道题。题目：${quiz?quiz.q:'-'} 标准答案要点：${quiz?quiz.a:'-'}。请用中文点评用户回答是否到位（2-3句），肯定正确的部分，指出遗漏，不要直接给满分式敷衍。若用户基本答对，鼓励并提示可进入下一题。`

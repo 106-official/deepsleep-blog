@@ -12,8 +12,18 @@ DeepSleep 博客立信板块(/lixin/)的 LLM 问答后端,腾讯云 SCF Web 函�
 | **部署** | 腾讯云函数 SCF(Web 函数类型) |
 | **启动** | `scf_bootstrap` + 监听 9000 端口 |
 | **模型** | DeepSeek API(`deepseek-v4-flash`,`https://api.deepseek.com/v1/chat/completions`) |
-| **响应方式** | SSE 流式(`res.write` + `res.end`,SCF Web 函数原生支持) |
+| **响应方式** | 旧版 SSE 流式；RPG 格式返回 JSON `{reply, mock}` |
 | **限速** | 每 IP 每小时 10 次 |
+
+## 选课避雷知识库（course-kb.json）
+
+后端启动时会加载同目录的 `course-kb.json`（由 `立信选课推荐及避坑.xlsx` 的「工作表1_后台数据」解析生成，收录 113 位教师、387 条学生评价）。
+
+- **检索**：每次请求根据问题中的**教师姓名**做轻量子串匹配，命中的教师评价才注入 system prompt；未命中则只给教师名册索引，引导用户指明具体老师。这样既不浪费 token，也能精准回答"XX 老师怎么样 / 避雷吗"。
+- **双格式兼容**：
+  1. 旧版 `POST /`：`{question, context?, topics?}` → SSE 流式 `{delta}`。
+  2. RPG 前端 `POST /api/llm/chat`：`{messages:[{role,content}...]}` → JSON `{reply, mock:false}`。RPG 的「⚙ 设置」里把后端地址填为该函数 URL 即可直接接入真实大模型（含选课知识）。
+- **部署注意**：`course-kb.json` 必须随函数代码一并上传（否则知识库为空，仅打印告警）。
 
 ## 环境变量
 

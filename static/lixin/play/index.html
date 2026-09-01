@@ -437,7 +437,7 @@
 
 <script>
 /* ============================================================
-   Lixin · 学习 RPG  v1.17.0
+   Lixin · 学习 RPG  v1.18.0
    - 地图扩大 4 倍（176×132，楼间距拉大，便于后续细化）
    - 引入 Kenney Tiny Town（CC0）素材：草地/泥路/树/灌木/花/桥
    - 文汇路小吃街（摊位 + 路灯 + 招牌）
@@ -485,7 +485,7 @@ function hideSplash(){
   if(window.removeEventListener) window.removeEventListener('keydown',spKey,true);
   setTimeout(()=>{
     if(splash.parentNode) splash.parentNode.removeChild(splash);
-    toast('欢迎来到 Lixin v1.17！方向键 / WASD 移动，空格互动，右侧旅程会记录探索进度。');
+    toast('欢迎来到 Lixin v1.18！方向键 / WASD 移动，空格互动，右侧旅程会记录探索进度。');
   },650);
 }
 if(splash){
@@ -1009,17 +1009,17 @@ const canDecorate=(tx,ty)=>!blocked.has(key(tx,ty))&&!isPath(tx,ty)
   &&!SQUARES.some(s=>tx>=s.x&&tx<s.x+s.w&&ty>=s.y&&ty<s.y+s.h);
 // v1.17 控制装饰密度：保留层次，但为人物、建筑与任务信息留出视觉呼吸感。
 const flowers=[];
-for(let i=0;i<1200;i++){const tx=Math.floor(rnd()*COLS),ty=Math.floor(rnd()*ROWS);
+for(let i=0;i<520;i++){const tx=Math.floor(rnd()*COLS),ty=Math.floor(rnd()*ROWS);
   if(canDecorate(tx,ty))flowers.push({x:tx*TILE+rnd()*TILE,y:ty*TILE+rnd()*TILE,k:Math.floor(rnd()*8)});}
 const trees=[];
-for(let i=0;i<220;i++){const tx=Math.floor(rnd()*COLS),ty=Math.floor(rnd()*ROWS);
+for(let i=0;i<132;i++){const tx=Math.floor(rnd()*COLS),ty=Math.floor(rnd()*ROWS);
   if(canDecorate(tx,ty))trees.push({x:tx*TILE,y:ty*TILE,k:Math.floor(rnd()*5)});}
 const bushes=[];
-for(let i=0;i<280;i++){const tx=Math.floor(rnd()*COLS),ty=Math.floor(rnd()*ROWS);
+for(let i=0;i<160;i++){const tx=Math.floor(rnd()*COLS),ty=Math.floor(rnd()*ROWS);
   if(canDecorate(tx,ty))bushes.push({x:tx*TILE,y:ty*TILE,k:Math.floor(rnd()*4)});}
 /* ---- 宿舍区高大树木（四期绿化带：楼间大冠乔木） ---- */
 const dormTrees=[];
-for(let i=0;i<130;i++){
+for(let i=0;i<72;i++){
   const tx=Math.floor(rnd()*80)+3, ty=Math.floor(rnd()*36)+2;
   if(canDecorate(tx,ty)&&ty<40) dormTrees.push({x:tx*TILE,y:ty*TILE,k:Math.floor(rnd()*3)});
 }
@@ -1034,7 +1034,7 @@ for(let y=48;y<=124;y+=6){
 }
 /* ---- v1.12 高大树木：树干+下层冠画进背景，上层冠在建筑后以半透明叠加 → 树叶遮挡建筑时透视虚化 ---- */
 const bigTrees=[];
-for(let i=0;i<92;i++){
+for(let i=0;i<42;i++){
   const tx=Math.floor(rnd()*COLS), ty=Math.floor(rnd()*ROWS);
   if(canDecorate(tx,ty)) bigTrees.push({x:tx*TILE,y:ty*TILE,k:Math.floor(rnd()*3),s:1.1+rnd()*0.7});
 }
@@ -3548,8 +3548,9 @@ requestAnimationFrame(loop);
 // v1.15.3/4 加载地图编辑器产物：map-data.json（结构层：道路/水域/桥梁/围墙/建筑/路灯 + 逐格地形）
 // 与旧版 tile-overrides.json（仅逐格地形）兼容。加载后重算通行与缓存，刷新即生效。
 Promise.all([
-  fetch('map-data.json').then(r=>r.ok?r.json():null).catch(()=>null),
-  fetch('tile-overrides.json').then(r=>r.ok?r.json():null).catch(()=>null)
+  // 地图内容是可编辑数据：跳过浏览器旧缓存，避免编辑器新贴图仍显示上一次地图。
+  fetch('map-data.json?v=1.18.0',{cache:'no-store'}).then(r=>r.ok?r.json():null).catch(()=>null),
+  fetch('tile-overrides.json?v=1.18.0',{cache:'no-store'}).then(r=>r.ok?r.json():null).catch(()=>null)
 ]).then(([md,ov])=>{
   applyMapData(md);
   const o=(ov&&ov.overrides)?ov.overrides:{};
@@ -3886,6 +3887,12 @@ document.getElementById('mapBtn').onclick=(e)=>{ e.stopPropagation(); openMinima
 
 /* ---------- 更新日志（右上角） ---------- */
 const CHANGELOG=[
+  {ver:'v1.18',date:'2026-09-02',items:[
+    '重做双校区装饰布置：新增图书馆水岸、诚信广场、钱币广场、活动中心、宿舍休憩区等明确的景观节点',
+    '接入新贴图素材：喷泉、凉亭、长椅、花盆、遮阳伞、街灯、行道树、芦苇与鹅卵石/红砖铺装均已落到地图',
+    '移除压到校际道路旁的重复树列；不改动道路、桥梁、围墙和建筑数据',
+    '降低随机花木与大冠乔木密度，让地标、NPC、通行空间和新装饰更清晰',
+  ]},
   {ver:'v1.17',date:'2026-09-01',items:[
     '全新校园界面：重排 HUD、当前地点卡、旅程手册、校园导航与响应式底部快捷栏',
     '新增键盘 WASD / 方向键移动与手机方向键、互动按钮，手机端不再裁掉主要操作',

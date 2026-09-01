@@ -26,7 +26,7 @@
   function extOf(name) { var i = name.toLowerCase().lastIndexOf('.'); return i >= 0 ? name.slice(i) : ''; }
   function fmtSize(n) { if (!n) return ''; if (n < 1024) return n + ' B'; if (n < 1048576) return (n / 1024).toFixed(1) + ' KB'; return (n / 1048576).toFixed(1) + ' MB'; }
   function setMsg(type, text) {
-    var m = $('nf-msg'); if (!m) return;
+    var m = $('nf-status'); if (!m) return;
     m.className = 'nf-msg ' + (type || '');
     m.textContent = text || '';
   }
@@ -75,7 +75,7 @@
     function handlePick(file) {
       var ext = extOf(file.name);
       if (ALLOWED.indexOf(ext) < 0) { setMsg('err', '仅支持 ' + ALLOWED.join(' / ') + ' 格式'); return; }
-      if (file.size > MAX_SIZE || file.size < 100) { setMsg('err', '文件大小需在 100KB ~ 20MB 之间'); return; }
+      if (!file.size || file.size > MAX_SIZE) { setMsg('err', '文件大小需在 20MB 以内'); return; }
       setMsg('', '');
       pending = { name: file.name, size: file.size, mime: file.type || 'application/octet-stream', _file: file };
       showFile(file);

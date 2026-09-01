@@ -8,6 +8,8 @@
   'use strict';
   const D = window.MonData;
   if (!D) { console.error('[mon] 缺少 mon-data.js'); return; }
+  // TILE 来自 index.html 顶层 const；取一份安全副本，避免任何作用域/时序问题导致 NaN
+  const T = (typeof TILE === 'number') ? TILE : 32;
 
   /* ---------------- 基础工具 ---------------- */
   const $ = function (s) { return document.querySelector(s); };
@@ -78,7 +80,7 @@
     return {
       v: 1, team: [], box: [], bag: { ball: 5, potion: 3 }, money: 500,
       dex: {}, stats: { battles: 0, wins: 0, catches: 0, faints: 0, steps: 0 },
-      step: 0, nextEncounter: ri(20, 42), createdAt: Date.now()
+      step: 0, nextEncounter: ri(28, 56), createdAt: Date.now()
     };
   }
   function save() {
@@ -93,7 +95,7 @@
     S.bag = S.bag || {}; S.dex = S.dex || {};
     S.stats = S.stats || { battles: 0, wins: 0, catches: 0, faints: 0, steps: 0 };
     S.team.forEach(function (m) { if (m.hp === undefined) m.hp = statHp(m); });
-    if (typeof S.nextEncounter !== 'number') S.nextEncounter = ri(20, 42);
+    if (typeof S.nextEncounter !== 'number') S.nextEncounter = ri(28, 56);
   }
 
   function markSeen(id) { const k = String(id); S.dex[k] = S.dex[k] || { seen: 0, caught: 0 }; S.dex[k].seen = 1; }
@@ -140,16 +142,22 @@
     if (B.on || panelOpen || (typeof splashing !== 'undefined' && splashing)) return;
     if (typeof dialogOpen !== 'undefined' && dialogOpen) return;
     const px = player.x, py = player.y;
+    // 首帧用玩家真实坐标初始化，避免 lastX/lastY 初值(-1)造成首帧距离爆表污染 acc
+    if (lastX < 0) { lastX = px; lastY = py; }
     const d = Math.hypot(px - lastX, py - lastY);
     lastX = px; lastY = py;
+    // 大跳跃（传送/读档/重生/地图加载）不计入行走距离，防止 acc 被一次性灌满 → 每帧触发战斗
+    if (d > T * 1.5) { acc = 0; return; }
     if (d <= 0.01) return;
-    acc += d / TILE;
+    acc += d / T;
     S.stats.steps++;
     if (acc < 1) return;
     acc -= 1;
     S.nextEncounter--;
     if (S.nextEncounter > 0) return;
-    S.nextEncounter = ri(9, 20);
+    // 建筑区内为安全区，不触发野外遭遇（仅草地/水边/道路遇敌）
+    if (zoneOf(px, py) === '建筑区') { S.nextEncounter = ri(12, 26); return; }
+    S.nextEncounter = ri(12, 26);
     startWild(px, py);
   }
 

@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Lixin 地图编辑器</title>
+<title>Lixin Campus Studio</title>
+<meta name="theme-color" content="#111714" />
 <style>
   :root{
     --bg:#16171c; --panel:#222329; --line:#33343d;
@@ -101,11 +102,16 @@
   #cellBubble #cbInfo{color:var(--gold);font-weight:700;margin-bottom:10px;font-size:13.5px;}
   #chipPreview{border:2px solid var(--gold)!important;border-radius:12px!important;box-shadow:0 12px 34px rgba(0,0,0,.55)!important;background:linear-gradient(180deg,#fff,#f6f1e6)!important;color:#3a352a!important;}
 </style>
+<link rel="stylesheet" href="editor-shell.css" />
 </head>
 <body>
 <header>
-  <h1>🌾 Lixin 地图编辑器</h1>
-  <span class="hint">编辑立信 RPG 整张地图：笔刷拖拽成矩形，一键铺设地表贴图与道路/水域/桥梁/围墙/建筑等结构；点放路灯与物件，刷多种写实草地/地表贴图；结果保存到 <b>map-data.json</b>，游戏刷新即生效</span>
+  <div class="studio-brand"><span>立</span><div><h1>Lixin Campus Studio</h1><small>地图设计工作台 · v1.0</small></div></div>
+  <span class="hint">绘制地表与结构、管理图层并实时预览游戏效果。所有编辑自动保存到 <b>map-data.json</b>。</span>
+  <div class="header-actions">
+    <button class="btn ghost" id="layersBtn">◫ 图层</button>
+    <button class="btn" id="previewBtn">▶ 游戏预览</button>
+  </div>
 </header>
 <div class="toolbar" id="tools"></div>
 <div class="subbar" id="subbar"></div>
@@ -128,8 +134,13 @@
   <span class="lbl" style="color:#777;">（插入以鼠标所在格为位置，否则提示输入）</span>
 </div>
 <div class="bar">
+  <button class="btn ghost" id="undoBtn" disabled>↶ 撤销</button>
+  <button class="btn ghost" id="redoBtn" disabled>↷ 重做</button>
   <button class="btn" id="saveBtn">💾 保存</button>
   <button class="btn ghost" id="reloadBtn">↻ 重新加载</button>
+  <button class="btn ghost" id="exportBtn">⇩ 导出 JSON</button>
+  <button class="btn ghost" id="importBtn">⇧ 导入 JSON</button>
+  <input id="importFile" type="file" accept="application/json,.json" hidden />
   <button class="btn ghost" id="clearOvBtn">🧹 清空地形覆盖</button>
   <button class="btn danger" id="resetBtn">♻ 还原默认地图</button>
 </div>
@@ -368,8 +379,10 @@ TOOLS.forEach(tl=>{
   const d=document.createElement('div');
   d.className='tool'+(tl.t===tool?' active':'');
   d.dataset.t=tl.t;
+  d.tabIndex=0; d.setAttribute('role','button');
   d.innerHTML='<span class="sw" style="background:'+tl.sw+'"></span>'+tl.name;
   d.onclick=()=>{ tool=tl.t; hideCellBubble(); [...toolsEl.children].forEach(c=>c.classList.toggle('active',c.dataset.t===tool)); renderSubbar(); statusEl.textContent='已选：'+tl.name; };
+  d.onkeydown=e=>{ if(e.code==='Enter'||e.code==='Space'){e.preventDefault();d.click();} };
   toolsEl.appendChild(d);
 });
 
@@ -905,5 +918,6 @@ function toast(msg){ toastEl.textContent=msg; toastEl.classList.add('show'); cle
 renderSubbar();
 loadAll();
 </script>
+<script src="editor-enhancements.js"></script>
 </body>
 </html>

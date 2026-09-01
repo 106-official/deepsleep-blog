@@ -3,10 +3,13 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<title>Lixin</title>
+<title>Lixin Campus · 学习 RPG</title>
+<meta name="theme-color" content="#17221f" />
+<meta name="description" content="在像素校园中探索上海立信会计金融学院、与课程 NPC 对话、完成学习挑战并培养校园精灵。" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=VT323&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="game-shell.css" />
 <style>
   :root{
     --grass:#7cb86a; --grass2:#74b062; --dirt:#caa472; --dirt2:#bd9663;
@@ -260,39 +263,49 @@
     <div class="gender-pick" id="genderPick">
       <div class="gp-title">🎮 选择你的形象</div>
       <div class="gp-opts">
-        <div class="gp-opt" data-g="m">
+        <button type="button" class="gp-opt" data-g="m">
           <canvas id="gpPrevM" width="72" height="72"></canvas>
           <div class="gp-name">👦 男生</div>
           <div class="gp-desc">短发 · 蓝白校服</div>
-        </div>
-        <div class="gp-opt" data-g="f">
+        </button>
+        <button type="button" class="gp-opt" data-g="f">
           <canvas id="gpPrevF" width="72" height="72"></canvas>
           <div class="gp-name">👧 女生</div>
           <div class="gp-desc">长发 · 粉白校服</div>
-        </div>
+        </button>
       </div>
       <div class="gp-tip">点击选择，开始立信校园之旅</div>
     </div>
     <div class="skip">点击任意处 或 按 空格/回车 选择形象</div>
   </div>
-  <div class="hud">
-    <h1>🌾 Lixin</h1>
-    <span class="hint">点地面走动 · 点学长问全站 · 点村民聊单科 · 低头迅速走开摆脱校园搭讪</span>
-    <span class="clock" id="gameClock" title="游戏内 24 小时制时间">06:00</span>
-    <span class="familiarity">熟悉度：<b id="famVal">0</b></span>
+  <div class="hud" aria-label="游戏主导航">
+    <div class="game-brand">
+      <span class="brand-seal">立</span>
+      <span class="brand-copy"><b>Lixin Campus</b><small>学习 · 探索 · 精灵养成</small></span>
+    </div>
+    <div class="hud-status">
+      <span class="clock" id="gameClock" title="游戏内 24 小时制时间">06:00</span>
+      <span class="zone-chip" id="zoneChip">文汇生活区</span>
+      <span class="familiarity" title="探索、答题与帮助同学可提升"><i>✦</i> <b id="famVal">0</b></span>
+    </div>
     <span class="spacer"></span>
-    <button class="btn ghost sm" id="codexBtn">📖<span class="lbl"> 村民图鉴</span></button>
-    <button class="btn ghost sm" id="helpBtn">❓<span class="lbl"> 玩法</span></button>
-    <div id="minimapBtn" title="小地图 · 点击传送"></div>
-    <button class="btn ghost sm" id="mapBtn">🗺️<span class="lbl"> 全图</span></button>
-    <button class="btn ghost sm" id="logBtn">📜<span class="lbl"> 更新日志</span></button>
-    <button class="btn ghost sm" id="monBtn">🐾<span class="lbl"> 精灵</span></button>
-    <button class="btn ghost sm" id="acctBtn">👤<span class="lbl"> 账号</span></button>
-    <button class="btn ghost sm" id="setBtn">⚙<span class="lbl"> 设置</span></button>
+    <div class="hud-actions">
+      <button class="btn ghost sm primary-action" id="questBtn">◈<span class="lbl"> 旅程</span></button>
+      <button class="btn ghost sm primary-action" id="navBtn">⌖<span class="lbl"> 校园导航</span></button>
+      <button class="btn ghost sm primary-action" id="monBtn">🐾<span class="lbl"> 精灵</span></button>
+      <button class="btn ghost sm" id="codexBtn">📖<span class="lbl"> 人物</span></button>
+      <button class="btn ghost sm" id="helpBtn">?<span class="lbl"> 玩法</span></button>
+      <button class="btn ghost sm" id="mapBtn">▦<span class="lbl"> 全图</span></button>
+      <button class="btn ghost sm" id="logBtn">📜<span class="lbl"> 日志</span></button>
+      <button class="btn ghost sm" id="acctBtn">👤<span class="lbl"> 账号</span></button>
+      <button class="btn ghost sm" id="setBtn">⚙<span class="lbl"> 设置</span></button>
+      <button class="btn ghost sm menu-trigger" id="menuBtn" aria-expanded="false">•••<span class="lbl"> 更多</span></button>
+    </div>
   </div>
 
   <div class="stage" id="stage">
     <canvas id="game"></canvas>
+    <div id="minimapBtn" title="小地图 · 点击传送" role="button" aria-label="打开小地图" tabindex="0"></div>
     <div id="minimapModal">
       <div class="minimap-wrap">
         <div class="minimap-title">🗺️ 小地图 · 点击任意位置传送 · 右上角关闭</div>
@@ -300,8 +313,77 @@
         <canvas id="minimap" width="352" height="264" title="点击传送 / Click to teleport"></canvas>
       </div>
     </div>
-    <div class="map-legend"><b>🧑 你</b> 在松江·文汇路<br>右下方是<b>浦东</b>校区 👉 校际大道直达</div>
+    <div class="map-legend" id="landmarkCard"><small>当前位置</small><b>文汇生活区</b><span>小吃街与宿舍之间</span></div>
     <div class="near-tip" id="nearTip">按 <b>空格</b> 或点击村民对话</div>
+
+    <aside class="quest-peek" id="questPeek" aria-live="polite">
+      <div class="quest-peek-head"><span>今日旅程</span><b id="questPeekCount">0 / 4</b></div>
+      <div class="quest-peek-title" id="questPeekTitle">新生报到</div>
+      <div class="quest-peek-progress"><i id="questPeekBar"></i></div>
+      <button id="questPeekOpen">查看任务</button>
+    </aside>
+
+    <div class="hud-menu" id="hudMenu" aria-label="更多功能">
+      <button data-open="codexBtn">📖 人物图鉴</button>
+      <button data-open="helpBtn">❔ 玩法说明</button>
+      <button data-open="logBtn">📜 更新日志</button>
+      <button data-open="acctBtn">👤 本机账号</button>
+      <button data-open="setBtn">⚙ 对话设置</button>
+    </div>
+
+    <div class="game-modal" id="questPanel" aria-hidden="true">
+      <div class="game-sheet">
+        <button class="sheet-close" data-close="questPanel" aria-label="关闭">×</button>
+        <div class="sheet-kicker">CAMPUS JOURNEY</div>
+        <h2>旅程手册</h2>
+        <p class="sheet-lead">探索不是赶路。认识校园、和人交谈、完成一次课前热身，都会留下进度。</p>
+        <div class="quest-list" id="questList"></div>
+      </div>
+    </div>
+
+    <div class="game-modal" id="navPanel" aria-hidden="true">
+      <div class="game-sheet nav-sheet">
+        <button class="sheet-close" data-close="navPanel" aria-label="关闭">×</button>
+        <div class="sheet-kicker">CAMPUS TRANSIT</div>
+        <h2>校园导航</h2>
+        <p class="sheet-lead">选择地标快速到达。传送不会触发野外遭遇。</p>
+        <div class="nav-grid" id="navGrid"></div>
+        <button class="sheet-secondary" id="openMinimapFromNav">打开完整小地图</button>
+      </div>
+    </div>
+
+    <div class="game-modal" id="helpPanel" aria-hidden="true">
+      <div class="game-sheet">
+        <button class="sheet-close" data-close="helpPanel" aria-label="关闭">×</button>
+        <div class="sheet-kicker">QUICK START</div>
+        <h2>怎么玩</h2>
+        <p class="sheet-lead">你可以只把它当校园散步游戏，也可以做任务、课程问答和精灵养成。</p>
+        <div class="help-grid">
+          <article><b>01 · 移动探索</b><span>点击地面，或使用 WASD / 方向键。手机使用左下方向键。</span></article>
+          <article><b>02 · 与人互动</b><span>靠近角色后按空格，手机点 A。课程 NPC 可自由问答或 Grill me。</span></article>
+          <article><b>03 · 精灵养成</b><span>在草地与水边行走会遇敌。按 P 或打开“精灵”管理队伍、背包和图鉴。</span></article>
+          <article><b>04 · 校园旅程</b><span>发现区域、认识同学与完成摸底会推进旅程。导航可快速前往两校区。</span></article>
+        </div>
+      </div>
+    </div>
+
+    <div class="touch-controls" id="touchControls" aria-label="触控移动">
+      <div class="dpad">
+        <button data-move="up" aria-label="向上">▲</button>
+        <button data-move="left" aria-label="向左">◀</button>
+        <span></span>
+        <button data-move="right" aria-label="向右">▶</button>
+        <button data-move="down" aria-label="向下">▼</button>
+      </div>
+      <button class="interact-btn" id="interactBtn"><span>A</span>互动</button>
+    </div>
+
+    <nav class="mobile-dock" aria-label="手机快捷菜单">
+      <button data-open-panel="questPanel"><span>◈</span>旅程</button>
+      <button data-open-panel="navPanel"><span>⌖</span>导航</button>
+      <button id="mobileMon"><span>🐾</span>精灵</button>
+      <button id="mobileMenu"><span>•••</span>更多</button>
+    </nav>
 
     <div class="dialog" id="dialog">
       <div class="dlg-top">
@@ -355,7 +437,7 @@
 
 <script>
 /* ============================================================
-   Lixin · 学习 RPG  v1.15.4
+   Lixin · 学习 RPG  v1.17.0
    - 地图扩大 4 倍（176×132，楼间距拉大，便于后续细化）
    - 引入 Kenney Tiny Town（CC0）素材：草地/泥路/树/灌木/花/桥
    - 文汇路小吃街（摊位 + 路灯 + 招牌）
@@ -403,7 +485,7 @@ function hideSplash(){
   if(window.removeEventListener) window.removeEventListener('keydown',spKey,true);
   setTimeout(()=>{
     if(splash.parentNode) splash.parentNode.removeChild(splash);
-    toast('欢迎来到 Lixin v1.15.4！已选择'+(playerApp.gender==='f'?'女生':'男生')+'形象，全图渲染已修复，右上角 🗺️ 全图一屏看全地图、点击传送～');
+    toast('欢迎来到 Lixin v1.17！方向键 / WASD 移动，空格互动，右侧旅程会记录探索进度。');
   },650);
 }
 if(splash){
@@ -925,15 +1007,15 @@ buildBlocked();
 let seed=20260818; const rnd=()=>{seed=(seed*1103515245+12345)&0x7fffffff;return seed/0x7fffffff;};
 const canDecorate=(tx,ty)=>!blocked.has(key(tx,ty))&&!isPath(tx,ty)
   &&!SQUARES.some(s=>tx>=s.x&&tx<s.x+s.w&&ty>=s.y&&ty<s.y+s.h);
-// v1.10 大幅提高装饰密度，解决"大地图很多空白"——canDecorate 自然避开建筑/路/河/广场/摊位
+// v1.17 控制装饰密度：保留层次，但为人物、建筑与任务信息留出视觉呼吸感。
 const flowers=[];
-for(let i=0;i<3200;i++){const tx=Math.floor(rnd()*COLS),ty=Math.floor(rnd()*ROWS);
+for(let i=0;i<1200;i++){const tx=Math.floor(rnd()*COLS),ty=Math.floor(rnd()*ROWS);
   if(canDecorate(tx,ty))flowers.push({x:tx*TILE+rnd()*TILE,y:ty*TILE+rnd()*TILE,k:Math.floor(rnd()*8)});}
 const trees=[];
-for(let i=0;i<460;i++){const tx=Math.floor(rnd()*COLS),ty=Math.floor(rnd()*ROWS);
+for(let i=0;i<220;i++){const tx=Math.floor(rnd()*COLS),ty=Math.floor(rnd()*ROWS);
   if(canDecorate(tx,ty))trees.push({x:tx*TILE,y:ty*TILE,k:Math.floor(rnd()*5)});}
 const bushes=[];
-for(let i=0;i<800;i++){const tx=Math.floor(rnd()*COLS),ty=Math.floor(rnd()*ROWS);
+for(let i=0;i<280;i++){const tx=Math.floor(rnd()*COLS),ty=Math.floor(rnd()*ROWS);
   if(canDecorate(tx,ty))bushes.push({x:tx*TILE,y:ty*TILE,k:Math.floor(rnd()*4)});}
 /* ---- 宿舍区高大树木（四期绿化带：楼间大冠乔木） ---- */
 const dormTrees=[];
@@ -952,7 +1034,7 @@ for(let y=48;y<=124;y+=6){
 }
 /* ---- v1.12 高大树木：树干+下层冠画进背景，上层冠在建筑后以半透明叠加 → 树叶遮挡建筑时透视虚化 ---- */
 const bigTrees=[];
-for(let i=0;i<150;i++){
+for(let i=0;i<92;i++){
   const tx=Math.floor(rnd()*COLS), ty=Math.floor(rnd()*ROWS);
   if(canDecorate(tx,ty)) bigTrees.push({x:tx*TILE,y:ty*TILE,k:Math.floor(rnd()*3),s:1.1+rnd()*0.7});
 }
@@ -961,15 +1043,15 @@ for(let i=0;i<150;i++){
  [12,60],[24,60],[36,60],[60,60],[72,60],[112,60],[136,60],[148,60],[12,110],[148,110]].forEach(([tx,ty])=>{
   if(canDecorate(tx,ty)) bigTrees.push({x:tx*TILE,y:ty*TILE,k:Math.floor(rnd()*3),s:1.4});
 });
-/* ---- 草叶动画数据：每草地格 2 株草（世界坐标，动态层随风摆动） ---- */
+/* ---- 草叶动画数据：每草地格 1 株草（世界坐标，动态层随风摆动） ---- */
 const grassCells=[];
 for(let ty=0;ty<ROWS;ty++)for(let tx=0;tx<COLS;tx++){
-  if(canDecorate(tx,ty)) for(let k=0;k<2;k++)
+  if(canDecorate(tx,ty)) for(let k=0;k<1;k++)
     grassCells.push({x:tx*TILE+rnd()*TILE,y:ty*TILE+rnd()*TILE,ph:rnd()*6.28,k:Math.floor(rnd()*3)});
 }
 // v1.15.1 #2：独立建模的"风吹草动"层——稀疏草叶，每帧随全局风场 + 各自相位微微摆动（仅叶尖摇曳，不挪动整块草坪）
 const windGrass=[];
-for(let i=0;i<12000;i++){ const tx=Math.floor(rnd()*COLS), ty=Math.floor(rnd()*ROWS);
+for(let i=0;i<5200;i++){ const tx=Math.floor(rnd()*COLS), ty=Math.floor(rnd()*ROWS);
   const px=tx*TILE+TILE/2, py=ty*TILE+TILE/2;
   if(blocked.has(key(tx,ty))||isPath(tx,ty)||isWater(px,py)) continue;
   if(rnd()<0.42) continue;   // v1.15.2 #5：稍密一些，风动效更明显
@@ -1910,9 +1992,10 @@ function rr(c,x,y,w,h,r){
 }
 /* ---- 草地 / 道路 tile（Kenney 素材，带少量花） ---- */
 function drawGrassTile(x,y){
-  const h=(x*7+y*13)%11;
-  let name='grassA';
-  if(h===0)name='grassB'; else if(h===3)name='grassAf'; else if(h===7)name='grassBf';
+  const h=(x*7+y*13)%37;
+  // Kenney 的带物件草格在放大后像重复土堆；基础草地只保留两种纯草纹理，
+  // 花、灌木与树由独立装饰层控制，密度和遮挡更可预测。
+  const name=h===0?'grassB':'grassA';
   kTile(name,x*TILE,y*TILE);
   // v1.15.2 #5：更真实细致的草坪——底色微斑 + 多色草簇 + 少量枯草点缀
   const px=x*TILE, py=y*TILE;
@@ -3376,7 +3459,11 @@ function drawTextOverlay(){
   const r=visRect(camX,camY);
   ctx.save(); ctx.translate(-camX,-camY);
   // 建筑名牌
-  BUILDINGS.forEach(b=>{ if(inView(b.x,b.y,r,b.w,b.h)) drawNameplate(b,b.x*TILE,b.y*TILE,b.w*TILE,b.h*TILE); });
+  BUILDINGS.forEach(b=>{
+    const important=/图书馆|序伦|博物馆|体育馆|食堂|行政|文博|活动中心/.test(b.name||'');
+    const nearby=Math.hypot(player.x-(b.x+b.w/2)*TILE,player.y-(b.y+b.h/2)*TILE)<TILE*12;
+    if(inView(b.x,b.y,r,b.w,b.h)&&(important||nearby)) drawNameplate(b,b.x*TILE,b.y*TILE,b.w*TILE,b.h*TILE);
+  });
   // 招牌 / 校门
   SIGNS.forEach(s=>{ if(inView(s.x,s.y,r,1,1)) drawSignText(s); });
   GATES.forEach(g=>{ if(inView(g.x,g.y,r,1,1)) drawGateText(g); });
@@ -3557,6 +3644,7 @@ function openDialog(n){
   chatEl.style.display='none'; chatEl.innerHTML=''; inputRow.style.display='none';
   scoreEl.style.display='none';
   dialog.classList.add('show');
+  window.dispatchEvent(new CustomEvent('lixin:talk',{detail:{kind:'course',id:n.id||n.name,name:n.name}}));
   typeText(n.greeting+' 想和我聊聊，还是让我考考你？',()=>showChoices());
 }
 let activeStudent=null;
@@ -3572,6 +3660,7 @@ function openStudentChat(s){
   chatEl.style.display='none'; chatEl.innerHTML=''; inputRow.style.display='none';
   scoreEl.style.display='none';
   dialog.classList.add('show');
+  window.dispatchEvent(new CustomEvent('lixin:talk',{detail:{kind:'student',id:s.name,name:s.name}}));
   const line=STUDENT_CHITCHAT[Math.floor(Math.random()*STUDENT_CHITCHAT.length)];
   typeText(s.name+'：'+line,()=>showStudentChoices());
 }
@@ -3668,6 +3757,7 @@ function startFree(){
 function startGrill(){
   mode='grill'; quizStep=0; quizScore=0; choicesEl.innerHTML='';
   inputRow.style.display='flex'; scoreEl.style.display='block';
+  window.dispatchEvent(new CustomEvent('lixin:grill',{detail:{id:activeNpc.id||activeNpc.name,name:activeNpc.name}}));
   updateScore();
   const boundary='【我的边界】我负责：'+activeNpc.scope+' 不负责：'+activeNpc.out;
   typeText('来吧，Grill me！先说清楚规则——'+boundary,()=>{
@@ -3796,6 +3886,13 @@ document.getElementById('mapBtn').onclick=(e)=>{ e.stopPropagation(); openMinima
 
 /* ---------- 更新日志（右上角） ---------- */
 const CHANGELOG=[
+  {ver:'v1.17',date:'2026-09-01',items:[
+    '全新校园界面：重排 HUD、当前地点卡、旅程手册、校园导航与响应式底部快捷栏',
+    '新增键盘 WASD / 方向键移动与手机方向键、互动按钮，手机端不再裁掉主要操作',
+    '新增探索任务与地点发现，记录课程 NPC、同学交流、Grill me 和双校区到访进度',
+    '降低重复草地装饰和标签密度，减轻视觉噪声并减少动态草叶计算量',
+    '游客默认直接进入，账号改为可选；野外遭遇间隔与步数统计更合理',
+  ]},
   {ver:'v1.16.0',date:'2026-09-01',items:[
     '新增「精灵学院」玩法：30 只立信主题原创精灵、10 种属性克制、技能与 PP、异常状态、等级经验、进化链、捕获与图鉴',
     '四地带遇敌（草地 / 水边 / 道路 / 建筑区），野生等级随队伍等级滑动匹配，不会开局撞见高等级碾压怪',
@@ -3963,5 +4060,6 @@ logEl.addEventListener('click',e=>{if(e.target===logEl)closeLog();});
 <script src="mon-data.js"></script>
 <script src="auth.js"></script>
 <script src="mon.js"></script>
+<script src="game-ui.js"></script>
 </body>
 </html>

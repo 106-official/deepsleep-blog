@@ -269,8 +269,11 @@
         if (global.MonGame && global.MonGame.onAuthReady) global.MonGame.onAuthReady();
         return true;
       }
-      this.open();
-      return false;
+      // 首次进入直接使用本机游客存档，避免连续出现“形象 → 登录 → 初始精灵”三层阻断。
+      // 账号仍可从 HUD 随时注册或切换，已有账号继续自动登录。
+      this.guest();
+      if (global.MonGame && global.MonGame.onAuthReady) global.MonGame.onAuthReady();
+      return true;
     }
   };
 

@@ -150,14 +150,15 @@
     if (d > T * 1.5) { acc = 0; return; }
     if (d <= 0.01) return;
     acc += d / T;
-    S.stats.steps++;
     if (acc < 1) return;
-    acc -= 1;
-    S.nextEncounter--;
+    const walked = Math.floor(acc);
+    acc -= walked;
+    S.stats.steps += walked;
+    S.nextEncounter -= walked;
     if (S.nextEncounter > 0) return;
     // 建筑区内为安全区，不触发野外遭遇（仅草地/水边/道路遇敌）
-    if (zoneOf(px, py) === '建筑区') { S.nextEncounter = ri(12, 26); return; }
-    S.nextEncounter = ri(12, 26);
+    if (zoneOf(px, py) === '建筑区') { S.nextEncounter = ri(36, 70); return; }
+    S.nextEncounter = ri(36, 70);
     startWild(px, py);
   }
 

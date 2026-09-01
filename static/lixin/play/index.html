@@ -286,6 +286,8 @@
     <div id="minimapBtn" title="小地图 · 点击传送"></div>
     <button class="btn ghost sm" id="mapBtn">🗺️<span class="lbl"> 全图</span></button>
     <button class="btn ghost sm" id="logBtn">📜<span class="lbl"> 更新日志</span></button>
+    <button class="btn ghost sm" id="monBtn">🐾<span class="lbl"> 精灵</span></button>
+    <button class="btn ghost sm" id="acctBtn">👤<span class="lbl"> 账号</span></button>
     <button class="btn ghost sm" id="setBtn">⚙<span class="lbl"> 设置</span></button>
   </div>
 
@@ -3446,6 +3448,8 @@ function loop(t){
   else if(snear&&!dialogOpen){tip.classList.add('show');tip.innerHTML='按 <b>空格</b> 或点 '+snear.name+' 闲聊';}
   else if(nnear&&!dialogOpen){tip.classList.add('show');tip.innerHTML='按 <b>空格</b> 喂猫（熟悉度 +1）';}
   else tip.classList.remove('show');
+  /* v1.16 精灵学院：草丛遇敌 tick（独立模块，异常不影响主循环） */
+  try{ if(window.__monTick) window.__monTick(dt); }catch(e){ window.__showErr&&window.__showErr('mon: '+e.message); }
   render();
   requestAnimationFrame(loop);
 }
@@ -3792,6 +3796,14 @@ document.getElementById('mapBtn').onclick=(e)=>{ e.stopPropagation(); openMinima
 
 /* ---------- 更新日志（右上角） ---------- */
 const CHANGELOG=[
+  {ver:'v1.16.0',date:'2026-09-01',items:[
+    '新增「精灵学院」玩法：30 只立信主题原创精灵、10 种属性克制、技能与 PP、异常状态、等级经验、进化链、捕获与图鉴',
+    '四地带遇敌（草地 / 水边 / 道路 / 建筑区），野生等级随队伍等级滑动匹配，不会开局撞见高等级碾压怪',
+    '新增四合一面板：🐾 队伍（出战顺序 / 详情 / 改名 / 放生）· 🎒 背包 · 📕 图鉴 · 🛒 教育超市与校医院，按 P 快速打开',
+    '新增邮箱注册登录：SHA-256 加盐哈希保存在本机，默认记住登录态，打开即进游戏；存档按账号隔离，可切换 / 登出 / 游客试玩',
+    '回合制战斗：属性克制、会心一击、灼伤 / 中毒 / 麻痹、投球捕获、换宠与逃跑；全队倒下送校医院并扣除学分',
+    '初始精灵三选一（账芽苗 / 借火猫 / 概率鱼），可能量数值经过模拟校准：各地带各等级胜率 30%~87%，无必输死局',
+  ]},
   {ver:'v1.15.4',date:'2026-08-22',items:[
     '贴图编辑器升级为完整「地图编辑器」：可拖拽绘制/删除 道路矩形（柏油/水泥/鹅卵石/土路）、水域矩形、桥梁矩形、围墙矩形、建筑矩形（带名称），单击放置路灯（大/小），保留逐格地形笔与橡皮擦',
     '新增结构层数据 map-data.json：游戏启动时加载并整体替换道路/水域/桥梁/围墙/建筑/路灯，配合 tile-overrides.json 逐格地形，刷新即生效；编辑结果写入 map-data.json（结构+地形一体化）',
@@ -3946,5 +3958,10 @@ logEl.addEventListener('click',e=>{if(e.target===logEl)closeLog();});
 // 初始提示
 // 初始提示已改由开屏动画结束后（hideSplash）显示
 </script>
+
+<!-- v1.16 精灵学院：数据层 → 账号层 → 玩法层（顺序不可调换） -->
+<script src="mon-data.js"></script>
+<script src="auth.js"></script>
+<script src="mon.js"></script>
 </body>
 </html>

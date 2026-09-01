@@ -1,0 +1,77 @@
+{{ define "main" }}
+<link rel="stylesheet" href="/css/needs.css" />
+<article class="needs-single">
+  <a class="needs-back" href="/needs/">← 返回项目列表</a>
+
+  <div class="needs-single-head">
+    <span class="needs-status needs-status--{{ .Params.status | default "招募中" | urlize }}">{{ .Params.status | default "招募中" }}</span>
+    <h1>{{ .Title }}</h1>
+    <div class="needs-meta">
+      {{ with .Params.deadline }}<span class="needs-meta-item">📅 截止 {{ . }}</span>{{ end }}
+      {{ range .Params.tags }}<span class="needs-tag">#{{ . }}</span>{{ end }}
+    </div>
+  </div>
+
+  <div class="needs-body">
+    {{ .Content }}
+  </div>
+
+  <section class="needs-apply" id="apply">
+    <h2>投递项目 / 提交需求</h2>
+    <p class="needs-apply-tip">填写联系方式并上传 Word/PDF 文档，我会在 <b>24 小时内</b> 联系你并选定人选。</p>
+
+    <form id="needsForm" data-slug="{{ .Params.project_slug }}" data-title="{{ .Title }}" novalidate>
+      <div class="nf-row">
+        <label class="nf-label" for="nf-name">姓名 / 昵称 <span class="req">*</span></label>
+        <input id="nf-name" name="name" type="text" maxlength="40" placeholder="方便我称呼你" autocomplete="name" />
+      </div>
+
+      <div class="nf-row nf-row--2">
+        <div>
+          <label class="nf-label" for="nf-ctype">联系方式类型 <span class="req">*</span></label>
+          <select id="nf-ctype" name="contactType">
+            <option value="phone">手机号</option>
+            <option value="wechat">微信号</option>
+            <option value="email">邮箱</option>
+            <option value="qq">QQ</option>
+            <option value="other">其他</option>
+          </select>
+        </div>
+        <div>
+          <label class="nf-label" for="nf-contact">联系方式 <span class="req">*</span></label>
+          <input id="nf-contact" name="contact" type="text" maxlength="60" placeholder="手机号 / 微信号 / 邮箱" />
+        </div>
+      </div>
+
+      <div class="nf-row">
+        <label class="nf-label" for="nf-msg">留言（选填）</label>
+        <textarea id="nf-msg" name="message" maxlength="2000" rows="4" placeholder="简单介绍你自己、为什么想参与，或描述你的需求（2000 字内）"></textarea>
+      </div>
+
+      <div class="nf-row">
+        <label class="nf-label">文档（Word / PDF）<span class="req">*</span></label>
+        <div id="nf-drop" class="nf-drop" tabindex="0" role="button" aria-label="点击或拖拽上传文件">
+          <input id="nf-file" type="file" accept=".doc,.docx,.pdf,.rtf,.odt,.txt,.md" hidden />
+          <div class="nf-drop-icon">⬆</div>
+          <div class="nf-drop-text">点击选择，或把文件拖到这里</div>
+          <div class="nf-drop-sub">支持 .doc / .docx / .pdf / .rtf / .odt / .txt / .md，≤ 20MB</div>
+        </div>
+        <div id="nf-fileinfo" class="nf-fileinfo" hidden>
+          <span class="nf-fileicon">📄</span>
+          <span id="nf-filename" class="nf-filename"></span>
+          <span id="nf-filesize" class="nf-filesize"></span>
+          <button type="button" id="nf-fileclear" class="nf-fileclear" aria-label="移除">✕</button>
+        </div>
+        <div id="nf-progress" class="nf-progress" hidden>
+          <div id="nf-progress-bar" class="nf-progress-bar"></div>
+          <span id="nf-progress-text" class="nf-progress-text">上传中…</span>
+        </div>
+      </div>
+
+      <button type="submit" id="nf-submit" class="nf-submit">提交投递</button>
+      <div id="nf-msg" class="nf-msg" role="status" aria-live="polite"></div>
+    </form>
+  </section>
+</article>
+<script src="/js/needs.js" defer></script>
+{{ end }}

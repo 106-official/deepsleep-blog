@@ -41,3 +41,7 @@ docs/cpa-source/exams/
 
 # Corrupted git backup (2026-08-18 incident)
 .git-corrupted-20260818/
+
+# Hugo build verification scratch dirs (local only)
+.vtest*/
+.verify*/

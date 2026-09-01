@@ -3,6 +3,9 @@ languageCode = "zh-CN"
 title = "DeepSleep Blog"
 theme = ["PaperMod"]
 
+# 允许发布当前/未来日期的内容（项目与需求页常用当天日期）
+buildFuture = true
+
 [params]
   # 主题配置
   defaultTheme = "auto"
@@ -121,6 +124,12 @@ theme = ["PaperMod"]
   name = "我"
   url = "/me/"
   weight = 30
+
+[[menu.main]]
+  identifier = "needs"
+  name = "需求"
+  url = "/needs/"
+  weight = 35
 
 [[menu.main]]
   identifier = "profile"

@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>项目一览 · 挑战杯 2027 | DeepSleep</title>
+<meta name="description" content="挑战杯 2027 参赛项目一览：大学城 AI 助手 App、长沙文旅数字地图、科研创作智能体、文化村数据项目。">
+<meta name="theme-color" content="#0b0c0e">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌙</text></svg>">
+<style>
+  /* 深色底 + 金色点缀，与 blog 主题色 #D4AF37 保持一致 */
+  :root{
+    --bg:#0b0c0e;
+    --bg-soft:#101216;
+    --panel:#13161b;
+    --line:rgba(212,175,55,.16);
+    --line-strong:rgba(212,175,55,.34);
+    --gold:#D4AF37;
+    --gold-dim:#a98a2a;
+    --text:#eae8e4;
+    --muted:#8b8880;
+    --radius:14px;
+    --maxw:1060px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Source Han Sans SC",sans-serif;
+    font-size:16px;
+    line-height:1.85;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px}
+
+  /* 顶部导航 */
+  .topbar{
+    position:sticky;top:0;z-index:20;
+    background:rgba(11,12,14,.82);
+    backdrop-filter:saturate(140%) blur(12px);
+    border-bottom:1px solid var(--line);
+  }
+  .topbar .wrap{display:flex;align-items:center;justify-content:space-between;height:60px;gap:16px}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:600;letter-spacing:.02em}
+  .brand .dot{width:8px;height:8px;border-radius:50%;background:var(--gold);box-shadow:0 0 12px rgba(212,175,55,.7)}
+  .nav{display:flex;gap:26px;font-size:14px;color:var(--muted)}
+  .nav a{transition:color .18s}
+  .nav a:hover{color:var(--gold)}
+  .tag-line{font-size:12px;color:var(--gold);border:1px solid var(--line-strong);border-radius:999px;padding:3px 12px;letter-spacing:.08em;white-space:nowrap}
+
+  /* 首屏 */
+  .hero{padding:88px 0 56px;position:relative;overflow:hidden}
+  .hero::after{
+    content:"";position:absolute;inset:-40% 30% auto -20%;height:520px;
+    background:radial-gradient(closest-side,rgba(212,175,55,.13),transparent 70%);
+    pointer-events:none;
+  }
+  .eyebrow{font-size:13px;letter-spacing:.28em;color:var(--gold-dim);text-transform:uppercase;margin:0 0 22px}
+  h1{font-size:clamp(30px,4.4vw,50px);line-height:1.28;margin:0 0 24px;font-weight:650;letter-spacing:-.01em}
+  h1 span{color:var(--gold)}
+  .lede{font-size:17px;color:#c3c0ba;max-width:46em;margin:0}
+  .hero-meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:34px}
+  .chip{
+    font-size:13px;color:var(--muted);
+    border:1px solid rgba(255,255,255,.09);border-radius:999px;padding:5px 14px;
+    background:rgba(255,255,255,.02);
+  }
+
+  /* 概览卡片 */
+  .section{padding:8px 0 64px}
+  /* 锚点跳转时给吸顶导航留出高度，避免标题被压住 */
+  .section,.proj{scroll-margin-top:76px}
+  .sec-title{
+    display:flex;align-items:baseline;gap:14px;
+    font-size:13px;letter-spacing:.22em;color:var(--gold-dim);
+    text-transform:uppercase;margin:0 0 28px;
+  }
+  .sec-title::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent)}
+  .cards{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+  .card{
+    position:relative;display:block;
+    background:linear-gradient(180deg,var(--panel),var(--bg-soft));
+    border:1px solid rgba(255,255,255,.07);
+    border-radius:var(--radius);padding:26px 26px 24px;
+    transition:border-color .2s,transform .2s,box-shadow .2s;
+  }
+  .card:hover{border-color:var(--line-strong);transform:translateY(-3px);box-shadow:0 14px 34px rgba(0,0,0,.42)}
+  .card .idx{font-size:12px;letter-spacing:.16em;color:var(--gold-dim);font-variant-numeric:tabular-nums}
+  .card h3{margin:10px 0 10px;font-size:19px;font-weight:600;letter-spacing:.01em}
+  .card p{margin:0;font-size:14px;color:var(--muted);line-height:1.75}
+  .card .status{
+    display:inline-block;margin-top:16px;font-size:12px;letter-spacing:.04em;
+    color:var(--gold);border-top:1px solid var(--line);padding-top:12px;width:100%;
+  }
+
+  /* 项目详情 */
+  .proj{
+    padding:44px 0;border-top:1px solid rgba(255,255,255,.06);
+    display:grid;grid-template-columns:210px 1fr;gap:40px;align-items:start;
+  }
+  .proj .num{
+    font-size:46px;line-height:1;font-weight:700;color:rgba(212,175,55,.24);
+    font-variant-numeric:tabular-nums;letter-spacing:-.02em;
+  }
+  .proj .meta{margin-top:14px;font-size:13px;color:var(--muted);letter-spacing:.04em}
+  .proj h2{font-size:24px;margin:0 0 6px;font-weight:600;line-height:1.4}
+  .proj .sub{font-size:14px;color:var(--gold-dim);margin:0 0 22px;letter-spacing:.02em}
+  dl{margin:0;display:grid;grid-template-columns:76px 1fr;gap:12px 18px}
+  dt{font-size:13px;color:var(--muted);letter-spacing:.06em;padding-top:2px}
+  dd{margin:0;font-size:15.5px;color:#d7d4cf}
+  dd strong{color:#fff;font-weight:600}
+  .flow{
+    display:inline-flex;flex-wrap:wrap;align-items:center;gap:8px;
+    font-size:14.5px;color:#d7d4cf;
+  }
+  .flow i{font-style:normal;color:var(--gold-dim)}
+
+  /* 页脚 */
+  footer{border-top:1px solid var(--line);padding:38px 0 54px;color:var(--muted);font-size:13.5px}
+  footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:14px;align-items:center}
+  footer a:hover{color:var(--gold)}
+  .back{color:var(--gold);border-bottom:1px solid transparent;transition:border-color .2s}
+  .back:hover{border-color:var(--gold)}
+
+  @media (max-width:820px){
+    .wrap{padding:0 20px}
+    .nav{display:none}
+    .hero{padding:60px 0 40px}
+    .cards{grid-template-columns:1fr}
+    .proj{grid-template-columns:1fr;gap:18px;padding:34px 0}
+    .proj .num{font-size:32px}
+    dl{grid-template-columns:64px 1fr;gap:10px 14px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+  }
+  @media print{
+    body{background:#fff;color:#111}
+    .topbar,.hero::after{display:none}
+    .card,.proj{border-color:#ddd;background:#fff;box-shadow:none}
+    .lede,.card p,dd,dt{color:#333}
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap">
+    <a class="brand" href="https://deepsleep.fun/"><span class="dot"></span>DeepSleep</a>
+    <nav class="nav">
+      <a href="#overview">项目概览</a>
+      <a href="#p1">校园信息</a>
+      <a href="#p2">地方文旅</a>
+      <a href="#p3">科研工具</a>
+      <a href="#p4">乡村数据</a>
+    </nav>
+    <span class="tag-line">挑战杯 · 2027</span>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <p class="eyebrow">Challenge Cup 2027 · Projects</p>
+      <h1>四条并行的项目线：<br>从校园信息入口，到<span>落地中的真实场景</span></h1>
+      <p class="lede">
+        四个项目分别面向高校学生、地方政府、科研工作者与乡村集体经济，
+        覆盖信息获取、文旅服务、科研工作流与数据资产四类需求。
+        其中两个已进入实际运行，一个在竞赛中打磨产品，一个处于模式构想阶段。
+      </p>
+      <div class="hero-meta">
+        <span class="chip">已上线运行 2 项</span>
+        <span class="chip">G 端合作立项 1 项</span>
+        <span class="chip">软著申请中</span>
+        <span class="chip">覆盖校园 / 文旅 / 科研 / 乡村</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="overview">
+    <div class="wrap">
+      <h2 class="sec-title">项目概览</h2>
+      <div class="cards">
+        <a class="card" href="#p1">
+          <div class="idx">01</div>
+          <h3>大学城 AI 助手 App</h3>
+          <p>聚合考研、留学、校内课程、证书考级、竞赛组队等分散信息，用 AI 对话直接给出答案。</p>
+          <span class="status">产品 Demo · 竞赛打磨中</span>
+        </a>
+        <a class="card" href="#p2">
+          <div class="idx">02</div>
+          <h3>长沙文旅数字地图</h3>
+          <p>与长沙市 G 端合作的文旅数字化项目，提供精简旅游规划、景点信息、城市人文与行程记录。</p>
+          <span class="status">已立项 · 创业园区入驻</span>
+        </a>
+        <a class="card" href="#p3">
+          <div class="idx">03</div>
+          <h3>科研创作智能体</h3>
+          <p>论文库、实证研究、AI 工具三合一，集成 Stata 语言与文档的实时编辑与运行。</p>
+          <span class="status">已上线 · 课题组在用 · 软著准备中</span>
+        </a>
+        <a class="card" href="#p4">
+          <div class="idx">04</div>
+          <h3>文化村数据项目</h3>
+          <p>村集体以村资源置换贷款，企业运营盈利，运营数据面向高校课题组开放。</p>
+          <span class="status">构想阶段 · 合作策略待定</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="projects">
+    <div class="wrap">
+      <h2 class="sec-title">项目详情</h2>
+
+      <article class="proj" id="p1">
+        <div>
+          <div class="num">01</div>
+          <div class="meta">校园信息 · 产品 Demo</div>
+        </div>
+        <div>
+          <h2>大学城 AI 助手 App</h2>
+          <p class="sub">面向松江大学城高校学生的一站式信息助手</p>
+          <dl>
+            <dt>定位</dt>
+            <dd>面向松江大学城高校学生的一站式信息助手。</dd>
+            <dt>内容</dt>
+            <dd>聚合考研、留学、校内课程、证书考级、竞赛组队等分散信息，通过 AI 对话直接给出答案，<strong>降低信息获取成本</strong>。</dd>
+            <dt>阶段</dt>
+            <dd>目前处于 Demo 阶段，正通过各类竞赛打磨产品并积累曝光。</dd>
+            <dt>规划</dt>
+            <dd>下一步计划将产品扩展到其他城市和高校。</dd>
+          </dl>
+        </div>
+      </article>
+
+      <article class="proj" id="p2">
+        <div>
+          <div class="num">02</div>
+          <div class="meta">地方文旅 · G 端合作</div>
+        </div>
+        <div>
+          <h2>长沙文旅数字地图</h2>
+          <p class="sub">与长沙市 G 端合作的文旅数字化项目</p>
+          <dl>
+            <dt>定位</dt>
+            <dd>与长沙市 G 端合作的文旅数字化项目。</dd>
+            <dt>功能</dt>
+            <dd>核心功能是为用户提供精简的旅游规划、景点信息、城市人文介绍与行程记录。</dd>
+            <dt>团队</dt>
+            <dd>项目由中南大学博士生带队。</dd>
+            <dt>进展</dt>
+            <dd>目前长沙方向沟通顺畅，已取得当地创业园区入驻资格并完成立项。</dd>
+          </dl>
+        </div>
+      </article>
+
+      <article class="proj" id="p3">
+        <div>
+          <div class="num">03</div>
+          <div class="meta">科研工具 · 已上线</div>
+        </div>
+        <div>
+          <h2>科研创作智能体</h2>
+          <p class="sub">面向科研工作流的一体化智能体</p>
+          <dl>
+            <dt>定位</dt>
+            <dd>面向科研工作流的一体化智能体。</dd>
+            <dt>模块</dt>
+            <dd>包含<strong>论文库</strong>、<strong>实证研究</strong>、<strong>AI 工具</strong>三大模块。</dd>
+            <dt>特色</dt>
+            <dd>集成 Stata 语言与文档的实时编辑和运行能力，并兼容大部分编程语言。</dd>
+            <dt>进展</dt>
+            <dd>已上线并在内部多个课题组实际使用，目前正在准备软件著作权申请。</dd>
+          </dl>
+        </div>
+      </article>
+
+      <article class="proj" id="p4">
+        <div>
+          <div class="num">04</div>
+          <div class="meta">乡村数据 · 构想阶段</div>
+        </div>
+        <div>
+          <h2>文化村数据项目</h2>
+          <p class="sub">中部地区文化村的资源—运营—数据闭环</p>
+          <dl>
+            <dt>定位</dt>
+            <dd>对接中部地区一个文化村，探索资源、运营与数据贯通的闭环模式。</dd>
+            <dt>模式</dt>
+            <dd>
+              <span class="flow">
+                村集体以村资源置换贷款 <i>→</i> 企业负责运营盈利 <i>→</i> 运营产生的数据面向高校课题组开放
+              </span>
+            </dd>
+            <dt>现状</dt>
+            <dd>目前多方意愿都很强，具体合作策略尚未确定。</dd>
+          </dl>
+        </div>
+      </article>
+
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© <span id="y">2026</span> DeepSleep · 挑战杯 2027 项目资料</span>
+    <a class="back" href="https://deepsleep.fun/">返回博客首页</a>
+  </div>
+</footer>
+
+<script>
+  // 年份自动更新，避免每年手改
+  document.getElementById('y').textContent = new Date().getFullYear();
+</script>
+</body>
+</html>
